@@ -1,0 +1,13 @@
+<div class="card card-xl h-full shadow-sm rounded-2xl flex-row" [attr.data-theme]="_theme()">
+    <div class="card-body p-4">
+        @if (title()) {
+        <h2 class="card-title font-extrabold text-[1.625rem]">{{title()}}</h2>
+        }
+        <ng-content></ng-content>
+    </div>
+    @if(actions()){
+    <div class="p-4 card-actions ">
+        <ng-content class="flex flex-col" select="[actions]"></ng-content>
+    </div>
+    }
+</div>
