@@ -1,0 +1,19 @@
+<label class="label" [for]="inputId()">Correo electronico:</label>
+<div class=" input input-md validator">
+    <span class="icon text-[1rem]!">
+        email
+    </span>
+    <input [value]="value" (input)="onInput($event)" [attr.aria-invalid]="isInvalid ? true : null" (blur)="handleBlur()"
+        [disabled]="isDisabled" type="email" placeholder="mail@site.com" />
+</div>
+
+@if(errors?.['required'] && isInvalid){
+<p class="validator-hint">
+    Este campo es obligatorio
+</p>
+}
+
+@if(errors?.['email'] && isInvalid){
+<p class="validator-hint">
+    El formato del email no es válido</p>
+}

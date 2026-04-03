@@ -2,21 +2,61 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 
-@plugin "daisyui" {
-    themes:
-        lofi --default,
-        black --prefersdark;
+
+@plugin "daisyui/theme" {
+    name: "devhelper";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: #171717;
+    --color-base-200: #20201E;
+    --color-base-300: #363633;
+    --color-base-content: #e8e8e8;
+    --color-primary: #e8e8e8;
+    --color-primary-content: #171717;
+    --color-secondary: #20201E;
+    --color-secondary-content: #e8e8e8;
+    --color-accent: #363633;
+    --color-accent-content: #e8e8e8;
+    --color-neutral: oklch(14% 0.005 285.823);
+    --color-neutral-content: oklch(92% 0.004 286.32);
+    --color-info: #135FA7;
+    --color-info-content: #e8e8e8;
+    --color-success: #5BA025;
+    --color-success-content: oklch(98% 0.003 250.300);
+    --color-warning: oklch(82% 0.189 84.429);
+    --color-warning-content: oklch(41% 0.112 45.904);
+    --color-error: #B81818;
+    --color-error-content: oklch(97% 0.013 17.38);
+    --radius-selector: 1rem;
+    --radius-field: 0.25rem;
+    --radius-box: 1rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 0;
+    --noise: 0;
 }
 
-@custom-variant dark (&:where([data-theme=black], [data-theme=black] *));
+
+@custom-variant dark (&:where([data-theme=devhelper], [data-theme=devhelper] *));
 
 :root {
     --font-base: 'Roboto', sans-serif;
 }
 
+@layer utilities {
+    @layer daisyui.l1.l2.l3 {
+        :is(.list > :not(:last-child).list-row, .list > :not(:last-child) .list-row)::after {
+            border-color: rgba(232, 232, 232, 0.2) !important;
+        }
+    }
+}
+
 @layer base {
     body {
         font-family: 'Roboto', sans-serif;
+        @apply bg-base-100  from-base-content/5 bg-linear-to-bl to-60% h-screen overflow-auto;
     }
 }
 
@@ -25,4 +65,49 @@
         font-family: 'Material Symbols Outlined';
         @apply text-2xl;
     }
+
+    .input {
+        @apply w-full bg-base-200;
+
+        input {
+            @apply placeholder-neutral-400 hover:placeholder-base-content transition-colors duration-200;
+        }
+
+        .icon {
+            @apply justify-center flex items-center;
+        }
+    }
+
+    .label,
+    label {
+        @apply text-base-content/75 mb-1;
+    }
+
+    .btn {
+        @apply rounded-xl;
+    }
+}
+
+/* Define keyframe animations */
+@keyframes rotate-out {
+    to {
+        transform: rotate(90deg);
+    }
+}
+
+@keyframes rotate-in {
+    from {
+        transform: rotate(-90deg);
+    }
+}
+
+/* Target view transition pseudo-elements */
+::view-transition-old(count),
+::view-transition-new(count) {
+    animation-duration: 200ms;
+    animation-name: -ua-view-transition-fade-in, rotate-in;
+}
+
+::view-transition-old(count) {
+    animation-name: -ua-view-transition-fade-out, rotate-out;
 }

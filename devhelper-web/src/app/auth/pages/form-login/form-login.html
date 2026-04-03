@@ -1,0 +1,30 @@
+<form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSudmit()">
+    <auth-email-input inputId="email" formControlName="email" />
+    <auth-password-input inputId="password" formControlName="password">
+        <ng-template errorMessage="required">
+            <p class="validator-hint">
+                Este campo es obligatorio
+            </p>
+        </ng-template>
+    </auth-password-input>
+    @if(form.errors?.['FirebaseError'] == 'auth/invalid-credential'){
+    <p class="text-error text-center">
+        Correo o contraseña incorrectos
+    </p>
+    }
+
+
+    <button class="btn btn-primary btn-lg mt-4" type="submit">
+        @if(loanding){
+        <span class="loading loading-infinity"></span>
+        }@else{
+        Login
+        }
+    </button>
+</form>
+
+
+<p class="text-center mb-4">
+    <span class="opacity-30"> ¿No tienes cuenta? </span>
+    <a class="opacity-70 hover:opacity-100" routerLink="/login/register">Regístrate aquí</a>
+</p>

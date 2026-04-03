@@ -1,3 +1,3 @@
-<button class="btn btn-{{size()}} btn-{{severity()}} btn-{{type()}} {{styleClass()}}">
+<button class="btn btn-{{size()}} btn-{{severity()}} btn-{{type()}} {{styleClass()}}" (click)="click.emit()">
     <span class="icon {{iconClass()}}">{{icon()}}</span>
 </button>

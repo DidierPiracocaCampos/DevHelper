@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'sh-action-button',
@@ -12,5 +12,6 @@ export class ActionButton {
   iconClass = input<string>();
   type = input<'circle' | 'square'>('square');
   size = input<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md')
-  severity = input<'primary' | 'secundary' | 'light'>('primary');
+  severity = input<'secundary' | 'primary'>('secundary');
+  click = output();
 }

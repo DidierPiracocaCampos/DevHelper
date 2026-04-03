@@ -10,7 +10,6 @@ export class CardBase {
   color = input<'DARK' | 'LIGTH'>('DARK');
   title = input<string>();
   actions = input(true, {transform: booleanAttribute});
-  readonly _theme = computed<string>(() => this.color() === 'DARK' ? 'black' : 'lofi');
-
+  readonly _theme = computed<string>(() => this.color() === 'DARK' ? '' : 'bg-primary text-primary-content');
 
 }

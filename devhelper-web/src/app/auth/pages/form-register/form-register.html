@@ -1,0 +1,68 @@
+<form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSudmit()">
+    <auth-email-input inputId="email" formControlName="email" />
+    @let valid = form.get('password')?.valid;
+    <auth-password-input inputId="password" formControlName="password">
+        <ng-template errorMessage="firebasePassword" [visible]="true" let-error>
+            <ul class="list">
+                <li class=" py-2 text-xs opacity-60 tracking-wide">Tu contraseña debe tener:</li>
+                <li class="list-row">
+                    <span class="icon" [ngClass]="{ 'success': error?.minLength || valid, 
+                    'error': error && !error.minLength}">
+                        {{error?.minLength || valid ? 'check':'error'}}</span>
+                    <div class="text-xs"> Mínimo 8 caracteres</div>
+                </li>
+
+                <li class="list-row">
+                    <span class="icon" [ngClass]="{ 'success': error?.lower || valid, 
+                    'error': error && !error.lower}">{{error?.lower || valid ? 'check':'error'}}</span>
+                    <div class="text-xs"> Letra minúscula</div>
+                </li>
+
+                <li class="list-row">
+                    <span class="icon" [ngClass]="{ 'success': error?.upper || valid, 'error': error && !error.upper}">
+                        {{error?.upper || valid ? 'check':'error'}}</span>
+                    <div class="text-xs"> Letra mayúscula</div>
+                </li>
+
+                <li class="list-row">
+                    <span class="icon"
+                        [ngClass]="{ 'success': error?.number || valid, 'error': error && !error.number}">
+                        {{error?.number || valid ? 'check':'error'}}</span>
+                    <div class="text-xs"> Número</div>
+                </li>
+
+                <li class="list-row">
+                    <span class="icon"
+                        [ngClass]="{ 'success': error?.special || valid, 'error': error && !error.special}">
+                        {{error?.special || valid ? 'check':'error'}}
+                    </span>
+                    <div class="text-xs"> Carácter especial</div>
+                </li>
+            </ul>
+        </ng-template>
+        <ng-template errorMessage="required">
+            <p class="validator-hint">
+                Este campo es obligatorio
+            </p>
+        </ng-template>
+    </auth-password-input>
+    <auth-password-input label="Verificar contraseña" inputId="verifyPassword" formControlName="verifyPassword">
+        <ng-template errorMessage="required">
+            <p class="validator-hint">
+                Este campo es obligatorio
+            </p>
+        </ng-template>
+        <ng-template errorMessage="notMatching">
+            <p class="validator-hint">
+                Las contraseñas no coinciden
+            </p>
+        </ng-template>
+    </auth-password-input>
+
+    <div></div>
+    <button class="btn btn-primary btn-lg mt-4" type="submit"> Registrarme </button>
+
+    <button class="btn btn-lg btn-secondary " routerLink="/login" type="button">
+        Volver a login
+    </button>
+</form>
