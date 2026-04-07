@@ -1,8 +1,8 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Injector, runInInjectionContext, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Auth, authState, browserLocalPersistence, createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, setPersistence, signInWithEmailAndPassword, signInWithPopup, User } from '@angular/fire/auth';
+import { Auth, authState, browserLocalPersistence, createUserWithEmailAndPassword, GoogleAuthProvider, setPersistence, signInWithEmailAndPassword, signInWithPopup, User } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,13 +10,20 @@ import { firstValueFrom } from 'rxjs';
 export class Authenticator {
 
   private _auth = inject(Auth);
+  private _injector = inject(Injector);
   private _router = inject(Router);
+
   readonly initialized = signal(false);
-  readonly user = toSignal(authState(this._auth), { initialValue: null });
+  readonly user = toSignal(this.$userObservable(), { initialValue: null });
   readonly isLoggedIn = computed(() => !!this.user());
 
+
+  $userObservable(): Observable<User | null> {
+    return runInInjectionContext(this._injector, () => authState(this._auth));
+  }
+
   userPromise(): Promise<User | null> {
-    return firstValueFrom(authState(this._auth));
+    return firstValueFrom(this.$userObservable());
   }
 
   register(email: string, password: string) {
