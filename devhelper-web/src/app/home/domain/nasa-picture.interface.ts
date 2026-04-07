@@ -1,4 +1,4 @@
-export interface NasaPictureInfo {
+export interface NasaPictureI {
     date: string,
     explanation: string,
     hdurl?: string,
