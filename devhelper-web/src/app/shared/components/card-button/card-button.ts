@@ -1,12 +1,12 @@
 import { Component, input, output } from '@angular/core';
 
 @Component({
-  selector: 'sh-action-button',
+  selector: 'sh-card-button',
   imports: [],
-  templateUrl: './action-button.html',
-  styleUrl: './action-button.css',
+  templateUrl: './card-button.html',
+  styleUrl: './card-button.css',
 })
-export class ActionButton {
+export class CardButton {
   icon = input<string>();
   styleClass = input<string>();
   iconClass = input<string>();

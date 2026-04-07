@@ -1,9 +1,12 @@
-<div class="card  card-xl h-full flex-row {{_theme()}}">
+<div class="card card-xl h-full flex-row {{_theme()}}">
     <div class="card-body p-4">
         @if (title()) {
         <h2 class="card-title font-extrabold text-[1.625rem]">{{title()}}</h2>
         }
-        <ng-content></ng-content>
+        <div class="flex-1 min-h-0 min-w-0">
+            <ng-content></ng-content>
+        </div>
+
     </div>
     @if(actions()){
     <div class="p-4 card-actions ">
