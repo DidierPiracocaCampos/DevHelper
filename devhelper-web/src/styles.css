@@ -56,7 +56,7 @@
 @layer base {
     body {
         font-family: 'Roboto', sans-serif;
-        @apply bg-base-100  from-base-content/5 bg-linear-to-bl to-60% h-screen overflow-auto;
+        @apply bg-base-100  from-base-content/5 bg-linear-to-bl to-60% h-screen w-screen overflow-y-auto;
     }
 }
 
