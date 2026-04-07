@@ -1,16 +1,7 @@
 <label class="label">{{label()}}:</label>
 <div class="input input-md  validator">
-    <span class="icon text-[1rem]!">
-        key
-    </span>
     <input [id]="inputId()" [value]="value" (input)="onInput($event)" [attr.aria-invalid]="isInvalid ? true : null"
-        (blur)="handleBlur()" [disabled]="isDisabled" [type]="!showPassword ? 'password' : 'text' " />
-
-    <button type="button" (click)="togglePassword()">
-        <span class="icon text-[1rem]! text-neutral-400 hover:text-base-content transition-colors duration-200">
-            {{ !showPassword ? 'visibility_off' : 'visibility' }}
-        </span>
-    </button>
+        (blur)="handleBlur()" [disabled]="isDisabled" [type]="type()" />
 </div>
 
 @for (m of errorMessages(); track $index) {
