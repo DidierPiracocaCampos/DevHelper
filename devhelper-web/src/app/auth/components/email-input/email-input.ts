@@ -1,5 +1,5 @@
-import { Component, forwardRef } from '@angular/core';
-import {  NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, forwardRef } from '@angular/core';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputBase } from '../../../shared/forms/components/input-base/input-base';
 
 @Component({
@@ -13,7 +13,8 @@ import { InputBase } from '../../../shared/forms/components/input-base/input-bas
       useExisting: forwardRef(() => EmailInput),
       multi: true,
     },
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailInput extends InputBase<string> {
 

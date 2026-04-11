@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Authenticator } from '../../services/authenticator';
 import { EmailInput } from '../../components/email-input/email-input';
@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
   imports: [ReactiveFormsModule, EmailInput, PasswordInput, ErrorMessage, NgClass, RouterLink],
   templateUrl: './form-register.html',
   styleUrl: './form-register.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;

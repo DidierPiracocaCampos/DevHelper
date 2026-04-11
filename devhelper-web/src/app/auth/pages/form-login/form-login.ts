@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EmailInput } from '../../components/email-input/email-input';
 import { PasswordInput } from '../../components/password-input/password-input';
@@ -10,6 +10,7 @@ import { Authenticator } from '../../services/authenticator';
   imports: [ReactiveFormsModule, EmailInput, PasswordInput, RouterLink],
   templateUrl: './form-login.html',
   styleUrl: './form-login.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class FormLogin {
   private _authenticator = inject(Authenticator);
@@ -37,7 +38,7 @@ export default class FormLogin {
         this.form.get('password')?.setErrors({ FirebaseError: e.code });
         this.form.setErrors({ FirebaseError: e.code });
       })
-      .finally(() => this.loanding = false );
+      .finally(() => this.loanding = false);
   }
 
 }

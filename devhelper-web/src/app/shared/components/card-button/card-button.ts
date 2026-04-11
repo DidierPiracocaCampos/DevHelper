@@ -1,10 +1,11 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'sh-card-button',
   imports: [],
   templateUrl: './card-button.html',
   styleUrl: './card-button.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardButton {
   icon = input<string>();

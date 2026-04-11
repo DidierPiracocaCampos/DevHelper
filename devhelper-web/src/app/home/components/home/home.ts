@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CardBase } from "../../../shared/components/card-base/card-base";
-import { CardButton } from "../../../shared/components/action-button/action-button";
+import { CardButton } from "../../../shared/components/card-button/card-button";
 import { NasaPicture } from "../nasa-picture/nasa-picture";
 import { Authenticator } from '../../../auth/services/authenticator';
+import { PasswordList } from "../password-list/password-list";
 
 @Component({
   selector: 'app-home',
-  imports: [CardBase, CardButton, NasaPicture],
+  imports: [CardBase, CardButton, NasaPicture, PasswordList],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
