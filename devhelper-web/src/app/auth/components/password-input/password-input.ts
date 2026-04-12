@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputBase } from '../../../shared/forms/components/input-base/input-base';
 import { NgTemplateOutlet } from '@angular/common';
@@ -14,8 +14,7 @@ import { NgTemplateOutlet } from '@angular/common';
       useExisting: forwardRef(() => PasswordInput),
       multi: true,
     },
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  ]
 })
 export class PasswordInput extends InputBase<string> {
   label = input<string>('Contraseña');

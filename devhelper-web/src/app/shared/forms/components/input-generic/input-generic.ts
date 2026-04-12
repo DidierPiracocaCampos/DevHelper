@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { Component, forwardRef, input } from '@angular/core';
 import { InputBase } from '../input-base/input-base';
 import { NgTemplateOutlet } from '@angular/common';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -14,8 +14,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => InputGeneric),
       multi: true,
     },
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  ]
 })
 export class InputGeneric extends InputBase<any> {
   label = input();
