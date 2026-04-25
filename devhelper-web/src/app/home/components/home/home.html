@@ -28,3 +28,43 @@
     </sh-card-base>
     <password-list class="col-span-6 min-h-0" />
 </div>
+
+
+<dialog #secureModal class="modal">
+    <div class="modal-box max-w-xl">
+        <h3 class="text-2xl font-bold flex space-x-1 items-center">
+            <span class="icon">shield</span> <span>Configurar Vault</span>
+        </h3>
+        <p class="p-3  my-3 rounded-xl bg-base-300">Este paso añade una capa de seguridad para acceder a tus datos.
+            Podrás desbloquear tu vault usando el método que elijas.</p>
+        <form [formGroup]="_secureForm" class="pt-4 grid gap-4" (ngSubmit)="createSecurity()">
+            <div class="flex flex-col gap-2 ">
+                <label class="font-medium">Elige método</label>
+                <label class="flex items-center space-x-2">
+                    <input class="radio" type="radio" formControlName="type" value="pin" />
+                    <span>PIN</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input class="radio" type="radio" formControlName="type" value="passkey" />
+                    <span>Passkey</span>
+                </label>
+            </div>
+            @if(_secureForm.value.type === 'pin'){
+            <sh-input type="number" label="Crear PIN" inputId="pin" formControlName="pin" />
+            }
+            @if(_secureForm.value.type === 'passkey'){
+            <p class="text-sm text-gray-500">
+                Se creará una Passkey usando tu dispositivo actual.
+            </p>
+            <button type="button" class="btn btn-primary" (click)="registerPasskey()">
+                <span class="icon">encrypted_add</span>
+                Crear Passkey
+            </button>
+            }
+            <div class="modal-action flex space-x-3 pt-2">
+                <sh-button label="Cancelar" severity="secondary" type="reset" (click)="secureModal.close()" />
+                <sh-button label="Guardar" severity="primary" type="submit" />
+            </div>
+        </form>
+    </div>
+</dialog>
