@@ -9,8 +9,10 @@ import { NasaPictureI } from '../domain/nasa-picture.interface';
 export class NasaPictureResource {
 
   getPicture() {
-    return httpResource<NasaPictureI>(
-      () => 'https://api.nasa.gov/planetary/apod?api_key=' + environment.nasaApiKey + '&thumbs=true');
+    return httpResource<NasaPictureI>(() => ({
+      url: 'https://api.nasa.gov/planetary/apod?api_key=' + environment.nasaApiKey + '&thumbs=true',
+      cache: 'force-cache'
+    }));
   }
 
 }
