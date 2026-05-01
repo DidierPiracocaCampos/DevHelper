@@ -9,6 +9,7 @@ import { InputGeneric } from "../../../shared/forms/components/input-generic/inp
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { PassKeyService } from '../../../shared/service/pass-key';
 import { VaultSecurity } from '../../../shared/service/security';
+import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'app-home',
@@ -23,13 +24,21 @@ export default class Home {
   private _srvPasskey = inject(PassKeyService);
   private _fb = inject(FormBuilder).nonNullable;
   private _modal = computed(() => this.secureModal()?.nativeElement);
+  private _loader = inject(Loader);
+
 
   async ngOnInit() {
+    this._loader.hide();
     this._vault.secureModal = this._modal;
     this._modal()?.showModal();
   }
 
   async createSecurity() {
+    const f = this._secureForm;
+    if (f.valid) {
+      const value = f.value;
+      this._vault.createVault(value.type!, value.pin);
+    }
   }
 
   async registerPasskey() {
