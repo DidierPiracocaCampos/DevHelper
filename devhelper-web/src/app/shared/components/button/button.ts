@@ -14,7 +14,9 @@ export class Button {
   btnClass = input<string>();
   label = input<string>();
   isLoandig = input<boolean>(false);
+  disabled = input<boolean>(false);
   onClick = output();
+
 
 
 }
