@@ -1,4 +1,4 @@
-<form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSudmit()">
+<form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSubmit()">
     <auth-email-input inputId="email" formControlName="email" />
     <auth-password-input inputId="password" formControlName="password">
         <ng-template errorMessage="required">

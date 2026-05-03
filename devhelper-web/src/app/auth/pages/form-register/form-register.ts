@@ -3,10 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { EmailInput } from '../../components/email-input/email-input';
 import { PasswordInput } from '../../components/password-input/password-input';
-import firebasePasswordValidator from '../../forms/validators/password.validator';
+import firebasePasswordValidator from '../../../shared/forms/validators/password.validator';
 import { ErrorMessage } from "../../../shared/forms/components/input-base/error-message";
 import { NgClass } from '@angular/common';
-import { matchOtherValidator } from '../../forms/validators/match.validator';
+import { matchOtherValidator } from '../../../shared/forms/validators/match.validator';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -26,7 +26,7 @@ export default class FormRegister {
     verifyPassword: this._formBuilder.control<string>('', [Validators.required, matchOtherValidator('password')]),
   });
 
-  onSudmit() {
+  onSubmit() {
     const f = this.form;
     if (f.invalid) {
       f.markAllAsDirty();

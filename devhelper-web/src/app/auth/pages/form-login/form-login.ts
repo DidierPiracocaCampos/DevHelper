@@ -23,7 +23,7 @@ export default class FormLogin {
     password: this._formBuilder.control<string>('', [Validators.required])
   });
 
-  onSudmit() {
+  onSubmit() {
     const f = this.form;
     if (f.invalid) {
       f.markAllAsDirty();
