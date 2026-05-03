@@ -11,12 +11,11 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 export class Button {
   severity = input<'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'>();
   type = input<'submit' | 'button' | 'reset'>();
-  btnClass = input<string>();
+  btnClass = input<string>('');
+  icon = input<string>();
   label = input<string>();
   isLoandig = input<boolean>(false);
   disabled = input<boolean>(false);
   onClick = output();
-
-
 
 }
