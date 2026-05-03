@@ -1,1 +1,0 @@
-export { VaultSecurity } from "./services/vault-security";
