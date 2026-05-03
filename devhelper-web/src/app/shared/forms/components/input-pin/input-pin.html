@@ -1,0 +1,17 @@
+<label class="label">{{label()}}:</label>
+
+<div class="flex gap-2" role="group" [attr.aria-label]="'Introduce tu PIN de ' + length() + ' dígitos'">
+    @for (digit of digits; let i = $index; track i) {
+    <input #pinInput type="text" inputmode="numeric" maxlength="1"
+        class="input input-bordered text-center text-lg tracking-widest w-[6ch]! p-0 flex-none" [value]="digit"
+        (input)="onInputNumber($event, i)" (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)"
+        [class.validator]="isInvalid" (blur)="handleBlur()" type="text" pattern="[0-9]*" />
+    }
+</div>
+
+@for (m of errorMessages(); track $index) {
+@if((errors?.[m.error()] && isInvalid) || m.visible()){
+<ng-container [ngTemplateOutlet]="m.template" [ngTemplateOutletContext]=" { $implicit: errors?.[m.error()] }">
+</ng-container>
+}
+}
