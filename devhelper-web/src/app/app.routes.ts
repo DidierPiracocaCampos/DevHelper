@@ -4,7 +4,7 @@ import { authCanMatch } from './core/is-auth.can.mach';
 export const routes: Routes = [
     {
         path: '',
-        loadComponent: () => import('./home/components/home/home').then((c) => c),
+        loadComponent: () => import('./home/pages/home/home').then((c) => c),
         canMatch: [authCanMatch()]
     },
     {
