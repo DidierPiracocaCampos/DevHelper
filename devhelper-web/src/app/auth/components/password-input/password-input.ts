@@ -17,9 +17,13 @@ import { NgTemplateOutlet } from '@angular/common';
   ]
 })
 export class PasswordInput extends InputBase<string> {
+
   label = input<string>('Contraseña');
   showPassword = false;
 
+  protected override inputOnInit(): void {
+  }
+  
   togglePassword() {
     this.showPassword = !this.showPassword;
   }

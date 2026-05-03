@@ -5,7 +5,7 @@ import { ErrorMessage } from './error-message';
 @Component({
   template: ''
 })
-export class InputBase<T = string> implements ControlValueAccessor {
+export abstract class InputBase<T = string> implements ControlValueAccessor {
 
   private _ngControl: NgControl | null = null;
   private _injector = inject(Injector);
@@ -20,10 +20,13 @@ export class InputBase<T = string> implements ControlValueAccessor {
 
   ngOnInit() {
     this._ngControl = this._injector.get(NgControl, null);
+    this.inputOnInit();
   }
 
-  private onChange: (value: T) => void = () => { };
-  private onTouched: () => void = () => { };
+  protected abstract inputOnInit(): void;
+
+  protected onChange: (value: T) => void = () => { };
+  protected onTouched: () => void = () => { };
 
   writeValue(value: T | null): void {
     this.value = value;

@@ -17,5 +17,7 @@ import { InputBase } from '../../../shared/forms/components/input-base/input-bas
 })
 export class EmailInput extends InputBase<string> {
 
-
+  protected override inputOnInit(): void {
+  }
+  
 }
