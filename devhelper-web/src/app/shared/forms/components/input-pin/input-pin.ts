@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, forwardRef, input, viewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, forwardRef, input, viewChildren } from '@angular/core';
 import { InputBase } from '../input-base/input-base';
 import { NgTemplateOutlet } from '@angular/common';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -8,7 +8,6 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   imports: [NgTemplateOutlet],
   templateUrl: './input-pin.html',
   styleUrl: './input-pin.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -17,47 +16,66 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ]
 })
-export class InputPin extends InputBase<string> {
+export class InputPin extends InputBase<string> implements AfterViewInit {
 
-  label = input();
+  label = input<string>();
   length = input<number>(4);
-  digits: string[] = [];
 
   private inputs = viewChildren<ElementRef<HTMLInputElement>>('pinInput');
 
-  inputOnInit() {
-    this.digits = Array(this.length()).fill('');
+  protected digits: string[] = [];
 
+  protected override inputOnInit(): void {
+  }
+
+  ngAfterViewInit() {
+    this.resetDigits();
     queueMicrotask(() => this.focus(0));
+  }
+
+  private resetDigits(value: string = '') {
+    this.digits = Array(this.length())
+      .fill('')
+      .map((_, i) => value[i] ?? '');
+  }
+
+  private syncDOM() {
+    const inputs = this.inputs();
+
+    inputs.forEach((el, i) => {
+      el.nativeElement.value = this.digits[i] ?? '';
+    });
   }
 
   private focus(index: number) {
     const el = this.inputs()[index]?.nativeElement;
-    if (el) {
-      el.focus();
-    }
+    el?.focus();
   }
 
   onInputNumber(event: Event, index: number) {
     const input = event.target as HTMLInputElement;
     const value = input.value.replace(/\D/g, '');
+
     this.digits[index] = value;
+
     if (value && index < this.length() - 1) {
       this.focus(index + 1);
     }
-    if (this.getValue().length === this.length()) {
-      this.onTouched();
-    }
-    this.onChange(this.getValue());
+
+    this.emitValue();
   }
 
   onKeyDown(event: KeyboardEvent, index: number) {
-    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    const allowedKeys = [
+      'Backspace',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'Home',
+      'End'
+    ];
 
-    if (
-      !allowedKeys.includes(event.key) &&
-      !/^\d$/.test(event.key)
-    ) {
+    if (!allowedKeys.includes(event.key) && !/^\d$/.test(event.key)) {
       event.preventDefault();
     }
 
@@ -88,7 +106,7 @@ export class InputPin extends InputBase<string> {
     if (event.key === 'Backspace') {
       if (this.digits[index]) {
         this.digits[index] = '';
-        this.onChange(this.getValue());
+        this.emitValue();
         return;
       }
 
@@ -104,25 +122,35 @@ export class InputPin extends InputBase<string> {
     const paste = event.clipboardData?.getData('text') ?? '';
     const numbers = paste.replace(/\D/g, '').slice(0, this.length());
 
-    this.digits = Array(this.length()).fill('').map((_, i) => numbers[i] ?? '');
+    this.resetDigits(numbers);
+    this.syncDOM();
 
-    this.onChange(this.getValue());
+    this.emitValue();
 
     this.focus(Math.min(numbers.length, this.length() - 1));
   }
+
 
   getValue(): string {
     return this.digits.join('');
   }
 
-  override writeValue(value: string | null): void {
-    this.value = value;
-
-    const val = value ?? '';
-    const chars = val.split('').slice(0, this.length());
-
-    this.digits = Array(this.length()).fill('').map((_, i) => chars[i] ?? '');
+  private emitValue() {
+    this.onChange(this.getValue());
   }
 
-}
+  override writeValue(value: string | null): void {
+    const val = value ?? '';
 
+    this.digits = Array(this.length())
+      .fill('')
+      .map((_, i) => val[i] ?? '');
+
+    queueMicrotask(() => {
+      this.inputs().forEach((el, i) => {
+        el.nativeElement.value = this.digits[i] ?? '';
+      });
+    });
+  }
+  
+}
