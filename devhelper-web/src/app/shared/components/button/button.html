@@ -1,4 +1,4 @@
-<button class="btn btn-{{severity()}} flex gap-2 justify-center items-center {{btnClass()}}" [ngClass]="{'px-7': isLoandig()}" (click)="onClick.emit()"
+<button class="btn {{severity()}} flex gap-2 justify-center items-center {{btnClass()}}" [ngClass]="{'px-7': isLoandig()}" (click)="onClick.emit()"
     [disabled]="disabled()" [attr.type]="type()? type() : null">
     @if(isLoandig()){
     <span class="loading loading-infinity loading-sm"></span>
