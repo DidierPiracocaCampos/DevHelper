@@ -134,11 +134,11 @@ export abstract class BaseRepository<T extends { id?: string }> {
     return this.$userCollectionRef().pipe(
       switchMap(ref => {
         if (!ref) return EMPTY;
-        const _ref = doc(ref, id);
-        const _data: DocumentData = { ...data };
-        const docRef = doc(_ref, id);
-        return runInInjectionContext(this._injector, () =>
-          from(updateDoc(docRef, _data))
+        return runInInjectionContext(this._injector, () => {
+          const docRef = doc(ref, id);
+          const _data: DocumentData = { ...data };
+          return from(updateDoc(docRef, _data))
+        }
         );
       })
     );
@@ -148,12 +148,10 @@ export abstract class BaseRepository<T extends { id?: string }> {
     return this.$userCollectionRef().pipe(
       switchMap(ref => {
         if (!ref) return EMPTY;
-
-        const docRef = doc(ref, id);
-
-        return runInInjectionContext(this._injector, () =>
-          from(setDoc(docRef, data, { merge: true }))
-        );
+        return runInInjectionContext(this._injector, () => {
+          const docRef = doc(ref, id);
+          return from(setDoc(docRef, data, { merge: true }));
+        });
       })
     );
   }
