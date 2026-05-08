@@ -14,12 +14,14 @@ export class VaultRepository extends BaseRepository<UnlockKeyI> {
   protected override path: [string, ...string[]] = ['vault'];
   protected override converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
     toFirestore(vault: UnlockKeyI): DocumentData {
-      return {
-        ...vault,
+      const data: DocumentData = {
         encryptedMasterKey: toBase64(vault.encryptedMasterKey),
-        salt: vault.salt ? toBase64(vault.salt) : undefined,
         iv: toBase64(vault.iv),
       };
+      if (vault.salt) {
+        data['salt'] = toBase64(vault.salt);
+      }
+      return data;
     },
 
     fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): UnlockKeyI {

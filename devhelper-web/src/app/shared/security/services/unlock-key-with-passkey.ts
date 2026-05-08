@@ -78,6 +78,7 @@ export class UnlockKeyWithPasskey {
       return {
         encryptedMasterKey: new Uint8Array(encryptedMasterKey),
         iv,
+        salt: undefined,
         params: {
           type: 'passkey'
         }
