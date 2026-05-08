@@ -88,6 +88,18 @@
     }
 }
 
+:root {
+    --alert-error: oklch(70% 0.25 25);
+    --alert-warning: oklch(88% 0.18 85);
+    --alert-info: oklch(70% 0.2 265);
+    --alert-success: oklch(72% 0.2 145);
+    --alert-error-bg: oklch(65% 0.27 25 / 0.15);
+    --alert-warning-bg: oklch(88% 0.18 85 / 0.15);
+    --alert-info-bg: oklch(65% 0.2 265 / 0.15);
+    --alert-success-bg: oklch(70% 0.2 145 / 0.15);
+    --alert-message: oklch(92% 0.004 286.32 / 0.7);
+}
+
 /* Define keyframe animations */
 @keyframes rotate-out {
     to {

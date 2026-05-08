@@ -4,11 +4,12 @@ import { VaultSecurity } from '../../vault-security';
 import { InputPin } from "../../../forms/components/input-pin/input-pin";
 import { matchOtherValidator } from '../../../forms/validators/match.validator';
 import { ErrorMessage } from '../../../forms/components/input-base/error-message';
-import { Button } from "../../../components/button/button";
+import { Button } from "../../../components/ui-button/button";
+import { UiAlert } from "../../../components/ui-alert/ui-alert";
 
 @Component({
   selector: 'secure-create-vault',
-  imports: [ReactiveFormsModule, FormsModule, InputPin, ErrorMessage, Button],
+  imports: [ReactiveFormsModule, FormsModule, InputPin, ErrorMessage, Button, UiAlert],
   templateUrl: './modal-create-vault.html',
   styleUrl: './modal-create-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

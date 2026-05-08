@@ -32,13 +32,10 @@
                         Más seguro y sin contraseñas
                     </p>
                     @if(passkeyError() && checked() === 'PASSKEY'){
-                    <div role="alert" class="alert alert-error max-w-sm">
-                        <span class="icon">error</span>
-                        <span class="text-sm">{{passkeyError()}}</span>
-                    </div>
+                    <ui-alert severity="error" title="Error al crear Passkey" [message]="passkeyError()" icon="error" />
                     }
-                    <sh-button class="w-2/5" btnClass="w-full" icon="passkey" label="Crear Passkey" severity="success"
-                        type="button" [disabled]="creatingUnlockWithPasskey()" [isLoandig]="creatingUnlockWithPasskey()"
+                    <ui-button class="w-2/5" btnClass="w-full" icon="passkey" label="Crear Passkey" severity="success"
+                        type="button" [disabled]="creatingUnlockWithPasskey()" [isLoading]="creatingUnlockWithPasskey()"
                         (onClick)="registerPasskey()" />
                 </div>
                 }@else{
@@ -60,10 +57,10 @@
                     <p class="text-xs text-base-content/60">
                         También puedes usar PIN como método alternativo.
                     </p>
-                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PIN" severity="primary"
+                    <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PIN" severity="primary"
                         (onClick)="checked.set('PIN'); createUnlockWithPasskey.set(false)" />
                     }
-                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Listo" severity="secondary"
+                    <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Listo" severity="secondary"
                         (onClick)="secureModal.close()" />
                 </div>
                 }
@@ -95,10 +92,7 @@
                         }
                     </p>
                     @if(pinError() && checked() === 'PIN'){
-                    <div role="alert" class="alert alert-error max-w-sm">
-                        <span class="icon">error</span>
-                        <span class="text-sm">{{pinError()}}</span>
-                    </div>
+                    <ui-alert severity="error" title="Error al crear PIN" [message]="pinError()" icon="error" />
                     }
                     @if (haveUnlockKeyWithPin()) {
                     <sh-input-pin inputId="current-pin" label="PIN actual" class="mb-6" formControlName="current_pin"
@@ -114,9 +108,9 @@
                             </p>
                         </ng-template>
                     </sh-input-pin>
-                    <sh-button class="w-2/5 mt-4" btnClass="w-full" icon="password"
+                    <ui-button class="w-2/5 mt-4" btnClass="w-full" icon="password"
                         [label]="!haveUnlockKeyWithPin() ? 'Crear PIN' : 'Actualizar PIN'" severity="primary"
-                        type="submit" [disabled]="isLoadingUnlockWithPin()" [isLoandig]="isLoadingUnlockWithPin()" />
+                        type="submit" [disabled]="isLoadingUnlockWithPin()" [isLoading]="isLoadingUnlockWithPin()" />
                 </form>
                 }@else{
                 <div class="flex flex-col items-center gap-4 text-center">
@@ -140,10 +134,10 @@
                     <p class="text-xs text-base-content/60">
                         También puedes usar Passkey como método alternativo para mayor seguridad.
                     </p>
-                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PassKey" severity="primary"
+                    <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PassKey" severity="primary"
                         (onClick)="checked.set('PASSKEY'); createUnlockWithPin.set(false)" />
                     }
-                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
+                    <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
                         (onClick)="secureModal.close()" />
                 </div>
                 }

@@ -8,7 +8,7 @@ import { PasswordInput } from "../../../auth/components/password-input/password-
 import { PasswordRepository } from '../../service/passwords.repository';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PasswordI } from '../../domain/password.interface';
-import { Button } from "../../../shared/components/button/button";
+import { Button } from "../../../shared/components/ui-button/button";
 import { ErrorMessage } from '../../../shared/forms/components/input-base/error-message';
 
 @Component({
