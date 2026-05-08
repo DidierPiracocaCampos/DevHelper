@@ -1,0 +1,33 @@
+@reference '../../../../styles.css';
+
+:host {
+    display: inline-flex;
+}
+
+button {
+    transition: all 0.15s ease;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.01em;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.125em;
+}
+
+.neutral { @apply btn-neutral; }
+.primary { @apply btn-primary; }
+.secondary { @apply btn-secondary; }
+.accent { @apply btn-accent; }
+.info { @apply btn-info; }
+.success { @apply btn-success; }
+.warning { @apply btn-warning; }
+.error { @apply btn-error; }

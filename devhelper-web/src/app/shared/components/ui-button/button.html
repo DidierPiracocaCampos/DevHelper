@@ -1,0 +1,15 @@
+<button
+  class="btn flex items-center gap-2 {{severity()}} {{btnClass()}}"
+  [ngClass]="{ 'px-7': isLoading() }"
+  [disabled]="disabled()"
+  [attr.type]="type() || 'button'"
+  (click)="onClick.emit()">
+  @if (isLoading()) {
+    <span class="loading loading-infinity loading-sm"></span>
+  } @else {
+    @if (icon()) {
+      <span class="icon">{{ icon() }}</span>
+    }
+    {{ label() }}
+  }
+</button>
