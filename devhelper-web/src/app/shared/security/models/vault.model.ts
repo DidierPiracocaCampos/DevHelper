@@ -13,5 +13,10 @@ export enum VAULT_ERRORS {
     SALT_IS_MISSING = 'Se produjo un error de seguridad al procesar tu solicitud. Inténtalo de nuevo.',
     CHANGE_PIN_FAILED = 'No se pudo cambiar el PIN. Verifica el PIN actual e inténtalo de nuevo.',
     TOO_MANY_ATTEMPTS = 'Has superado el número de intentos permitidos. Inténtalo más tarde.',
-    UNKNOWN_ERROR = 'Ha ocurrido un error inesperado. Inténtalo de nuevo.'
+    UNKNOWN_ERROR = 'Ha ocurrido un error inesperado. Inténtalo de nuevo.',
+    WEB_AUTHN_NOT_SUPPORTED = 'Tu dispositivo no soporta autenticación con passkey. Usa un navegador compatible.',
+    PASSKEY_REGISTRATION_FAILED = 'No se pudo registrar el passkey. Inténtalo de nuevo.',
+    PASSKEY_CREATION_FAILED = 'No se pudo crear la clave de desbloqueo con passkey. Inténtalo de nuevo.',
+    PASSKEY_UNLOCK_FAILED = 'No se pudo desbloquear el vault con passkey. Inténtalo de nuevo.',
+    PASSKEY_USER_VERIFICATION = 'La verificación de usuario falló. Inténtalo de nuevo.'
 }

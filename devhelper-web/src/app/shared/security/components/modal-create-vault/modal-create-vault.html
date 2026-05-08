@@ -18,9 +18,12 @@
                 <input type="radio" name="vault" value="PASSKEY" [(ngModel)]="checked" />
                 <span class="icon">passkey</span>
                 Passkey
+                @if(!haveUnlockKeyWithPasskey()){
                 <span class="badge badge-success badge-sm">Recomendado</span>
+                }
             </label>
             <div class="tab-content border-base-300 bg-base-100 p-6 rounded-xl m-[-5px]">
+                @if(!this.createUnlockWithPasskey()){
                 <div class="flex flex-col gap-4 items-center">
                     <p class="text-sm text-base-content/70">
                         Usa tu huella, rostro o dispositivo para crear una clave segura.
@@ -28,10 +31,42 @@
                     <p class="text-sm text-success">
                         Más seguro y sin contraseñas
                     </p>
+                    @if(passkeyError() && checked() === 'PASSKEY'){
+                    <div role="alert" class="alert alert-error max-w-sm">
+                        <span class="icon">error</span>
+                        <span class="text-sm">{{passkeyError()}}</span>
+                    </div>
+                    }
                     <sh-button class="w-2/5" btnClass="w-full" icon="passkey" label="Crear Passkey" severity="success"
-                        type="button" [disabled]="creatingUnlockWithPassKey()" [isLoandig]="creatingUnlockWithPassKey()"
+                        type="button" [disabled]="creatingUnlockWithPasskey()" [isLoandig]="creatingUnlockWithPasskey()"
                         (onClick)="registerPasskey()" />
                 </div>
+                }@else{
+                <div class="flex flex-col items-center gap-4 text-center">
+                    <div class="flex justify-center items-center rounded-full bg-success/10 text-success w-12 h-12">
+                        <span class="icon text-4xl">check_circle</span>
+                    </div>
+                    <p class="text-base font-semibold">
+                        Passkey creada correctamente
+                    </p>
+                    <p class="text-sm text-base-content/70">
+                        Tu dispositivo está vinculado como método de desbloqueo.
+                    </p>
+                    @if(haveUnlockKeyWithPin()){
+                    <p class="text-xs text-base-content/60">
+                        También puedes usar PIN como método alternativo.
+                    </p>
+                    } @else {
+                    <p class="text-xs text-base-content/60">
+                        También puedes usar PIN como método alternativo.
+                    </p>
+                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PIN" severity="primary"
+                        (onClick)="checked.set('PIN'); createUnlockWithPasskey.set(false)" />
+                    }
+                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Listo" severity="secondary"
+                        (onClick)="secureModal.close()" />
+                </div>
+                }
             </div>
             <label class="tab gap-2">
                 <input type="radio" name="vault" value="PIN" [(ngModel)]="checked" />
@@ -59,7 +94,12 @@
                         Actualiza tu PIN de forma rápida y segura
                         }
                     </p>
-                    <!-- PIN actual (solo en cambio) -->
+                    @if(pinError() && checked() === 'PIN'){
+                    <div role="alert" class="alert alert-error max-w-sm">
+                        <span class="icon">error</span>
+                        <span class="text-sm">{{pinError()}}</span>
+                    </div>
+                    }
                     @if (haveUnlockKeyWithPin()) {
                     <sh-input-pin inputId="current-pin" label="PIN actual" class="mb-6" formControlName="current_pin"
                         [length]="5" />
@@ -78,7 +118,7 @@
                         [label]="!haveUnlockKeyWithPin() ? 'Crear PIN' : 'Actualizar PIN'" severity="primary"
                         type="submit" [disabled]="isLoadingUnlockWithPin()" [isLoandig]="isLoadingUnlockWithPin()" />
                 </form>
-                }@else(){
+                }@else{
                 <div class="flex flex-col items-center gap-4 text-center">
                     <div class="flex justify-center items-center rounded-full bg-success/10 text-success w-12 h-12">
                         <span class="icon text-4xl">check_circle</span>
@@ -92,16 +132,19 @@
                         Ya puedes usar tu PIN para acceder a tu vault desde cualquier dispositivo.
                     </p>
 
+                    @if(haveUnlockKeyWithPasskey()){
                     <p class="text-xs text-base-content/60">
                         También puedes usar Passkey como método alternativo para mayor seguridad.
                     </p>
-
-                    <div class="flex gap-4 w-full justify-center">
-                        <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PassKey" severity="primary"
-                            (click)="checked.set('PASSKEY'); createUnlockWithPin.set(false) " />
-                        <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
-                            (click)="secureModal.close()" />
-                    </div>
+                    } @else {
+                    <p class="text-xs text-base-content/60">
+                        También puedes usar Passkey como método alternativo para mayor seguridad.
+                    </p>
+                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PassKey" severity="primary"
+                        (onClick)="checked.set('PASSKEY'); createUnlockWithPin.set(false)" />
+                    }
+                    <sh-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
+                        (onClick)="secureModal.close()" />
                 </div>
                 }
             </div>

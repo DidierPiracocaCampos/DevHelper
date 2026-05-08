@@ -1,7 +1,9 @@
 import { computed, effect, inject, Injectable, signal, Signal } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { VaultRepository } from './services/vault.repository';
 import { MasterKey } from './services/master-key';
 import { UnlockKeyWithPin } from './services/unlock-key-with-pin';
+import { UnlockKeyWithPasskey } from './services/unlock-key-with-passkey';
 import { UnlockKeyI } from './models/unlock-key.model';
 import { firstValueFrom } from 'rxjs';
 import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
@@ -12,9 +14,11 @@ import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
 })
 export class VaultSecurity {
 
+  private _auth = inject(Auth);
   private _repository = inject(VaultRepository);
   private _masterKey = inject(MasterKey);
   private _unlockWithPin = inject(UnlockKeyWithPin);
+  private _unlockWithPasskey = inject(UnlockKeyWithPasskey);
   private _vaultKey?: Uint8Array;
   private _secureModal: Signal<HTMLDialogElement | undefined> = signal(undefined);
 
@@ -29,6 +33,24 @@ export class VaultSecurity {
     return unlock != undefined
   });
 
+  readonly haveUnlockKeyWithPasskey = computed(() => {
+    const unlock = this._repository.unlockKeyWithPasskey();
+    return unlock != undefined
+  });
+
+  readonly isWebAuthnSupported = computed(async () => {
+    if (!window.PublicKeyCredential) return false;
+    try {
+      return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    } catch {
+      return false;
+    }
+  });
+
+  readonly isUnlocked = computed(() => {
+    return this._vaultKey !== undefined;
+  });
+
   private statusChanges = effect(() => {
     const s = this._repository.status();
     if (s === VAULT_STATUS.NO_CREATE) {
@@ -40,10 +62,22 @@ export class VaultSecurity {
   async createVault(type: 'pin' | 'passkey', pin?: string) {
     let unlockKey: UnlockKeyI | undefined = undefined;
     try {
+      const user = this._auth.currentUser;
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const masterKey = await this._masterKey.generateMasterKey();
       const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
       if (type === 'pin' && pin) {
         unlockKey = await this._unlockWithPin.createUnlockKey(pin, masterKeyBuffer);
+      } else if (type === 'passkey') {
+        const attestation = await this._unlockWithPasskey.registerPasskeyAttestation(
+          user.uid,
+          user.email || undefined,
+          user.displayName || undefined
+        );
+        unlockKey = await this._unlockWithPasskey.createUnlockKeyWithPasskey(attestation, masterKeyBuffer);
       }
       if (!unlockKey) {
         throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN)
@@ -52,8 +86,13 @@ export class VaultSecurity {
       this._repository.unlockList.reload();
       return true;
     } catch (error) {
+      console.error(error);
       return false;
     }
+  }
+
+  async createVaultWithPasskey() {
+    return this.createVault('passkey');
   }
 
   lockVault() {
