@@ -5,7 +5,7 @@ import { NasaPicture } from "../../components/nasa-picture/nasa-picture";
 import { Authenticator } from '../../../shared/service/authenticator';
 import { PasswordList } from "../../components/password-list/password-list";
 import { Loader } from '../../../shared/service/loader';
-import { ModalCreateVault } from "../../../shared/security";
+import { ModalCreateVault, VaultSecurity } from "../../../shared/security";
 
 @Component({
   selector: 'app-home',
@@ -17,6 +17,7 @@ export default class Home {
 
   private _authenticator = inject(Authenticator);
   private _loader = inject(Loader);
+  private _vault = inject(VaultSecurity);
 
   async ngOnInit() {
     this._loader.hide();
@@ -26,4 +27,7 @@ export default class Home {
     this._authenticator.logout();
   }
 
+  openVault(){
+    this._vault.showModal();
+  }
 }

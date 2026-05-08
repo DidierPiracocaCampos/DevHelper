@@ -12,7 +12,7 @@
         <sh-card-base actions="false">
             <div class="flex flex-col gap-4 items-center justify-center h-full">
                 <sh-card-button icon="data_object" iconClass="text-3xl!" styleClass="p-6!" size="lg" />
-                <sh-card-button icon="settings" size="xl" iconClass="text-3xl!" styleClass="p-6!" />
+                <sh-card-button icon="settings" size="xl" iconClass="text-3xl!" styleClass="p-6!" (click)="openVault()" />
                 <sh-card-button icon="logout" size="xl" iconClass="text-3xl!" styleClass="p-6!" (click)="logout()" />
 
             </div>
