@@ -33,3 +33,6 @@ skills-lock.json
 .opencode/
 .agents/
 .vscode/
+
+#enviroment
+src/environments/
