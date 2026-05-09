@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { CardButton } from "../../../shared/components/card-button/card-button";
 import { CardBase } from "../../../shared/components/card-base/card-base";
 import { ItemList } from '../../../shared/components/item-list/item-list';
@@ -10,10 +10,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PasswordI } from '../../domain/password.interface';
 import { Button } from "../../../shared/components/ui-button/button";
 import { ErrorMessage } from '../../../shared/forms/components/input-base/error-message';
+import { UiModal } from "../../../shared/components/ui-modal/ui-modal";
 
 @Component({
   selector: 'password-list',
-  imports: [CardButton, CardBase, ItemList, ListButton, InputGeneric, PasswordInput, ReactiveFormsModule, Button, ErrorMessage],
+  imports: [CardButton, CardBase, ItemList, ListButton, InputGeneric, PasswordInput, ReactiveFormsModule, Button, ErrorMessage, UiModal],
   templateUrl: './password-list.html',
   styleUrl: './password-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -24,8 +25,8 @@ export class PasswordList {
 
   readonly collection = this._repo.getAllResource();
 
-  modalForm = viewChild<ElementRef<HTMLDialogElement>>('form');
-  modalDelete = viewChild<ElementRef<HTMLDialogElement>>('deleteModal');
+  modalForm = viewChild.required<UiModal>('formModal');
+  modalDelete = viewChild.required<UiModal>('deleteModal');
   deleteStatus = signal<{ password?: PasswordI, loanding: boolean }>({ loanding: false });
   addStatus = signal<{ isEdit?: boolean, loanding: boolean }>({ loanding: false });
 
@@ -37,7 +38,7 @@ export class PasswordList {
       return
     }
     const { password, ...args } = f.value;
-    
+
     const pass = { ...args, password: this._repo.encrypt(cryptoKey, password!) };
     this.addStatus.update(v => {
       v.loanding = true;
@@ -45,7 +46,7 @@ export class PasswordList {
     });
     this._repo.create(value).subscribe({
       next: (value) => {
-        this.modalForm()?.nativeElement.close();
+        this.modalForm().close();
         this.collection.reload();
         this._form.reset();
         this._form.markAsUntouched();
@@ -64,7 +65,7 @@ export class PasswordList {
       v.isEdit = true;
       return v;
     });
-    this.modalForm()?.nativeElement.showModal();
+    this.modalForm().open();
   }
 
   openAdd() {
@@ -72,11 +73,11 @@ export class PasswordList {
       v.isEdit = false;
       return v;
     });
-    this.modalForm()?.nativeElement.showModal();
+    this.modalForm().open();
   }
 
   cancelForm() {
-    this.modalForm()?.nativeElement.close();
+    this.modalForm().close();
     this.addStatus.set({ loanding: false });
     this._form.reset();
     this._form.get('name')?.markAsUntouched();
@@ -90,7 +91,7 @@ export class PasswordList {
       v.password = item;
       return v;
     });
-    this.modalDelete()?.nativeElement.showModal();
+    this.modalDelete().open();
   }
 
   delete() {
@@ -103,7 +104,7 @@ export class PasswordList {
 
     this._repo.delete(id).subscribe({
       next: () => {
-        this.modalDelete()?.nativeElement.close();
+        this.modalDelete().close();
         this.collection.reload();
         this.deleteStatus.set({ loanding: false });
       }

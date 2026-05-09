@@ -1,0 +1,32 @@
+<dialog #dialogElement class="modal" (click)="_onBackdropClick($event)">
+  <div class="modal-box" [class]="'max-w-' + size()">
+
+    <div class="flex justify-between items-center">
+      <h3 class="text-2xl font-bold flex space-x-1 items-center">
+        @if(icon()) {
+          <span class="icon">{{ icon() }}</span>
+        }
+        <span>{{ title() }}</span>
+      </h3>
+
+      @if(showCloseButton() && !static()) {
+        <button class="btn btn-sm btn-circle btn-ghost icon" (click)="close()">
+          close
+        </button>
+      }
+    </div>
+
+    <div class="py-4">
+      <ng-content select="[body]" />
+    </div>
+
+    <ng-content select="[footer]" />
+
+  </div>
+
+  @if(!static()) {
+    <form method="dialog" class="modal-backdrop">
+      <button [value]="closeOnBackdrop() ? 'close' : 'hide'">close</button>
+    </form>
+  }
+</dialog>

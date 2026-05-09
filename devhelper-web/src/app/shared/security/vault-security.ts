@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal, Signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { VaultRepository } from './services/vault.repository';
 import { MasterKey } from './services/master-key';
@@ -7,6 +7,7 @@ import { UnlockKeyWithPasskey } from './services/unlock-key-with-passkey';
 import { UnlockKeyI } from './models/unlock-key.model';
 import { firstValueFrom } from 'rxjs';
 import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
+import { UiModal } from '../components/ui-modal/ui-modal';
 
 
 @Injectable({
@@ -20,15 +21,20 @@ export class VaultSecurity {
   private _unlockWithPin = inject(UnlockKeyWithPin);
   private _unlockWithPasskey = inject(UnlockKeyWithPasskey);
   private _vaultKey?: Uint8Array;
-  private _secureModal: Signal<HTMLDialogElement | undefined> = signal(undefined);
-  private _unlockModal: Signal<HTMLDialogElement | undefined> = signal(undefined);
+  private _secureModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
+  private _unlockModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
+  private _secureModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
 
   secureModal(secureModal: Signal<HTMLDialogElement | undefined>) {
-    this._secureModal = secureModal;
+    this._secureModal.set(secureModal() as HTMLDialogElement);
   }
 
   unlockModal(unlockModal: Signal<HTMLDialogElement | undefined>) {
-    this._unlockModal = unlockModal;
+    this._unlockModal.set(unlockModal() as HTMLDialogElement);
+  }
+
+  setSecureModalUi(modal: UiModal) {
+    this._secureModalUi.set(modal);
   }
 
   readonly status = this._repository.status;
@@ -59,7 +65,12 @@ export class VaultSecurity {
   private statusChanges = effect(() => {
     const s = this._repository.status();
     if (s === VAULT_STATUS.NO_CREATE) {
-      this._secureModal()?.showModal();
+      const uiModal = this._secureModalUi();
+      if (uiModal) {
+        uiModal.open();
+      } else {
+        this._secureModal()?.showModal();
+      }
       return;
     }
   });
@@ -105,6 +116,11 @@ export class VaultSecurity {
   }
 
   showModal() {
+    const uiModal = this._secureModalUi();
+    if (uiModal) {
+      uiModal.open();
+      return;
+    }
     this._secureModal()?.showModal();
   }
 
