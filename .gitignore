@@ -29,5 +29,7 @@ yarn-error.log*
 
 #opencode
 AGENTS.md
-.opencode/commands/commit.md
-.opencode/commands/git-commit.md
+skills-lock.json
+.opencode/
+.agents/
+.vscode/
