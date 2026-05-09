@@ -1,20 +1,20 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-export type CardVariant = 'default' | 'elevated' | 'outlined';
-export type CardTheme = 'dark' | 'light';
+export type UiCardVariant = 'default' | 'elevated' | 'outlined';
+export type UiCardTheme = 'dark' | 'light';
 
 @Component({
-  selector: 'sh-card-base',
+  selector: 'ui-card',
   imports: [],
   templateUrl: './card-base.html',
   styleUrl: './card-base.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CardBase {
+export class UiCard {
   title = input<string>();
   subtitle = input<string>();
-  variant = input<CardVariant>('default');
-  theme = input<CardTheme>('dark');
+  variant = input<UiCardVariant>('default');
+  theme = input<UiCardTheme>('dark');
   actions = input(true, { transform: booleanAttribute });
   padding = input<'sm' | 'md' | 'lg'>('md');
 

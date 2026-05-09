@@ -1,19 +1,19 @@
 import { Component, input } from '@angular/core';
 
-export type ItemListVariant = 'default' | 'outlined' | 'plain';
-export type ItemListColor = 'primary' | 'secondary' | 'accent';
+export type UiListItemVariant = 'default' | 'outlined' | 'plain';
+export type UiListItemColor = 'primary' | 'secondary' | 'accent';
 
 @Component({
-  selector: 'sh-item-list',
+  selector: 'ui-list-item',
   imports: [],
   templateUrl: './item-list.html',
   styleUrl: './item-list.css',
 })
-export class ItemList {
+export class UiListItem {
   label = input<string>();
   sub = input<string>();
-  variant = input<ItemListVariant>('default');
-  color = input<ItemListColor>('primary');
+  variant = input<UiListItemVariant>('default');
+  color = input<UiListItemColor>('primary');
   disabled = input<boolean>(false);
   selected = input<boolean>(false);
 }

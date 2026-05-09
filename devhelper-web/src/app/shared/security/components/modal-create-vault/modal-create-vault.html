@@ -27,8 +27,8 @@
           <ui-alert severity="error" title="Error al crear Passkey" [message]="passkeyError()" icon="error" />
           }
           <ui-button class="w-2/5" icon="passkey" label="Crear Passkey" severity="success" type="button"
-            [disabled]="creatingUnlockWithPasskey()" [isLoading]="creatingUnlockWithPasskey()"
-            (onClick)="registerPasskey()" />
+            [disabled]="creatingUnlockWithPasskey()" [loading]="creatingUnlockWithPasskey()"
+            (click)="registerPasskey()" />
         </div>
         }@else{
         <div class="flex flex-col items-center gap-4 text-center">
@@ -50,10 +50,10 @@
             También puedes usar PIN como método alternativo.
           </p>
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PIN" severity="primary"
-            (onClick)="checked.set('PIN'); createUnlockWithPasskey.set(false)" />
+            (click)="checked.set('PIN'); createUnlockWithPasskey.set(false)" />
           }
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Listo" severity="secondary"
-            (onClick)="modal.close()" />
+            (click)="modal.close()" />
         </div>
         }
       </div>
@@ -86,21 +86,21 @@
           <ui-alert severity="error" title="Error al crear PIN" [message]="pinError()" icon="error" />
           }
           @if (haveUnlockKeyWithPin()) {
-          <sh-input-pin inputId="current-pin" label="PIN actual" class="mb-6" formControlName="current_pin"
+          <ui-pin-input inputId="current-pin" label="PIN actual" class="mb-6" formControlName="current_pin"
             [length]="5" />
           }
-          <sh-input-pin inputId="pin" [label]="!haveUnlockKeyWithPin()? 'Ingresa tu PIN' : 'Nuevo PIN'"
+          <ui-pin-input inputId="pin" [label]="!haveUnlockKeyWithPin()? 'Ingresa tu PIN' : 'Nuevo PIN'"
             formControlName="pin" [length]="5" />
-          <sh-input-pin inputId="verify-pin" label="Confirma tu pin" formControlName="verify_pin" [length]="5">
+          <ui-pin-input inputId="verify-pin" label="Confirma tu pin" formControlName="verify_pin" [length]="5">
             <ng-template errorMessage="notMatching">
               <p class="validator-hint">
                 El pin no coinciden
               </p>
             </ng-template>
-          </sh-input-pin>
+          </ui-pin-input>
           <ui-button class="w-2/5 mt-4" btnClass="w-full" icon="password"
             [label]="!haveUnlockKeyWithPin() ? 'Crear PIN' : 'Actualizar PIN'" severity="primary" type="submit"
-            [disabled]="isLoadingUnlockWithPin()" [isLoading]="isLoadingUnlockWithPin()" />
+            [disabled]="isLoadingUnlockWithPin()" [loading]="isLoadingUnlockWithPin()" />
         </form>
         }@else{
         <div class="flex flex-col items-center gap-4 text-center">
@@ -125,10 +125,10 @@
             También puedes usar Passkey como método alternativo para mayor seguridad.
           </p>
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Crear PassKey" severity="primary"
-            (onClick)="checked.set('PASSKEY'); createUnlockWithPin.set(false)" />
+            (click)="checked.set('PASSKEY'); createUnlockWithPin.set(false)" />
           }
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
-            (onClick)="modal.close()" />
+            (click)="modal.close()" />
         </div>
         }
       </div>

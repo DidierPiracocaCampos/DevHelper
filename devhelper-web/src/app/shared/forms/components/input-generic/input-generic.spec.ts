@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InputGeneric } from './input-generic';
+import { UiInput } from './input-generic';
 
-describe('InputGeneric', () => {
-  let component: InputGeneric;
-  let fixture: ComponentFixture<InputGeneric>;
+describe('UiInput', () => {
+  let component: UiInput;
+  let fixture: ComponentFixture<UiInput>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InputGeneric]
+      imports: [UiInput]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InputGeneric);
+    fixture = TestBed.createComponent(UiInput);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

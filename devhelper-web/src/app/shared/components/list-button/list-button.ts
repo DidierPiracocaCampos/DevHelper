@@ -1,17 +1,17 @@
 import { Component, input, output } from '@angular/core';
 
-export type ListButtonSeverity = 'ghost' | 'neutral' | 'primary';
+export type UiListButtonSeverity = 'ghost' | 'neutral' | 'primary';
 
 @Component({
-  selector: 'sh-list-button',
+  selector: 'ui-list-button',
   imports: [],
   templateUrl: './list-button.html',
   styleUrl: './list-button.css',
 })
-export class ListButton {
+export class UiListButton {
   icon = input.required<string>();
-  severity = input<ListButtonSeverity>('ghost');
+  severity = input<UiListButtonSeverity>('ghost');
   disabled = input<boolean>(false);
-  isLoading = input<boolean>(false);
-  onClick = output();
+  loading = input<boolean>(false);
+  click = output();
 }

@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
-import { CardButton } from "../../../shared/components/card-button/card-button";
-import { CardBase } from "../../../shared/components/card-base/card-base";
-import { ItemList } from '../../../shared/components/item-list/item-list';
-import { ListButton } from "../../../shared/components/list-button/list-button";
-import { InputGeneric } from "../../../shared/forms/components/input-generic/input-generic";
+import { UiCardButton } from "../../../shared/components/card-button/card-button";
+import { UiCard } from "../../../shared/components/card-base/card-base";
+import { UiListItem } from '../../../shared/components/item-list/item-list';
+import { UiListButton } from "../../../shared/components/list-button/list-button";
+import { UiInput } from "../../../shared/forms/components/input-generic/input-generic";
 import { PasswordInput } from "../../../auth/components/password-input/password-input";
 import { PasswordRepository } from '../../service/passwords.repository';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PasswordI } from '../../domain/password.interface';
-import { Button } from "../../../shared/components/ui-button/button";
+import { UiButton } from "../../../shared/components/ui-button/button";
 import { ErrorMessage } from '../../../shared/forms/components/input-base/error-message';
 import { UiModal } from "../../../shared/components/ui-modal/ui-modal";
 
 @Component({
   selector: 'password-list',
-  imports: [CardButton, CardBase, ItemList, ListButton, InputGeneric, PasswordInput, ReactiveFormsModule, Button, ErrorMessage, UiModal],
+  imports: [UiCardButton, UiCard, UiListItem, UiListButton, UiInput, PasswordInput, ReactiveFormsModule, UiButton, ErrorMessage, UiModal],
   templateUrl: './password-list.html',
   styleUrl: './password-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -4,19 +4,19 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'sh-input',
+  selector: 'ui-input',
   imports: [NgTemplateOutlet],
   templateUrl: './input-generic.html',
   styleUrl: './input-generic.css',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputGeneric),
+      useExisting: forwardRef(() => UiInput),
       multi: true,
     },
   ]
 })
-export class InputGeneric extends InputBase<any> {
+export class UiInput extends InputBase<any> {
   label = input();
   type = input('string');
   icon = input<string>();

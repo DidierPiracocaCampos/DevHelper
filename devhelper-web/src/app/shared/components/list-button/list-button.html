@@ -1,8 +1,8 @@
 <button
   class="list-btn list-btn-{{severity()}}"
-  [disabled]="disabled() || isLoading()"
-  (click)="onClick.emit()">
-  @if (isLoading()) {
+  [disabled]="disabled() || loading()"
+  (click)="click.emit()">
+  @if (loading()) {
     <span class="loading loading-spinner loading-sm"></span>
   } @else {
     <span class="icon">{{ icon() }}</span>

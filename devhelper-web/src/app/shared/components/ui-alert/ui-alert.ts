@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-export type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
+export type UiAlertSeverity = 'error' | 'warning' | 'info' | 'success';
 
 @Component({
   selector: 'ui-alert',
@@ -10,7 +10,7 @@ export type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UiAlert {
-  severity = input<AlertSeverity>('error');
+  severity = input<UiAlertSeverity>('error');
   title = input<string>();
   message = input<string>();
   icon = input<string>();

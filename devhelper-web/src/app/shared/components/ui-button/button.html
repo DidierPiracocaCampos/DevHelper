@@ -1,10 +1,10 @@
 <button
   class="btn btn-base {{ getSeverityClass() }} {{ getSizeClass() }} w-full"
-  [class.px-7]="isLoading()"
+  [class.px-7]="loading()"
   [disabled]="disabled()"
   [attr.type]="type()"
-  (click)="onClick.emit()">
-  @if (isLoading()) {
+  (click)="click.emit()">
+  @if (loading()) {
     <span class="loading loading-infinity loading-sm"></span>
   } @else {
     @if (icon()) {

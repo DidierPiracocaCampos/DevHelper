@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { CardBase } from "../../../shared/components/card-base/card-base";
-import { CardButton } from "../../../shared/components/card-button/card-button";
+import { UiCard } from "../../../shared/components/card-base/card-base";
+import { UiCardButton } from "../../../shared/components/card-button/card-button";
 import { NasaPicture } from "../../components/nasa-picture/nasa-picture";
 import { Authenticator } from '../../../shared/service/authenticator';
 import { PasswordList } from "../../components/password-list/password-list";
@@ -9,7 +9,7 @@ import { ModalCreateVault, VaultSecurity } from "../../../shared/security";
 
 @Component({
   selector: 'app-home',
-  imports: [CardBase, CardButton, NasaPicture, PasswordList, ModalCreateVault],
+  imports: [UiCard, UiCardButton, NasaPicture, PasswordList, ModalCreateVault],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

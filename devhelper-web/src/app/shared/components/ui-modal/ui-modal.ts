@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
 
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
+export type UiModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 @Component({
   selector: 'ui-modal',
@@ -12,7 +12,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 export class UiModal {
   title = input.required<string>();
   icon = input<string>('');
-  size = input<ModalSize>('md');
+  size = input<UiModalSize>('md');
   showCloseButton = input<boolean>(true);
   closeOnEscape = input<boolean>(true);
   closeOnBackdrop = input<boolean>(true);

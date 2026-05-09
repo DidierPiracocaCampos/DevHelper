@@ -4,19 +4,19 @@ import { NgTemplateOutlet } from '@angular/common';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'sh-input-pin',
+  selector: 'ui-pin-input',
   imports: [NgTemplateOutlet],
   templateUrl: './input-pin.html',
   styleUrl: './input-pin.css',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputPin),
+      useExisting: forwardRef(() => UiPinInput),
       multi: true,
     },
   ]
 })
-export class InputPin extends InputBase<string> implements AfterViewInit {
+export class UiPinInput extends InputBase<string> implements AfterViewInit {
 
   label = input<string>();
   length = input<number>(4);
@@ -152,5 +152,5 @@ export class InputPin extends InputBase<string> implements AfterViewInit {
       });
     });
   }
-  
+
 }

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-export type ButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error';
-export type ButtonSize = 'sm' | 'md' | 'lg';
-export type ButtonVariant = 'filled' | 'outline' | 'ghost';
+export type UiButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error';
+export type UiButtonSize = 'sm' | 'md' | 'lg';
+export type UiButtonVariant = 'filled' | 'outline' | 'ghost';
 
 @Component({
   selector: 'ui-button',
@@ -11,16 +11,16 @@ export type ButtonVariant = 'filled' | 'outline' | 'ghost';
   styleUrl: './button.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Button {
-  severity = input<ButtonSeverity>('primary');
-  variant = input<ButtonVariant>('filled');
-  size = input<ButtonSize>('lg');
+export class UiButton {
+  severity = input<UiButtonSeverity>('primary');
+  variant = input<UiButtonVariant>('filled');
+  size = input<UiButtonSize>('lg');
   type = input<'submit' | 'button' | 'reset'>('button');
   icon = input<string>();
   label = input<string>();
-  isLoading = input<boolean>(false);
+  loading = input<boolean>(false);
   disabled = input<boolean>(false);
-  onClick = output();
+  click = output();
 
   getSeverityClass(): string {
     const variant = this.variant();
