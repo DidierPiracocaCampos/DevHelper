@@ -1,14 +1,16 @@
 @reference '../../../../styles.css';
+@reference '../../../../styles/tokens.css';
+@reference '../../../../styles/utilities.css';
 
 :host {
-    display: inline-flex;
+    display: block;
+    width: 100%;
 }
 
 button {
-    transition: all 0.15s ease;
-    font-weight: 500;
-    text-transform: none;
-    letter-spacing: 0.01em;
+    font-weight: var(--btn-font-weight);
+    text-transform: var(--btn-text-transform);
+    letter-spacing: var(--btn-letter-spacing);
 }
 
 button:disabled {
@@ -23,11 +25,18 @@ button:disabled {
     font-size: 1.125em;
 }
 
-.neutral { @apply btn-neutral; }
-.primary { @apply btn-primary; }
-.secondary { @apply btn-secondary; }
-.accent { @apply btn-accent; }
-.info { @apply btn-info; }
-.success { @apply btn-success; }
-.warning { @apply btn-warning; }
-.error { @apply btn-error; }
+.btn-neutral { @apply btn-neutral; }
+.btn-primary { @apply btn-primary; }
+.btn-secondary { @apply btn-secondary; }
+.btn-accent { @apply btn-accent; }
+.btn-info { @apply btn-info; }
+.btn-success { @apply btn-success; }
+.btn-warning { @apply btn-warning; }
+.btn-error { @apply btn-error; }
+
+.btn-sm { @apply btn-sm; }
+.btn-md { @apply btn-md; }
+.btn-lg { @apply btn-lg; }
+
+.btn-outline { @apply btn-outline; }
+.btn-ghost { @apply btn-ghost; }

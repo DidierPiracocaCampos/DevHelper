@@ -1,16 +1,20 @@
-<div class="card card-xl h-full flex-row {{_theme()}}">
-    <div class="card-body p-4">
+<div class="card card-xl h-full flex-row {{ _themeClass() }} {{ _variantClass() }}">
+    <div class="card-body {{ _paddingClass() }}">
         @if (title()) {
-        <h2 class="card-title font-extrabold text-[1.625rem]">{{title()}}</h2>
+        <div class="card-header-custom">
+            <h2 class="card-title">{{title()}}</h2>
+            @if(subtitle()){
+            <p class="card-subtitle">{{subtitle()}}</p>
+            }
+        </div>
         }
-        <div class="flex-1 min-h-0 min-w-0">
+        <div class="card-content">
             <ng-content></ng-content>
         </div>
-
     </div>
     @if(actions()){
-    <div class="p-4 card-actions ">
-        <ng-content class="flex flex-col" select="[actions]"></ng-content>
+    <div class="card-actions-custom">
+        <ng-content select="[actions]"></ng-content>
     </div>
     }
 </div>

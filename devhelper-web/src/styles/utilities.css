@@ -13,50 +13,15 @@
         font-size: var(--icon-size-lg);
     }
 
-    .input-field {
-        width: 100%;
-        background: var(--input-bg);
-        border: var(--input-border);
-        border-radius: var(--input-radius);
-        transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    .input {
+        @apply w-full bg-base-200 flex items-center;
 
         input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: inherit;
-
-            &::placeholder {
-                color: oklch(var(--color-base-content) / 0.4);
-                transition: color var(--transition-fast);
-            }
-
-            &:hover::placeholder {
-                color: oklch(var(--color-base-content) / 0.6);
-            }
-
-            &:focus::placeholder {
-                color: oklch(var(--color-base-content) / 0.3);
-            }
+            @apply placeholder-neutral-400 hover:placeholder-base-content transition-colors duration-200;
         }
 
-        &:focus-within {
-            box-shadow: 0 0 0 2px var(--input-focus-ring);
-        }
-
-        .icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    }
-
-    .input-invalid {
-        border-color: var(--color-error);
-
-        &:focus-within {
-            box-shadow: 0 0 0 2px var(--color-error);
+        .icon {
+            @apply justify-center flex items-center;
         }
     }
 

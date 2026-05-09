@@ -1,0 +1,52 @@
+@reference '../../../../styles.css';
+@reference '../../../../styles/tokens.css';
+
+:host {
+    display: inline-flex;
+}
+
+.list-btn {
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+}
+
+.list-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.list-btn-ghost {
+    background: transparent;
+}
+
+.list-btn-ghost:hover:not(:disabled) {
+    background: oklch(var(--color-base-content) / 0.1);
+}
+
+.list-btn-neutral {
+    background: oklch(var(--color-base-content) / 0.05);
+}
+
+.list-btn-neutral:hover:not(:disabled) {
+    background: oklch(var(--color-base-content) / 0.15);
+}
+
+.list-btn-primary {
+    background: oklch(var(--color-primary) / 0.15);
+    color: var(--color-primary-content);
+}
+
+.list-btn-primary:hover:not(:disabled) {
+    background: oklch(var(--color-primary) / 0.25);
+}
+
+.icon {
+    font-size: var(--icon-size-lg);
+}

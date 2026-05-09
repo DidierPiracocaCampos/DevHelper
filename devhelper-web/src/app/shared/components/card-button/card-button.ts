@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+export type CardButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type CardButtonShape = 'square' | 'circle';
+export type CardButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent';
+
 @Component({
   selector: 'sh-card-button',
   imports: [],
@@ -8,11 +12,10 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardButton {
-  icon = input<string>();
-  styleClass = input<string>();
-  iconClass = input<string>();
-  type = input<'circle' | 'square'>('square');
-  size = input<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md')
-  severity = input<'secundary' | 'primary'>('secundary');
+  icon = input.required<string>();
+  size = input<CardButtonSize>('lg');
+  shape = input<CardButtonShape>('square');
+  severity = input<CardButtonSeverity>('secondary');
+  disabled = input<boolean>(false);
   click = output();
 }

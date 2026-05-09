@@ -1,8 +1,8 @@
-<div class="alert" [class]="'alert-' + severity()">
-    <span class="icon">{{icon()}}</span>
+<div class="alert-custom alert-{{severity()}}">
+    <span class="alert-icon icon icon-{{severity()}}">{{icon()}}</span>
     <div class="alert-content">
         @if(title()){
-        <span class="alert-title">{{title()}}</span>
+        <span class="alert-title text-{{severity()}}">{{title()}}</span>
         }
         <span class="alert-message">{{message()}}</span>
     </div>

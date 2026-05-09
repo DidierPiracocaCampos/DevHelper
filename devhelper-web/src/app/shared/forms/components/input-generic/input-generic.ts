@@ -17,9 +17,9 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class InputGeneric extends InputBase<any> {
-
   label = input();
   type = input('string');
+  icon = input<string>();
 
   protected override inputOnInit(): void {
   }

@@ -1,14 +1,16 @@
-<li class="list-row py-2 justify-center items-center {{severity() == 'secondary'? ' bg-secondary':' bg-primary' }}">
-    <div class="list-col-grow">
+<li class="item-list-row item-list-{{color()}} item-list-{{variant()}}"
+    [class.item-list-disabled]="disabled()"
+    [class.item-list-selected]="selected()">
+    <div class="item-list-content">
         @if(label()){
-        <span class="font-semibold text-[1.05rem]">{{label()}}</span>
+        <span class="item-list-label">{{label()}}</span>
         }
         @if(sub()){
-        <span class=" text-xs">{{sub()}}</span>
+        <span class="item-list-sub">{{sub()}}</span>
         }
     </div>
 
-    <div class="flex ">
+    <div class="item-list-actions">
         <ng-content select="[actions]"></ng-content>
     </div>
 </li>

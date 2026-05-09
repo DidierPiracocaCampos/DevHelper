@@ -1,5 +1,8 @@
 import { Component, input } from '@angular/core';
 
+export type ItemListVariant = 'default' | 'outlined' | 'plain';
+export type ItemListColor = 'primary' | 'secondary' | 'accent';
+
 @Component({
   selector: 'sh-item-list',
   imports: [],
@@ -9,5 +12,8 @@ import { Component, input } from '@angular/core';
 export class ItemList {
   label = input<string>();
   sub = input<string>();
-  severity = input<"primary" | "secondary">("primary");
+  variant = input<ItemListVariant>('default');
+  color = input<ItemListColor>('primary');
+  disabled = input<boolean>(false);
+  selected = input<boolean>(false);
 }

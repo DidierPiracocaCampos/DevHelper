@@ -1,13 +1,46 @@
 @reference '../../../../styles.css';
+@reference '../../../../styles/utilities.css';
 
-.btn-square {
-    @apply rounded-xl;
+:host {
+    display: inline-flex;
 }
 
-.btn-light {
-    @apply bg-base-content text-base-100 hover:bg-base-content/75;
+button {
+    transition: all var(--btn-transition);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.icon {
+    font-size: 1.125em;
+}
+
+.btn-xl {
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+}
+
+.btn-square {
+    border-radius: var(--btn-radius);
 }
 
 .btn-circle {
-    @apply btn-circle;
+    border-radius: 50%;
+    padding: 1rem;
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+}
+
+.btn-light {
+    background: var(--color-base-content);
+    color: var(--color-base-100);
+}
+
+.btn-light:hover {
+    background: oklch(var(--color-base-content) / 0.75);
 }
