@@ -1,6 +1,12 @@
 <label class="label">{{label()}}:</label>
-<div class="input input-md" [class.validator]="isInvalid">
-    <input [id]="inputId()" [value]="value" (input)="onInput($event)" [attr.aria-invalid]="isInvalid ? true : null"
+<div class="input input-lg w-full" [class.validator]="isInvalid">
+    @if(icon()){
+    <span class="icon">
+        {{icon()}}
+    </span>
+    }
+    <input class="input-grow" [id]="inputId()" [value]="value" (input)="onInput($event)"
+        [attr.aria-invalid]="isInvalid ? true : null"
         (blur)="handleBlur()" [disabled]="isDisabled" [type]="type()" />
 </div>
 

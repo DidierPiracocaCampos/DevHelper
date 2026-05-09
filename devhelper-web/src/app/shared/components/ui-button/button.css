@@ -22,7 +22,15 @@ button:disabled {
 .icon {
     display: inline-flex;
     align-items: center;
-    font-size: 1.125em;
+    font-size: var(--icon-size);
+}
+
+.icon-sm {
+    font-size: var(--icon-size-sm);
+}
+
+.icon-lg {
+    font-size: var(--icon-size-lg);
 }
 
 .btn-neutral { @apply btn-neutral; }

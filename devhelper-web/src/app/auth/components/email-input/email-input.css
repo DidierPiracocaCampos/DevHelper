@@ -1,0 +1,26 @@
+@reference '../../../../styles.css';
+@reference '../../../../styles/tokens.css';
+
+:host {
+    display: block;
+    width: 100%;
+}
+
+.label {
+    display: block;
+    margin-bottom: var(--spacing-1);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.icon {
+    font-size: var(--icon-size-lg);
+    color: var(--color-text-muted);
+}
+
+.validator-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-error);
+    margin-top: var(--spacing-1);
+}

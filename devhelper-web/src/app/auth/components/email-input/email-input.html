@@ -1,6 +1,6 @@
 <label class="label" [for]="inputId()">Correo electronico:</label>
-<div class="input input-md validator">
-    <span class="icon text-[1rem]!">
+<div class="input input-lg w-full validator">
+    <span class="icon text-lg!">
         email
     </span>
     <input [value]="value" (input)="onInput($event)" [attr.aria-invalid]="isInvalid ? true : null" (blur)="handleBlur()"
