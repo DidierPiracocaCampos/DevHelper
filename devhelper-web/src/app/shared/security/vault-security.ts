@@ -21,9 +21,14 @@ export class VaultSecurity {
   private _unlockWithPasskey = inject(UnlockKeyWithPasskey);
   private _vaultKey?: Uint8Array;
   private _secureModal: Signal<HTMLDialogElement | undefined> = signal(undefined);
+  private _unlockModal: Signal<HTMLDialogElement | undefined> = signal(undefined);
 
   secureModal(secureModal: Signal<HTMLDialogElement | undefined>) {
     this._secureModal = secureModal;
+  }
+
+  unlockModal(unlockModal: Signal<HTMLDialogElement | undefined>) {
+    this._unlockModal = unlockModal;
   }
 
   readonly status = this._repository.status;
