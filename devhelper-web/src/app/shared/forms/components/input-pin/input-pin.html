@@ -4,9 +4,9 @@
     [class.validator]="isInvalid">
     @for (digit of digits; let i = $index; track i) {
     <input #pinInput type="text" inputmode="numeric" maxlength="1" [class.validator]="isInvalid"
-        class="input input-bordered text-center text-2xl tracking-widest w-[4.5ch]! h-[4.5ch]! p-0 flex-none" [value]="digit"
-        (input)="onInputNumber($event, i)" (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)" (focusout)="handleBlur()"
-        [attr.aria-invalid]="isInvalid ? true : null" (blur)="handleBlur()" type="password" />
+        class="input input-lg text-center text-2xl tracking-widest w-[4.5ch]! h-[4.5ch]! p-0 flex-none" [value]="digit"
+        (input)="onInputNumber($event, i)" (keydown)="onKeyDown($event, i)" (paste)="onPaste($event)"
+        (focusout)="handleBlur()" [attr.aria-invalid]="isInvalid ? true : null" />
     }
 </div>
 
