@@ -1,4 +1,10 @@
 <form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSubmit()">
+    @if(showVerificationMessage){
+    <div class="alert alert-success">
+        <span class="icon">mark_email_unread</span>
+        <span>Revisa tu correo y verifica tu cuenta para continuar.</span>
+    </div>
+    }@else{
     <auth-email-input inputId="email" formControlName="email" />
     @let valid = form.get('password')?.valid;
     <auth-password-input inputId="password" formControlName="password">
@@ -60,9 +66,16 @@
     </auth-password-input>
 
     <div></div>
-    <button class="btn btn-primary btn-lg mt-4" type="submit"> Registrarme </button>
+    <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
+        @if(loading){
+        <span class="loading loading-infinity"></span>
+        }@else{
+        Registrarme
+        }
+    </button>
 
     <button class="btn btn-lg btn-secondary " routerLink="/login" type="button">
         Volver a login
     </button>
+    }
 </form>

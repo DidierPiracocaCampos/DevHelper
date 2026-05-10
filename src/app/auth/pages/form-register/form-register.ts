@@ -8,6 +8,7 @@ import { ErrorMessage } from "../../../shared/forms/components/input-base/error-
 import { NgClass } from '@angular/common';
 import { matchOtherValidator } from '../../../shared/forms/validators/match.validator';
 import { RouterLink } from '@angular/router';
+import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'auth-form-register',
@@ -19,6 +20,10 @@ import { RouterLink } from '@angular/router';
 export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _authenticator = inject(Authenticator);
+  private _loader = inject(Loader);
+
+  loading = false;
+  showVerificationMessage = false;
 
   form = this._formBuilder.group({
     email: this._formBuilder.control<string>('', [Validators.email, Validators.required]),
@@ -26,15 +31,25 @@ export default class FormRegister {
     verifyPassword: this._formBuilder.control<string>('', [Validators.required, matchOtherValidator('password')]),
   });
 
-  onSubmit() {
+  async onSubmit() {
     const f = this.form;
     if (f.invalid) {
       f.markAllAsDirty();
       return
     }
     const value = f.value;
-    this._authenticator.register(value.email!, value.password!);
-  }
+    this.loading = true;
+    this._loader.show();
 
+    const result = await this._authenticator.register(value.email!, value.password!);
+
+    this.loading = false;
+    this._loader.hide();
+
+    if (result.success) {
+      this.showVerificationMessage = true;
+      this.form.reset();
+    }
+  }
 
 }
