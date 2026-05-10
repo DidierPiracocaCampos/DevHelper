@@ -1,0 +1,23 @@
+<div class="toast-container">
+  @for (toast of toastService.toasts(); track toast.id) {
+  <div class="toast toast-custom toast-{{ toast.severity }}" [class.toast-expanded]="toast.expanded"
+    (click)="onToastClick(toast)" role="alert" aria-live="polite">
+    <div class="toast-main">
+      <div class="toast-row">
+        <div class=" flex gap-3 items-center">
+          <span class="toast-icon icon-{{ toast.severity }} icon">
+            {{ getIcon(toast.severity) }}
+          </span>
+          <span class="toast-message">{{ toast.message }}</span>
+        </div>
+        <button class="toast-dismiss" (click)="onDismiss($event, toast.id)" aria-label="Cerrar notificación">
+          <span class="icon">close</span>
+        </button>
+      </div>
+      @if (toast.expanded && toast.details) {
+      <pre class="toast-details">{{ toast.details }}</pre>
+      }
+    </div>
+  </div>
+  }
+</div>
