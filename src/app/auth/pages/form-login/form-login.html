@@ -12,15 +12,23 @@
         Correo o contraseña incorrectos
     </p>
     }
+    @if(form.errors?.['customError']){
+    <p class="text-error text-center">
+        {{form.errors?.['customError']}}
+    </p>
+    }
 
-
-    <button class="btn btn-primary btn-lg mt-4" type="submit">
-        @if(loanding){
+    <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
+        @if(loading){
         <span class="loading loading-infinity"></span>
         }@else{
         Login
         }
     </button>
+
+    <div class="text-center mt-2">
+        <a class="link link-primary text-sm" routerLink="/login/reset-password">¿Olvidaste tu contraseña?</a>
+    </div>
 </form>
 
 
