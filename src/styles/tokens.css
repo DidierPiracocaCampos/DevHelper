@@ -141,5 +141,8 @@
         --animate-bounce: 1s infinite;
 
         --view-transition-duration: 200ms;
+
+        --animate-fade-slide-in: 300ms ease-out;
+        --animate-fade-slide-out: 300ms ease-out;
     }
 }
