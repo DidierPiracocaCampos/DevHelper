@@ -2,10 +2,9 @@ import { resource, runInInjectionContext } from "@angular/core";
 import { ApiBase, Constructor } from "./api-base";
 import { firstValueFrom } from "rxjs/internal/firstValueFrom";
 import { filter } from "rxjs/internal/operators/filter";
-import { addDoc, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentData, getDoc, setDoc, updateDoc } from "@angular/fire/firestore";
-import { AddDocFeature, DeleteDocFeature, GetCollectionFeature, GetDocFeature, SetDocFeature, UpdateDocFeature } from "./api.interfaces";
+import { addDoc, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentData, getCountFromServer, getDocs, getDoc, limit, orderBy, query, runTransaction, setDoc, startAfter, updateDoc, where, QueryDocumentSnapshot, Transaction } from "@angular/fire/firestore";
+import { AddDocFeature, CountFeature, DeleteDocFeature, GetCollectionFeature, GetDocFeature, PaginationFeature, PaginationResult, QueryFeature, QueryOptions, SetDocFeature, TransactionFeature, UpdateDocFeature } from "./api.interfaces";
 import { switchMap } from "rxjs/internal/operators/switchMap";
-import { EMPTY } from "rxjs/internal/observable/empty";
 import { from } from "rxjs/internal/observable/from";
 import { map } from "rxjs/internal/operators/map";
 import { of } from "rxjs/internal/observable/of";
@@ -185,5 +184,151 @@ export function withDocDelete<T extends { id?: string }>() {
       }
     }
     return DeleteDocMixin;
+  };
+}
+
+export function withQuery<T extends { id?: string }>() {
+  return function <TBase extends Constructor<ApiBase<T>>>(
+    Base: TBase
+  ): Constructor<QueryFeature<T>> & TBase {
+
+    abstract class QueryMixin extends Base implements QueryFeature<T> {
+      getFilteredCollection(options: QueryOptions) {
+        return resource({
+          loader: async () => {
+            const ref = await firstValueFrom(
+              this.$userCollectionRef().pipe(
+                filter((r): r is CollectionReference<T> => !!r)
+              )
+            );
+            if (!ref) return [];
+
+            return runInInjectionContext(this._injector, async () => {
+              let q: any = ref;
+
+              if (options.filters) {
+                for (const [field, op, value] of options.filters) {
+                  q = query(q, where(field, op, value));
+                }
+              }
+
+              if (options.orderBy) {
+                q = query(q, orderBy(options.orderBy[0], options.orderBy[1]));
+              }
+
+              if (options.limit) {
+                q = query(q, limit(options.limit));
+              }
+
+              const snapshot = await getDocs(q);
+              return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as T) } as T & { id: string }));
+            });
+          }
+        });
+      }
+    }
+    return QueryMixin;
+  };
+}
+
+export function withTransaction<T extends { id?: string }>() {
+  return function <TBase extends Constructor<ApiBase<T>>>(
+    Base: TBase
+  ): Constructor<TransactionFeature> & TBase {
+
+    abstract class TransactionMixin extends Base implements TransactionFeature {
+      runTransaction<TResult>(fn: (tx: Transaction) => Promise<TResult>) {
+        return this.$userCollectionRef().pipe(
+          switchMap(ref => {
+            if (!ref) return throwError(() => new Error('Collection reference not available'));
+            return runInInjectionContext(this._injector, () =>
+              from(runTransaction(this._firestore, fn))
+            );
+          })
+        );
+      }
+    }
+    return TransactionMixin;
+  };
+}
+
+export function withPagination<T extends { id?: string }>() {
+  return function <TBase extends Constructor<ApiBase<T>>>(
+    Base: TBase
+  ): Constructor<PaginationFeature<T>> & TBase {
+
+    abstract class PaginationMixin extends Base implements PaginationFeature<T> {
+      getPaginatedCollection(pageSize: number, options?: QueryOptions, cursor?: QueryDocumentSnapshot<T>) {
+        return this.$userCollectionRef().pipe(
+          switchMap(ref => {
+            if (!ref) return throwError(() => new Error('Collection reference not available'));
+
+            return runInInjectionContext(this._injector, () =>
+              from(this.getPage(ref, pageSize, options, cursor))
+            );
+          })
+        );
+      }
+
+      private async getPage(
+        ref: CollectionReference<T>,
+        pageSize: number,
+        options?: QueryOptions,
+        cursor?: QueryDocumentSnapshot<T>
+      ): Promise<PaginationResult<T>> {
+        let q: any = ref;
+
+        if (options?.filters) {
+          for (const [field, op, value] of options.filters) {
+            q = query(q, where(field, op, value));
+          }
+        }
+
+        if (options?.orderBy) {
+          q = query(q, orderBy(options.orderBy[0], options.orderBy[1]));
+        }
+
+        if (cursor) {
+          q = query(q, startAfter(cursor));
+        }
+
+        q = query(q, limit(pageSize + 1));
+
+        const snapshot = await getDocs(q);
+        const docs = snapshot.docs;
+
+        const hasNextPage = docs.length > pageSize;
+        const pageDocs = hasNextPage ? docs.slice(0, pageSize) : docs;
+
+        return {
+          data: pageDocs.map(d => ({ id: d.id, ...(d.data() as T) } as T & { id: string })),
+          nextCursor: hasNextPage ? (docs[docs.length - 1] as QueryDocumentSnapshot<T>) : undefined
+        };
+      }
+    }
+    return PaginationMixin;
+  };
+}
+
+export function withCount<T extends { id?: string }>() {
+  return function <TBase extends Constructor<ApiBase<T>>>(
+    Base: TBase
+  ): Constructor<CountFeature> & TBase {
+
+    abstract class CountMixin extends Base implements CountFeature {
+      getCount() {
+        return this.$userCollectionRef().pipe(
+          switchMap(ref => {
+            if (!ref) return of(0);
+            return runInInjectionContext(this._injector, () =>
+              from(getCountFromServer(ref)).pipe(
+                map(snapshot => snapshot.data().count)
+              )
+            );
+          })
+        );
+      }
+    }
+    return CountMixin;
   };
 }
