@@ -2,13 +2,13 @@ import { Component, inject } from '@angular/core';
 import { ToastService, ToastI } from '../../service/toast';
 
 @Component({
-  selector: 'app-toast',
+  selector: 'ui-toast',
   standalone: true,
   imports: [],
-  templateUrl: './toast.html',
-  styleUrl: './toast.css',
+  templateUrl: './ui-toast.html',
+  styleUrl: './ui-toast.css',
 })
-export class ToastComponent {
+export class UiToastComponent {
   protected toastService = inject(ToastService);
 
   protected getIcon(severity: ToastI['severity']): string {
