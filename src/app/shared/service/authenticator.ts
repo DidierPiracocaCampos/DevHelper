@@ -4,6 +4,7 @@ import { Auth, authState, createUserWithEmailAndPassword, GithubAuthProvider, Go
 import { EmailAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
+import { ToastService } from './toast';
 
 export enum AuthErrorCode {
   InvalidCredential = 'auth/invalid-credential',
@@ -30,6 +31,7 @@ export class Authenticator {
   private _auth = inject(Auth);
   private _injector = inject(Injector);
   private _router = inject(Router);
+  private _toastService = inject(ToastService);
   readonly initialized = signal(false);
   readonly user = toSignal(this.$userObservable(), { initialValue: null });
   readonly isLoggedIn = computed(() => !!this.user());
@@ -96,6 +98,7 @@ export class Authenticator {
         this._router.navigate(['/']);
         return { success: true };
       } catch (error: any) {
+        this._toastService.error('Error en registro', error.code);
         return { success: false, error: error.code };
       }
     });
@@ -114,6 +117,7 @@ export class Authenticator {
         return { success: true };
       } catch (error: any) {
         this._recordFailedAttempt(email);
+        this._toastService.error('Error en inicio de sesión', error.code);
         return { success: false, error: error.code };
       }
     });
@@ -131,6 +135,7 @@ export class Authenticator {
         return { success: true };
       } catch (error: any) {
         console.error('Google login error:', error.code, error.message);
+        this._toastService.error('Error con Google', error.code);
         return { success: false, error: error.code };
       }
     });
@@ -148,6 +153,7 @@ export class Authenticator {
         return { success: true };
       } catch (error: any) {
         console.error('GitHub login error:', error.code, error.message);
+        this._toastService.error('Error con GitHub', error.code);
         return { success: false, error: error.code };
       }
     });
@@ -159,6 +165,7 @@ export class Authenticator {
         await sendPasswordResetEmail(this._auth, email);
         return { success: true };
       } catch (error: any) {
+        this._toastService.error('Error al enviar correo de recuperación', error.code);
         return { success: false, error: error.code };
       }
     });
@@ -176,6 +183,7 @@ export class Authenticator {
         this._updateLastActivity();
         return { success: true };
       } catch (error: any) {
+        this._toastService.error('Error de reautenticación', error.code);
         return { success: false, error: error.code };
       }
     });
