@@ -9,10 +9,19 @@
 
     <hr class="m-5 w-full max-w-[22rem] opacity-30" />
 
-    <button class="btn btn-outline btn-lg mt-4 m-auto w-full 
+    <div class="w-full">
+        <button class="btn btn-outline btn-lg mt-4 m-auto w-full 
         max-w-[25rem] flex items-center justify-center" (click)="loginWithGoogle()">
-        <img src="/icons/google.svg" width="20" alt="google logo" class="mr-2">
-        Iniciar sesión con Google
-    </button>
+            <img src="/icons/google.svg" width="20" alt="google logo" class="mr-2">
+            Iniciar sesión con Google
+        </button>
+
+        <button class="btn btn-outline btn-lg mt-3 m-auto w-full 
+        max-w-[25rem] flex items-center justify-center" (click)="loginWithGithub()">
+            <img src="/icons/github.svg" width="20" alt="github logo" class="mr-2">
+            Iniciar sesión con GitHub
+        </button>
+    </div>
+
 
 </div>
