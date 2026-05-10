@@ -98,7 +98,7 @@ export class VaultSecurity {
       if (!unlockKey) {
         throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN)
       }
-      const saveUnlockKey = await firstValueFrom(this._repository.create(unlockKey));
+      const saveUnlockKey = await firstValueFrom(this._repository.addDoc(unlockKey));
       this._repository.unlockList.reload();
       return true;
     } catch (error) {
@@ -139,7 +139,7 @@ export class VaultSecurity {
       );
 
       await firstValueFrom(
-        this._repository.set(currentUnlockKey.id, updatedUnlockKey)
+        this._repository.setDoc(currentUnlockKey.id, updatedUnlockKey)
       );
 
       this._repository.unlockList.reload();

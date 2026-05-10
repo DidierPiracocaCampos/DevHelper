@@ -1,18 +1,27 @@
 import { computed, Injectable } from '@angular/core';
 import { FirestoreDataConverter, DocumentData, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
 import { UnlockKeyI } from '../models/unlock-key.model';
-import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { VAULT_STATUS } from '../models/vault.model';
 import { fromBase64, toBase64 } from './utils';
-import { BaseRepository } from '../../service/repository-base';
+import { ApiBase } from '../../api/api-base';
+import { withCollection } from '../../api/crud.mixins';
+import { withAddDoc } from '../../api/crud.mixins';
+import { withSetDoc } from '../../api/crud.mixins';
 
 @Injectable({
   providedIn: 'root',
 })
-export class VaultRepository extends BaseRepository<UnlockKeyI> {
+export class VaultRepository extends 
+  withSetDoc<UnlockKeyI>()(
+    withAddDoc<UnlockKeyI>()(
+      withCollection<UnlockKeyI>()(
+        ApiBase<UnlockKeyI>
+      )
+    )
+  ) {
 
-  protected override path: [string, ...string[]] = ['vault'];
-  protected override converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
+  protected path: [string, ...string[]] = ['vault'];
+  protected converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
     toFirestore(vault: UnlockKeyI): DocumentData {
       const data: DocumentData = {
         encryptedMasterKey: toBase64(vault.encryptedMasterKey),
@@ -37,7 +46,7 @@ export class VaultRepository extends BaseRepository<UnlockKeyI> {
     }
   };
 
-  readonly unlockList = this.getAllResource();
+  readonly unlockList = this.getCollection();
 
   readonly status = computed<VAULT_STATUS>(() => {
     const list = this.unlockList;
@@ -56,7 +65,7 @@ export class VaultRepository extends BaseRepository<UnlockKeyI> {
     if (status == VAULT_STATUS.NO_CREATE || status == VAULT_STATUS.ERROR) {
       return undefined;
     }
-    return this.unlockList.value()?.find((v) => v.salt != undefined);
+    return this.unlockList.value()?.find((v: UnlockKeyI) => v.salt != undefined);
   });
 
   readonly unlockKeyWithPasskey = computed(() => {
@@ -64,12 +73,12 @@ export class VaultRepository extends BaseRepository<UnlockKeyI> {
     if (status == VAULT_STATUS.NO_CREATE || status == VAULT_STATUS.ERROR) {
       return undefined;
     }
-    return this.unlockList.value()?.find((v) => v.salt === undefined);
+    return this.unlockList.value()?.find((v: UnlockKeyI) => v.salt === undefined);
   });
 
-  async hasVaultKey(): Promise<boolean> {
-    const stored = await firstValueFrom(this.getAll());
-    return !!stored && stored.length > 0;
+  hasVaultKey(): boolean {
+    const value = this.unlockList.value();
+    return !!value && value.length > 0;
   }
 
 }

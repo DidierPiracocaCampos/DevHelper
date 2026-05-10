@@ -1,19 +1,28 @@
-import {  Injectable } from '@angular/core';
-import {  PasswordI } from '../domain/password.interface';
+import { Injectable } from '@angular/core';
+import { PasswordI } from '../domain/password.interface';
 import { FirestoreDataConverter } from '@angular/fire/firestore';
-import { BaseRepository } from '../../shared/service/repository-base';
+import { ApiBase } from '../../shared/api/api-base';
+import { withCollection } from '../../shared/api/crud.mixins';
+import { withAddDoc } from '../../shared/api/crud.mixins';
+import { withDocDelete } from '../../shared/api/crud.mixins';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PasswordRepository extends BaseRepository<PasswordI> {
+export class PasswordRepository extends 
+  withDocDelete<PasswordI>()(
+    withAddDoc<PasswordI>()(
+      withCollection<PasswordI>()(
+        ApiBase<PasswordI>
+      )
+    )
+  ) {
 
-  protected override path: [string, ...string[]] = ['passwords'];
+  protected path: [string, ...string[]] = ['passwords'];
 
-  protected override converter: FirestoreDataConverter<PasswordI> = {
+  protected converter: FirestoreDataConverter<PasswordI> = {
     toFirestore: (data: PasswordI) => data,
     fromFirestore: (snap) => snap.data() as PasswordI
   };
-
 
 }

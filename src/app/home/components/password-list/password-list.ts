@@ -23,7 +23,7 @@ export class PasswordList {
   private _repo = inject(PasswordRepository);
   private _formBuilder = inject(FormBuilder).nonNullable;
 
-  readonly collection = this._repo.getAllResource();
+  readonly collection = this._repo.getCollection();
 
   modalForm = viewChild.required<UiModal>('formModal');
   modalDelete = viewChild.required<UiModal>('deleteModal');
@@ -102,7 +102,7 @@ export class PasswordList {
       return v;
     });
 
-    this._repo.delete(id).subscribe({
+    this._repo.deleteDoc(id).subscribe({
       next: () => {
         this.modalDelete().close();
         this.collection.reload();
