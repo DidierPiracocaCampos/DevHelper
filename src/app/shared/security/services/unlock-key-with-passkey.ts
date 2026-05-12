@@ -93,7 +93,7 @@ export class UnlockKeyWithPasskey {
     unlockKey: UnlockKeyI
   ): Promise<ArrayBuffer> {
     if (!unlockKey.iv || !unlockKey.encryptedMasterKey) {
-      throw new Error(VAULT_ERRORS.SALT_IS_MISSING);
+      throw new Error(VAULT_ERRORS.MISSING_UNLOCK_KEY_DATA);
     }
 
     try {

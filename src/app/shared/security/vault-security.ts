@@ -21,9 +21,14 @@ export class VaultSecurity {
   private _unlockWithPin = inject(UnlockKeyWithPin);
   private _unlockWithPasskey = inject(UnlockKeyWithPasskey);
   private _vaultKey?: Uint8Array;
+  private readonly MAX_PIN_ATTEMPTS = 3;
+  private readonly PIN_LOCKOUT_DURATION_MS = 5 * 60 * 1000;
+
   private _secureModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
   private _unlockModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
   private _secureModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
+  private _pinAttempts = 0;
+  private _pinLockUntil: number | null = null;
 
   secureModal(secureModal: Signal<HTMLDialogElement | undefined>) {
     this._secureModal.set(secureModal() as HTMLDialogElement);
@@ -49,14 +54,21 @@ export class VaultSecurity {
     return unlock != undefined
   });
 
-  readonly isWebAuthnSupported = computed(async () => {
-    if (!window.PublicKeyCredential) return false;
+  readonly isWebAuthnSupported = signal(false);
+
+  constructor() {
+    this._checkWebAuthnSupport();
+  }
+
+  private async _checkWebAuthnSupport() {
+    if (!window.PublicKeyCredential) return;
     try {
-      return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      const supported = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      this.isWebAuthnSupported.set(supported);
     } catch {
-      return false;
+      // mantiene false
     }
-  });
+  }
 
   readonly isUnlocked = computed(() => {
     return this._vaultKey !== undefined;
@@ -74,6 +86,28 @@ export class VaultSecurity {
       return;
     }
   });
+
+  private _isPinLocked(): boolean {
+    if (this._pinLockUntil === null) return false;
+    if (Date.now() > this._pinLockUntil) {
+      this._pinLockUntil = null;
+      this._pinAttempts = 0;
+      return false;
+    }
+    return true;
+  }
+
+  private _recordPinAttempt(success: boolean) {
+    if (success) {
+      this._pinAttempts = 0;
+      this._pinLockUntil = null;
+      return;
+    }
+    this._pinAttempts++;
+    if (this._pinAttempts >= this.MAX_PIN_ATTEMPTS) {
+      this._pinLockUntil = Date.now() + this.PIN_LOCKOUT_DURATION_MS;
+    }
+  }
 
   async createVault(type: 'pin' | 'passkey', pin?: string) {
     let unlockKey: UnlockKeyI | undefined = undefined;
@@ -126,6 +160,10 @@ export class VaultSecurity {
 
   async changePin(oldPin: string, newPin: string): Promise<boolean> {
     try {
+      if (this._isPinLocked()) {
+        throw new Error(VAULT_ERRORS.TOO_MANY_ATTEMPTS);
+      }
+
       const currentUnlockKey = this._repository.unlockKeyWithPin();
 
       if (!currentUnlockKey) {
@@ -143,8 +181,10 @@ export class VaultSecurity {
       );
 
       this._repository.unlockList.reload();
+      this._recordPinAttempt(true);
       return true;
     } catch (error) {
+      this._recordPinAttempt(false);
       console.error(error);
       return false;
     }

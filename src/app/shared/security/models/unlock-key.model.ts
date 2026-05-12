@@ -3,5 +3,5 @@ export interface UnlockKeyI {
     encryptedMasterKey: Uint8Array;
     salt?: Uint8Array;
     iv: Uint8Array;
-    params: any;
+    params: { iterations: number } | { type: 'passkey' };
 }

@@ -1,6 +1,6 @@
 export enum VAULT_STATUS {
     ERROR = 'ERROR',
-    LOADING = 'LOANDING',
+    LOADING = 'LOADING',
     NO_CREATE = 'NO_CREATE',
     ENCRYPTED = 'ENCRYPTED',
     DESENCRYPTED = 'DESENCRYPTED'
@@ -18,5 +18,6 @@ export enum VAULT_ERRORS {
     PASSKEY_REGISTRATION_FAILED = 'No se pudo registrar el passkey. Inténtalo de nuevo.',
     PASSKEY_CREATION_FAILED = 'No se pudo crear la clave de desbloqueo con passkey. Inténtalo de nuevo.',
     PASSKEY_UNLOCK_FAILED = 'No se pudo desbloquear el vault con passkey. Inténtalo de nuevo.',
-    PASSKEY_USER_VERIFICATION = 'La verificación de usuario falló. Inténtalo de nuevo.'
+    PASSKEY_USER_VERIFICATION = 'La verificación de usuario falló. Inténtalo de nuevo.',
+    MISSING_UNLOCK_KEY_DATA = 'Faltan datos de la clave de desbloqueo. Reconfigura el vault.'
 }
