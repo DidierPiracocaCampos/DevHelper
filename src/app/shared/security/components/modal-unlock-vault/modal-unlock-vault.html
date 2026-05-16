@@ -1,0 +1,130 @@
+<ui-modal #modal title="Desbloquear Vault" icon="lock" size="md"
+  (closed)="reset()">
+
+  <div body
+    class="flex flex-col items-center gap-4 p-4">
+
+    <p class="text-sm text-base-content/70 text-center">
+      Desbloquea tu vault para acceder a tus datos cifrados.
+    </p>
+
+    @if (!isLockedOut()) {
+      @if (errorMessage()) {
+        <ui-alert severity="error" title="Error al desbloquear" [message]="errorMessage()" icon="error" />
+      }
+    }
+
+    <!-- ====== Solo Passkey ====== -->
+    @if (onlyPasskey() && havePasskey()) {
+      <div class="flex flex-col items-center gap-4 w-full">
+        <div class="flex justify-center items-center rounded-full bg-primary/10 text-primary w-12 h-12">
+          <span class="icon text-3xl">passkey</span>
+        </div>
+        <p class="text-sm text-base-content/70 text-center">
+          Usa tu huella, rostro o dispositivo para desbloquear tu vault de forma segura.
+        </p>
+        <ui-button class="w-3/5" btnClass="w-full" icon="passkey" label="Desbloquear con Passkey"
+          severity="primary" [loading]="isLoading()" [disabled]="isLoading()"
+          (click)="unlockWithPasskey()" />
+      </div>
+    }
+
+    <!-- ====== Solo PIN ====== -->
+    @if (onlyPin() && havePin()) {
+      <div class="flex flex-col items-center gap-4 w-full">
+        @if (isLockedOut()) {
+          <div class="flex flex-col items-center gap-3 w-full">
+            <div class="flex justify-center items-center rounded-full bg-error/10 text-error w-12 h-12">
+              <span class="icon text-3xl">timer</span>
+            </div>
+            <ui-alert severity="error" title="Demasiados intentos"
+              [message]="'Espera ' + countdown() + ' para intentar de nuevo.'" icon="timer" />
+          </div>
+        } @else {
+          <form [formGroup]="_unlockForm" (ngSubmit)="submitPin()" class="flex flex-col items-center gap-4 w-full">
+            <ui-pin-input inputId="unlock-pin" label="Ingresa tu PIN" formControlName="pin" [length]="5" />
+            @if (attemptsRemaining() < 3) {
+              <p class="text-xs text-warning">
+                Intentos restantes: {{ attemptsRemaining() }}
+              </p>
+            }
+            <ui-button class="w-3/5 mt-2" btnClass="w-full" icon="lock_open" label="Desbloquear"
+              severity="primary" type="submit" [loading]="isLoading()"
+              [disabled]="_unlockForm.invalid || isLoading()" />
+          </form>
+        }
+      </div>
+    }
+
+    <!-- ====== Ambos: tabs ====== -->
+    @if (bothAvailable()) {
+      <div class="tabs tabs-lift w-full">
+        <label class="tab gap-2 ml-1">
+          <input type="radio" name="unlock-method" value="PASSKEY" [(ngModel)]="checked" />
+          <span class="icon">passkey</span>
+          Passkey
+          <span class="badge badge-success badge-sm">Recomendado</span>
+        </label>
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <div class="flex flex-col items-center gap-4">
+            <div class="flex justify-center items-center rounded-full bg-primary/10 text-primary w-12 h-12">
+              <span class="icon text-3xl">passkey</span>
+            </div>
+            <p class="text-sm text-base-content/70 text-center">
+              Usa tu huella, rostro o dispositivo para desbloquear tu vault de forma segura.
+            </p>
+            @if (errorMessage() && checked() === 'PASSKEY') {
+              @if (havePin()) {
+                <ui-alert severity="warning" [message]="errorMessage() + ' ¿Probar con PIN?'" icon="warning" />
+              } @else {
+                <ui-alert severity="error" [message]="errorMessage()" icon="error" />
+              }
+            }
+            <ui-button class="w-3/5" btnClass="w-full" icon="passkey" label="Desbloquear con Passkey"
+              severity="primary" [loading]="isLoading()" [disabled]="isLoading()"
+              (click)="unlockWithPasskey()" />
+            @if (errorMessage() && havePin() && checked() === 'PASSKEY') {
+              <ui-button class="w-3/5" btnClass="w-full" variant="outline" label="Usar PIN en su lugar"
+                (click)="switchToPin()" />
+            }
+          </div>
+        </div>
+
+        <label class="tab gap-2">
+          <input type="radio" name="unlock-method" value="PIN" [(ngModel)]="checked" />
+          <span class="icon">password</span>
+          PIN
+        </label>
+        <div class="tab-content border-base-300 bg-base-100 p-6">
+          <div class="flex flex-col items-center gap-4">
+            @if (isLockedOut()) {
+              <div class="flex flex-col items-center gap-3 w-full">
+                <div class="flex justify-center items-center rounded-full bg-error/10 text-error w-12 h-12">
+                  <span class="icon text-3xl">timer</span>
+                </div>
+                <ui-alert severity="error" title="Demasiados intentos"
+                  [message]="'Espera ' + countdown() + ' para intentar de nuevo.'" icon="timer" />
+              </div>
+            } @else {
+              <form [formGroup]="_unlockForm" (ngSubmit)="submitPin()" class="flex flex-col items-center gap-4 w-full">
+                <ui-pin-input inputId="unlock-pin-tab" label="Ingresa tu PIN" formControlName="pin" [length]="5" />
+                @if (errorMessage() && checked() === 'PIN') {
+                  <ui-alert severity="error" [message]="errorMessage()" icon="error" />
+                }
+                @if (attemptsRemaining() < 3) {
+                  <p class="text-xs text-warning">
+                    Intentos restantes: {{ attemptsRemaining() }}
+                  </p>
+                }
+                <ui-button class="w-3/5 mt-2" btnClass="w-full" icon="lock_open" label="Desbloquear"
+                  severity="primary" type="submit" [loading]="isLoading()"
+                  [disabled]="_unlockForm.invalid || isLoading()" />
+              </form>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+</ui-modal>

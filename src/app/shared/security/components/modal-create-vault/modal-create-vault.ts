@@ -29,7 +29,7 @@ export class ModalCreateVault implements OnInit, AfterViewInit {
   private _vault = inject(VaultSecurity);
   private _fb = inject(FormBuilder).nonNullable;
 
-  protected readonly status = this._vault.status;
+  protected readonly status = this._vault.vaultStatus;
   protected readonly haveUnlockKeyWithPin = this._vault.haveUnlockKeyWithPin;
   protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
 

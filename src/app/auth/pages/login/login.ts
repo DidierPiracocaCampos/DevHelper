@@ -22,7 +22,6 @@ export default class Login {
   async loginWithGoogle() {
     this._loader.show();
     const result = await this._authenticator.loginWithGoogle();
-    console.log('Google login result:', result);
     if (!result.success) {
       this._loader.hide();
     }
@@ -30,9 +29,7 @@ export default class Login {
 
   async loginWithGithub() {
     this._loader.show();
-    console.log('GitHub login starting...');
     const result = await this._authenticator.loginWithGithub();
-    console.log('GitHub login result:', result);
     if (!result.success) {
       this._loader.hide();
     }

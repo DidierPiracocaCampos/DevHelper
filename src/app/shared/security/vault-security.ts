@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { VaultRepository } from './services/vault.repository';
 import { MasterKey } from './services/master-key';
@@ -20,15 +20,20 @@ export class VaultSecurity {
   private _masterKey = inject(MasterKey);
   private _unlockWithPin = inject(UnlockKeyWithPin);
   private _unlockWithPasskey = inject(UnlockKeyWithPasskey);
-  private _vaultKey?: Uint8Array;
+  private _destroyRef = inject(DestroyRef);
+  private _vaultKey: WritableSignal<CryptoKey | undefined> = signal(undefined);
   private readonly MAX_PIN_ATTEMPTS = 3;
   private readonly PIN_LOCKOUT_DURATION_MS = 5 * 60 * 1000;
 
   private _secureModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
   private _unlockModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
   private _secureModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
+  private _unlockModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
   private _pinAttempts = 0;
   private _pinLockUntil: number | null = null;
+  private _countdownIntervalId: ReturnType<typeof setInterval> | null = null;
+
+  readonly pinLockoutRemainingMs = signal(0);
 
   secureModal(secureModal: Signal<HTMLDialogElement | undefined>) {
     this._secureModal.set(secureModal() as HTMLDialogElement);
@@ -42,7 +47,19 @@ export class VaultSecurity {
     this._secureModalUi.set(modal);
   }
 
-  readonly status = this._repository.status;
+  setUnlockModalUi(modal: UiModal) {
+    this._unlockModalUi.set(modal);
+  }
+
+  readonly repositoryStatus = this._repository.status;
+
+  readonly vaultStatus = computed<VAULT_STATUS>(() => {
+    const repoStatus = this._repository.status();
+    if (repoStatus !== VAULT_STATUS.ENCRYPTED) {
+      return repoStatus;
+    }
+    return this._vaultKey() ? VAULT_STATUS.DESENCRYPTED : VAULT_STATUS.ENCRYPTED;
+  });
 
   readonly haveUnlockKeyWithPin = computed(() => {
     const unlock = this._repository.unlockKeyWithPin();
@@ -71,21 +88,52 @@ export class VaultSecurity {
   }
 
   readonly isUnlocked = computed(() => {
-    return this._vaultKey !== undefined;
+    return this._vaultKey() !== undefined;
   });
+
+  getVaultKey(): CryptoKey | undefined {
+    return this._vaultKey();
+  }
+
+  readonly pinAttemptsRemaining = computed(() => {
+    if (this._isPinLocked()) return 0;
+    return this.MAX_PIN_ATTEMPTS - this._pinAttempts;
+  });
+
+  readonly isPinLockedOut = computed(() => this._isPinLocked());
 
   private statusChanges = effect(() => {
     const s = this._repository.status();
     if (s === VAULT_STATUS.NO_CREATE) {
-      const uiModal = this._secureModalUi();
-      if (uiModal) {
-        uiModal.open();
-      } else {
-        this._secureModal()?.showModal();
-      }
-      return;
+      this.openSetupVaultModal();
     }
   });
+
+  private lockoutCountdown = effect(() => {
+    const locked = this.isPinLockedOut();
+    if (locked && !this._countdownIntervalId) {
+      this._tickCountdown();
+      this._countdownIntervalId = setInterval(() => this._tickCountdown(), 1000);
+      this._destroyRef.onDestroy(() => {
+        if (this._countdownIntervalId) {
+          clearInterval(this._countdownIntervalId);
+        }
+      });
+    } else if (!locked && this._countdownIntervalId) {
+      clearInterval(this._countdownIntervalId);
+      this._countdownIntervalId = null;
+      this.pinLockoutRemainingMs.set(0);
+    }
+  });
+
+  private _tickCountdown() {
+    const remaining = this._pinLockUntil ? Math.max(0, this._pinLockUntil - Date.now()) : 0;
+    this.pinLockoutRemainingMs.set(remaining);
+    if (remaining <= 0 && this._countdownIntervalId) {
+      clearInterval(this._countdownIntervalId);
+      this._countdownIntervalId = null;
+    }
+  }
 
   private _isPinLocked(): boolean {
     if (this._pinLockUntil === null) return false;
@@ -134,6 +182,8 @@ export class VaultSecurity {
       }
       const saveUnlockKey = await firstValueFrom(this._repository.addDoc(unlockKey));
       this._repository.unlockList.reload();
+
+      this._vaultKey.set(masterKey);
       return true;
     } catch (error) {
       console.error(error);
@@ -145,17 +195,76 @@ export class VaultSecurity {
     return this.createVault('passkey');
   }
 
+  async unlockWithPin(pin: string): Promise<boolean> {
+    try {
+      if (this._isPinLocked()) {
+        throw new Error(VAULT_ERRORS.TOO_MANY_ATTEMPTS);
+      }
+
+      const unlockKey = this._repository.unlockKeyWithPin();
+      if (!unlockKey) {
+        throw new Error(VAULT_ERRORS.NOT_EXIST_UNLOCK_WITH_PIN);
+      }
+
+      const rawMasterKey = await this._unlockWithPin.unlockMasterKey(pin, unlockKey);
+      this._vaultKey.set(await this._masterKey.importMasterKey(rawMasterKey));
+      this._recordPinAttempt(true);
+      return true;
+    } catch (error) {
+      this._recordPinAttempt(false);
+      throw error;
+    }
+  }
+
+  async unlockWithPasskey(): Promise<boolean> {
+    try {
+      const unlockKey = this._repository.unlockKeyWithPasskey();
+      if (!unlockKey) {
+        throw new Error(VAULT_ERRORS.PASSKEY_UNLOCK_FAILED);
+      }
+
+      const assertion = await this._unlockWithPasskey.requestAssertion();
+      const rawMasterKey = await this._unlockWithPasskey.unlockMasterKeyWithPasskey(assertion, unlockKey);
+      this._vaultKey.set(await this._masterKey.importMasterKey(rawMasterKey));
+      return true;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
   lockVault() {
-    this._vaultKey = undefined;
+    this._vaultKey.set(undefined);
   }
 
   showModal() {
+    const s = this.vaultStatus();
+    if (s === VAULT_STATUS.NO_CREATE) {
+      this.openSetupVaultModal();
+      return;
+    }
+    if (s === VAULT_STATUS.ENCRYPTED) {
+      this.openUnlockVaultModal();
+    }
+  }
+
+  openSetupVaultModal() {
+    if (this.vaultStatus() !== VAULT_STATUS.NO_CREATE) return;
     const uiModal = this._secureModalUi();
     if (uiModal) {
       uiModal.open();
       return;
     }
     this._secureModal()?.showModal();
+  }
+
+  openUnlockVaultModal() {
+    if (this.vaultStatus() !== VAULT_STATUS.ENCRYPTED) return;
+    const uiModal = this._unlockModalUi();
+    if (uiModal) {
+      uiModal.open();
+      return;
+    }
+    this._unlockModal()?.showModal();
   }
 
   async changePin(oldPin: string, newPin: string): Promise<boolean> {

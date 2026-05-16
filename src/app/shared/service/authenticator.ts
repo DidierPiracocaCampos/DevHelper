@@ -127,9 +127,7 @@ export class Authenticator {
     return runInInjectionContext(this._injector, async () => {
       const provider = new GoogleAuthProvider();
       try {
-        console.log('Google: Calling signInWithPopup...');
         await signInWithPopup(this._auth, provider);
-        console.log('Google: Popup success, navigating...');
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
@@ -145,9 +143,7 @@ export class Authenticator {
     return runInInjectionContext(this._injector, async () => {
       const provider = new GithubAuthProvider();
       try {
-        console.log('GitHub: Calling signInWithPopup...');
         await signInWithPopup(this._auth, provider);
-        console.log('GitHub: Popup success, navigating...');
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
