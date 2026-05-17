@@ -1,0 +1,31 @@
+<ui-modal
+  [title]="_confirmService.config()?.title ?? ''"
+  [icon]="_confirmService.config()?.icon ?? _defaultIcon[_confirmService.config()?.severity ?? 'info']"
+  [iconBg]="_confirmService.config()?.severity ?? 'info'"
+  size="sm"
+  [showCloseButton]="false"
+  [closeOnEscape]="false"
+  [closeOnBackdrop]="false"
+  [static]="true"
+  [(isOpen)]="_isOpen">
+
+  <div body>
+    @if(_confirmService.config(); as config) {
+      <p class="text-base-content/80">{{ config.message }}</p>
+    }
+  </div>
+
+  <div footer class="flex gap-2 justify-end pt-4">
+    @if(_confirmService.config()?.showCancel) {
+      <ui-button
+        variant="outline"
+        label="Cancelar"
+        (click)="onCancel()" />
+    }
+    <ui-button
+      [severity]="_severityClass[_confirmService.config()?.severity ?? 'info']"
+      [label]="_confirmService.config()?.confirmLabel ?? 'Confirmar'"
+      (click)="onConfirm()" />
+  </div>
+
+</ui-modal>

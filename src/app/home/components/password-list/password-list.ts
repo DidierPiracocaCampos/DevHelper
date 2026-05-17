@@ -13,6 +13,7 @@ import { ErrorMessage } from '../../../shared/forms/components/input-base/error-
 import { UiModal } from "../../../shared/components/ui-modal/ui-modal";
 import { VaultSecurity } from "../../../shared/security/vault-security";
 import { UiAlert } from "../../../shared/components/ui-alert/ui-alert";
+import { ConfirmService } from '../../../shared/service/confirm.service';
 
 @Component({
   selector: 'password-list',
@@ -26,14 +27,13 @@ export class PasswordList {
   private _repo = inject(PasswordRepository);
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _vault = inject(VaultSecurity);
+  private _confirmService = inject(ConfirmService);
 
   readonly collection = this._repo.getCollection();
 
   isFormModalOpen = signal(false);
-  isDeleteModalOpen = signal(false);
   isViewModalOpen = signal(false);
 
-  deleteStatus = signal<{ password?: PasswordI, loanding: boolean }>({ loanding: false });
   addStatus = signal<{ isEdit?: boolean, loanding: boolean }>({ loanding: false });
 
   viewStatus = signal<{ password?: PasswordI, decrypted: string, loading: boolean, error: string }>({ loading: false, error: '', decrypted: '' });
@@ -112,20 +112,15 @@ export class PasswordList {
     });
   }
 
-  questionDelete(item: PasswordI) {
-    this.deleteStatus.update((v) => { v.password = item; return v; });
-    this.isDeleteModalOpen.set(true);
-  }
-
-  delete() {
-    const id = this.deleteStatus().password?.id;
-    if (!id) return;
-    this.deleteStatus.update((v) => { v.loanding = true; return v; });
-    this._repo.deleteDoc(id).subscribe({
+  async deletePassword(item: PasswordI) {
+    const confirmed = await this._confirmService.delete(
+      `¿Eliminar "${item.name}"? Esta acción no se puede deshacer.`
+    );
+    if (!confirmed) return;
+    if (!item.id) return;
+    this._repo.deleteDoc(item.id).subscribe({
       next: () => {
-        this.isDeleteModalOpen.set(false);
         this.collection.reload();
-        this.deleteStatus.set({ loanding: false });
       }
     });
   }

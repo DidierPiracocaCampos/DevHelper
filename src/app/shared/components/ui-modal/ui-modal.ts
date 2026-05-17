@@ -12,6 +12,7 @@ export type UiModalSize = 'sm' | 'md' | 'lg' | 'xl';
 export class UiModal {
   title = input.required<string>();
   icon = input<string>('');
+  iconBg = input<string>('');
   size = input<UiModalSize>('md');
   showCloseButton = input<boolean>(true);
   closeOnEscape = input<boolean>(true);
