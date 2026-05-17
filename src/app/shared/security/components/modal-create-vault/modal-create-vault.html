@@ -1,5 +1,5 @@
-<ui-modal #modal title="Configurar Vault" icon="shield" size="xl"
-  (closed)="_secureForm.reset(); _secureForm.get('current_pin')?.markAsPristine(); _secureForm.get('current_pin')?.markAsUntouched(); _secureForm.updateValueAndValidity(); createUnlockWithPin.set(false); createUnlockWithPasskey.set(false); pinError.set(undefined); passkeyError.set(undefined); checked.set('PASSKEY')">
+<ui-modal title="Configurar Vault" icon="shield" size="xl" [(isOpen)]="isOpen"
+  (isOpenChange)="_secureForm.reset(); _secureForm.get('current_pin')?.markAsPristine(); _secureForm.get('current_pin')?.markAsUntouched(); _secureForm.updateValueAndValidity(); createUnlockWithPin.set(false); createUnlockWithPasskey.set(false); pinError.set(undefined); passkeyError.set(undefined); checked.set('PASSKEY')">
 
   <div body>
     <p class="p-3 my-4 rounded-xl bg-base-200 text-sm">
@@ -53,7 +53,7 @@
             (click)="checked.set('PIN'); createUnlockWithPasskey.set(false)" />
           }
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Listo" severity="secondary"
-            (click)="modal.close()" />
+            (click)="isOpen.set(false)" />
         </div>
         }
       </div>
@@ -128,7 +128,7 @@
             (click)="checked.set('PASSKEY'); createUnlockWithPin.set(false)" />
           }
           <ui-button class="w-2/5 mt-4" btnClass="w-full" label="Salir" severity="secondary"
-            (click)="modal.close()" />
+            (click)="isOpen.set(false)" />
         </div>
         }
       </div>

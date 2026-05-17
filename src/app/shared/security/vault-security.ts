@@ -1,4 +1,4 @@
-import { computed, DestroyRef, effect, inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { VaultRepository } from './services/vault.repository';
 import { MasterKey } from './services/master-key';
@@ -7,7 +7,6 @@ import { UnlockKeyWithPasskey } from './services/unlock-key-with-passkey';
 import { UnlockKeyI } from './models/unlock-key.model';
 import { firstValueFrom } from 'rxjs';
 import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
-import { UiModal } from '../components/ui-modal/ui-modal';
 
 
 @Injectable({
@@ -24,32 +23,14 @@ export class VaultSecurity {
   private _vaultKey: WritableSignal<CryptoKey | undefined> = signal(undefined);
   private readonly MAX_PIN_ATTEMPTS = 3;
   private readonly PIN_LOCKOUT_DURATION_MS = 5 * 60 * 1000;
-
-  private _secureModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
-  private _unlockModal: WritableSignal<HTMLDialogElement | undefined> = signal(undefined);
-  private _secureModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
-  private _unlockModalUi: WritableSignal<UiModal | undefined> = signal(undefined);
   private _pinAttempts = 0;
   private _pinLockUntil: number | null = null;
   private _countdownIntervalId: ReturnType<typeof setInterval> | null = null;
 
   readonly pinLockoutRemainingMs = signal(0);
 
-  secureModal(secureModal: Signal<HTMLDialogElement | undefined>) {
-    this._secureModal.set(secureModal() as HTMLDialogElement);
-  }
-
-  unlockModal(unlockModal: Signal<HTMLDialogElement | undefined>) {
-    this._unlockModal.set(unlockModal() as HTMLDialogElement);
-  }
-
-  setSecureModalUi(modal: UiModal) {
-    this._secureModalUi.set(modal);
-  }
-
-  setUnlockModalUi(modal: UiModal) {
-    this._unlockModalUi.set(modal);
-  }
+  readonly isSecureModalOpen = signal(false);
+  readonly isUnlockModalOpen = signal(false);
 
   readonly repositoryStatus = this._repository.status;
 
@@ -239,32 +220,20 @@ export class VaultSecurity {
   showModal() {
     const s = this.vaultStatus();
     if (s === VAULT_STATUS.NO_CREATE) {
-      this.openSetupVaultModal();
+      this.isSecureModalOpen.set(true);
       return;
     }
     if (s === VAULT_STATUS.ENCRYPTED) {
-      this.openUnlockVaultModal();
+      this.isUnlockModalOpen.set(true);
     }
   }
 
   openSetupVaultModal() {
-    if (this.vaultStatus() !== VAULT_STATUS.NO_CREATE) return;
-    const uiModal = this._secureModalUi();
-    if (uiModal) {
-      uiModal.open();
-      return;
-    }
-    this._secureModal()?.showModal();
+    this.isSecureModalOpen.set(true);
   }
 
   openUnlockVaultModal() {
-    if (this.vaultStatus() !== VAULT_STATUS.ENCRYPTED) return;
-    const uiModal = this._unlockModalUi();
-    if (uiModal) {
-      uiModal.open();
-      return;
-    }
-    this._unlockModal()?.showModal();
+    this.isUnlockModalOpen.set(true);
   }
 
   async changePin(oldPin: string, newPin: string): Promise<boolean> {

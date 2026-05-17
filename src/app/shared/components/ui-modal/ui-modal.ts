@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, output, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, input, model, viewChild } from '@angular/core';
 
 export type UiModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -17,50 +17,53 @@ export class UiModal {
   closeOnEscape = input<boolean>(true);
   closeOnBackdrop = input<boolean>(true);
   static = input<boolean>(false);
-
-  closed = output<void>();
-
-  isOpen = signal(false);
+  isOpen = model<boolean>(false);
 
   private _dialog = viewChild<ElementRef<HTMLDialogElement>>('dialogElement');
 
-  open() {
+  private _syncDialogWithModel = effect(() => {
     const dialog = this._dialog()?.nativeElement;
     if (!dialog) return;
 
-    dialog.showModal();
-    this.isOpen.set(true);
-  }
+    if (this.isOpen()) {
+      if (!dialog.open) {
+        dialog.showModal();
+      }
+    } else {
+      if (dialog.open) {
+        dialog.close();
+      }
+    }
+  });
 
-  close() {
-    const dialog = this._dialog()?.nativeElement;
-    if (!dialog) return;
-
-    dialog.close();
-    this.isOpen.set(false);
-    this.closed.emit();
-  }
-
-  private _backdropEffect = effect(() => {
+  private _dialogCloseListener = effect(() => {
     const dialog = this._dialog()?.nativeElement;
     if (!dialog) return;
 
     const handleClose = () => {
       this.isOpen.set(false);
-      this.closed.emit();
     };
 
     dialog.addEventListener('close', handleClose);
 
-    if (!this.closeOnEscape() && this.static()) {
-      dialog.addEventListener('cancel', (e) => {
-        e.preventDefault();
-      });
-    }
-
     return () => {
       dialog.removeEventListener('close', handleClose);
     };
+  });
+
+  private _preventCancelEffect = effect(() => {
+    const dialog = this._dialog()?.nativeElement;
+    if (!dialog) return;
+
+    if (this.static() || !this.closeOnEscape()) {
+      const handleCancel = (e: Event) => {
+        e.preventDefault();
+      };
+      dialog.addEventListener('cancel', handleCancel);
+      return () => dialog.removeEventListener('cancel', handleCancel);
+    }
+
+    return;
   });
 
   protected _onBackdropClick(event: MouseEvent) {
@@ -80,7 +83,7 @@ export class UiModal {
       event.clientY > rect.bottom;
 
     if (isBackdropClick) {
-      this.close();
+      this.isOpen.set(false);
     }
   }
 }

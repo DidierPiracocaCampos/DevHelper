@@ -1,5 +1,5 @@
-<ui-modal #modal title="Desbloquear Vault" icon="lock" size="md"
-  (closed)="reset()">
+<ui-modal title="Desbloquear Vault" icon="lock" size="md" [(isOpen)]="isOpen"
+  (isOpenChange)="reset()">
 
   <div body
     class="flex flex-col items-center gap-4 p-4">

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, AfterViewInit, Component, computed, effect, inject, OnInit, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from "../../../components/ui-modal/ui-modal";
@@ -15,8 +15,7 @@ import { UiAlert } from "../../../components/ui-alert/ui-alert";
   styleUrl: './modal-create-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalCreateVault implements OnInit, AfterViewInit {
-  protected modal = viewChild.required<UiModal>('modal');
+export class ModalCreateVault {
   protected creatingUnlockWithPasskey = signal(false);
   protected isLoadingUnlockWithPin = signal(false);
   protected createUnlockWithPin = signal(false);
@@ -31,17 +30,8 @@ export class ModalCreateVault implements OnInit, AfterViewInit {
 
   protected readonly status = this._vault.vaultStatus;
   protected readonly haveUnlockKeyWithPin = this._vault.haveUnlockKeyWithPin;
-  protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
-
-  ngOnInit() {
-    if (this.haveUnlockKeyWithPin()) {
-      this._secureForm.controls.current_pin.enable();
-    }
-  }
-
-  ngAfterViewInit() {
-    this._vault.setSecureModalUi(this.modal());
-  }
+protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
+  protected readonly isOpen = this._vault.isSecureModalOpen;
 
   private _pinStateEffect = effect(() => {
     if (this.haveUnlockKeyWithPin()) {
@@ -50,10 +40,6 @@ export class ModalCreateVault implements OnInit, AfterViewInit {
       this._secureForm.controls.current_pin.disable();
     }
   });
-
-  open() {
-    this.modal().open();
-  }
 
   async submitFormPin() {
     const f = this._secureForm;

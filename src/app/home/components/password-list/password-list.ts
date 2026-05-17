@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { UiCardButton } from "../../../shared/components/card-button/card-button";
 import { UiCard } from "../../../shared/components/card-base/card-base";
 import { UiListItem } from '../../../shared/components/item-list/item-list';
@@ -17,7 +17,7 @@ import { UiAlert } from "../../../shared/components/ui-alert/ui-alert";
 @Component({
   selector: 'password-list',
   imports: [UiCardButton, UiCard, UiListItem, UiListButton, UiInput, PasswordInput,
-    ReactiveFormsModule, UiButton, ErrorMessage, UiModal, UiAlert],
+    ReactiveFormsModule, UiButton, ErrorMessage, UiAlert, UiModal],
   templateUrl: './password-list.html',
   styleUrl: './password-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -29,9 +29,10 @@ export class PasswordList {
 
   readonly collection = this._repo.getCollection();
 
-  modalForm = viewChild.required<UiModal>('formModal');
-  modalDelete = viewChild.required<UiModal>('deleteModal');
-  modalView = viewChild.required<UiModal>('viewModal');
+  isFormModalOpen = signal(false);
+  isDeleteModalOpen = signal(false);
+  isViewModalOpen = signal(false);
+
   deleteStatus = signal<{ password?: PasswordI, loanding: boolean }>({ loanding: false });
   addStatus = signal<{ isEdit?: boolean, loanding: boolean }>({ loanding: false });
 
@@ -45,7 +46,7 @@ export class PasswordList {
     }
     this.editPassword.set(null);
     this.addStatus.update(v => { v.isEdit = false; return v; });
-    this.modalForm().open();
+    this.isFormModalOpen.set(true);
   }
 
   async openEdit(item: PasswordI) {
@@ -56,7 +57,7 @@ export class PasswordList {
     this.editPassword.set(item.password.cipher.length > 0 ? '****' : '');
     this.addStatus.update(v => { v.isEdit = true; return v; });
     this._form.patchValue({ name: item.name, secure: item.secure });
-    this.modalForm().open();
+    this.isFormModalOpen.set(true);
   }
 
   async viewPassword(item: PasswordI) {
@@ -66,7 +67,7 @@ export class PasswordList {
       return;
     }
     this.viewStatus.update(v => { v.password = item; v.loading = true; v.error = ''; return v; });
-    this.modalView().open();
+    this.isViewModalOpen.set(true);
     try {
       const decrypted = await this._repo.decryptPassword(item.password, vaultKey);
       this.viewStatus.update(v => { v.decrypted = decrypted; v.loading = false; return v; });
@@ -76,7 +77,7 @@ export class PasswordList {
   }
 
   cancelForm() {
-    this.modalForm().close();
+    this.isFormModalOpen.set(false);
     this.addStatus.set({ loanding: false });
     this._form.reset();
     this.editPassword.set(null);
@@ -99,7 +100,7 @@ export class PasswordList {
     this.addStatus.update(v => { v.loanding = true; return v; });
     this._repo.addDoc({ name, password: encryptedPassword, secure: secure ?? false }).subscribe({
       next: () => {
-        this.modalForm().close();
+        this.isFormModalOpen.set(false);
         this.collection.reload();
         this._form.reset();
         this.editPassword.set(null);
@@ -113,7 +114,7 @@ export class PasswordList {
 
   questionDelete(item: PasswordI) {
     this.deleteStatus.update((v) => { v.password = item; return v; });
-    this.modalDelete().open();
+    this.isDeleteModalOpen.set(true);
   }
 
   delete() {
@@ -122,7 +123,7 @@ export class PasswordList {
     this.deleteStatus.update((v) => { v.loanding = true; return v; });
     this._repo.deleteDoc(id).subscribe({
       next: () => {
-        this.modalDelete().close();
+        this.isDeleteModalOpen.set(false);
         this.collection.reload();
         this.deleteStatus.set({ loanding: false });
       }

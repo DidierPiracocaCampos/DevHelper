@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from '../../../components/ui-modal/ui-modal';
@@ -13,9 +13,7 @@ import { UiAlert } from '../../../components/ui-alert/ui-alert';
   styleUrl: './modal-unlock-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalUnlockVault implements AfterViewInit {
-  protected modal = viewChild.required<UiModal>('modal');
-
+export class ModalUnlockVault {
   private _vault = inject(VaultSecurity);
   private _fb = inject(FormBuilder).nonNullable;
   private _autoSubmitted = false;
@@ -29,6 +27,7 @@ export class ModalUnlockVault implements AfterViewInit {
   protected readonly attemptsRemaining = this._vault.pinAttemptsRemaining;
   protected readonly isLockedOut = this._vault.isPinLockedOut;
   protected readonly countdownMs = this._vault.pinLockoutRemainingMs;
+  protected readonly isOpen = this._vault.isUnlockModalOpen;
 
   protected readonly onlyPin = computed(() => this.havePin() && !this.havePasskey());
   protected readonly onlyPasskey = computed(() => this.havePasskey() && !this.havePin());
@@ -45,13 +44,12 @@ export class ModalUnlockVault implements AfterViewInit {
 
   private _statusEffect = effect(() => {
     const status = this._vault.vaultStatus();
-    if (status !== 'ENCRYPTED' && this.modal().isOpen()) {
-      this.modal().close();
+    if (status !== 'ENCRYPTED' && this.isOpen()) {
+      this.isOpen.set(false);
     }
   });
 
-  ngAfterViewInit() {
-    this._vault.setUnlockModalUi(this.modal());
+  constructor() {
     this._setupAutoSubmit();
   }
 
@@ -82,7 +80,7 @@ export class ModalUnlockVault implements AfterViewInit {
     this.errorMessage.set(undefined);
     try {
       await this._vault.unlockWithPin(this._unlockForm.controls.pin.value);
-      this.modal().close();
+      this.isOpen.set(false);
     } catch (error: any) {
       this.errorMessage.set(error.message);
       this._unlockForm.controls.pin.reset();
@@ -98,7 +96,7 @@ export class ModalUnlockVault implements AfterViewInit {
     this.errorMessage.set(undefined);
     try {
       await this._vault.unlockWithPasskey();
-      this.modal().close();
+      this.isOpen.set(false);
     } catch (error: any) {
       this.errorMessage.set(error.message);
     } finally {
