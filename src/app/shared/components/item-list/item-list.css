@@ -9,18 +9,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-4);
     border-radius: var(--list-row-radius);
     transition: all var(--transition-fast);
-    min-height: 3.5rem;
+    padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-3);
 }
 
 .item-list-primary {
-    background: oklch(var(--color-primary) / 0.1);
+    background: var(--color-primary);
 }
 
 .item-list-secondary {
-    background: oklch(var(--color-secondary) / 0.3);
+    background: var(--color-secondary);
 }
 
 .item-list-accent {
@@ -29,7 +28,7 @@
 
 .item-list-outlined {
     background: transparent;
-    border: 1px solid oklch(var(--color-base-content) / 0.2);
+    border: 1px solid var(--color-base-content);
 }
 
 .item-list-plain {

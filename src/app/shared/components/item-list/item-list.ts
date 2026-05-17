@@ -13,7 +13,7 @@ export class UiListItem {
   label = input<string>();
   sub = input<string>();
   variant = input<UiListItemVariant>('default');
-  color = input<UiListItemColor>('primary');
+  severity = input<UiListItemColor>('primary');
   disabled = input<boolean>(false);
   selected = input<boolean>(false);
 }

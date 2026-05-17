@@ -1,5 +1,5 @@
 <button
-  class="list-btn list-btn-{{severity()}}"
+  class="list-btn list-btn-{{variant()}} list-btn-{{severity()}}"
   [disabled]="disabled() || loading()"
   (click)="click.emit()">
   @if (loading()) {

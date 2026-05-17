@@ -6,15 +6,15 @@
 }
 
 .list-btn {
-    padding: var(--spacing-3);
+    padding: var(--spacing-1);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+    width: 3rem;
+    height: 3rem;
     aspect-ratio: 1;
 }
 
@@ -31,23 +31,69 @@
     background: oklch(var(--color-base-content) / 0.1);
 }
 
-.list-btn-neutral {
-    background: oklch(var(--color-base-content) / 0.05);
+.list-btn-outline {
+    background: transparent;
+    border: 1px solid var(--color-base-content);
 }
 
-.list-btn-neutral:hover:not(:disabled) {
-    background: oklch(var(--color-base-content) / 0.15);
+.list-btn-outline:hover:not(:disabled) {
+    background: oklch(var(--color-base-content) / 0.1);
 }
 
-.list-btn-primary {
-    background: oklch(var(--color-primary) / 0.15);
-    color: var(--color-primary-content);
+.list-btn-solid {
+    background: var(--color-base-content);
+    color: var(--color-base);
 }
 
-.list-btn-primary:hover:not(:disabled) {
-    background: oklch(var(--color-primary) / 0.25);
+.list-btn-solid:hover:not(:disabled) {
+    background: oklch(var(--color-base-content) / 0.8);
 }
 
 .icon {
     font-size: var(--icon-size-lg);
+    color:var(--color-base-content) !important;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-btn-primary {
+    --color-base-content: var(--color-primary);
+}
+
+.list-btn-secondary {
+    --color-base-content: var(--color-secondary);
+}
+
+.list-btn-error:hover:not(:disabled) .icon {
+    --color-base-content: var(--color-error-content);
+    background: var(--color-error-bg);
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.list-btn-info:hover:not(:disabled) .icon {
+    --color-base-content: var(--color-info-content);
+    background: var(--color-info-bg);
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
+}
+
+.list-btn-success:hover:not(:disabled) .icon {
+    --color-base-content: var(--color-success-content);
+    background: var(--color-success-bg);
+    border-radius: 100%;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    -ms-border-radius: 100%;
+    -o-border-radius: 100%;
 }
