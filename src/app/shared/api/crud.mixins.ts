@@ -303,7 +303,7 @@ export function withPagination<T extends { id?: string }>() {
         options?: QueryOptions,
         cursor?: QueryDocumentSnapshot<T>,
       ): Promise<PaginationResult<T>> {
-        let q: Query<T, DocumentData> = ref;
+        let q: any = ref;
 
         if (options?.filters) {
           for (const [field, op, value] of options?.filters) {
