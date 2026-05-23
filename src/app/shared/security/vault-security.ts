@@ -186,7 +186,7 @@ export class VaultSecurity {
       if (!unlockKey) {
         throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN);
       }
-      const saveUnlockKey = await firstValueFrom(this._repository.addDoc(unlockKey));
+      const _saveUnlockKey = await firstValueFrom(this._repository.addDoc(unlockKey));
       this._repository.unlockList.reload();
 
       this._vaultKey.set(masterKey);
@@ -236,7 +236,7 @@ export class VaultSecurity {
       );
       this._vaultKey.set(await this._masterKey.importMasterKey(rawMasterKey));
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw error;
     }
   }

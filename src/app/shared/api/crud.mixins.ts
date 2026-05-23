@@ -226,7 +226,7 @@ export function withQuery<T extends { id?: string }>() {
             if (!ref) return [];
 
             return runInInjectionContext(this._injector, async () => {
-              let q: any = ref;
+              let q: CollectionReference<T, DocumentData> = ref;
 
               if (options.filters) {
                 for (const [field, op, value] of options.filters) {
@@ -302,7 +302,7 @@ export function withPagination<T extends { id?: string }>() {
         options?: QueryOptions,
         cursor?: QueryDocumentSnapshot<T>,
       ): Promise<PaginationResult<T>> {
-        let q: any = ref;
+        let q: CollectionReference<T, DocumentData> = ref;
 
         if (options?.filters) {
           for (const [field, op, value] of options.filters) {

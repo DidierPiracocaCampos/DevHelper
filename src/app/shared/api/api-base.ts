@@ -6,7 +6,7 @@ import { map } from 'rxjs/internal/operators/map';
 import { User } from '@angular/fire/auth';
 import { collection, Firestore, FirestoreDataConverter } from '@angular/fire/firestore';
 
-export type Constructor<T = {}> = abstract new (...args: any) => T;
+export type Constructor<T = object> = abstract new (...args: any[]) => T;
 
 @Injectable()
 export abstract class ApiBase<T extends { id?: string }> {

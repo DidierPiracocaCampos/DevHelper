@@ -99,7 +99,7 @@ export class PasswordList {
         v.loading = false;
         return v;
       });
-    } catch (err) {
+    } catch (_err) {
       this.viewStatus.update((v) => {
         v.error = 'Error al desencriptar';
         v.loading = false;

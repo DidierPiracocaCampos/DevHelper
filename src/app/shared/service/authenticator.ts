@@ -37,6 +37,8 @@ export interface FailedAttempt {
   email: string;
 }
 
+type FirebaseError = { code?: string };
+
 @Injectable({
   providedIn: 'root',
 })
@@ -118,9 +120,10 @@ export class Authenticator {
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
-      } catch (error: any) {
-        this._toastService.error('Error en registro', error.code);
-        return { success: false, error: error.code };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        this._toastService.error('Error en registro', code);
+        return { success: false, error: code };
       }
     });
   }
@@ -131,15 +134,16 @@ export class Authenticator {
         return { success: false, error: AuthErrorCode.TooManyRequests };
       }
       try {
-        const result = await signInWithEmailAndPassword(this._auth, email, password);
+        await signInWithEmailAndPassword(this._auth, email, password);
         this._clearFailedAttempts(email);
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
-      } catch (error: any) {
+      } catch (error) {
         this._recordFailedAttempt(email);
-        this._toastService.error('Error en inicio de sesión', error.code);
-        return { success: false, error: error.code };
+        const code = (error as FirebaseError).code;
+        this._toastService.error('Error en inicio de sesión', code);
+        return { success: false, error: code };
       }
     });
   }
@@ -152,10 +156,11 @@ export class Authenticator {
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
-      } catch (error: any) {
-        console.error('Google login error:', error.code, error.message);
-        this._toastService.error('Error con Google', error.code);
-        return { success: false, error: error.code };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        console.error('Google login error:', code);
+        this._toastService.error('Error con Google', code);
+        return { success: false, error: code };
       }
     });
   }
@@ -168,10 +173,11 @@ export class Authenticator {
         this._updateLastActivity();
         this._router.navigate(['/']);
         return { success: true };
-      } catch (error: any) {
-        console.error('GitHub login error:', error.code, error.message);
-        this._toastService.error('Error con GitHub', error.code);
-        return { success: false, error: error.code };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        console.error('GitHub login error:', code);
+        this._toastService.error('Error con GitHub', code);
+        return { success: false, error: code };
       }
     });
   }
@@ -181,9 +187,10 @@ export class Authenticator {
       try {
         await sendPasswordResetEmail(this._auth, email);
         return { success: true };
-      } catch (error: any) {
-        this._toastService.error('Error al enviar correo de recuperación', error.code);
-        return { success: false, error: error.code };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        this._toastService.error('Error al enviar correo de recuperación', code);
+        return { success: false, error: code };
       }
     });
   }
@@ -199,9 +206,10 @@ export class Authenticator {
         await reauthenticateWithCredential(user, credential);
         this._updateLastActivity();
         return { success: true };
-      } catch (error: any) {
-        this._toastService.error('Error de reautenticación', error.code);
-        return { success: false, error: error.code };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        this._toastService.error('Error de reautenticación', code);
+        return { success: false, error: code };
       }
     });
   }

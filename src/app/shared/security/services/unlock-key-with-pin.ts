@@ -61,7 +61,7 @@ export class UnlockKeyWithPin {
     let masterKey: ArrayBuffer;
     try {
       masterKey = await this.unlockMasterKey(oldPin, currentUnlockKey);
-    } catch (error) {
+    } catch (_e) {
       throw new Error(VAULT_ERRORS.INCORRECT_PIN_TO_UNLOCK_WITH_PIN);
     }
     const newUnlockKey = await this.createUnlockKey(newPin, masterKey);
