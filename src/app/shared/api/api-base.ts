@@ -6,6 +6,7 @@ import { map } from 'rxjs/internal/operators/map';
 import { User } from '@angular/fire/auth';
 import { collection, Firestore, FirestoreDataConverter } from '@angular/fire/firestore';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Constructor<T = object> = abstract new (...args: any[]) => T;
 
 @Injectable()

@@ -16,6 +16,7 @@ import {
   limit,
   orderBy,
   query,
+  Query,
   runTransaction,
   setDoc,
   startAfter,
