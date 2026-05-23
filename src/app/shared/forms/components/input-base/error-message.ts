@@ -4,7 +4,7 @@ import { Directive, inject, input, TemplateRef } from '@angular/core';
   selector: 'ng-template[errorMessage]',
 })
 export class ErrorMessage {
-  template = inject(TemplateRef<any>);
+  template = inject(TemplateRef<unknown>);
   error = input.required<string>({ alias: 'errorMessage' });
   visible = input<boolean>(false);
 }

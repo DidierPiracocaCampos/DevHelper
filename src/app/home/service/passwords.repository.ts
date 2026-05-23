@@ -6,7 +6,6 @@ import { withCollection } from '../../shared/api/crud.mixins';
 import { withAddDoc } from '../../shared/api/crud.mixins';
 import { withDocDelete } from '../../shared/api/crud.mixins';
 import { MasterKey } from '../../shared/security/services/master-key';
-import { toBase64, fromBase64 } from '../../shared/security/services/utils';
 
 @Injectable({
   providedIn: 'root',

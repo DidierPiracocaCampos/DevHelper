@@ -87,8 +87,8 @@ export class ModalUnlockVault {
     this.errorMessage.set(undefined);
     try {
       await this._vault.unlockWithPin(this._unlockForm.controls.pin.value);
-    } catch (error: any) {
-      this.errorMessage.set(error.message);
+    } catch (error: unknown) {
+      this.errorMessage.set((error as Error).message);
       this._unlockForm.controls.pin.reset();
       this._autoSubmitted = false;
     } finally {
@@ -102,8 +102,8 @@ export class ModalUnlockVault {
     this.errorMessage.set(undefined);
     try {
       await this._vault.unlockWithPasskey();
-    } catch (error: any) {
-      this.errorMessage.set(error.message);
+    } catch (error: unknown) {
+      this.errorMessage.set((error as Error).message);
     } finally {
       this.isLoading.set(false);
     }

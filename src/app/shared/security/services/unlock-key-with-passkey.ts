@@ -20,7 +20,7 @@ export class UnlockKeyWithPasskey {
       if (!isSupported) {
         throw new Error(VAULT_ERRORS.WEB_AUTHN_NOT_SUPPORTED);
       }
-    } catch (error) {
+    } catch (_error) {
       throw new Error(VAULT_ERRORS.WEB_AUTHN_NOT_SUPPORTED);
     }
 
@@ -50,7 +50,7 @@ export class UnlockKeyWithPasskey {
 
       const response = credential.response as AuthenticatorAttestationResponse;
       return response.clientDataJSON;
-    } catch (error) {
+    } catch (_error) {
       throw new Error(VAULT_ERRORS.PASSKEY_REGISTRATION_FAILED);
     }
   }
@@ -86,7 +86,7 @@ export class UnlockKeyWithPasskey {
           type: 'passkey',
         },
       };
-    } catch (error) {
+    } catch (_error) {
       throw new Error(VAULT_ERRORS.PASSKEY_CREATION_FAILED);
     }
   }
@@ -119,7 +119,7 @@ export class UnlockKeyWithPasskey {
       );
 
       return rawMasterKey;
-    } catch (error) {
+    } catch (_error) {
       throw new Error(VAULT_ERRORS.PASSKEY_UNLOCK_FAILED);
     }
   }
@@ -143,8 +143,8 @@ export class UnlockKeyWithPasskey {
 
       const response = credential.response as AuthenticatorAssertionResponse;
       return response.clientDataJSON;
-    } catch (error: any) {
-      if (error.name === 'NotAllowedError') {
+    } catch (error: unknown) {
+      if ((error as { name?: string }).name === 'NotAllowedError') {
         throw new Error(VAULT_ERRORS.PASSKEY_USER_VERIFICATION);
       }
       throw new Error(VAULT_ERRORS.PASSKEY_UNLOCK_FAILED);

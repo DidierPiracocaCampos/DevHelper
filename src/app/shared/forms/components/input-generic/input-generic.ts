@@ -16,7 +16,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class UiInput extends InputBase<any> {
+export class UiInput extends InputBase<string> {
   label = input();
   type = input('string');
   icon = input<string>();

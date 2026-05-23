@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from '../../../components/ui-modal/ui-modal';
@@ -71,8 +64,8 @@ export class ModalCreateVault {
         this.createUnlockWithPin.set(true);
         this.successType.set('pin');
       }
-    } catch (error: any) {
-      this.pinError.set(error.message);
+    } catch (error: unknown) {
+      this.pinError.set((error as Error).message);
     } finally {
       this.isLoadingUnlockWithPin.set(false);
     }
@@ -91,8 +84,8 @@ export class ModalCreateVault {
       } else {
         this.passkeyError.set('No se pudo crear el vault con passkey.');
       }
-    } catch (error: any) {
-      this.passkeyError.set(error.message);
+    } catch (error: unknown) {
+      this.passkeyError.set((error as Error).message);
     } finally {
       this.creatingUnlockWithPasskey.set(false);
     }
