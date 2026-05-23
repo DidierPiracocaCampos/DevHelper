@@ -1,11 +1,16 @@
 <dialog #dialogElement class="modal" (click)="_onBackdropClick($event)">
   <div class="modal-box" [class]="'max-w-' + size()">
-
     <div class="flex justify-between items-center">
       <h3 class="text-2xl font-bold flex space-x-1 items-center">
-        @if(icon()) {
-          @if(iconBg()) {
-            <span class="icon flex justify-center items-center w-10 h-10 rounded-full bg-{{iconBg()}}/15 text-{{iconBg()}}">{{ icon() }}</span>
+        @if (icon()) {
+          @if (iconBg()) {
+            <span
+              class="icon flex justify-center items-center w-10 h-10 rounded-full bg-{{
+                iconBg()
+              }}/15 text-{{ iconBg() }}"
+            >
+              {{ icon() }}
+            </span>
           } @else {
             <span class="icon">{{ icon() }}</span>
           }
@@ -13,7 +18,7 @@
         <span>{{ title() }}</span>
       </h3>
 
-      @if(showCloseButton() && !static()) {
+      @if (showCloseButton() && !static()) {
         <button class="btn btn-sm btn-circle btn-ghost icon" (click)="isOpen.set(false)">
           close
         </button>
@@ -25,10 +30,9 @@
     </div>
 
     <ng-content select="[footer]" />
-
   </div>
 
-  @if(!static()) {
+  @if (!static()) {
     <form method="dialog" class="modal-backdrop">
       <button [value]="closeOnBackdrop() ? 'close' : 'hide'">close</button>
     </form>

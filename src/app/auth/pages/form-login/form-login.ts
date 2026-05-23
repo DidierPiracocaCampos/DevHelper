@@ -11,7 +11,7 @@ import { Loader } from '../../../shared/service/loader';
   imports: [ReactiveFormsModule, EmailInput, PasswordInput, RouterLink],
   templateUrl: './form-login.html',
   styleUrl: './form-login.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class FormLogin {
   private _authenticator = inject(Authenticator);
@@ -22,14 +22,14 @@ export default class FormLogin {
 
   form = this._formBuilder.group({
     email: this._formBuilder.control<string>('', [Validators.email, Validators.required]),
-    password: this._formBuilder.control<string>('', [Validators.required])
+    password: this._formBuilder.control<string>('', [Validators.required]),
   });
 
   async onSubmit() {
     const f = this.form;
     if (f.invalid) {
       f.markAllAsDirty();
-      return
+      return;
     }
     const value = f.value;
     this.loading = true;
@@ -47,12 +47,13 @@ export default class FormLogin {
 
   private _handleAuthError(errorCode: string): void {
     if (errorCode === AuthErrorCode.TooManyRequests) {
-      this.form.setErrors({ customError: 'Demasiados intentos fallidos. Intenta de nuevo en 15 minutos.' });
+      this.form.setErrors({
+        customError: 'Demasiados intentos fallidos. Intenta de nuevo en 15 minutos.',
+      });
     } else {
       this.form.get('email')?.setErrors({ FirebaseError: errorCode });
       this.form.get('password')?.setErrors({ FirebaseError: errorCode });
       this.form.setErrors({ FirebaseError: errorCode });
     }
   }
-
 }

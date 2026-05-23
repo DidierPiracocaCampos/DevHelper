@@ -6,7 +6,7 @@ import { ConfirmModal } from './shared/components/confirm-modal/confirm-modal';
   selector: 'app-root',
   imports: [RouterOutlet, UiToastComponent, ConfirmModal],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected readonly title = signal('devhelper-web');

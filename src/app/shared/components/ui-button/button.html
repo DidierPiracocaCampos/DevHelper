@@ -3,7 +3,8 @@
   [class.px-7]="loading()"
   [disabled]="disabled()"
   [attr.type]="type()"
-  (click)="click.emit()">
+  (click)="click.emit()"
+>
   @if (loading()) {
     <span class="loading loading-infinity loading-sm"></span>
   } @else {

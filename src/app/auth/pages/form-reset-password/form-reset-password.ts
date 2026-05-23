@@ -11,7 +11,7 @@ import { Loader } from '../../../shared/service/loader';
   imports: [ReactiveFormsModule, EmailInput, RouterLink],
   templateUrl: './form-reset-password.html',
   styleUrl: './form-reset-password.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class FormResetPassword {
   private _formBuilder = inject(FormBuilder).nonNullable;
@@ -23,14 +23,14 @@ export default class FormResetPassword {
   errorMessage = signal<string | null>(null);
 
   form = this._formBuilder.group({
-    email: this._formBuilder.control<string>('', [Validators.email, Validators.required])
+    email: this._formBuilder.control<string>('', [Validators.email, Validators.required]),
   });
 
   async onSubmit() {
     const f = this.form;
     if (f.invalid) {
       f.markAllAsDirty();
-      return
+      return;
     }
     const value = f.value;
     this.loading = true;
@@ -60,5 +60,4 @@ export default class FormResetPassword {
     }
     return 'Error al enviar el correo de recuperación';
   }
-
 }

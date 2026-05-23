@@ -1,4 +1,12 @@
-import { computed, DestroyRef, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { VaultRepository } from './services/vault.repository';
 import { MasterKey } from './services/master-key';
@@ -8,12 +16,10 @@ import { UnlockKeyI } from './models/unlock-key.model';
 import { firstValueFrom } from 'rxjs';
 import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
 
-
 @Injectable({
   providedIn: 'root',
 })
 export class VaultSecurity {
-
   private _auth = inject(Auth);
   private _repository = inject(VaultRepository);
   private _masterKey = inject(MasterKey);
@@ -45,12 +51,12 @@ export class VaultSecurity {
 
   readonly haveUnlockKeyWithPin = computed(() => {
     const unlock = this._repository.unlockKeyWithPin();
-    return unlock != undefined
+    return unlock != undefined;
   });
 
   readonly haveUnlockKeyWithPasskey = computed(() => {
     const unlock = this._repository.unlockKeyWithPasskey();
-    return unlock != undefined
+    return unlock != undefined;
   });
 
   readonly isWebAuthnSupported = signal(false);
@@ -170,12 +176,15 @@ export class VaultSecurity {
         const attestation = await this._unlockWithPasskey.registerPasskeyAttestation(
           user.uid,
           user.email || undefined,
-          user.displayName || undefined
+          user.displayName || undefined,
         );
-        unlockKey = await this._unlockWithPasskey.createUnlockKeyWithPasskey(attestation, masterKeyBuffer);
+        unlockKey = await this._unlockWithPasskey.createUnlockKeyWithPasskey(
+          attestation,
+          masterKeyBuffer,
+        );
       }
       if (!unlockKey) {
-        throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN)
+        throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN);
       }
       const saveUnlockKey = await firstValueFrom(this._repository.addDoc(unlockKey));
       this._repository.unlockList.reload();
@@ -221,7 +230,10 @@ export class VaultSecurity {
       }
 
       const assertion = await this._unlockWithPasskey.requestAssertion();
-      const rawMasterKey = await this._unlockWithPasskey.unlockMasterKeyWithPasskey(assertion, unlockKey);
+      const rawMasterKey = await this._unlockWithPasskey.unlockMasterKeyWithPasskey(
+        assertion,
+        unlockKey,
+      );
       this._vaultKey.set(await this._masterKey.importMasterKey(rawMasterKey));
       return true;
     } catch (error: any) {
@@ -270,12 +282,10 @@ export class VaultSecurity {
       const updatedUnlockKey = await this._unlockWithPin.changePin(
         oldPin,
         newPin,
-        currentUnlockKey
+        currentUnlockKey,
       );
 
-      await firstValueFrom(
-        this._repository.setDoc(currentUnlockKey.id, updatedUnlockKey)
-      );
+      await firstValueFrom(this._repository.setDoc(currentUnlockKey.id, updatedUnlockKey));
 
       this._repository.unlockList.reload();
       this._recordPinAttempt(true);
@@ -286,5 +296,4 @@ export class VaultSecurity {
       return false;
     }
   }
-
 }

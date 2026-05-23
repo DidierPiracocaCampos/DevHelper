@@ -11,22 +11,16 @@ import { toBase64, fromBase64 } from '../../shared/security/services/utils';
 @Injectable({
   providedIn: 'root',
 })
-export class PasswordRepository extends
-  withDocDelete<PasswordI>()(
-    withAddDoc<PasswordI>()(
-      withCollection<PasswordI>()(
-        ApiBase<PasswordI>
-      )
-    )
-  ) {
-
+export class PasswordRepository extends withDocDelete<PasswordI>()(
+  withAddDoc<PasswordI>()(withCollection<PasswordI>()(ApiBase<PasswordI>)),
+) {
   private _masterKey = inject(MasterKey);
 
   protected path: [string, ...string[]] = ['passwords'];
 
   protected converter: FirestoreDataConverter<PasswordI> = {
     toFirestore: (data: PasswordI) => data,
-    fromFirestore: (snap) => snap.data() as PasswordI
+    fromFirestore: (snap) => snap.data() as PasswordI,
   };
 
   async encryptPassword(plaintext: string, vaultKey: CryptoKey): Promise<EncryptedData> {
@@ -42,5 +36,4 @@ export class PasswordRepository extends
     const iv = new Uint8Array(data.iv);
     return this._masterKey.decryptVaultItem(vaultKey, ciphertext, iv);
   }
-
 }

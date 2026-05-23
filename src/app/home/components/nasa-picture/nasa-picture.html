@@ -1,15 +1,21 @@
 <div class="hover-3d w-[99%] h-full min-h-35 relative">
-    <div>
-        @if(info.hasValue() && info.value().url ){
-        <img [ngSrc]="info.value().url" [alt]="info.value().title" fill class="object-cover rounded-2xl" priority />
-        }
-    </div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div>
+    @if (info.hasValue() && info.value().url) {
+      <img
+        [ngSrc]="info.value().url"
+        [alt]="info.value().title"
+        fill
+        class="object-cover rounded-2xl"
+        priority
+      />
+    }
+  </div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
 </div>

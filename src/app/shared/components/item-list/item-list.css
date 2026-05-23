@@ -2,70 +2,70 @@
 @reference '../../../../styles/tokens.css';
 
 :host {
-    display: contents;
+  display: contents;
 }
 
 .item-list-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: var(--list-row-radius);
-    transition: all var(--transition-fast);
-    padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--list-row-radius);
+  transition: all var(--transition-fast);
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-3);
 }
 
 .item-list-primary {
-    background: var(--color-primary);
+  background: var(--color-primary);
 }
 
 .item-list-secondary {
-    background: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 .item-list-accent {
-    background: oklch(var(--color-accent) / 0.3);
+  background: oklch(var(--color-accent) / 0.3);
 }
 
 .item-list-outlined {
-    background: transparent;
-    border: 1px solid var(--color-base-content);
+  background: transparent;
+  border: 1px solid var(--color-base-content);
 }
 
 .item-list-plain {
-    background: transparent;
+  background: transparent;
 }
 
 .item-list-disabled {
-    opacity: 0.5;
-    pointer-events: none;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .item-list-selected {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
 }
 
 .item-list-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-1);
-    min-width: 0;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+  flex: 1;
 }
 
 .item-list-label {
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .item-list-sub {
-    font-size: var(--font-size-xs);
-    color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 .item-list-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }

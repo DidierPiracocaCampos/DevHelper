@@ -14,13 +14,12 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => UiInput),
       multi: true,
     },
-  ]
+  ],
 })
 export class UiInput extends InputBase<any> {
   label = input();
   type = input('string');
   icon = input<string>();
 
-  protected override inputOnInit(): void {
-  }
+  protected override inputOnInit(): void {}
 }

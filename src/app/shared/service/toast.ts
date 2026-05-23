@@ -20,11 +20,16 @@ export class ToastService {
   private readonly MAX_TOASTS = 5;
   private counter = 0;
 
-  show(message: string, severity: ToastSeverity = 'error', details?: string, duration = 5000): void {
+  show(
+    message: string,
+    severity: ToastSeverity = 'error',
+    details?: string,
+    duration = 5000,
+  ): void {
     const id = `toast-${++this.counter}`;
     const toast: ToastI = { id, message, severity, details, expanded: false };
 
-    this._toasts.update(toasts => {
+    this._toasts.update((toasts) => {
       const updated = [...toasts, toast];
       return updated.length > this.MAX_TOASTS ? updated.slice(-this.MAX_TOASTS) : updated;
     });
@@ -49,12 +54,12 @@ export class ToastService {
   }
 
   dismiss(id: string): void {
-    this._toasts.update(toasts => toasts.filter(t => t.id !== id));
+    this._toasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   toggleExpanded(id: string): void {
-    this._toasts.update(toasts =>
-      toasts.map(t => (t.id === id ? { ...t, expanded: !t.expanded } : t))
+    this._toasts.update((toasts) =>
+      toasts.map((t) => (t.id === id ? { ...t, expanded: !t.expanded } : t)),
     );
   }
 }

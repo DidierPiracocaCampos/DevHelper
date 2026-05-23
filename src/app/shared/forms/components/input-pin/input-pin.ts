@@ -1,4 +1,11 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, input, viewChildren } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  forwardRef,
+  input,
+  viewChildren,
+} from '@angular/core';
 import { InputBase } from '../input-base/input-base';
 import { NgTemplateOutlet } from '@angular/common';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -14,10 +21,9 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       useExisting: forwardRef(() => UiPinInput),
       multi: true,
     },
-  ]
+  ],
 })
 export class UiPinInput extends InputBase<string> implements AfterViewInit {
-
   label = input<string>();
   length = input<number>(4);
 
@@ -25,8 +31,7 @@ export class UiPinInput extends InputBase<string> implements AfterViewInit {
 
   protected digits: string[] = [];
 
-  protected override inputOnInit(): void {
-  }
+  protected override inputOnInit(): void {}
 
   ngAfterViewInit() {
     this.resetDigits();
@@ -66,14 +71,7 @@ export class UiPinInput extends InputBase<string> implements AfterViewInit {
   }
 
   onKeyDown(event: KeyboardEvent, index: number) {
-    const allowedKeys = [
-      'Backspace',
-      'Tab',
-      'ArrowLeft',
-      'ArrowRight',
-      'Home',
-      'End'
-    ];
+    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
     if (!allowedKeys.includes(event.key) && !/^\d$/.test(event.key)) {
       event.preventDefault();
@@ -130,7 +128,6 @@ export class UiPinInput extends InputBase<string> implements AfterViewInit {
     this.focus(Math.min(numbers.length, this.length() - 1));
   }
 
-
   getValue(): string {
     return this.digits.join('');
   }
@@ -152,5 +149,4 @@ export class UiPinInput extends InputBase<string> implements AfterViewInit {
       });
     });
   }
-
 }

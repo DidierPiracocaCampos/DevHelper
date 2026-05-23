@@ -9,7 +9,7 @@ export type UiCardButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent
   imports: [],
   templateUrl: './card-button.html',
   styleUrl: './card-button.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCardButton {
   icon = input.required<string>();

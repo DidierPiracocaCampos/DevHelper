@@ -26,7 +26,7 @@ export class ConfirmService {
   show(config: ConfirmConfig): Promise<boolean> {
     this._config.set(config);
     this._isOpen.set(true);
-    return new Promise(resolve => this._resolveRef.set(resolve));
+    return new Promise((resolve) => this._resolveRef.set(resolve));
   }
 
   confirm(message: string, title = 'Confirmar'): Promise<boolean> {
@@ -74,9 +74,12 @@ export class ConfirmService {
     const resolve = this._resolveRef();
     if (resolve) {
       this._isOpen.set(false);
-      this._config.set(null);
       this._resolveRef.set(null);
       resolve(result);
     }
+  }
+
+  clearConfig(): void {
+    this._config.set(null);
   }
 }

@@ -1,6 +1,25 @@
-import { computed, inject, Injectable, Injector, runInInjectionContext, signal } from '@angular/core';
+import {
+  computed,
+  inject,
+  Injectable,
+  Injector,
+  runInInjectionContext,
+  signal,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Auth, authState, createUserWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, reauthenticateWithCredential, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, User } from '@angular/fire/auth';
+import {
+  Auth,
+  authState,
+  createUserWithEmailAndPassword,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  reauthenticateWithCredential,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  User,
+} from '@angular/fire/auth';
 import { EmailAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
@@ -22,7 +41,6 @@ export interface FailedAttempt {
   providedIn: 'root',
 })
 export class Authenticator {
-
   private readonly LOCKOUT_DURATION_MS = 15 * 60 * 1000;
   private readonly MAX_FAILED_ATTEMPTS = 5;
   private readonly FAILED_ATTEMPTS_WINDOW_MS = 5 * 60 * 1000;
@@ -49,15 +67,18 @@ export class Authenticator {
   private _isAccountLocked(email: string): boolean {
     const now = Date.now();
     const recentAttempts = this._failedAttempts.filter(
-      a => a.email.toLowerCase() === email.toLowerCase() &&
-        now - a.timestamp < this.FAILED_ATTEMPTS_WINDOW_MS
+      (a) =>
+        a.email.toLowerCase() === email.toLowerCase() &&
+        now - a.timestamp < this.FAILED_ATTEMPTS_WINDOW_MS,
     );
     if (recentAttempts.length >= this.MAX_FAILED_ATTEMPTS) {
       const oldestAttempt = recentAttempts[0];
       if (now - oldestAttempt.timestamp < this.LOCKOUT_DURATION_MS) {
         return true;
       }
-      this._failedAttempts = this._failedAttempts.filter(a => a.timestamp > oldestAttempt.timestamp);
+      this._failedAttempts = this._failedAttempts.filter(
+        (a) => a.timestamp > oldestAttempt.timestamp,
+      );
     }
     return false;
   }
@@ -71,7 +92,7 @@ export class Authenticator {
 
   private _clearFailedAttempts(email: string): void {
     this._failedAttempts = this._failedAttempts.filter(
-      a => a.email.toLowerCase() !== email.toLowerCase()
+      (a) => a.email.toLowerCase() !== email.toLowerCase(),
     );
   }
 

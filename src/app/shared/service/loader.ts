@@ -26,5 +26,4 @@ export class Loader {
       }, 300);
     }
   }
-  
 }

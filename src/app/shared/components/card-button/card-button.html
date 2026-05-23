@@ -1,6 +1,9 @@
 <button
-  class="btn btn-{{severity()}} btn-{{size()}} {{ shape() === 'circle' ? 'btn-circle-custom' : 'btn-square-custom' }}"
+  class="btn btn-{{ severity() }} btn-{{ size() }} {{
+    shape() === 'circle' ? 'btn-circle-custom' : 'btn-square-custom'
+  }}"
   [disabled]="disabled()"
-  (click)="click.emit()">
-  <span class="icon">{{icon()}}</span>
+  (click)="click.emit()"
+>
+  <span class="icon">{{ icon() }}</span>
 </button>

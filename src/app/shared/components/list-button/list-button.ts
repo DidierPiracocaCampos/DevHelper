@@ -1,6 +1,12 @@
 import { Component, input, output } from '@angular/core';
 
-export type UiListButtonSeverity = 'primary' | 'secondary'| 'info' | 'error' | 'success' | 'warning';
+export type UiListButtonSeverity =
+  | 'primary'
+  | 'secondary'
+  | 'info'
+  | 'error'
+  | 'success'
+  | 'warning';
 export type UiListButtonVariant = 'ghost' | 'outline' | 'solid';
 
 @Component({

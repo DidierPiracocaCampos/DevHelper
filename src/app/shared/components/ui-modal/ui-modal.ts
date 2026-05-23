@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, input, model, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  input,
+  model,
+  viewChild,
+} from '@angular/core';
 
 export type UiModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -7,7 +15,7 @@ export type UiModalSize = 'sm' | 'md' | 'lg' | 'xl';
   imports: [],
   templateUrl: './ui-modal.html',
   styleUrl: './ui-modal.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiModal {
   title = input.required<string>();

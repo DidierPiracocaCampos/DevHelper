@@ -1,4 +1,10 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 
 export type UiCardVariant = 'default' | 'elevated' | 'outlined';
 export type UiCardTheme = 'dark' | 'light';
@@ -8,7 +14,7 @@ export type UiCardTheme = 'dark' | 'light';
   imports: [],
   templateUrl: './card-base.html',
   styleUrl: './card-base.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCard {
   title = input<string>();

@@ -1,18 +1,27 @@
-<label class="label">{{label()}}:</label>
+<label class="label">{{ label() }}:</label>
 <div class="input input-lg w-full" [class.validator]="isInvalid">
-    @if(icon()){
+  @if (icon()) {
     <span class="icon">
-        {{icon()}}
+      {{ icon() }}
     </span>
-    }
-    <input class="input-grow" [id]="inputId()" [value]="value" (input)="onInput($event)"
-        [attr.aria-invalid]="isInvalid ? true : null"
-        (blur)="handleBlur()" [disabled]="isDisabled" [type]="type()" />
+  }
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    [value]="value"
+    (input)="onInput($event)"
+    [attr.aria-invalid]="isInvalid ? true : null"
+    (blur)="handleBlur()"
+    [disabled]="isDisabled"
+    [type]="type()"
+  />
 </div>
 
 @for (m of errorMessages(); track $index) {
-@if((errors?.[m.error()] && isInvalid) || m.visible()){
-<ng-container [ngTemplateOutlet]="m.template" [ngTemplateOutletContext]=" { $implicit: errors?.[m.error()] }">
-</ng-container>
-}
+  @if ((errors?.[m.error()] && isInvalid) || m.visible()) {
+    <ng-container
+      [ngTemplateOutlet]="m.template"
+      [ngTemplateOutletContext]="{ $implicit: errors?.[m.error()] }"
+    ></ng-container>
+  }
 }

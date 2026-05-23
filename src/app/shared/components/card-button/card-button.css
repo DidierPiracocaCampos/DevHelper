@@ -3,55 +3,55 @@
 @reference '../../../../styles/utilities.css';
 
 :host {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 button {
-    transition: all var(--btn-transition);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  transition: all var(--btn-transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .icon {
-    font-size: var(--icon-size);
+  font-size: var(--icon-size);
 }
 
 .btn-xl {
-    padding: var(--spacing-4);
-    font-size: 1.125rem;
-    min-width: 3.5rem;
-    min-height: 3.5rem;
-    aspect-ratio: 1;
-    border-radius: var(--btn-radius);
+  padding: var(--spacing-4);
+  font-size: 1.125rem;
+  min-width: 3.5rem;
+  min-height: 3.5rem;
+  aspect-ratio: 1;
+  border-radius: var(--btn-radius);
 }
 
 .btn-square-custom {
-    aspect-ratio: 1;
-    border-radius: var(--btn-radius);
-    padding: var(--spacing-3);
-    min-width: 3rem;
-    min-height: 3rem;
+  aspect-ratio: 1;
+  border-radius: var(--btn-radius);
+  padding: var(--spacing-3);
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .btn-circle-custom {
-    border-radius: 50%;
-    padding: var(--spacing-3);
-    min-width: 3rem;
-    min-height: 3rem;
-    aspect-ratio: 1;
+  border-radius: 50%;
+  padding: var(--spacing-3);
+  min-width: 3rem;
+  min-height: 3rem;
+  aspect-ratio: 1;
 }
 
 .btn-light {
-    background: var(--color-base-content);
-    color: var(--color-base-100);
+  background: var(--color-base-content);
+  color: var(--color-base-100);
 }
 
 .btn-light:hover {
-    background: oklch(var(--color-base-content) / 0.75);
+  background: oklch(var(--color-base-content) / 0.75);
 }

@@ -1,7 +1,8 @@
 <button
-  class="list-btn list-btn-{{variant()}} list-btn-{{severity()}}"
+  class="list-btn list-btn-{{ variant() }} list-btn-{{ severity() }}"
   [disabled]="disabled() || loading()"
-  (click)="click.emit()">
+  (click)="click.emit()"
+>
   @if (loading()) {
     <span class="loading loading-spinner loading-sm"></span>
   } @else {

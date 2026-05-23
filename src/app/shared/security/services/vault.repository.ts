@@ -1,5 +1,10 @@
 import { computed, Injectable } from '@angular/core';
-import { FirestoreDataConverter, DocumentData, QueryDocumentSnapshot, SnapshotOptions } from 'firebase/firestore';
+import {
+  FirestoreDataConverter,
+  DocumentData,
+  QueryDocumentSnapshot,
+  SnapshotOptions,
+} from 'firebase/firestore';
 import { UnlockKeyI } from '../models/unlock-key.model';
 import { VAULT_STATUS } from '../models/vault.model';
 import { fromBase64, toBase64 } from './utils';
@@ -11,15 +16,9 @@ import { withSetDoc } from '../../api/crud.mixins';
 @Injectable({
   providedIn: 'root',
 })
-export class VaultRepository extends 
-  withSetDoc<UnlockKeyI>()(
-    withAddDoc<UnlockKeyI>()(
-      withCollection<UnlockKeyI>()(
-        ApiBase<UnlockKeyI>
-      )
-    )
-  ) {
-
+export class VaultRepository extends withSetDoc<UnlockKeyI>()(
+  withAddDoc<UnlockKeyI>()(withCollection<UnlockKeyI>()(ApiBase<UnlockKeyI>)),
+) {
   protected path: [string, ...string[]] = ['vault'];
   protected converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
     toFirestore(vault: UnlockKeyI): DocumentData {
@@ -43,7 +42,7 @@ export class VaultRepository extends
         iv: fromBase64(data['iv']),
         params: data['params'],
       };
-    }
+    },
   };
 
   readonly unlockList = this.getCollection();
@@ -80,5 +79,4 @@ export class VaultRepository extends
     const value = this.unlockList.value();
     return !!value && value.length > 0;
   }
-
 }

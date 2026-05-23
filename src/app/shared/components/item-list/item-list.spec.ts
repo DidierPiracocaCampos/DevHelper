@@ -8,9 +8,8 @@ describe('UiListItem', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UiListItem]
-    })
-    .compileComponents();
+      imports: [UiListItem],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UiListItem);
     component = fixture.componentInstance;

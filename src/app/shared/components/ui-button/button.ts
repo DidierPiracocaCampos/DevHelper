@@ -1,6 +1,14 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
-export type UiButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error';
+export type UiButtonSeverity =
+  | 'neutral'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error';
 export type UiButtonSize = 'sm' | 'md' | 'lg';
 export type UiButtonVariant = 'filled' | 'outline' | 'ghost';
 
@@ -9,7 +17,7 @@ export type UiButtonVariant = 'filled' | 'outline' | 'ghost';
   imports: [],
   templateUrl: './button.html',
   styleUrl: './button.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiButton {
   severity = input<UiButtonSeverity>('primary');

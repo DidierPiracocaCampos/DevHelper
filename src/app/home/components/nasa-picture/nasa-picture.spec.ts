@@ -8,9 +8,8 @@ describe('NasaPicture', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NasaPicture]
-    })
-    .compileComponents();
+      imports: [NasaPicture],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NasaPicture);
     component = fixture.componentInstance;

@@ -1,12 +1,12 @@
 export interface EncryptedVaultKeyI {
-    cipher: number[];
-    iv: number[];
-    salt: number[];
+  cipher: number[];
+  iv: number[];
+  salt: number[];
 }
 
 export interface UserVaultI {
-    id?: string;
-    encryptedVaultKeyWithPin?: EncryptedVaultKeyI;
-    encryptedVaultKeyWithPasskey?: EncryptedVaultKeyI;
-    createdAt: number;
+  id?: string;
+  encryptedVaultKeyWithPin?: EncryptedVaultKeyI;
+  encryptedVaultKeyWithPasskey?: EncryptedVaultKeyI;
+  createdAt: number;
 }

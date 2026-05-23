@@ -8,10 +8,9 @@ import { Loader } from '../../../shared/service/loader';
   imports: [RouterOutlet],
   templateUrl: './login.html',
   styleUrl: './login.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Login {
-
   private _loader = inject(Loader);
   private _authenticator = inject(Authenticator);
 
@@ -34,5 +33,4 @@ export default class Login {
       this._loader.hide();
     }
   }
-
 }

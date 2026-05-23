@@ -1,7 +1,7 @@
 import { Directive, inject, input, TemplateRef } from '@angular/core';
 
 @Directive({
-  selector: 'ng-template[errorMessage]'
+  selector: 'ng-template[errorMessage]',
 })
 export class ErrorMessage {
   template = inject(TemplateRef<any>);

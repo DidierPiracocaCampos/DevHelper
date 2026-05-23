@@ -61,10 +61,18 @@
   margin-top: -2px;
 }
 
-.icon-error { color: var(--color-error); }
-.icon-success { color: var(--color-success); }
-.icon-warning { color: var(--color-warning); }
-.icon-info { color: var(--color-info); }
+.icon-error {
+  color: var(--color-error);
+}
+.icon-success {
+  color: var(--color-success);
+}
+.icon-warning {
+  color: var(--color-warning);
+}
+.icon-info {
+  color: var(--color-info);
+}
 
 .toast-main {
   display: flex;
@@ -72,7 +80,7 @@
   gap: var(--spacing-2);
   flex: 1;
   min-width: 0;
-  width: 100% ;
+  width: 100%;
 }
 
 .toast-row {

@@ -25,9 +25,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       let message = HTTP_ERROR_MESSAGES[status];
 
       if (!message) {
-        message = status >= 500
-          ? 'Error del servidor'
-          : 'Error en la solicitud';
+        message = status >= 500 ? 'Error del servidor' : 'Error en la solicitud';
       }
 
       let details: string | undefined;
@@ -48,6 +46,6 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       toastService.error(message, details);
 
       return throwError(() => error);
-    })
+    }),
   );
 };

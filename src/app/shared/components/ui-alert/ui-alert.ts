@@ -7,7 +7,7 @@ export type UiAlertSeverity = 'error' | 'warning' | 'info' | 'success';
   imports: [],
   templateUrl: './ui-alert.html',
   styleUrl: './ui-alert.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiAlert {
   severity = input<UiAlertSeverity>('error');

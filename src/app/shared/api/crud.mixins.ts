@@ -1,37 +1,66 @@
-import { resource, runInInjectionContext } from "@angular/core";
-import { ApiBase, Constructor } from "./api-base";
-import { firstValueFrom } from "rxjs/internal/firstValueFrom";
-import { filter } from "rxjs/internal/operators/filter";
-import { addDoc, collectionData, CollectionReference, deleteDoc, doc, docData, DocumentData, getCountFromServer, getDocs, getDoc, limit, orderBy, query, runTransaction, setDoc, startAfter, updateDoc, where, QueryDocumentSnapshot, Transaction } from "@angular/fire/firestore";
-import { AddDocFeature, CountFeature, DeleteDocFeature, GetCollectionFeature, GetDocFeature, PaginationFeature, PaginationResult, QueryFeature, QueryOptions, SetDocFeature, TransactionFeature, UpdateDocFeature } from "./api.interfaces";
-import { switchMap } from "rxjs/internal/operators/switchMap";
-import { from } from "rxjs/internal/observable/from";
-import { map } from "rxjs/internal/operators/map";
-import { of } from "rxjs/internal/observable/of";
-import { catchError } from "rxjs/internal/operators/catchError";
-import { throwError } from "rxjs/internal/observable/throwError";
+import { resource, runInInjectionContext } from '@angular/core';
+import { ApiBase, Constructor } from './api-base';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { filter } from 'rxjs/internal/operators/filter';
+import {
+  addDoc,
+  collectionData,
+  CollectionReference,
+  deleteDoc,
+  doc,
+  docData,
+  DocumentData,
+  getCountFromServer,
+  getDocs,
+  getDoc,
+  limit,
+  orderBy,
+  query,
+  runTransaction,
+  setDoc,
+  startAfter,
+  updateDoc,
+  where,
+  QueryDocumentSnapshot,
+  Transaction,
+} from '@angular/fire/firestore';
+import {
+  AddDocFeature,
+  CountFeature,
+  DeleteDocFeature,
+  GetCollectionFeature,
+  GetDocFeature,
+  PaginationFeature,
+  PaginationResult,
+  QueryFeature,
+  QueryOptions,
+  SetDocFeature,
+  TransactionFeature,
+  UpdateDocFeature,
+} from './api.interfaces';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { from } from 'rxjs/internal/observable/from';
+import { map } from 'rxjs/internal/operators/map';
+import { of } from 'rxjs/internal/observable/of';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { throwError } from 'rxjs/internal/observable/throwError';
 
 export function withCollection<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<GetCollectionFeature<T>> & TBase {
-
     abstract class GetAllMixin extends Base implements GetCollectionFeature<T> {
       readonly getCollectionResource = resource({
         loader: async () => {
           const ref = await firstValueFrom(
-            this.$userCollectionRef().pipe(
-              filter((r): r is CollectionReference<T> => !!r)
-            )
+            this.$userCollectionRef().pipe(filter((r): r is CollectionReference<T> => !!r)),
           );
           if (!ref) return [];
           return runInInjectionContext(this._injector, async () => {
-            const data = await firstValueFrom(
-              collectionData(ref, { idField: 'id' })
-            );
+            const data = await firstValueFrom(collectionData(ref, { idField: 'id' }));
             return data as (T & { id: string })[];
           });
-        }
+        },
       });
       getCollection() {
         return this.getCollectionResource;
@@ -43,7 +72,7 @@ export function withCollection<T extends { id?: string }>() {
 
 export function withDocById<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<GetDocFeature<T>> & TBase {
     abstract class GetDocMixin extends Base implements GetDocFeature<T> {
       getDocResource(id: string) {
@@ -54,11 +83,10 @@ export function withDocById<T extends { id?: string }>() {
             return await firstValueFrom(
               runInInjectionContext(this._injector, () => {
                 const docRef = doc(ref, id);
-                return docData(docRef, { idField: 'id' })
-              }
-              )
+                return docData(docRef, { idField: 'id' });
+              }),
             );
-          }
+          },
         });
       }
     }
@@ -68,21 +96,19 @@ export function withDocById<T extends { id?: string }>() {
 
 export function withDocExists<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(Base: TBase) {
-
     abstract class ExistsMixin extends Base {
-
       docExists(id: string) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
+          switchMap((ref) => {
             if (!ref) return of(false);
 
             const docRef = doc(ref, id);
 
             return from(getDoc(docRef)).pipe(
-              map(snap => snap.exists()),
-              catchError(() => of(false))
+              map((snap) => snap.exists()),
+              catchError(() => of(false)),
             );
-          })
+          }),
         );
       }
     }
@@ -93,25 +119,28 @@ export function withDocExists<T extends { id?: string }>() {
 
 export function withAddDoc<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<AddDocFeature<T>> & TBase {
     abstract class AddDocMixin extends Base implements AddDocFeature<T> {
       addDoc(item: T) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
+          switchMap((ref) => {
             if (!ref) {
               return throwError(() => new Error('No collection ref'));
             }
 
             return runInInjectionContext(this._injector, () =>
               from(addDoc(ref, item)).pipe(
-                map(docRef => ({
-                  id: docRef.id,
-                  ...item
-                } as T & { id: string }))
-              )
+                map(
+                  (docRef) =>
+                    ({
+                      id: docRef.id,
+                      ...item,
+                    }) as T & { id: string },
+                ),
+              ),
             );
-          })
+          }),
         );
       }
     }
@@ -121,21 +150,19 @@ export function withAddDoc<T extends { id?: string }>() {
 
 export function withUpdateDoc<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<UpdateDocFeature<T>> & TBase {
-
     abstract class UpdateDocMixin extends Base implements UpdateDocFeature<T> {
-
       updateDoc(id: string, data: Partial<T>) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
-            if (!ref) return throwError(() => new Error('Collection reference not available'));;
+          switchMap((ref) => {
+            if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
               const docRef = doc(ref, id);
               const _data: DocumentData = { ...data };
               return from(updateDoc(docRef, _data));
             });
-          })
+          }),
         );
       }
     }
@@ -145,19 +172,18 @@ export function withUpdateDoc<T extends { id?: string }>() {
 
 export function withSetDoc<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<SetDocFeature<T>> & TBase {
-
     abstract class SetDocMixin extends Base implements SetDocFeature<T> {
       setDoc(id: string, data: Partial<T>) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
-            if (!ref) return throwError(() => new Error('Collection reference not available'));;
+          switchMap((ref) => {
+            if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
               const docRef = doc(ref, id);
               return from(setDoc(docRef, data, { merge: true }));
             });
-          })
+          }),
         );
       }
     }
@@ -167,19 +193,18 @@ export function withSetDoc<T extends { id?: string }>() {
 
 export function withDocDelete<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<DeleteDocFeature> & TBase {
-
     abstract class DeleteDocMixin extends Base implements DeleteDocFeature {
       deleteDoc(id: string) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
-            if (!ref) return throwError(() => new Error('Collection reference not available'));;
+          switchMap((ref) => {
+            if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
               const docRef = doc(ref, id);
               return from(deleteDoc(docRef));
             });
-          })
+          }),
         );
       }
     }
@@ -189,17 +214,14 @@ export function withDocDelete<T extends { id?: string }>() {
 
 export function withQuery<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<QueryFeature<T>> & TBase {
-
     abstract class QueryMixin extends Base implements QueryFeature<T> {
       getFilteredCollection(options: QueryOptions) {
         return resource({
           loader: async () => {
             const ref = await firstValueFrom(
-              this.$userCollectionRef().pipe(
-                filter((r): r is CollectionReference<T> => !!r)
-              )
+              this.$userCollectionRef().pipe(filter((r): r is CollectionReference<T> => !!r)),
             );
             if (!ref) return [];
 
@@ -221,9 +243,11 @@ export function withQuery<T extends { id?: string }>() {
               }
 
               const snapshot = await getDocs(q);
-              return snapshot.docs.map(d => ({ id: d.id, ...(d.data() as T) } as T & { id: string }));
+              return snapshot.docs.map(
+                (d) => ({ id: d.id, ...(d.data() as T) }) as T & { id: string },
+              );
             });
-          }
+          },
         });
       }
     }
@@ -233,18 +257,17 @@ export function withQuery<T extends { id?: string }>() {
 
 export function withTransaction<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<TransactionFeature> & TBase {
-
     abstract class TransactionMixin extends Base implements TransactionFeature {
       runTransaction<TResult>(fn: (tx: Transaction) => Promise<TResult>) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
+          switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () =>
-              from(runTransaction(this._firestore, fn))
+              from(runTransaction(this._firestore, fn)),
             );
-          })
+          }),
         );
       }
     }
@@ -254,19 +277,22 @@ export function withTransaction<T extends { id?: string }>() {
 
 export function withPagination<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<PaginationFeature<T>> & TBase {
-
     abstract class PaginationMixin extends Base implements PaginationFeature<T> {
-      getPaginatedCollection(pageSize: number, options?: QueryOptions, cursor?: QueryDocumentSnapshot<T>) {
+      getPaginatedCollection(
+        pageSize: number,
+        options?: QueryOptions,
+        cursor?: QueryDocumentSnapshot<T>,
+      ) {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
+          switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
 
             return runInInjectionContext(this._injector, () =>
-              from(this.getPage(ref, pageSize, options, cursor))
+              from(this.getPage(ref, pageSize, options, cursor)),
             );
-          })
+          }),
         );
       }
 
@@ -274,7 +300,7 @@ export function withPagination<T extends { id?: string }>() {
         ref: CollectionReference<T>,
         pageSize: number,
         options?: QueryOptions,
-        cursor?: QueryDocumentSnapshot<T>
+        cursor?: QueryDocumentSnapshot<T>,
       ): Promise<PaginationResult<T>> {
         let q: any = ref;
 
@@ -301,8 +327,8 @@ export function withPagination<T extends { id?: string }>() {
         const pageDocs = hasNextPage ? docs.slice(0, pageSize) : docs;
 
         return {
-          data: pageDocs.map(d => ({ id: d.id, ...(d.data() as T) } as T & { id: string })),
-          nextCursor: hasNextPage ? (docs[docs.length - 1] as QueryDocumentSnapshot<T>) : undefined
+          data: pageDocs.map((d) => ({ id: d.id, ...(d.data() as T) }) as T & { id: string }),
+          nextCursor: hasNextPage ? (docs[docs.length - 1] as QueryDocumentSnapshot<T>) : undefined,
         };
       }
     }
@@ -312,20 +338,17 @@ export function withPagination<T extends { id?: string }>() {
 
 export function withCount<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(
-    Base: TBase
+    Base: TBase,
   ): Constructor<CountFeature> & TBase {
-
     abstract class CountMixin extends Base implements CountFeature {
       getCount() {
         return this.$userCollectionRef().pipe(
-          switchMap(ref => {
+          switchMap((ref) => {
             if (!ref) return of(0);
             return runInInjectionContext(this._injector, () =>
-              from(getCountFromServer(ref)).pipe(
-                map(snapshot => snapshot.data().count)
-              )
+              from(getCountFromServer(ref)).pipe(map((snapshot) => snapshot.data().count)),
             );
-          })
+          }),
         );
       }
     }

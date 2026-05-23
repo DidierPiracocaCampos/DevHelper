@@ -6,8 +6,11 @@ import { UnlockKeyI } from '../models/unlock-key.model';
   providedIn: 'root',
 })
 export class UnlockKeyWithPasskey {
-
-  async registerPasskeyAttestation(userId: string, userEmail?: string, userDisplayName?: string): Promise<ArrayBuffer> {
+  async registerPasskeyAttestation(
+    userId: string,
+    userEmail?: string,
+    userDisplayName?: string,
+  ): Promise<ArrayBuffer> {
     if (!window.PublicKeyCredential) {
       throw new Error(VAULT_ERRORS.WEB_AUTHN_NOT_SUPPORTED);
     }
@@ -26,24 +29,24 @@ export class UnlockKeyWithPasskey {
       user: {
         id: new TextEncoder().encode(userId),
         name: userEmail || userId,
-        displayName: userDisplayName || userEmail || userId
+        displayName: userDisplayName || userEmail || userId,
       },
       rp: {
-        name: "DevHelper",
-        id: this.getRpId()
+        name: 'DevHelper',
+        id: this.getRpId(),
       },
-      pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+      pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
       authenticatorSelection: {
         residentKey: 'required',
         userVerification: 'required',
-        authenticatorAttachment: 'platform'
-      }
+        authenticatorAttachment: 'platform',
+      },
     };
 
     try {
-      const credential = await navigator.credentials.create({
-        publicKey: createOptions
-      }) as PublicKeyCredential;
+      const credential = (await navigator.credentials.create({
+        publicKey: createOptions,
+      })) as PublicKeyCredential;
 
       const response = credential.response as AuthenticatorAttestationResponse;
       return response.clientDataJSON;
@@ -54,7 +57,7 @@ export class UnlockKeyWithPasskey {
 
   async createUnlockKeyWithPasskey(
     attestation: ArrayBuffer,
-    masterKey: ArrayBuffer
+    masterKey: ArrayBuffer,
   ): Promise<UnlockKeyI> {
     try {
       const hashBuffer = await crypto.subtle.digest('SHA-256', attestation);
@@ -64,7 +67,7 @@ export class UnlockKeyWithPasskey {
         hashBuffer,
         { name: 'AES-GCM' },
         false,
-        ['encrypt']
+        ['encrypt'],
       );
 
       const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -72,7 +75,7 @@ export class UnlockKeyWithPasskey {
       const encryptedMasterKey = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv },
         passkeyKey,
-        masterKey
+        masterKey,
       );
 
       return {
@@ -80,8 +83,8 @@ export class UnlockKeyWithPasskey {
         iv,
         salt: undefined,
         params: {
-          type: 'passkey'
-        }
+          type: 'passkey',
+        },
       };
     } catch (error) {
       throw new Error(VAULT_ERRORS.PASSKEY_CREATION_FAILED);
@@ -90,7 +93,7 @@ export class UnlockKeyWithPasskey {
 
   async unlockMasterKeyWithPasskey(
     assertion: ArrayBuffer,
-    unlockKey: UnlockKeyI
+    unlockKey: UnlockKeyI,
   ): Promise<ArrayBuffer> {
     if (!unlockKey.iv || !unlockKey.encryptedMasterKey) {
       throw new Error(VAULT_ERRORS.MISSING_UNLOCK_KEY_DATA);
@@ -103,16 +106,16 @@ export class UnlockKeyWithPasskey {
         hashBuffer,
         { name: 'AES-GCM' },
         false,
-        ['decrypt']
+        ['decrypt'],
       );
 
       const rawMasterKey = await crypto.subtle.decrypt(
         {
           name: 'AES-GCM',
-          iv: new Uint8Array(unlockKey.iv)
+          iv: new Uint8Array(unlockKey.iv),
         },
         passkeyKey,
-        new Uint8Array(unlockKey.encryptedMasterKey)
+        new Uint8Array(unlockKey.encryptedMasterKey),
       );
 
       return rawMasterKey;
@@ -134,9 +137,9 @@ export class UnlockKeyWithPasskey {
         rpId: this.getRpId(),
       };
 
-      const credential = await navigator.credentials.get({
-        publicKey: getOptions
-      }) as PublicKeyCredential;
+      const credential = (await navigator.credentials.get({
+        publicKey: getOptions,
+      })) as PublicKeyCredential;
 
       const response = credential.response as AuthenticatorAssertionResponse;
       return response.clientDataJSON;
@@ -153,9 +156,6 @@ export class UnlockKeyWithPasskey {
   }
 
   private getRpId(): string {
-    return window.location.hostname.includes('localhost')
-      ? 'localhost'
-      : window.location.hostname;
+    return window.location.hostname.includes('localhost') ? 'localhost' : window.location.hostname;
   }
-
 }

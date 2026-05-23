@@ -1,12 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
-import { UiModal } from "../../../components/ui-modal/ui-modal";
-import { UiPinInput } from "../../../forms/components/input-pin/input-pin";
+import { UiModal } from '../../../components/ui-modal/ui-modal';
+import { UiPinInput } from '../../../forms/components/input-pin/input-pin';
 import { matchOtherValidator } from '../../../forms/validators/match.validator';
 import { ErrorMessage } from '../../../forms/components/input-base/error-message';
-import { UiButton } from "../../../components/ui-button/button";
-import { UiAlert } from "../../../components/ui-alert/ui-alert";
+import { UiButton } from '../../../components/ui-button/button';
+import { UiAlert } from '../../../components/ui-alert/ui-alert';
 
 @Component({
   selector: 'secure-create-vault',
@@ -30,7 +37,7 @@ export class ModalCreateVault {
 
   protected readonly status = this._vault.vaultStatus;
   protected readonly haveUnlockKeyWithPin = this._vault.haveUnlockKeyWithPin;
-protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
+  protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
   protected readonly isOpen = this._vault.isSecureModalOpen;
 
   private _pinStateEffect = effect(() => {
@@ -92,7 +99,10 @@ protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPassk
   }
 
   protected _secureForm = this._fb.group({
-    current_pin: this._fb.control<string>({ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\d{5}$/)]),
+    current_pin: this._fb.control<string>({ value: '', disabled: true }, [
+      Validators.required,
+      Validators.pattern(/^\d{5}$/),
+    ]),
     pin: this._fb.control<string>('', [Validators.required, Validators.pattern(/^\d{5}$/)]),
     verify_pin: this._fb.control<string>('', [Validators.required, matchOtherValidator('pin')]),
   });

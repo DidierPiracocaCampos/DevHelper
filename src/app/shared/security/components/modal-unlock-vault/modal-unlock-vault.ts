@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from '../../../components/ui-modal/ui-modal';
@@ -54,7 +61,7 @@ export class ModalUnlockVault {
   }
 
   private _setupAutoSubmit() {
-    this._unlockForm.controls.pin.valueChanges.subscribe(val => {
+    this._unlockForm.controls.pin.valueChanges.subscribe((val) => {
       if (!this._autoSubmitted && val.length === 5 && !this.isLockedOut()) {
         this._autoSubmitted = true;
         this.submitPin();

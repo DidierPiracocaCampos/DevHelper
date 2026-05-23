@@ -13,11 +13,8 @@ import { InputBase } from '../../../shared/forms/components/input-base/input-bas
       useExisting: forwardRef(() => EmailInput),
       multi: true,
     },
-  ]
+  ],
 })
 export class EmailInput extends InputBase<string> {
-
-  protected override inputOnInit(): void {
-  }
-  
+  protected override inputOnInit(): void {}
 }

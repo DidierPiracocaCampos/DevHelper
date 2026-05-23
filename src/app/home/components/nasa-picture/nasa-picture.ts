@@ -8,7 +8,6 @@ import { NgOptimizedImage } from '@angular/common';
   styleUrl: './nasa-picture.css',
 })
 export class NasaPicture {
-
   private _service = inject(NasaPictureResource);
 
   info = this._service.getPicture();

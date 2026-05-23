@@ -1,16 +1,18 @@
-<li class="item-list-row item-list-{{severity()}} item-list-{{variant()}}"
-    [class.item-list-disabled]="disabled()"
-    [class.item-list-selected]="selected()">
-    <div class="item-list-content">
-        @if(label()){
-        <span class="item-list-label">{{label()}}</span>
-        }
-        @if(sub()){
-        <span class="item-list-sub">{{sub()}}</span>
-        }
-    </div>
+<li
+  class="item-list-row item-list-{{ severity() }} item-list-{{ variant() }}"
+  [class.item-list-disabled]="disabled()"
+  [class.item-list-selected]="selected()"
+>
+  <div class="item-list-content">
+    @if (label()) {
+      <span class="item-list-label">{{ label() }}</span>
+    }
+    @if (sub()) {
+      <span class="item-list-sub">{{ sub() }}</span>
+    }
+  </div>
 
-    <div class="item-list-actions">
-        <ng-content select="[actions]"></ng-content>
-    </div>
+  <div class="item-list-actions">
+    <ng-content select="[actions]"></ng-content>
+  </div>
 </li>

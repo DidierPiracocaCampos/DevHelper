@@ -1,11 +1,11 @@
 export interface EncryptedData {
-    cipher: number[];
-    iv: number[];
+  cipher: number[];
+  iv: number[];
 }
 
 export interface PasswordI {
-    id?: string;
-    name: string;
-    password: EncryptedData;
-    secure: boolean;
+  id?: string;
+  name: string;
+  password: EncryptedData;
+  secure: boolean;
 }

@@ -4,15 +4,10 @@ import { ToastService } from '../service/toast';
 export class GlobalErrorHandler extends ErrorHandler {
   private toastService = inject(ToastService);
 
-  private readonly IGNORED_ERRORS = [
-    'Unrecognized feature',
-    'Squirrelly',
-  ];
+  private readonly IGNORED_ERRORS = ['Unrecognized feature', 'Squirrelly'];
 
   private shouldIgnore(message: string): boolean {
-    return this.IGNORED_ERRORS.some(ignored =>
-      message.includes(ignored)
-    );
+    return this.IGNORED_ERRORS.some((ignored) => message.includes(ignored));
   }
 
   override handleError(error: unknown): void {
@@ -24,13 +19,8 @@ export class GlobalErrorHandler extends ErrorHandler {
 
     console.error('Global error:', error);
 
-    const details = error instanceof Error
-      ? error.stack || error.message
-      : String(error);
+    const details = error instanceof Error ? error.stack || error.message : String(error);
 
-    this.toastService.error(
-      'Ha ocurrido un error inesperado',
-      details
-    );
+    this.toastService.error('Ha ocurrido un error inesperado', details);
   }
 }
