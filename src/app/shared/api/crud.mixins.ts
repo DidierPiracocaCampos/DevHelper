@@ -16,7 +16,6 @@ import {
   limit,
   orderBy,
   query,
-  Query,
   runTransaction,
   setDoc,
   startAfter,
@@ -24,6 +23,7 @@ import {
   where,
   QueryDocumentSnapshot,
   Transaction,
+  Query,
 } from '@angular/fire/firestore';
 import {
   AddDocFeature,
@@ -227,7 +227,7 @@ export function withQuery<T extends { id?: string }>() {
             if (!ref) return [];
 
             return runInInjectionContext(this._injector, async () => {
-              let q: Query<T, DocumentData> = ref;
+              let q: CollectionReference<T, DocumentData> | Query<unknown, DocumentData> = ref;
 
               if (options.filters) {
                 for (const [field, op, value] of options.filters) {
@@ -303,7 +303,7 @@ export function withPagination<T extends { id?: string }>() {
         options?: QueryOptions,
         cursor?: QueryDocumentSnapshot<T>,
       ): Promise<PaginationResult<T>> {
-        let q: any = ref;
+        let q: CollectionReference<T, DocumentData> | Query<unknown, DocumentData> = ref;
 
         if (options?.filters) {
           for (const [field, op, value] of options?.filters) {
