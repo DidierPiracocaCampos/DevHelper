@@ -34,12 +34,9 @@ export class ConfirmModal {
   };
 
   constructor() {
-    effect(
-      () => {
-        this._isOpen.set(this._confirmService.isOpen());
-      },
-      { allowSignalWrites: true },
-    );
+    effect(() => {
+      this._isOpen.set(this._confirmService.isOpen());
+    });
 
     effect(() => {
       if (!this._isOpen() && !this._confirmService.isOpen()) {

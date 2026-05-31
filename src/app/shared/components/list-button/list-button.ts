@@ -7,6 +7,7 @@ export type UiListButtonSeverity =
   | 'error'
   | 'success'
   | 'warning';
+
 export type UiListButtonVariant = 'ghost' | 'outline' | 'solid';
 
 @Component({
