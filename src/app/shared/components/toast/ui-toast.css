@@ -28,7 +28,8 @@
   max-width: 420px;
   cursor: pointer;
   pointer-events: auto;
-  animation: fade-slide-in 3000ms ease-out forwards;
+  animation: fade-slide-in 100ms ease-out forwards;
+  -webkit-animation: fade-slide-in 100ms ease-out forwards;
 }
 
 .toast-custom.toast-expanded {
