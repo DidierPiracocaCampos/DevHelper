@@ -14,6 +14,8 @@ import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
 import { VaultSecurity } from '../../../shared/security/vault-security';
 import { UiAlert } from '../../../shared/components/ui-alert/ui-alert';
 import { ConfirmService } from '../../../shared/service/confirm.service';
+import { ToastService } from '../../../shared/service/toast';
+import { UiTooltipComponent } from '../../../shared/components/tooltip';
 
 @Component({
   selector: 'password-list',
@@ -29,6 +31,7 @@ import { ConfirmService } from '../../../shared/service/confirm.service';
     ErrorMessage,
     UiAlert,
     UiModal,
+    UiTooltipComponent,
   ],
   templateUrl: './password-list.html',
   styleUrl: './password-list.css',
@@ -39,6 +42,7 @@ export class PasswordList {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _vault = inject(VaultSecurity);
   private _confirmService = inject(ConfirmService);
+  private _toastService = inject(ToastService);
 
   readonly collection = this._repo.getCollection();
 
@@ -105,6 +109,21 @@ export class PasswordList {
         v.loading = false;
         return v;
       });
+    }
+  }
+
+  async copyPassword(item: PasswordI) {
+    if (!this._vault.isUnlocked()) {
+      this._vault.showModal(() => this.copyPassword(item));
+      return;
+    }
+    const vaultKey = this._vault.getVaultKey()!;
+    try {
+      const decrypted = await this._repo.decryptPassword(item.password, vaultKey);
+      await navigator.clipboard.writeText(decrypted);
+      this._toastService.success('Contraseña copiada');
+    } catch (_err) {
+      this._toastService.error('Error al copiar contraseña');
     }
   }
 
