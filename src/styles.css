@@ -42,6 +42,25 @@
 
 @custom-variant dark (&:where([data-theme=devhelper], [data-theme=devhelper] *));
 
+@layer daisyui.tooltip-severity {
+  .tooltip-info {
+    --tt-bg: var(--color-info);
+    --tt-color: var(--color-info-content);
+  }
+  .tooltip-success {
+    --tt-bg: var(--color-success);
+    --tt-color: var(--color-success-content);
+  }
+  .tooltip-warning {
+    --tt-bg: var(--color-warning);
+    --tt-color: var(--color-warning-content);
+  }
+  .tooltip-error {
+    --tt-bg: var(--color-error);
+    --tt-color: var(--color-error-content);
+  }
+}
+
 @layer base {
   body {
     font-family: var(--font-base);
