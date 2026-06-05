@@ -1,4 +1,4 @@
-import { ResourceRef } from '@angular/core';
+import { ResourceRef, Signal } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { OrderByDirection, WhereFilterOp } from '@angular/fire/firestore';
 import { QueryDocumentSnapshot } from 'firebase/firestore';
@@ -34,7 +34,9 @@ export interface QueryOptions {
 }
 
 export interface QueryFeature<T> {
-  getFilteredCollection(options: QueryOptions): ResourceRef<(T & { id: string })[] | undefined>;
+  getFilteredCollection(
+    options: Signal<QueryOptions>,
+  ): ResourceRef<(T & { id: string })[] | undefined>;
 }
 
 export interface TransactionFeature {

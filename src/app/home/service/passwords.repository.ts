@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { PasswordI, EncryptedData } from '../domain/password.interface';
 import { FirestoreDataConverter } from '@angular/fire/firestore';
 import { ApiBase } from '../../shared/api/api-base';
@@ -15,7 +15,7 @@ export class PasswordRepository extends withDocDelete<PasswordI>()(
 ) {
   private _masterKey = inject(MasterKey);
 
-  protected path: [string, ...string[]] = ['passwords'];
+  protected path = signal(['passwords'] as const);
 
   protected converter: FirestoreDataConverter<PasswordI> = {
     toFirestore: (data: PasswordI) => data,

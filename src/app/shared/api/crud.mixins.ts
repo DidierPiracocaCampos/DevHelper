@@ -1,7 +1,6 @@
-import { resource, runInInjectionContext } from '@angular/core';
+import { resource, runInInjectionContext, Signal } from '@angular/core';
 import { ApiBase, Constructor } from './api-base';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
-import { filter } from 'rxjs/internal/operators/filter';
 import {
   addDoc,
   collectionData,
@@ -52,11 +51,9 @@ export function withCollection<T extends { id?: string }>() {
   ): Constructor<GetCollectionFeature<T>> & TBase {
     abstract class GetAllMixin extends Base implements GetCollectionFeature<T> {
       readonly getCollectionResource = resource({
-        loader: async () => {
-          const ref = await firstValueFrom(
-            this.$userCollectionRef().pipe(filter((r): r is CollectionReference<T> => !!r)),
-          );
-          if (!ref) return [];
+        params: () => this.colRefSignal(),
+        loader: async ({ params: ref }) => {
+          if (!ref) return [] as (T & { id: string })[];
           return runInInjectionContext(this._injector, async () => {
             const data = await firstValueFrom(collectionData(ref, { idField: 'id' }));
             return data as (T & { id: string })[];
@@ -78,12 +75,12 @@ export function withDocById<T extends { id?: string }>() {
     abstract class GetDocMixin extends Base implements GetDocFeature<T> {
       getDocResource(id: string) {
         return resource({
-          loader: async () => {
-            const ref = await firstValueFrom(this.$userCollectionRef());
-            if (!ref) return null;
+          params: () => ({ ref: this.colRefSignal(), id }),
+          loader: async ({ params }) => {
+            if (!params.ref) return null;
             return await firstValueFrom(
               runInInjectionContext(this._injector, () => {
-                const docRef = doc(ref, id);
+                const docRef = doc(params.ref!, params.id);
                 return docData(docRef, { idField: 'id' });
               }),
             );
@@ -218,29 +215,29 @@ export function withQuery<T extends { id?: string }>() {
     Base: TBase,
   ): Constructor<QueryFeature<T>> & TBase {
     abstract class QueryMixin extends Base implements QueryFeature<T> {
-      getFilteredCollection(options: QueryOptions) {
+      getFilteredCollection(options: Signal<QueryOptions>) {
         return resource({
-          loader: async () => {
-            const ref = await firstValueFrom(
-              this.$userCollectionRef().pipe(filter((r): r is CollectionReference<T> => !!r)),
-            );
-            if (!ref) return [];
+          params: () => ({ ref: this.colRefSignal(), options: options() }),
+          loader: async ({ params }) => {
+            if (!params.ref) return [] as (T & { id: string })[];
+            const ref = params.ref;
+            const { filters, orderBy: orderByOpt, limit: limitOpt } = params.options;
 
             return runInInjectionContext(this._injector, async () => {
               let q: CollectionReference<T, DocumentData> | Query<unknown, DocumentData> = ref;
 
-              if (options.filters) {
-                for (const [field, op, value] of options.filters) {
+              if (filters) {
+                for (const [field, op, value] of filters) {
                   q = query(q, where(field, op, value));
                 }
               }
 
-              if (options.orderBy) {
-                q = query(q, orderBy(options.orderBy[0], options.orderBy[1]));
+              if (orderByOpt) {
+                q = query(q, orderBy(orderByOpt[0], orderByOpt[1]));
               }
 
-              if (options.limit) {
-                q = query(q, limit(options.limit));
+              if (limitOpt) {
+                q = query(q, limit(limitOpt));
               }
 
               const snapshot = await getDocs(q);

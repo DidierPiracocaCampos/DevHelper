@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import {
   FirestoreDataConverter,
   DocumentData,
@@ -19,7 +19,7 @@ import { withSetDoc } from '../../api/crud.mixins';
 export class VaultRepository extends withSetDoc<UnlockKeyI>()(
   withAddDoc<UnlockKeyI>()(withCollection<UnlockKeyI>()(ApiBase<UnlockKeyI>)),
 ) {
-  protected path: [string, ...string[]] = ['vault'];
+  protected path = signal(['vault'] as const);
   protected converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
     toFirestore(vault: UnlockKeyI): DocumentData {
       const data: DocumentData = {
