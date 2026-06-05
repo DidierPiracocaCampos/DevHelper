@@ -1,0 +1,90 @@
+<ui-modal [title]="title()" [(isOpen)]="isOpen" size="md">
+  <div body class="flex flex-col gap-4">
+    @for (field of fields(); track field.key) {
+      <div class="flex flex-col gap-2">
+        <label class="font-semibold flex items-center gap-2">
+          <input
+            type="checkbox"
+            class="checkbox checkbox-sm"
+            [checked]="entryFor(field.key).enabled"
+            (change)="onToggle(field.key, $any($event.target).checked)"
+          />
+          {{ field.label }}
+        </label>
+
+        <div class="flex gap-2">
+          @if (field.ops.length > 1) {
+            <select
+              class="select select-lg"
+              [value]="entryFor(field.key).op"
+              (change)="onOpChange(field.key, $any($event.target).value)"
+            >
+              @for (op of field.ops; track op) {
+                <option [value]="op">{{ op }}</option>
+              }
+            </select>
+          } @else {
+            <span class="select select-lg flex items-center px-3 opacity-70">
+              {{ field.ops[0] }}
+            </span>
+          }
+
+          @switch (field.control) {
+            @case ('text') {
+              <input
+                type="text"
+                class="input input-lg w-full"
+                [placeholder]="field.placeholder ?? ''"
+                [ngModel]="entryFor(field.key).value"
+                (ngModelChange)="onValueChange(field.key, $event)"
+              />
+            }
+            @case ('number') {
+              <input
+                type="number"
+                class="input input-lg w-full"
+                [placeholder]="field.placeholder ?? ''"
+                [ngModel]="entryFor(field.key).value"
+                (ngModelChange)="onValueChange(field.key, +$event)"
+              />
+            }
+            @case ('date') {
+              <input
+                type="date"
+                class="input input-lg w-full"
+                [ngModel]="entryFor(field.key).value"
+                (ngModelChange)="onValueChange(field.key, $event)"
+              />
+            }
+            @case ('boolean') {
+              <select
+                class="select select-lg"
+                [ngModel]="entryFor(field.key).value ? 'true' : 'false'"
+                (ngModelChange)="onValueChange(field.key, $event === 'true')"
+              >
+                <option value="true">Sí</option>
+                <option value="false">No</option>
+              </select>
+            }
+            @case ('select') {
+              <select
+                class="select select-lg w-full"
+                [ngModel]="entryFor(field.key).value"
+                (ngModelChange)="onValueChange(field.key, $event)"
+              >
+                @for (opt of field.options ?? []; track opt.value) {
+                  <option [ngValue]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <div footer class="flex justify-end gap-2">
+    <ui-button variant="ghost" (click)="onClear()">Limpiar</ui-button>
+    <ui-button variant="filled" (click)="onApply()">Aplicar</ui-button>
+  </div>
+</ui-modal>
