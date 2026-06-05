@@ -10,17 +10,17 @@ Ninguna. Es el primer modulo que se trabaja.
 
 ### T0 · Base agnostica de scope (bloqueante para M3 y M4)
 
-- [ ] T0.1 Refactor `ApiBase` a path reactivo (`path` como signal/computed) y propagarlo por `$userCollectionRef()`.
-- [ ] T0.2 Servicio `ScopeContext` (`shared/scope/scope-context.ts`) con `scope = signal<'global' | { projectId: string }>('global')`, `setGlobal()` y `setProject(id)`.
-- [ ] T0.3 Ajustar `withCollection` / resto de mixins para que el `resource()` re-evalue al cambiar `path`.
-- [ ] T0.4 Tests del refactor (cambio de scope recarga el `resource()`).
+- [x] T0.1 Refactor `ApiBase` a path reactivo (`path` como signal/computed) y propagarlo por `$userCollectionRef()`.
+- [x] T0.2 Servicio `ScopeContext` (`shared/scope/scope-context.ts`) con `scope = signal<'global' | { projectId: string }>('global')`, `setGlobal()` y `setProject(id)`.
+- [x] T0.3 Ajustar `withCollection` / resto de mixins para que el `resource()` re-evalue al cambiar `path`.
+- [x] T0.4 Tests del refactor (cambio de scope recarga el `resource()`).
 
 ### T1 · Sistema de filtrado comun (agnostico de la entidad)
 
-- [ ] T1.1 Modelo `FilterField<T>` y `FilterSchema<T>` (campo, label, tipo de control, ops permitidas).
-- [ ] T1.2 `FilterService` con `state = signal<ActiveFilters>`, `apply(schema)`, `reset()`, salida en `QueryOptions`.
-- [ ] T1.3 Componente `FilterModal` (sobre `ui-modal` existente) que renderiza cualquier `FilterSchema` recibido por input.
-- [ ] T1.4 Componente `FilterChip` para filtros activos con opcion de quitar.
+- [x] T1.1 Modelo `FilterField<T>` y `FilterSchema<T>` (campo, label, tipo de control, ops permitidas).
+- [x] T1.2 `FilterService` con `state = signal<ActiveFilters>`, `apply(schema)`, `reset()`, salida en `QueryOptions`.
+- [x] T1.3 Componente `FilterModal` (sobre `ui-modal` existente) que renderiza cualquier `FilterSchema` recibido por input.
+- [x] T1.4 Componente `FilterChip` para filtros activos con opcion de quitar.
 
 ### T2 · Refactor de inputs a signals + patron compuesto
 
