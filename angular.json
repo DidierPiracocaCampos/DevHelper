@@ -83,7 +83,9 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "buildTarget": "devhelper-web:build:development"
+            "buildTarget": "devhelper-web:build:development",
+            "tsConfig": "tsconfig.spec.json",
+            "runner": "vitest"
           }
         }
       }
