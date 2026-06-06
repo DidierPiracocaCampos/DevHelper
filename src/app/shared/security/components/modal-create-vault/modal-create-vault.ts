@@ -2,15 +2,14 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from '../../../components/ui-modal/ui-modal';
-import { UiPinInput } from '../../../forms/components/input-pin/input-pin';
+import { UiPinField, ErrorMessage } from '../../../forms/fields';
 import { matchOtherValidator } from '../../../forms/validators/match.validator';
-import { ErrorMessage } from '../../../forms/components/input-base/error-message';
 import { UiButton } from '../../../components/ui-button/button';
 import { UiAlert } from '../../../components/ui-alert/ui-alert';
 
 @Component({
   selector: 'secure-create-vault',
-  imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinInput, ErrorMessage, UiButton, UiAlert],
+  imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinField, ErrorMessage, UiButton, UiAlert],
   templateUrl: './modal-create-vault.html',
   styleUrl: './modal-create-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +39,15 @@ export class ModalCreateVault {
       this._secureForm.controls.current_pin.disable();
     }
   });
+
+  constructor() {
+    this._secureForm.controls.pin.valueChanges.subscribe(() => {
+      this._secureForm.controls.verify_pin.updateValueAndValidity({
+        onlySelf: true,
+        emitEvent: false,
+      });
+    });
+  }
 
   async submitFormPin() {
     const f = this._secureForm;

@@ -68,9 +68,9 @@
             (ngSubmit)="submitPin()"
             class="flex flex-col items-center gap-4 w-full"
           >
-            <ui-pin-input
+            <ui-pin-field
               inputId="unlock-pin"
-              label="Ingresa tu PIN"
+              labelText="Ingresa tu PIN"
               formControlName="pin"
               [length]="5"
             />
@@ -171,9 +171,9 @@
                 (ngSubmit)="submitPin()"
                 class="flex flex-col items-center gap-4 w-full"
               >
-                <ui-pin-input
+                <ui-pin-field
                   inputId="unlock-pin-tab"
-                  label="Ingresa tu PIN"
+                  labelText="Ingresa tu PIN"
                   formControlName="pin"
                   [length]="5"
                 />

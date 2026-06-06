@@ -3,13 +3,12 @@ import { UiCardButton } from '../../../shared/components/card-button/card-button
 import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiListItem } from '../../../shared/components/item-list/item-list';
 import { UiListButton } from '../../../shared/components/list-button/list-button';
-import { UiInput } from '../../../shared/forms/components/input-generic/input-generic';
-import { PasswordInput } from '../../../auth/components/password-input/password-input';
-import { PasswordRepository } from '../../service/passwords.repository';
+import { UiTextField, UiPasswordField } from '../../../shared/forms/fields';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PasswordI } from '../../domain/password.interface';
+import { PasswordRepository } from '../../service/passwords.repository';
 import { UiButton } from '../../../shared/components/ui-button/button';
-import { ErrorMessage } from '../../../shared/forms/components/input-base/error-message';
+import { ErrorMessage } from '../../../shared/forms/fields';
 import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
 import { VaultSecurity } from '../../../shared/security/vault-security';
 import { UiAlert } from '../../../shared/components/ui-alert/ui-alert';
@@ -24,8 +23,8 @@ import { UiTooltipComponent } from '../../../shared/components/tooltip';
     UiCard,
     UiListItem,
     UiListButton,
-    UiInput,
-    PasswordInput,
+    UiTextField,
+    UiPasswordField,
     ReactiveFormsModule,
     UiButton,
     ErrorMessage,

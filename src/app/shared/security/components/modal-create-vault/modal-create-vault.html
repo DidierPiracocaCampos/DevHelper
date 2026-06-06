@@ -130,30 +130,30 @@
               />
             }
             @if (haveUnlockKeyWithPin()) {
-              <ui-pin-input
+              <ui-pin-field
                 inputId="current-pin"
-                label="PIN actual"
+                labelText="PIN actual"
                 class="mb-6"
                 formControlName="current_pin"
                 [length]="5"
               />
             }
-            <ui-pin-input
+            <ui-pin-field
               inputId="pin"
-              [label]="!haveUnlockKeyWithPin() ? 'Ingresa tu PIN' : 'Nuevo PIN'"
+              [labelText]="!haveUnlockKeyWithPin() ? 'Ingresa tu PIN' : 'Nuevo PIN'"
               formControlName="pin"
               [length]="5"
             />
-            <ui-pin-input
+            <ui-pin-field
               inputId="verify-pin"
-              label="Confirma tu pin"
+              labelText="Confirma tu pin"
               formControlName="verify_pin"
               [length]="5"
             >
               <ng-template errorMessage="notMatching">
                 <p class="validator-hint">El pin no coinciden</p>
               </ng-template>
-            </ui-pin-input>
+            </ui-pin-field>
             <ui-button
               class="w-2/5 mt-4"
               btnClass="w-full"

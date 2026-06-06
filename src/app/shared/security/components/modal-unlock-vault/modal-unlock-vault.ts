@@ -9,13 +9,13 @@ import {
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { VaultSecurity } from '../../vault-security';
 import { UiModal } from '../../../components/ui-modal/ui-modal';
-import { UiPinInput } from '../../../forms/components/input-pin/input-pin';
+import { UiPinField } from '../../../forms/fields';
 import { UiButton } from '../../../components/ui-button/button';
 import { UiAlert } from '../../../components/ui-alert/ui-alert';
 
 @Component({
   selector: 'secure-unlock-vault',
-  imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinInput, UiButton, UiAlert],
+  imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinField, UiButton, UiAlert],
   templateUrl: './modal-unlock-vault.html',
   styleUrl: './modal-unlock-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
