@@ -14,6 +14,30 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    function isNonEmptyString(value) {
+      return value is string && value.size() > 0;
+    }
+
+    function isBoundedString(value, maxLen) {
+      return value is string && value.size() <= maxLen;
+    }
+
+    function isTimestamp(value) {
+      return value is timestamp;
+    }
+
+    function isPositiveInt(value) {
+      return value is int && value >= 0;
+    }
+
+    function isBool(value) {
+      return value is bool;
+    }
+
+    function isUnchanged(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+
     // ===============================================================
     // Data Model
     // ===============================================================
@@ -21,18 +45,18 @@ service cloud.firestore {
     // Collection: users
     // Document ID: userId (UID from Firebase Auth)
     // Fields:
-    //   - email: string (required)
+    //   - email: string (required, immutable on create)
     //   - createdAt: timestamp (required, immutable)
     //
     // Subcollection: users/{userId}/passwords
     // Document ID: auto-generated
     // Fields:
-    //   - title: string (required)
-    //   - username: string (optional)
-    //   - password: string (required)
-    //   - url: string (optional)
-    //   - notes: string (optional)
-    //   - createdAt: timestamp (required)
+    //   - title: string (required, <= 200)
+    //   - username: string (optional, <= 200)
+    //   - password: string (required, <= 1024)
+    //   - url: string (optional, <= 500)
+    //   - notes: string (optional, <= 5000)
+    //   - createdAt: timestamp (required, immutable)
     //   - updatedAt: timestamp (required)
     //
     // Subcollection: users/{userId}/vault
@@ -42,23 +66,123 @@ service cloud.firestore {
     //   - iv: string (required)
     //   - salt: string (optional)
     //   - params: map (optional)
+    //
+    // Subcollection: users/{userId}/files
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required, <= 255)
+    //   - size: int (required, >= 0)
+    //   - type: string (required, <= 100)
+    //   - storagePath: string (required, <= 512, immutable, must match users/{uid}/files/...)
+    //   - uploadedAt: int (required, immutable)
     // ===============================================================
 
-    // User profile - only owner can access
+    // -------------------------------------------------------------------
+    // User profile
+    // -------------------------------------------------------------------
     match /users/{userId} {
       allow read: if isOwner(userId);
-      allow create: if isAuthenticated() && request.auth.uid == userId
-                   && request.resource.data.keys().hasAll(['email']);
-      allow update: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isNonEmptyString(request.resource.data.email)
+                    && isBoundedString(request.resource.data.email, 320)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && request.resource.data.keys().hasOnly(['email', 'createdAt', 'displayName', 'photoURL']);
+
+      allow update: if isOwner(userId)
+                    && isUnchanged('createdAt')
+                    && isBoundedString(request.resource.data.email, 320)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && request.resource.data.keys().hasOnly(['email', 'createdAt', 'displayName', 'photoURL']);
+
       allow delete: if isOwner(userId);
     }
 
-    // User subcollections (passwords, vault, etc.)
-    match /users/{userId}/{document=**} {
+    // -------------------------------------------------------------------
+    // Passwords
+    // -------------------------------------------------------------------
+    match /users/{userId}/passwords/{passwordId} {
       allow read: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && isBoundedString(request.resource.data.password, 1024)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && (!('username' in request.resource.data) || isBoundedString(request.resource.data.username, 200))
+                    && (!('url' in request.resource.data) || isBoundedString(request.resource.data.url, 500))
+                    && (!('notes' in request.resource.data) || isBoundedString(request.resource.data.notes, 5000))
+                    && request.resource.data.keys().hasOnly(['title', 'username', 'password', 'url', 'notes', 'createdAt', 'updatedAt']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && isBoundedString(request.resource.data.password, 1024)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && isUnchanged('createdAt')
+                    && (!('username' in request.resource.data) || isBoundedString(request.resource.data.username, 200))
+                    && (!('url' in request.resource.data) || isBoundedString(request.resource.data.url, 500))
+                    && (!('notes' in request.resource.data) || isBoundedString(request.resource.data.notes, 5000))
+                    && request.resource.data.keys().hasOnly(['title', 'username', 'password', 'url', 'notes', 'createdAt', 'updatedAt']);
+
       allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Vault (encrypted master keys)
+    // -------------------------------------------------------------------
+    match /users/{userId}/vault/{vaultDocId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.encryptedMasterKey, 4096)
+                    && isBoundedString(request.resource.data.iv, 256)
+                    && (!('salt' in request.resource.data) || isBoundedString(request.resource.data.salt, 256))
+                    && request.resource.data.keys().hasOnly(['encryptedMasterKey', 'iv', 'salt', 'params']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.encryptedMasterKey, 4096)
+                    && isBoundedString(request.resource.data.iv, 256)
+                    && (!('salt' in request.resource.data) || isBoundedString(request.resource.data.salt, 256))
+                    && isUnchanged('iv')
+                    && request.resource.data.keys().hasOnly(['encryptedMasterKey', 'iv', 'salt', 'params']);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Files metadata
+    // -------------------------------------------------------------------
+    match /users/{userId}/files/{fileId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.name, 255)
+                    && isPositiveInt(request.resource.data.size)
+                    && isBoundedString(request.resource.data.type, 100)
+                    && isBoundedString(request.resource.data.storagePath, 512)
+                    && isPositiveInt(request.resource.data.uploadedAt)
+                    && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
+                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'storagePath', 'uploadedAt']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.name, 255)
+                    && isPositiveInt(request.resource.data.size)
+                    && isBoundedString(request.resource.data.type, 100)
+                    && isUnchanged('storagePath')
+                    && isUnchanged('uploadedAt')
+                    && isUnchanged('size')
+                    && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
+                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'storagePath', 'uploadedAt']);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Default deny for any other path
+    // -------------------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
