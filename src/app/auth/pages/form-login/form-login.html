@@ -1,10 +1,10 @@
 <form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (ngSubmit)="onSubmit()">
-  <auth-email-input inputId="email" formControlName="email" />
-  <auth-password-input inputId="password" formControlName="password">
+  <ui-email-field inputId="email" formControlName="email" />
+  <ui-password-field inputId="password" formControlName="password">
     <ng-template errorMessage="required">
       <p class="validator-hint">Este campo es obligatorio</p>
     </ng-template>
-  </auth-password-input>
+  </ui-password-field>
   @if (form.errors?.['FirebaseError'] == 'auth/invalid-credential') {
     <p class="text-error text-center">Correo o contraseña incorrectos</p>
   }

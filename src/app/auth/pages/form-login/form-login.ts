@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EmailInput } from '../../components/email-input/email-input';
-import { PasswordInput } from '../../components/password-input/password-input';
+import { UiEmailField, UiPasswordField } from '../../../shared/forms/fields';
 import { RouterLink } from '@angular/router';
 import { Authenticator, AuthErrorCode } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'app-form-login',
-  imports: [ReactiveFormsModule, EmailInput, PasswordInput, RouterLink],
+  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, RouterLink],
   templateUrl: './form-login.html',
   styleUrl: './form-login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

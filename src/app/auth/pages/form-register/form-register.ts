@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Authenticator } from '../../../shared/service/authenticator';
-import { EmailInput } from '../../components/email-input/email-input';
-import { PasswordInput } from '../../components/password-input/password-input';
+import { UiEmailField, UiPasswordField } from '../../../shared/forms/fields';
 import firebasePasswordValidator from '../../../shared/forms/validators/password.validator';
-import { ErrorMessage } from '../../../shared/forms/components/input-base/error-message';
+import { ErrorMessage } from '../../../shared/forms/fields';
 import { NgClass } from '@angular/common';
 import { matchOtherValidator } from '../../../shared/forms/validators/match.validator';
 import { RouterLink } from '@angular/router';
@@ -12,7 +11,7 @@ import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'auth-form-register',
-  imports: [ReactiveFormsModule, EmailInput, PasswordInput, ErrorMessage, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, ErrorMessage, NgClass, RouterLink],
   templateUrl: './form-register.html',
   styleUrl: './form-register.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,16 +20,26 @@ export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _authenticator = inject(Authenticator);
   private _loader = inject(Loader);
+  private _destroyRef = inject(DestroyRef);
 
   loading = false;
   showVerificationMessage = false;
+
+  constructor() {
+    this.form.controls.password.valueChanges.subscribe(() => {
+      this.form.controls.verifyPassword.updateValueAndValidity({
+        onlySelf: true,
+        emitEvent: false,
+      });
+    });
+  }
 
   form = this._formBuilder.group({
     email: this._formBuilder.control<string>('', [Validators.email, Validators.required]),
     password: this._formBuilder.control<string>(
       '',
       [Validators.required],
-      [firebasePasswordValidator()],
+      [firebasePasswordValidator(this._destroyRef)],
     ),
     verifyPassword: this._formBuilder.control<string>('', [
       Validators.required,

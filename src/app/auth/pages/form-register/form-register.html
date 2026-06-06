@@ -5,9 +5,9 @@
       <span>Revisa tu correo y verifica tu cuenta para continuar.</span>
     </div>
   } @else {
-    <auth-email-input inputId="email" formControlName="email" />
+    <ui-email-field inputId="email" formControlName="email" />
     @let valid = form.get('password')?.valid;
-    <auth-password-input inputId="password" formControlName="password">
+    <ui-password-field inputId="password" formControlName="password" autocomplete="new-password">
       <ng-template errorMessage="firebasePassword" [visible]="true" let-error>
         <ul class="list">
           <li class="py-2 text-xs opacity-60 tracking-wide">Tu contraseña debe tener:</li>
@@ -65,11 +65,12 @@
       <ng-template errorMessage="required">
         <p class="validator-hint">Este campo es obligatorio</p>
       </ng-template>
-    </auth-password-input>
-    <auth-password-input
-      label="Verificar contraseña"
+    </ui-password-field>
+    <ui-password-field
+      labelText="Verificar contraseña"
       inputId="verifyPassword"
       formControlName="verifyPassword"
+      autocomplete="new-password"
     >
       <ng-template errorMessage="required">
         <p class="validator-hint">Este campo es obligatorio</p>
@@ -77,7 +78,7 @@
       <ng-template errorMessage="notMatching">
         <p class="validator-hint">Las contraseñas no coinciden</p>
       </ng-template>
-    </auth-password-input>
+    </ui-password-field>
 
     <div></div>
     <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
