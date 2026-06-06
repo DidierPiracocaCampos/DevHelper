@@ -24,18 +24,18 @@ Ninguna. Es el primer modulo que se trabaja.
 
 ### T2 · Refactor de inputs a signals + patron compuesto
 
-- [ ] T2.1 `UiField` base con slots `[label]`, `[prefix]`, `[suffix]`, `[errors]` y estado en signals (`value`, `disabled`, `errors`, `touched`, `dirty`).
-- [ ] T2.2 `UiTextField`.
-- [ ] T2.3 `UiEmailField`.
-- [ ] T2.4 `UiPasswordField` con toggle show/hide accesible.
-- [ ] T2.5 `UiNumberField`.
-- [ ] T2.6 `UiSearchField`.
-- [ ] T2.7 `UiPinField` (variante con UX propia: digitos, teclado, paste).
-- [ ] T2.8 `UiTextareaField`.
-- [ ] T2.9 Migrar consumidores existentes a los nuevos componentes.
-- [ ] T2.10 Corregir memory leak de `matchOtherValidator`.
-- [ ] T2.11 Anadir debounce a `firebasePasswordValidator`.
-- [ ] T2.12 Tests de los nuevos componentes.
+- [x] T2.1 `UiField` base con slots `[label]`, `[prefix]`, `[suffix]`, `[errors]` y estado en signals (`value`, `disabled`, `errors`, `touched`, `dirty`).
+- [x] T2.2 `UiTextField`.
+- [x] T2.3 `UiEmailField`.
+- [x] T2.4 `UiPasswordField` con toggle show/hide accesible.
+- [x] T2.5 `UiNumberField`.
+- [x] T2.6 `UiSearchField`.
+- [x] T2.7 `UiPinField` (variante con UX propia: digitos, teclado, paste).
+- [x] T2.8 `UiTextareaField`.
+- [x] T2.9 Migrar consumidores existentes a los nuevos componentes.
+- [x] T2.10 Corregir memory leak de `matchOtherValidator`.
+- [x] T2.11 Anadir debounce a `firebasePasswordValidator`.
+- [x] T2.12 Tests de los nuevos componentes.
 
 ### T3 · File-input con signals + Firebase Storage
 
