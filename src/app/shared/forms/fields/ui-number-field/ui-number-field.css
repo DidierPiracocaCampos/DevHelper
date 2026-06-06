@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.input-grow {
+  flex: 1;
+  min-width: 0;
+}

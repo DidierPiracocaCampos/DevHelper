@@ -1,0 +1,37 @@
+@if (label(); as l) {
+  <ng-container *ngTemplateOutlet="l.template" />
+}
+<div class="input input-lg w-full" [class.validator]="isInvalid()">
+  <span class="icon">search</span>
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    type="search"
+    [value]="value() ?? ''"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+  @if (hasValue() && !disabled()) {
+    <button
+      type="button"
+      class="icon text-base-content/60 hover:text-base-content"
+      aria-label="Limpiar búsqueda"
+      (click)="clear()"
+    >
+      close
+    </button>
+  }
+  <ng-content select="[suffix]" />
+</div>
+
+@for (m of errorMessages(); track $index) {
+  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
+    <ng-container
+      [ngTemplateOutlet]="m.template"
+      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
+    />
+  }
+}

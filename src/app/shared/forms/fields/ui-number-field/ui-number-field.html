@@ -1,0 +1,31 @@
+@if (label(); as l) {
+  <ng-container *ngTemplateOutlet="l.template" />
+}
+<div class="input input-lg w-full" [class.validator]="isInvalid()">
+  <ng-content select="[prefix]" />
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    type="number"
+    inputmode="numeric"
+    [value]="value() ?? ''"
+    [placeholder]="placeholder()"
+    [min]="min()"
+    [max]="max()"
+    [step]="step()"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+  <ng-content select="[suffix]" />
+</div>
+
+@for (m of errorMessages(); track $index) {
+  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
+    <ng-container
+      [ngTemplateOutlet]="m.template"
+      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
+    />
+  }
+}

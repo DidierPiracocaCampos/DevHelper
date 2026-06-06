@@ -1,0 +1,27 @@
+<label class="label" [attr.for]="inputId()">{{ labelText() }}:</label>
+<div class="input input-lg w-full" [class.validator]="isInvalid()">
+  <span class="icon text-lg!">mail</span>
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    type="email"
+    inputmode="email"
+    [value]="value() ?? ''"
+    [placeholder]="placeholder()"
+    [attr.autocomplete]="autocomplete()"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+  <ng-content select="[suffix]" />
+</div>
+
+@for (m of errorMessages(); track $index) {
+  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
+    <ng-container
+      [ngTemplateOutlet]="m.template"
+      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
+    />
+  }
+}

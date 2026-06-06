@@ -1,0 +1,31 @@
+@if (labelText()) {
+  <label class="label" [attr.for]="inputId()">{{ labelText() }}:</label>
+} @else if (label(); as l) {
+  <ng-container *ngTemplateOutlet="l.template" />
+}
+<div class="input input-lg w-full" [class.validator]="isInvalid()">
+  <ng-content select="[prefix]" />
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    [type]="type()"
+    [value]="value() ?? ''"
+    [placeholder]="placeholder()"
+    [attr.inputmode]="inputmode() || null"
+    [attr.autocomplete]="autocomplete() || null"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+  <ng-content select="[suffix]" />
+</div>
+
+@for (m of errorMessages(); track $index) {
+  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
+    <ng-container
+      [ngTemplateOutlet]="m.template"
+      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
+    />
+  }
+}
