@@ -1,0 +1,82 @@
+<div
+  class="dropzone"
+  [class.drag-over]="dragOver()"
+  [class.is-disabled]="disabled()"
+  [class.is-busy]="isBusy()"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="'Subir archivos'"
+  [attr.aria-describedby]="errorMsg() ? inputId() + '-err' : null"
+  [attr.aria-busy]="isBusy()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  (click)="openPicker()"
+  (keydown)="onKeydown($event)"
+>
+  <span class="icon text-lg!">cloud_upload</span>
+  <span class="dropzone-label">Suelta archivos o haz clic para seleccionar</span>
+  <input
+    #picker
+    type="file"
+    class="hidden"
+    [multiple]="multiple()"
+    [accept]="accept()"
+    [disabled]="disabled()"
+    (change)="onSelect($event)"
+  />
+</div>
+
+@if (errorMsg(); as err) {
+  <p [id]="inputId() + '-err'" class="text-error text-sm mt-2" role="alert">{{ err }}</p>
+}
+
+@if (items().length > 0) {
+  <ul class="file-list">
+    @for (item of items(); track item.localId) {
+      <li class="file-item" [class.is-error]="item.status === 'error'">
+        @if (isImage(item) && previewUrl(item); as url) {
+          <img [src]="url" alt="" class="thumb" />
+        } @else {
+          <span class="icon thumb-icon">description</span>
+        }
+
+        <div class="file-meta">
+          <span class="name">{{ displayName(item) }}</span>
+          <span class="size">{{ formatSize(item) }}</span>
+          @if (item.status === 'error' && item.error) {
+            <span class="error-msg">{{ item.error }}</span>
+          }
+        </div>
+
+        @if (item.status === 'uploading') {
+          <div
+            class="progress"
+            role="progressbar"
+            [attr.aria-valuenow]="item.progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'Progreso de ' + displayName(item)"
+          >
+            <div class="bar" [style.width.%]="item.progress"></div>
+          </div>
+        } @else if (item.status === 'error') {
+          <button type="button" class="icon-btn" (click)="retry(item)" [attr.aria-label]="'Reintentar ' + displayName(item)">
+            <span class="icon">refresh</span>
+          </button>
+        } @else {
+          <span class="icon status-done" aria-hidden="true">check_circle</span>
+        }
+
+        <button
+          type="button"
+          class="icon-btn"
+          (click)="removeItem(item)"
+          [attr.aria-label]="'Quitar ' + displayName(item)"
+        >
+          <span class="icon">close</span>
+        </button>
+      </li>
+    }
+  </ul>
+}
