@@ -96,7 +96,7 @@ export function withDocExists<T extends { id?: string }>() {
   return function <TBase extends Constructor<ApiBase<T>>>(Base: TBase) {
     abstract class ExistsMixin extends Base {
       docExists(id: string) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return of(false);
 
@@ -121,7 +121,7 @@ export function withAddDoc<T extends { id?: string }>() {
   ): Constructor<AddDocFeature<T>> & TBase {
     abstract class AddDocMixin extends Base implements AddDocFeature<T> {
       addDoc(item: T) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) {
               return throwError(() => new Error('No collection ref'));
@@ -152,7 +152,7 @@ export function withUpdateDoc<T extends { id?: string }>() {
   ): Constructor<UpdateDocFeature<T>> & TBase {
     abstract class UpdateDocMixin extends Base implements UpdateDocFeature<T> {
       updateDoc(id: string, data: Partial<T>) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
@@ -174,7 +174,7 @@ export function withSetDoc<T extends { id?: string }>() {
   ): Constructor<SetDocFeature<T>> & TBase {
     abstract class SetDocMixin extends Base implements SetDocFeature<T> {
       setDoc(id: string, data: Partial<T>) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
@@ -195,7 +195,7 @@ export function withDocDelete<T extends { id?: string }>() {
   ): Constructor<DeleteDocFeature> & TBase {
     abstract class DeleteDocMixin extends Base implements DeleteDocFeature {
       deleteDoc(id: string) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () => {
@@ -259,7 +259,7 @@ export function withTransaction<T extends { id?: string }>() {
   ): Constructor<TransactionFeature> & TBase {
     abstract class TransactionMixin extends Base implements TransactionFeature {
       runTransaction<TResult>(fn: (tx: Transaction) => Promise<TResult>) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
             return runInInjectionContext(this._injector, () =>
@@ -283,7 +283,7 @@ export function withPagination<T extends { id?: string }>() {
         options?: QueryOptions,
         cursor?: QueryDocumentSnapshot<T>,
       ) {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return throwError(() => new Error('Collection reference not available'));
 
@@ -340,7 +340,7 @@ export function withCount<T extends { id?: string }>() {
   ): Constructor<CountFeature> & TBase {
     abstract class CountMixin extends Base implements CountFeature {
       getCount() {
-        return this.$userCollectionRef().pipe(
+        return this.$userCollectionRef.pipe(
           switchMap((ref) => {
             if (!ref) return of(0);
             return runInInjectionContext(this._injector, () =>
