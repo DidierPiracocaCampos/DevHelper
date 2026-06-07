@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { UnlockKeyI } from '../models/unlock-key.model';
 import { VAULT_ERRORS } from '../models/vault.model';
 
+export const PBKDF2_ITERATIONS = 600000;
+
 @Injectable({
   providedIn: 'root',
 })
 export class UnlockKeyWithPin {
   private encoder = new TextEncoder();
 
-  private async deriveKey(pin: string, salt: BufferSource): Promise<CryptoKey> {
+  private async deriveKey(pin: string, salt: BufferSource, iterations: number): Promise<CryptoKey> {
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
       this.encoder.encode(pin),
@@ -20,7 +22,7 @@ export class UnlockKeyWithPin {
       {
         name: 'PBKDF2',
         salt,
-        iterations: 100000,
+        iterations,
         hash: 'SHA-256',
       },
       keyMaterial,
@@ -33,7 +35,7 @@ export class UnlockKeyWithPin {
   async createUnlockKey(pin: string, masterKey: ArrayBuffer): Promise<UnlockKeyI> {
     const salt = crypto.getRandomValues(new Uint8Array(16));
 
-    const pinKey = await this.deriveKey(pin, salt);
+    const pinKey = await this.deriveKey(pin, salt, PBKDF2_ITERATIONS);
 
     const iv = crypto.getRandomValues(new Uint8Array(12));
 
@@ -48,7 +50,8 @@ export class UnlockKeyWithPin {
       salt,
       iv,
       params: {
-        iterations: 100000,
+        iterations: PBKDF2_ITERATIONS,
+        type: 'pin',
       },
     };
   }
@@ -73,14 +76,24 @@ export class UnlockKeyWithPin {
     if (!unlockKey.salt) {
       throw new Error(VAULT_ERRORS.SALT_IS_MISSING);
     }
-    const pinKey = await this.deriveKey(pin, new Uint8Array(unlockKey.salt));
-
-    const rawMasterKey = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: new Uint8Array(unlockKey.iv) },
-      pinKey,
-      new Uint8Array(unlockKey.encryptedMasterKey),
+    if (unlockKey.params.type !== 'pin') {
+      throw new Error(VAULT_ERRORS.SALT_IS_MISSING);
+    }
+    const pinKey = await this.deriveKey(
+      pin,
+      new Uint8Array(unlockKey.salt),
+      unlockKey.params.iterations,
     );
 
-    return rawMasterKey;
+    try {
+      const rawMasterKey = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: new Uint8Array(unlockKey.iv) },
+        pinKey,
+        new Uint8Array(unlockKey.encryptedMasterKey),
+      );
+      return rawMasterKey;
+    } catch (_e) {
+      throw new Error(VAULT_ERRORS.INCORRECT_PIN_TO_UNLOCK_WITH_PIN);
+    }
   }
 }

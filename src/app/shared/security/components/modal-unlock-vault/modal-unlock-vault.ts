@@ -17,7 +17,6 @@ import { UiAlert } from '../../../components/ui-alert/ui-alert';
   selector: 'secure-unlock-vault',
   imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinField, UiButton, UiAlert],
   templateUrl: './modal-unlock-vault.html',
-  styleUrl: './modal-unlock-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalUnlockVault {
@@ -28,13 +27,13 @@ export class ModalUnlockVault {
   protected checked = signal<'PASSKEY' | 'PIN'>('PASSKEY');
   protected isLoading = signal(false);
   protected errorMessage = signal<string | undefined>(undefined);
+  protected isOpen = signal(false);
 
   protected readonly havePin = this._vault.haveUnlockKeyWithPin;
   protected readonly havePasskey = this._vault.haveUnlockKeyWithPasskey;
   protected readonly attemptsRemaining = this._vault.pinAttemptsRemaining;
   protected readonly isLockedOut = this._vault.isPinLockedOut;
   protected readonly countdownMs = this._vault.pinLockoutRemainingMs;
-  protected readonly isOpen = this._vault.isUnlockModalOpen;
 
   protected readonly onlyPin = computed(() => this.havePin() && !this.havePasskey());
   protected readonly onlyPasskey = computed(() => this.havePasskey() && !this.havePin());
@@ -50,6 +49,10 @@ export class ModalUnlockVault {
   });
 
   private _statusEffect = effect(() => {
+    this.isOpen.set(this._vault.isUnlockModalOpen());
+  });
+
+  private _closeOnUnlockEffect = effect(() => {
     const status = this._vault.vaultStatus();
     if (status !== 'ENCRYPTED' && this.isOpen()) {
       this.isOpen.set(false);
@@ -79,6 +82,10 @@ export class ModalUnlockVault {
     this.errorMessage.set(undefined);
     this.isLoading.set(false);
     this._autoSubmitted = false;
+  }
+
+  protected onModalClose(): void {
+    this.reset();
   }
 
   protected async submitPin() {

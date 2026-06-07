@@ -11,7 +11,6 @@ import { UiAlert } from '../../../components/ui-alert/ui-alert';
   selector: 'secure-create-vault',
   imports: [ReactiveFormsModule, FormsModule, UiModal, UiPinField, ErrorMessage, UiButton, UiAlert],
   templateUrl: './modal-create-vault.html',
-  styleUrl: './modal-create-vault.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalCreateVault {
@@ -23,6 +22,7 @@ export class ModalCreateVault {
   protected passkeyError = signal<string | undefined>(undefined);
   protected successType = signal<'passkey' | 'pin' | undefined>(undefined);
   protected checked = signal('PASSKEY');
+  protected isOpen = signal(false);
 
   private _vault = inject(VaultSecurity);
   private _fb = inject(FormBuilder).nonNullable;
@@ -30,7 +30,6 @@ export class ModalCreateVault {
   protected readonly status = this._vault.vaultStatus;
   protected readonly haveUnlockKeyWithPin = this._vault.haveUnlockKeyWithPin;
   protected readonly haveUnlockKeyWithPasskey = this._vault.haveUnlockKeyWithPasskey;
-  protected readonly isOpen = this._vault.isSecureModalOpen;
 
   private _pinStateEffect = effect(() => {
     if (this.haveUnlockKeyWithPin()) {
@@ -40,6 +39,10 @@ export class ModalCreateVault {
     }
   });
 
+  private _syncOpenEffect = effect(() => {
+    this.isOpen.set(this._vault.isSecureModalOpen());
+  });
+
   constructor() {
     this._secureForm.controls.pin.valueChanges.subscribe(() => {
       this._secureForm.controls.verify_pin.updateValueAndValidity({
@@ -47,6 +50,21 @@ export class ModalCreateVault {
         emitEvent: false,
       });
     });
+  }
+
+  protected onModalClose(): void {
+    this._secureForm.reset();
+    this._secureForm.get('current_pin')?.markAsPristine();
+    this._secureForm.get('current_pin')?.markAsUntouched();
+    this._secureForm.updateValueAndValidity();
+    this.createUnlockWithPin.set(false);
+    this.createUnlockWithPasskey.set(false);
+    this.pinError.set(undefined);
+    this.passkeyError.set(undefined);
+    this.checked.set('PASSKEY');
+    if (this.isOpen()) {
+      this.isOpen.set(false);
+    }
   }
 
   async submitFormPin() {

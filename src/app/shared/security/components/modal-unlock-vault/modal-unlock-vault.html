@@ -3,7 +3,7 @@
   icon="lock"
   size="md"
   [(isOpen)]="isOpen"
-  (isOpenChange)="reset()"
+  (closed)="onModalClose()"
 >
   <div body class="flex flex-col items-center gap-4">
     <p class="text-sm text-base-content/70 text-center">

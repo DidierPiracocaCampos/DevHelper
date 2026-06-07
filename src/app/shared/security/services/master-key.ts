@@ -55,7 +55,7 @@ export class MasterKey {
     const plaintextBuffer = await crypto.subtle.decrypt(
       {
         name: 'AES-GCM',
-        iv: iv as unknown as BufferSource,
+        iv: iv as BufferSource,
       },
       masterKey,
       ciphertext,

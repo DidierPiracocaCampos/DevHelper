@@ -3,17 +3,7 @@
   icon="shield"
   size="xl"
   [(isOpen)]="isOpen"
-  (isOpenChange)="
-    _secureForm.reset();
-    _secureForm.get('current_pin')?.markAsPristine();
-    _secureForm.get('current_pin')?.markAsUntouched();
-    _secureForm.updateValueAndValidity();
-    createUnlockWithPin.set(false);
-    createUnlockWithPasskey.set(false);
-    pinError.set(undefined);
-    passkeyError.set(undefined);
-    checked.set('PASSKEY')
-  "
+  (closed)="onModalClose()"
 >
   <div body>
     <p class="p-3 my-4 rounded-xl bg-base-200 text-sm">

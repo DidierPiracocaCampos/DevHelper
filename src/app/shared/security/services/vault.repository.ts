@@ -13,6 +13,22 @@ import { withCollection } from '../../api/crud.mixins';
 import { withAddDoc } from '../../api/crud.mixins';
 import { withSetDoc } from '../../api/crud.mixins';
 
+function migrateParams(raw: unknown, salt: Uint8Array | undefined): UnlockKeyI['params'] {
+  if (raw && typeof raw === 'object') {
+    const r = raw as { iterations?: unknown; type?: unknown };
+    if (r.type === 'passkey') {
+      return { type: 'passkey' };
+    }
+    if (r.type === 'pin' && typeof r.iterations === 'number') {
+      return { iterations: r.iterations, type: 'pin' };
+    }
+    if (typeof r.iterations === 'number') {
+      return { iterations: r.iterations, type: 'pin' };
+    }
+  }
+  return salt ? { iterations: 600000, type: 'pin' } : { type: 'passkey' };
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,6 +41,7 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
       const data: DocumentData = {
         encryptedMasterKey: toBase64(vault.encryptedMasterKey),
         iv: toBase64(vault.iv),
+        params: vault.params,
       };
       if (vault.salt) {
         data['salt'] = toBase64(vault.salt);
@@ -34,13 +51,15 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
 
     fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): UnlockKeyI {
       const data = snapshot.data(options);
+      const salt = data['salt'] ? fromBase64(data['salt']) : undefined;
+      const params = migrateParams(data['params'], salt);
 
       return {
         id: snapshot.id,
         encryptedMasterKey: fromBase64(data['encryptedMasterKey']),
-        salt: data['salt'] ? fromBase64(data['salt']) : undefined,
+        salt,
         iv: fromBase64(data['iv']),
-        params: data['params'],
+        params,
       };
     },
   };
@@ -64,7 +83,7 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
     if (status == VAULT_STATUS.NO_CREATE || status == VAULT_STATUS.ERROR) {
       return undefined;
     }
-    return this.unlockList.value()?.find((v: UnlockKeyI) => v.salt != undefined);
+    return this.unlockList.value()?.find((v: UnlockKeyI) => v.params?.type === 'pin');
   });
 
   readonly unlockKeyWithPasskey = computed(() => {
@@ -72,7 +91,7 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
     if (status == VAULT_STATUS.NO_CREATE || status == VAULT_STATUS.ERROR) {
       return undefined;
     }
-    return this.unlockList.value()?.find((v: UnlockKeyI) => v.salt === undefined);
+    return this.unlockList.value()?.find((v: UnlockKeyI) => v.params?.type === 'passkey');
   });
 
   hasVaultKey(): boolean {
