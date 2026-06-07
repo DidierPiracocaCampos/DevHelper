@@ -71,16 +71,30 @@ service cloud.firestore {
     // Document ID: auto-generated
     // Fields:
     //   - name: string (required, <= 255)
-    //   - size: int (required, >= 0)
+    //   - size: int (required, <= 5 * 1024 * 1024)
     //   - type: string (required, <= 100)
-    //   - storagePath: string (required, <= 512, immutable, must match users/{uid}/files/...)
-    //   - uploadedAt: int (required, immutable)
+    //   - chunkCount: int (required, <= 8)
+    //   - updatedAt: int (required)
+    //
+    // Subcollection: users/{userId}/files/{fileId}/chunks
+    // Document ID: '0'..'7'
+    // Fields:
+    //   - index: int (required, >= 0)
+    //   - data: bytes (required, <= 700 * 1024)
+    //
+    // Subcollection: users/{userId}/nasa-image
+    // Document ID: auto-generated (UUID)
+    // Fields: same shape as users/{userId}/files
+    //
+    // Subcollection: users/{userId}/nasa-image/{fileId}/chunks
+    // Document ID: '0'..'7'
+    // Fields: same shape as files/chunks
     //
     // Subcollection: users/{userId}/preferences
     // Document ID: 'singleton'
     // Fields:
     //   - id: string (required, must be 'singleton')
-    //   - customNasaImage?: { storagePath: string (<= 512, must match users/{uid}/nasa-image/.+), updatedAt: int (>= 0) }
+    //   - customNasaImage?: { fileId: string (<= 128), updatedAt: int (>= 0) }
     // ===============================================================
 
     // -------------------------------------------------------------------
@@ -157,29 +171,73 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------
-    // Files metadata
+    // Files metadata (M3 — cifrado cliente con vaultKey)
     // -------------------------------------------------------------------
     match /users/{userId}/files/{fileId} {
       allow read: if isOwner(userId);
 
-      allow create: if isOwner(userId)
+      allow create, update: if isOwner(userId)
                     && isBoundedString(request.resource.data.name, 255)
                     && isPositiveInt(request.resource.data.size)
+                    && request.resource.data.size <= 5 * 1024 * 1024
                     && isBoundedString(request.resource.data.type, 100)
-                    && isBoundedString(request.resource.data.storagePath, 512)
-                    && isPositiveInt(request.resource.data.uploadedAt)
-                    && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
-                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'storagePath', 'uploadedAt']);
+                    && isPositiveInt(request.resource.data.chunkCount)
+                    && request.resource.data.chunkCount <= 8
+                    && isPositiveInt(request.resource.data.updatedAt)
+                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'chunkCount', 'updatedAt', 'encrypted', 'iv']);
 
-      allow update: if isOwner(userId)
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Files chunks (M3 — bytes cifrados o planos)
+    // -------------------------------------------------------------------
+    match /users/{userId}/files/{fileId}/chunks/{chunkId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasOnly(['index', 'data'])
+                    && request.resource.data.index is int
+                    && request.resource.data.index >= 0
+                    && request.resource.data.index < 8
+                    && request.resource.data.data is bytes
+                    && request.resource.data.data.size() <= 700 * 1024;
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // NASA custom image metadata
+    // -------------------------------------------------------------------
+    match /users/{userId}/nasa-image/{fileId} {
+      allow read: if isOwner(userId);
+
+      allow create, update: if isOwner(userId)
                     && isBoundedString(request.resource.data.name, 255)
                     && isPositiveInt(request.resource.data.size)
+                    && request.resource.data.size <= 5 * 1024 * 1024
                     && isBoundedString(request.resource.data.type, 100)
-                    && isUnchanged('storagePath')
-                    && isUnchanged('uploadedAt')
-                    && isUnchanged('size')
-                    && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
-                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'storagePath', 'uploadedAt']);
+                    && isPositiveInt(request.resource.data.chunkCount)
+                    && request.resource.data.chunkCount <= 8
+                    && isPositiveInt(request.resource.data.updatedAt)
+                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'chunkCount', 'updatedAt', 'encrypted', 'iv']);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // NASA custom image chunks
+    // -------------------------------------------------------------------
+    match /users/{userId}/nasa-image/{fileId}/chunks/{chunkId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasOnly(['index', 'data'])
+                    && request.resource.data.index is int
+                    && request.resource.data.index >= 0
+                    && request.resource.data.index < 8
+                    && request.resource.data.data is bytes
+                    && request.resource.data.data.size() <= 700 * 1024;
 
       allow delete: if isOwner(userId);
     }
@@ -196,9 +254,8 @@ service cloud.firestore {
                     && isBoundedString(request.resource.data.id, 32)
                     && request.resource.data.id == 'singleton'
                     && (!('customNasaImage' in request.resource.data)
-                        || (isBoundedString(request.resource.data.customNasaImage.storagePath, 512)
-                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)
-                            && request.resource.data.customNasaImage.storagePath.matches('^users/' + userId + '/nasa-image/.+')))
+                        || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
+                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
                     && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
 
       allow update: if isOwner(userId)
@@ -206,9 +263,8 @@ service cloud.firestore {
                     && isBoundedString(request.resource.data.id, 32)
                     && request.resource.data.id == 'singleton'
                     && (!('customNasaImage' in request.resource.data)
-                        || (isBoundedString(request.resource.data.customNasaImage.storagePath, 512)
-                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)
-                            && request.resource.data.customNasaImage.storagePath.matches('^users/' + userId + '/nasa-image/.+')))
+                        || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
+                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
                     && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
 
       allow delete: if isOwner(userId)

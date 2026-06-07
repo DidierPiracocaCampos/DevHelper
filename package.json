@@ -8,13 +8,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:rules": "firebase emulators:exec --only storage \"ng test --watch=false\"",
     "test:rules:firestore": "firebase emulators:exec --only firestore \"ng test --watch=false\"",
-    "test:rules:all": "firebase emulators:exec --only firestore,storage \"ng test --watch=false\"",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "storage:cors": "gsutil cors set storage.cors.json gs://devhelper-a61ef.firebasestorage.app"
+    "lint:fix": "eslint --fix ."
   },
   "private": true,
   "dependencies": {

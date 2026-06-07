@@ -96,24 +96,67 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
               match /users/{userId}/files/{fileId} {
                 allow read: if isOwner(userId);
-                allow create: if isOwner(userId)
+                allow create, update: if isOwner(userId)
                               && isBoundedString(request.resource.data.name, 255)
                               && isPositiveInt(request.resource.data.size)
+                              && request.resource.data.size <= 5 * 1024 * 1024
                               && isBoundedString(request.resource.data.type, 100)
-                              && isBoundedString(request.resource.data.storagePath, 512)
-                              && isPositiveInt(request.resource.data.uploadedAt)
-                              && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
-                              && request.resource.data.keys().hasOnly(['name','size','type','storagePath','uploadedAt']);
-                allow update: if isOwner(userId)
-                              && isBoundedString(request.resource.data.name, 255)
-                              && isPositiveInt(request.resource.data.size)
-                              && isBoundedString(request.resource.data.type, 100)
-                              && isUnchanged('storagePath')
-                              && isUnchanged('uploadedAt')
-                              && isUnchanged('size')
-                              && request.resource.data.storagePath.matches('^users/' + userId + '/files/.+')
-                              && request.resource.data.keys().hasOnly(['name','size','type','storagePath','uploadedAt']);
+                              && isPositiveInt(request.resource.data.chunkCount)
+                              && request.resource.data.chunkCount <= 8
+                              && isPositiveInt(request.resource.data.updatedAt)
+                              && request.resource.data.keys().hasOnly(['name','size','type','chunkCount','updatedAt','encrypted','iv']);
                 allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/files/{fileId}/chunks/{chunkId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && request.resource.data.keys().hasOnly(['index','data'])
+                              && request.resource.data.index is int
+                              && request.resource.data.index >= 0
+                              && request.resource.data.index < 8
+                              && request.resource.data.data is bytes
+                              && request.resource.data.data.size() <= 700 * 1024;
+                allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/nasa-image/{fileId} {
+                allow read: if isOwner(userId);
+                allow create, update: if isOwner(userId)
+                              && isBoundedString(request.resource.data.name, 255)
+                              && isPositiveInt(request.resource.data.size)
+                              && request.resource.data.size <= 5 * 1024 * 1024
+                              && isBoundedString(request.resource.data.type, 100)
+                              && isPositiveInt(request.resource.data.chunkCount)
+                              && request.resource.data.chunkCount <= 8
+                              && isPositiveInt(request.resource.data.updatedAt)
+                              && request.resource.data.keys().hasOnly(['name','size','type','chunkCount','updatedAt','encrypted','iv']);
+                allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/nasa-image/{fileId}/chunks/{chunkId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && request.resource.data.keys().hasOnly(['index','data'])
+                              && request.resource.data.index is int
+                              && request.resource.data.index >= 0
+                              && request.resource.data.index < 8
+                              && request.resource.data.data is bytes
+                              && request.resource.data.data.size() <= 700 * 1024;
+                allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/preferences/{prefsId} {
+                allow read: if isOwner(userId) && prefsId == 'singleton';
+                allow create, update: if isOwner(userId)
+                              && prefsId == 'singleton'
+                              && isBoundedString(request.resource.data.id, 32)
+                              && request.resource.data.id == 'singleton'
+                              && (!('customNasaImage' in request.resource.data)
+                                  || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
+                                      && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
+                              && request.resource.data.keys().hasOnly(['id','customNasaImage']);
+                allow delete: if isOwner(userId) && prefsId == 'singleton';
               }
 
               match /{document=**} {
@@ -307,8 +350,8 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       name: 'doc.pdf',
       size: 1024,
       type: 'application/pdf',
-      storagePath: 'users/alice/files/abc/doc.pdf',
-      uploadedAt: 1,
+      chunkCount: 1,
+      updatedAt: 1,
     };
 
     it('owner can create, read, update, delete a file metadata', async () => {
@@ -320,45 +363,27 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       await assertSucceeds(deleteDoc(ref));
     });
 
-    it('create rejects when storagePath does not match the user namespace', async () => {
+    it('create rejects when file size exceeds 5 MB', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
       await assertFails(
-        addDoc(files, { ...validFile, storagePath: 'users/bob/files/abc/doc.pdf' }),
+        addDoc(files, { ...validFile, size: 6 * 1024 * 1024 }),
       );
+    });
+
+    it('create rejects when chunkCount exceeds 8', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
       await assertFails(
-        addDoc(files, { ...validFile, storagePath: 'public/doc.pdf' }),
+        addDoc(files, { ...validFile, chunkCount: 9 }),
       );
     });
 
     it('create rejects when required fields are missing or wrong type', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
-      await assertFails(
-        addDoc(files, { ...validFile, size: -1 }),
-      );
-      await assertFails(
-        addDoc(files, { ...validFile, uploadedAt: 'yesterday' }),
-      );
-      await assertFails(
-        addDoc(files, { ...validFile, name: 123 }),
-      );
-    });
-
-    it('update cannot change storagePath, uploadedAt, or size', async () => {
-      const alice = testEnv.authenticatedContext('alice');
-      const files = collection(alice.firestore(), 'users/alice/files');
-      const ref = await assertSucceeds(addDoc(files, validFile));
-
-      await assertFails(
-        updateDoc(ref, { ...validFile, storagePath: 'users/alice/files/xyz/other.pdf' }),
-      );
-      await assertFails(
-        updateDoc(ref, { ...validFile, uploadedAt: 999 }),
-      );
-      await assertFails(
-        updateDoc(ref, { ...validFile, size: 9999 }),
-      );
+      await assertFails(addDoc(files, { ...validFile, name: 123 }));
+      await assertFails(addDoc(files, { ...validFile, chunkCount: 'many' }));
     });
 
     it('other user cannot read or write another users file metadata', async () => {
@@ -369,6 +394,63 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const ref = doc(bob.firestore(), 'users/alice/files/f1');
       await assertFails(getDoc(ref));
       await assertFails(deleteDoc(ref));
+    });
+  });
+
+  describe('users/{userId}/files/{fileId}/chunks', () => {
+    const smallBytes = () => new Uint8Array(100 * 1024);
+    const oversizedBytes = () => new Uint8Array(800 * 1024);
+
+    it('owner can create and read a small chunk', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const chunks = collection(alice.firestore(), 'users/alice/files/f1/chunks');
+      const ref = doc(chunks, '0');
+      await assertSucceeds(setDoc(ref, { index: 0, data: smallBytes() }));
+      await assertSucceeds(getDoc(ref));
+    });
+
+    it('create rejects when data exceeds 700 KB', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const chunks = collection(alice.firestore(), 'users/alice/files/f1/chunks');
+      const ref = doc(chunks, '0');
+      await assertFails(setDoc(ref, { index: 0, data: oversizedBytes() }));
+    });
+
+    it('create rejects when index is negative or >= 8', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const chunks = collection(alice.firestore(), 'users/alice/files/f1/chunks');
+      const ref = doc(chunks, '8');
+      await assertFails(setDoc(ref, { index: 8, data: smallBytes() }));
+    });
+
+    it('other user cannot write to another users chunks', async () => {
+      const bob = testEnv.authenticatedContext('bob');
+      const chunks = collection(bob.firestore(), 'users/alice/files/f1/chunks');
+      const ref = doc(chunks, '0');
+      await assertFails(setDoc(ref, { index: 0, data: smallBytes() }));
+    });
+  });
+
+  describe('users/{userId}/nasa-image', () => {
+    const validImage = {
+      name: 'nasa.png',
+      size: 500 * 1024,
+      type: 'image/png',
+      chunkCount: 1,
+      updatedAt: 1,
+    };
+
+    it('owner can create and read a nasa image', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const nasa = collection(alice.firestore(), 'users/alice/nasa-image');
+      const ref = await assertSucceeds(addDoc(nasa, validImage));
+      await assertSucceeds(getDoc(ref));
+    });
+
+    it('create rejects when nasa image size exceeds 5 MB', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const nasa = collection(alice.firestore(), 'users/alice/nasa-image');
+      await assertFails(addDoc(nasa, { ...validImage, size: 6 * 1024 * 1024 }));
     });
   });
 
