@@ -16,9 +16,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { from, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { FileMetadataI, FileItem } from '../models/file.model';
-import { FileUploadService } from '../services/file-upload.service';
+import { FileBlobService } from '../services/file-blob.service';
 
 const IMAGE_PATTERN = /^image\//;
+
+export interface UploadProgress {
+  loaded: number;
+  total: number;
+  pct: number;
+}
+
+export interface UploadOptions {
+  localId: string;
+  onProgress?: (progress: UploadProgress) => void;
+}
 
 @Component({
   selector: 'file-input-field',
@@ -27,7 +38,7 @@ const IMAGE_PATTERN = /^image\//;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileInputField {
-  private readonly _upload = inject(FileUploadService);
+  private readonly _upload = inject(FileBlobService);
   private readonly _destroyRef = inject(DestroyRef);
 
   readonly inputId = input.required<string>();
@@ -78,11 +89,13 @@ export class FileInputField {
   }
 
   private _resolveRemoteUrl(item: FileItem): void {
-    if (!item.metadata) return;
+    if (!item.metadata || !item.metadata.id || !item.metadata.type) return;
     const localId = item.localId;
-    of(item.metadata.storagePath)
+    const fileId = item.metadata.id;
+    const type = item.metadata.type;
+    of(fileId)
       .pipe(
-        switchMap((path) => from(this._upload.getDownloadUrl(path))),
+        switchMap((id) => from(this._upload.getObjectUrl('files', id, type))),
         catchError(() => of(null)),
         takeUntilDestroyed(this._destroyRef),
       )
@@ -151,9 +164,9 @@ export class FileInputField {
 
   protected async removeItem(item: FileItem): Promise<void> {
     this._revokeObjectUrl(item.localId);
-    if (item.kind === 'remote' && item.metadata) {
+    if (item.kind === 'remote' && item.metadata?.id) {
       try {
-        await this._upload.deleteFile(item.metadata);
+        await this._upload.deleteFile('files', item.metadata.id);
       } catch (err) {
         console.error('[FileInputField] failed to delete file', err);
       }
@@ -167,8 +180,7 @@ export class FileInputField {
       arr.map((i) => (i.localId === item.localId ? { ...i, status: 'uploading', progress: 0, error: undefined } : i)),
     );
     try {
-      const metadata = await this._upload.upload(item.file, {
-        localId: item.localId,
+      const metadata = await this._upload.upload(item.file, 'files', {
         onProgress: (p) => this._updateItemProgress(item.localId, p.pct),
       });
       this._replaceItem(item.localId, {
@@ -280,8 +292,7 @@ export class FileInputField {
   private _startUpload(item: FileItem): void {
     if (!item.file) return;
     this._upload
-      .upload(item.file, {
-        localId: item.localId,
+      .upload(item.file, 'files', {
         onProgress: (p) => this._updateItemProgress(item.localId, p.pct),
       })
       .then((metadata) => {

@@ -2,21 +2,21 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
 import { FileInputField } from './file-input-field';
-import { FileUploadService } from '../services/file-upload.service';
-import { FileMetadataI } from '../models/file.model';
-import type { UploadProgress } from '../services/file-upload.service';
+import { FileBlobService, FileMetadataI } from '../services/file-blob.service';
 
 const uploadSpy = vi.fn();
 const deleteFileSpy = vi.fn();
+const getObjectUrlSpy = vi.fn();
 
 if (typeof URL.createObjectURL !== 'function') {
   URL.createObjectURL = vi.fn(() => 'blob:mock-url');
   URL.revokeObjectURL = vi.fn();
 }
 
-class FakeFileUploadService {
+class FakeFileBlobService {
   upload = uploadSpy;
   deleteFile = deleteFileSpy;
+  getObjectUrl = getObjectUrlSpy;
   progress = signal(new Map<string, { loaded: number; total: number; pct: number }>());
 }
 
@@ -25,8 +25,8 @@ const baseMetadata = (id: string, name = 'x.png'): FileMetadataI & { id: string 
   name,
   size: 10,
   type: 'image/png',
-  storagePath: `users/u/files/${id}/${name}`,
-  uploadedAt: 1,
+  chunkCount: 1,
+  updatedAt: 1,
 });
 
 describe('FileInputField', () => {
@@ -36,10 +36,11 @@ describe('FileInputField', () => {
   beforeEach(async () => {
     uploadSpy.mockReset();
     deleteFileSpy.mockReset();
+    getObjectUrlSpy.mockReset();
 
     await TestBed.configureTestingModule({
       imports: [FileInputField],
-      providers: [{ provide: FileUploadService, useClass: FakeFileUploadService }],
+      providers: [{ provide: FileBlobService, useClass: FakeFileBlobService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FileInputField);
@@ -85,11 +86,7 @@ describe('FileInputField', () => {
 
   it('uploads a single file and emits value when done', async () => {
     uploadSpy.mockImplementation(
-      (_file: File, opts: { localId: string; onProgress?: (p: UploadProgress) => void }) => {
-        opts.onProgress?.({ loaded: 5, total: 10, pct: 50 });
-        opts.onProgress?.({ loaded: 10, total: 10, pct: 100 });
-        return Promise.resolve(baseMetadata('doc-1'));
-      },
+      (file: File) => Promise.resolve(baseMetadata('doc-1')),
     );
     fixture.detectChanges();
 
@@ -106,7 +103,7 @@ describe('FileInputField', () => {
 
     expect(component['items']()[0].status).toBe('done');
     expect(component['items']()[0].metadata?.id).toBe('doc-1');
-    expect(emitted[emitted.length - 1]?.[0]?.id).toBe('doc-1');
+    expect(emitted.at(-1)?.[0]?.id).toBe('doc-1');
   });
 
   it('marks the item as error when upload fails', async () => {
@@ -135,17 +132,15 @@ describe('FileInputField', () => {
     const item = component['items']()[0];
     await (component as unknown as { removeItem: (i: typeof item) => Promise<void> }).removeItem(item);
 
-    expect(deleteFileSpy).toHaveBeenCalledWith(item.metadata);
+    expect(deleteFileSpy).toHaveBeenCalledWith('files', 'doc-1');
     expect(component['items']().length).toBe(0);
   });
 
   it('does not delete from storage when removing a local item', async () => {
     uploadSpy.mockImplementation(
-      (_file: File, _opts: { localId: string; onProgress?: (p: UploadProgress) => void }) => {
-        return new Promise(() => {
-          // never resolves: keeps item in 'uploading' state
-        });
-      },
+      () => new Promise(() => {
+        // never resolves
+      }),
     );
     fixture.detectChanges();
 
@@ -177,13 +172,10 @@ describe('FileInputField', () => {
 
   it('in single mode, adding a new file replaces the previous one', async () => {
     let counter = 0;
-    uploadSpy.mockImplementation(
-      (_file: File, opts: { localId: string; onProgress?: (p: UploadProgress) => void }) => {
-        counter += 1;
-        opts.onProgress?.({ loaded: 1, total: 1, pct: 100 });
-        return Promise.resolve(baseMetadata(`doc-${counter}`, `${counter === 1 ? 'a' : 'b'}.png`));
-      },
-    );
+    uploadSpy.mockImplementation(() => {
+      counter += 1;
+      return Promise.resolve(baseMetadata(`doc-${counter}`, `${counter === 1 ? 'a' : 'b'}.png`));
+    });
     fixture.detectChanges();
 
     addFiles([makeFile('a.png', 'image/png', 1)]);

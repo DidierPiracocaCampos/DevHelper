@@ -6,49 +6,50 @@ import {
   SnapshotOptions,
 } from 'firebase/firestore';
 import { ApiBase } from '../../api/api-base';
-import { withCollection, withDocById, withDocDelete } from '../../api/crud.mixins';
-import { FileMetadataI } from '../models/file.model';
+import { withDocById, withDocDelete } from '../../api/crud.mixins';
+import { EncryptedFileMetadataI } from './file-blob.service';
 
 @Injectable({ providedIn: 'root' })
-export class FileRepository extends withDocDelete()(
-  withDocById<FileMetadataI>()(
-    withCollection<FileMetadataI>()(ApiBase<FileMetadataI>),
-  ),
+export class NasaImageRepository extends withDocDelete()(
+  withDocById<EncryptedFileMetadataI>()(ApiBase<EncryptedFileMetadataI>),
 ) {
-  protected path = signal(['files'] as const);
+  protected path = signal(['nasa-image'] as const);
 
-  protected converter: FirestoreDataConverter<FileMetadataI, DocumentData> = {
-    toFirestore(data: FileMetadataI): DocumentData {
+  protected converter: FirestoreDataConverter<EncryptedFileMetadataI, DocumentData> = {
+    toFirestore(data: EncryptedFileMetadataI): DocumentData {
       return {
         name: data.name,
         size: data.size,
         type: data.type,
         chunkCount: data.chunkCount,
         updatedAt: data.updatedAt,
+        encrypted: data.encrypted,
+        iv: data.iv ?? null,
       };
     },
 
     fromFirestore(
       snapshot: QueryDocumentSnapshot,
       _options: SnapshotOptions,
-    ): FileMetadataI {
+    ): EncryptedFileMetadataI {
       const data = snapshot.data() as {
         name?: string;
         size?: number;
         type?: string;
         chunkCount?: number;
         updatedAt?: number;
+        encrypted?: boolean;
+        iv?: number[] | null;
       };
       return {
-        id: snapshot.id,
         name: data.name ?? '',
         size: data.size ?? 0,
         type: data.type ?? 'application/octet-stream',
         chunkCount: data.chunkCount ?? 1,
         updatedAt: data.updatedAt ?? 0,
+        encrypted: data.encrypted ?? false,
+        iv: data.iv ?? null,
       };
     },
   };
-
-  readonly files = this.getCollection();
 }

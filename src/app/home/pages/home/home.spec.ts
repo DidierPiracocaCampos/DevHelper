@@ -7,7 +7,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import Home from './home';
 import { VaultSecurity } from '../../../shared/security';
 import { Authenticator } from '../../../shared/service/authenticator';
-import { FileUploadService } from '../../../shared/files';
+import { FileBlobService } from '../../../shared/files';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
 
 if (!HTMLDialogElement.prototype.showModal) {
@@ -65,7 +65,7 @@ describe('Home', () => {
         provideHttpClientTesting(),
         { provide: VaultSecurity, useValue: vault },
         { provide: Authenticator, useValue: auth },
-        { provide: FileUploadService, useValue: new FakeUpload() },
+        { provide: FileBlobService, useValue: new FakeUpload() },
         { provide: PreferencesService, useValue: new FakePrefsService() },
       ],
     }).compileComponents();

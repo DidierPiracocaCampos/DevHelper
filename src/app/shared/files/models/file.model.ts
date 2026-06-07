@@ -3,8 +3,8 @@ export interface FileMetadataI {
   name: string;
   size: number;
   type: string;
-  storagePath: string;
-  uploadedAt: number;
+  chunkCount: number;
+  updatedAt: number;
 }
 
 export type FileItemStatus = 'pending' | 'uploading' | 'done' | 'error';
