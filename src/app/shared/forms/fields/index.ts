@@ -1,5 +1,6 @@
 export { UiField, UiLabel } from './ui-field/ui-field';
 export { ErrorMessage } from './ui-field/error-message';
+export { UiFieldErrors } from './ui-field/ui-field-errors';
 export { UiTextField } from './ui-text-field/ui-text-field';
 export { UiEmailField } from './ui-email-field/ui-email-field';
 export { UiPasswordField } from './ui-password-field/ui-password-field';

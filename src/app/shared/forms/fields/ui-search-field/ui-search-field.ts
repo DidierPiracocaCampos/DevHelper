@@ -9,10 +9,11 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-search-field',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, UiFieldErrors],
   templateUrl: './ui-search-field.html',
   styleUrl: './ui-search-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,12 +37,11 @@ export class UiSearchField extends UiField<string> {
   });
 
   onInput(event: Event) {
-    this.setDirty();
-    this.emitValue((event.target as HTMLInputElement).value);
+    this.handleInput(event);
   }
 
   onBlur() {
-    this.emitTouched();
+    this.handleBlur();
   }
 
   clear() {

@@ -21,11 +21,4 @@
   }
 </div>
 
-@for (m of errorMessages(); track $index) {
-  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
-    <ng-container
-      [ngTemplateOutlet]="m.template"
-      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
-    />
-  }
-}
+<ui-field-errors />

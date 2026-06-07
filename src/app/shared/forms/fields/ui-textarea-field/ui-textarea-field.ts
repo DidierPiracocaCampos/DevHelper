@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, forwardRef, input } from 
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-textarea-field',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, UiFieldErrors],
   templateUrl: './ui-textarea-field.html',
   styleUrl: './ui-textarea-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,11 +26,10 @@ export class UiTextareaField extends UiField<string> {
   readonly charCount = computed(() => (this.value() ?? '').length);
 
   onInput(event: Event) {
-    this.setDirty();
-    this.emitValue((event.target as HTMLTextAreaElement).value);
+    this.handleInput(event);
   }
 
   onBlur() {
-    this.emitTouched();
+    this.handleBlur();
   }
 }

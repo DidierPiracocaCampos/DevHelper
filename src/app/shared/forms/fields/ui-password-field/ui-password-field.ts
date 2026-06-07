@@ -7,12 +7,12 @@ import {
   signal,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-password-field',
-  imports: [NgTemplateOutlet],
+  imports: [UiFieldErrors],
   templateUrl: './ui-password-field.html',
   styleUrl: './ui-password-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,12 +33,11 @@ export class UiPasswordField extends UiField<string> {
   readonly inputType = computed(() => (this.showPassword() ? 'text' : 'password'));
 
   onInput(event: Event) {
-    this.setDirty();
-    this.emitValue((event.target as HTMLInputElement).value);
+    this.handleInput(event);
   }
 
   onBlur() {
-    this.emitTouched();
+    this.handleBlur();
   }
 
   togglePassword() {

@@ -80,6 +80,18 @@ export abstract class UiField<T = string> implements ControlValueAccessor {
     }
   }
 
+  protected handleInput(event: Event): void {
+    this.setDirty();
+    const target = event.target as HTMLInputElement | HTMLTextAreaElement | null;
+    if (target) {
+      this.emitValue(target.value as T);
+    }
+  }
+
+  protected handleBlur(): void {
+    this.emitTouched();
+  }
+
   get control() {
     return this._ngControl?.control;
   }

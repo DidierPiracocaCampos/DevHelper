@@ -2,13 +2,3 @@
   display: block;
   width: 100%;
 }
-
-.input-grow {
-  flex: 1;
-  min-width: 0;
-}
-
-.icon {
-  font-size: var(--icon-size-lg);
-  color: var(--color-text-muted);
-}

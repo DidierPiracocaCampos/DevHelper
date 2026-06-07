@@ -2,14 +2,3 @@
   display: block;
   width: 100%;
 }
-
-.textarea-grow {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  background: transparent;
-  outline: none;
-  resize: vertical;
-  font: inherit;
-  color: inherit;
-}

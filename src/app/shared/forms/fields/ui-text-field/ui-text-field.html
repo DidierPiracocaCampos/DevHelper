@@ -1,5 +1,5 @@
 @if (labelText()) {
-  <label class="label" [attr.for]="inputId()">{{ labelText() }}:</label>
+  <label class="label-field" [attr.for]="inputId()">{{ labelText() }}:</label>
 } @else if (label(); as l) {
   <ng-container *ngTemplateOutlet="l.template" />
 }
@@ -21,11 +21,4 @@
   <ng-content select="[suffix]" />
 </div>
 
-@for (m of errorMessages(); track $index) {
-  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
-    <ng-container
-      [ngTemplateOutlet]="m.template"
-      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
-    />
-  }
-}
+<ui-field-errors />

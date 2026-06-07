@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-number-field',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, UiFieldErrors],
   templateUrl: './ui-number-field.html',
   styleUrl: './ui-number-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,10 +24,6 @@ export class UiNumberField extends UiField<number | null> {
   max = input<number | null>(null);
   step = input<number | null>(null);
 
-  override writeValue(value: number | null): void {
-    super.writeValue(value);
-  }
-
   onInput(event: Event) {
     this.setDirty();
     const raw = (event.target as HTMLInputElement).value;
@@ -39,6 +36,6 @@ export class UiNumberField extends UiField<number | null> {
   }
 
   onBlur() {
-    this.emitTouched();
+    this.handleBlur();
   }
 }

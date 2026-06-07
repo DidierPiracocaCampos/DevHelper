@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-email-field',
-  imports: [NgTemplateOutlet],
+  imports: [UiFieldErrors],
   templateUrl: './ui-email-field.html',
   styleUrl: './ui-email-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,11 +23,10 @@ export class UiEmailField extends UiField<string> {
   autocomplete = input<string>('email');
 
   onInput(event: Event) {
-    this.setDirty();
-    this.emitValue((event.target as HTMLInputElement).value);
+    this.handleInput(event);
   }
 
   onBlur() {
-    this.emitTouched();
+    this.handleBlur();
   }
 }

@@ -10,12 +10,12 @@ import {
   viewChildren,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgTemplateOutlet } from '@angular/common';
 import { UiField } from '../ui-field/ui-field';
+import { UiFieldErrors } from '../ui-field/ui-field-errors';
 
 @Component({
   selector: 'ui-pin-field',
-  imports: [NgTemplateOutlet],
+  imports: [UiFieldErrors],
   templateUrl: './ui-pin-field.html',
   styleUrl: './ui-pin-field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

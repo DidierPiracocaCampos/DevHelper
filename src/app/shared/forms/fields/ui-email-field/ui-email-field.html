@@ -1,4 +1,4 @@
-<label class="label" [attr.for]="inputId()">{{ labelText() }}:</label>
+<label class="label-field" [attr.for]="inputId()">{{ labelText() }}:</label>
 <div class="input input-lg w-full" [class.validator]="isInvalid()">
   <span class="icon text-lg!">mail</span>
   <input
@@ -17,11 +17,4 @@
   <ng-content select="[suffix]" />
 </div>
 
-@for (m of errorMessages(); track $index) {
-  @if ((errors()?.[m.error()] && isInvalid()) || m.visible()) {
-    <ng-container
-      [ngTemplateOutlet]="m.template"
-      [ngTemplateOutletContext]="{ $implicit: errors()?.[m.error()] }"
-    />
-  }
-}
+<ui-field-errors />
