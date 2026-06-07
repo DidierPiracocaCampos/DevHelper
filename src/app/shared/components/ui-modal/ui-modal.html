@@ -1,5 +1,5 @@
 <dialog #dialogElement class="modal" (click)="_onBackdropClick($event)">
-  <div class="modal-box" [class]="'max-w-' + size()">
+  <div class="modal-box" [class.is-fullscreen]="fullscreen()" [class]="'max-w-' + size()">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl font-bold flex space-x-1 items-center">
         @if (icon()) {
@@ -25,9 +25,20 @@
       }
     </div>
 
-    <div class="py-4">
-      <ng-content select="[body]" />
-    </div>
+    @if (fullscreen()) {
+      <div class="config-layout">
+        <aside class="config-nav">
+          <ng-content select="[sectionsNav]" />
+        </aside>
+        <section class="config-body">
+          <ng-content select="[sectionsBody]" />
+        </section>
+      </div>
+    } @else {
+      <div class="py-4">
+        <ng-content select="[body]" />
+      </div>
+    }
 
     <ng-content select="[footer]" />
   </div>

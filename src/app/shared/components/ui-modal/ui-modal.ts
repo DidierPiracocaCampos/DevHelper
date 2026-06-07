@@ -26,6 +26,7 @@ export class UiModal {
   closeOnEscape = input<boolean>(true);
   closeOnBackdrop = input<boolean>(true);
   static = input<boolean>(false);
+  fullscreen = input<boolean>(false);
   isOpen = model<boolean>(false);
 
   private _dialog = viewChild<ElementRef<HTMLDialogElement>>('dialogElement');
