@@ -16,6 +16,18 @@ import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
 import { UiTooltipComponent } from '../../../shared/components/tooltip';
 
+interface AddStatus {
+  isEdit?: boolean;
+  loading: boolean;
+}
+
+interface ViewStatus {
+  password?: PasswordI;
+  decrypted: string;
+  loading: boolean;
+  error: string;
+}
+
 @Component({
   selector: 'password-list',
   imports: [
@@ -33,7 +45,6 @@ import { UiTooltipComponent } from '../../../shared/components/tooltip';
     UiTooltipComponent,
   ],
   templateUrl: './password-list.html',
-  styleUrl: './password-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordList {
@@ -45,26 +56,17 @@ export class PasswordList {
 
   readonly collection = this._repo.getCollection();
 
-  isFormModalOpen = signal(false);
-  isViewModalOpen = signal(false);
-
-  addStatus = signal<{ isEdit?: boolean; loanding: boolean }>({ loanding: false });
-
-  viewStatus = signal<{ password?: PasswordI; decrypted: string; loading: boolean; error: string }>(
-    { loading: false, error: '', decrypted: '' },
-  );
-  editPassword = signal<string | null>(null);
+  readonly isFormModalOpen = signal(false);
+  readonly isViewModalOpen = signal(false);
+  readonly addStatus = signal<AddStatus>({ loading: false });
+  readonly viewStatus = signal<ViewStatus>({ loading: false, error: '', decrypted: '' });
 
   async openAdd() {
     if (!this._vault.isUnlocked()) {
       this._vault.showModal(() => this.openAdd());
       return;
     }
-    this.editPassword.set(null);
-    this.addStatus.update((v) => {
-      v.isEdit = false;
-      return v;
-    });
+    this.addStatus.set({ ...this.addStatus(), isEdit: false });
     this.isFormModalOpen.set(true);
   }
 
@@ -73,11 +75,7 @@ export class PasswordList {
       this._vault.showModal(() => this.openEdit(item));
       return;
     }
-    this.editPassword.set(item.password.cipher.length > 0 ? '****' : '');
-    this.addStatus.update((v) => {
-      v.isEdit = true;
-      return v;
-    });
+    this.addStatus.set({ isEdit: true, loading: false });
     this._form.patchValue({ name: item.name, secure: item.secure });
     this.isFormModalOpen.set(true);
   }
@@ -87,27 +85,15 @@ export class PasswordList {
       this._vault.showModal(() => this.viewPassword(item));
       return;
     }
-    const vaultKey = this._vault.getVaultKey()!;
-    this.viewStatus.update((v) => {
-      v.password = item;
-      v.loading = true;
-      v.error = '';
-      return v;
-    });
+    const vaultKey = this._vault.getVaultKey();
+    if (!vaultKey) return;
+    this.viewStatus.set({ password: item, loading: true, error: '', decrypted: '' });
     this.isViewModalOpen.set(true);
     try {
       const decrypted = await this._repo.decryptPassword(item.password, vaultKey);
-      this.viewStatus.update((v) => {
-        v.decrypted = decrypted;
-        v.loading = false;
-        return v;
-      });
+      this.viewStatus.update((v) => ({ ...v, decrypted, loading: false }));
     } catch (_err) {
-      this.viewStatus.update((v) => {
-        v.error = 'Error al desencriptar';
-        v.loading = false;
-        return v;
-      });
+      this.viewStatus.update((v) => ({ ...v, error: 'Error al desencriptar', loading: false }));
     }
   }
 
@@ -116,7 +102,8 @@ export class PasswordList {
       this._vault.showModal(() => this.copyPassword(item));
       return;
     }
-    const vaultKey = this._vault.getVaultKey()!;
+    const vaultKey = this._vault.getVaultKey();
+    if (!vaultKey) return;
     try {
       const decrypted = await this._repo.decryptPassword(item.password, vaultKey);
       await navigator.clipboard.writeText(decrypted);
@@ -128,9 +115,13 @@ export class PasswordList {
 
   cancelForm() {
     this.isFormModalOpen.set(false);
-    this.addStatus.set({ loanding: false });
+    this.addStatus.set({ loading: false });
     this._form.reset();
-    this.editPassword.set(null);
+  }
+
+  closeViewModal() {
+    this.isViewModalOpen.set(false);
+    this.viewStatus.set({ loading: false, error: '', decrypted: '' });
   }
 
   async add() {
@@ -147,23 +138,16 @@ export class PasswordList {
     const { name, password, secure } = f.value;
     if (!name || !password) return;
     const encryptedPassword = await this._repo.encryptPassword(password, vaultKey);
-    this.addStatus.update((v) => {
-      v.loanding = true;
-      return v;
-    });
+    this.addStatus.update((v) => ({ ...v, loading: true }));
     this._repo.addDoc({ name, password: encryptedPassword, secure: secure ?? false }).subscribe({
       next: () => {
         this.isFormModalOpen.set(false);
         this.collection.reload();
         this._form.reset();
-        this.editPassword.set(null);
-        this.addStatus.set({ loanding: false });
+        this.addStatus.set({ loading: false });
       },
       error: () => {
-        this.addStatus.update((v) => {
-          v.loanding = false;
-          return v;
-        });
+        this.addStatus.update((v) => ({ ...v, loading: false }));
       },
     });
   }
@@ -172,8 +156,7 @@ export class PasswordList {
     const confirmed = await this._confirmService.delete(
       `¿Eliminar "${item.name}"? Esta acción no se puede deshacer.`,
     );
-    if (!confirmed) return;
-    if (!item.id) return;
+    if (!confirmed || !item.id) return;
     this._repo.deleteDoc(item.id).subscribe({
       next: () => {
         this.collection.reload();

@@ -109,7 +109,7 @@ export class FileBlobService {
       const dataBytes = options.encryptWith && iv
         ? new Uint8Array(
             await crypto.subtle.encrypt(
-              { name: 'AES-GCM', iv: iv as unknown as BufferSource },
+              { name: 'AES-GCM', iv: iv as BufferSource },
               options.encryptWith,
               plain,
             ),
