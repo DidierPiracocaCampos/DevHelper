@@ -11,8 +11,8 @@
   <ui-card class="col-span-8 row-span-2" theme="light" title="Tareas"></ui-card>
   <div class="col-span-4 min-h-0 flex gap-4">
     <div class="flex flex-col justify-center items-center gap-4 h-full">
-      <ui-card-button icon="data_object" size="xl" />
-      <ui-card-button icon="settings" size="xl" (click)="openVault()" />
+      <ui-card-button icon="data_object" size="xl" (click)="openVault()" />
+      <ui-card-button icon="settings" size="xl" (click)="openConfig()" />
       <ui-card-button icon="logout" size="xl" (click)="logout()" />
     </div>
     <ui-card class="w-full" theme="light" title="Calendario"></ui-card>
@@ -29,3 +29,6 @@
 
 <secure-create-vault />
 <secure-unlock-vault />
+<ui-config-modal [(isOpen)]="isConfigOpen">
+  <nasa-image-section />
+</ui-config-modal>

@@ -1,9 +1,9 @@
 <div class="hover-3d w-[99%] h-full min-h-35 relative">
   <div>
-    @if (info.hasValue() && info.value().url) {
+    @if (imageUrl(); as url) {
       <img
-        [ngSrc]="info.value().url"
-        [alt]="info.value().title"
+        [ngSrc]="url"
+        [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
         fill
         class="object-cover rounded-2xl"
         priority
