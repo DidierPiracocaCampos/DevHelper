@@ -42,13 +42,12 @@ describe('PreferencesRepository (path signal + singleton)', () => {
   });
 
   it('setDoc and deleteDoc return Observables', () => {
-    const setSpy = vi
-      .spyOn(repo as unknown as { $userCollectionRef: () => unknown }, '$userCollectionRef')
-      .mockReturnValue(of({}));
+    const original = (repo as unknown as { $userCollectionRef: unknown }).$userCollectionRef;
+    (repo as unknown as { $userCollectionRef: unknown }).$userCollectionRef = of({});
     const setResult = repo.setDoc('singleton', { id: 'singleton' });
     const delResult = repo.deleteDoc('singleton');
     expect(isObservable(setResult)).toBe(true);
     expect(isObservable(delResult)).toBe(true);
-    setSpy.mockRestore();
+    (repo as unknown as { $userCollectionRef: unknown }).$userCollectionRef = original;
   });
 });

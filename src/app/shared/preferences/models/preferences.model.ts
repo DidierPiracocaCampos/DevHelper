@@ -1,5 +1,5 @@
 export interface CustomNasaImageI {
-  storagePath: string;
+  fileId: string;
   updatedAt: number;
 }
 

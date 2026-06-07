@@ -6,8 +6,15 @@ import {
   resource,
   Resource,
 } from '@angular/core';
+import {
+  deleteField,
+  doc,
+  Firestore,
+  getDoc,
+} from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
-import { FileMetadataI, FileUploadService } from '../../files';
+import { FileBlobService } from '../../files/services/file-blob.service';
+import { Authenticator } from '../../service/authenticator';
 import { ToastService } from '../../service/toast';
 import { PreferencesRepository } from './preferences.repository';
 
@@ -45,8 +52,10 @@ function withPreviousValue<T>(input: Resource<T | null>, initial: T | null = nul
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
   private _repo = inject(PreferencesRepository);
-  private _upload = inject(FileUploadService);
+  private _blob = inject(FileBlobService);
   private _toast = inject(ToastService);
+  private _firestore = inject(Firestore);
+  private _auth = inject(Authenticator);
 
   readonly preferences = this._repo.preferences;
 
@@ -55,19 +64,28 @@ export class PreferencesService {
     return p.hasValue() ? !!p.value()?.customNasaImage : false;
   });
 
-  readonly customNasaImageUrl = computed(() => {
+  readonly customNasaImageFileId = computed(() => {
     const p = this.preferences;
-    return p.hasValue() ? p.value()?.customNasaImage?.storagePath ?? null : null;
+    return p.hasValue() ? p.value()?.customNasaImage?.fileId ?? null : null;
   });
 
   private readonly _urlResource = resource({
-    params: () => this.customNasaImageUrl(),
+    params: () => {
+      const fileId = this.customNasaImageFileId();
+      const uid = this._auth.user()?.uid ?? null;
+      return { fileId, uid };
+    },
     loader: async ({ params, abortSignal }) => {
-      if (!params) return null;
-      const url = await this._upload.getDownloadUrl(params);
-      if (abortSignal.aborted) {
-        throw new Error('aborted');
-      }
+      if (!params.fileId || !params.uid) return null;
+      const metaSnap = await getDoc(
+        doc(this._firestore, 'users', params.uid, 'nasa-image', params.fileId),
+      );
+      if (abortSignal.aborted) throw new Error('aborted');
+      if (!metaSnap.exists()) return null;
+      const type =
+        (metaSnap.data() as { type?: string } | undefined)?.type ?? 'application/octet-stream';
+      const url = await this._blob.getObjectUrl('nasa-image', params.fileId, type);
+      if (abortSignal.aborted) throw new Error('aborted');
       return url;
     },
   });
@@ -75,27 +93,32 @@ export class PreferencesService {
   readonly resolvedUrl = withPreviousValue(this._urlResource, null);
 
   async setCustomNasaImage(file: File): Promise<void> {
-    const previousPath = this.preferences.value()?.customNasaImage?.storagePath;
-    let newPath: string | null = null;
+    const previousFileId = this.preferences.value()?.customNasaImage?.fileId;
+    let newFileId: string | null = null;
     try {
-      const meta = await this._upload.upload(file, { localId: 'nasa' });
-      newPath = meta.storagePath;
+      const meta = await this._blob.upload(file, 'nasa-image', {
+        onProgress: () => {
+          /* progress handled at component level via local signal */
+        },
+      });
+      newFileId = meta.id;
       await firstValueFrom(
         this._repo.setDoc('singleton', {
           id: 'singleton',
           customNasaImage: {
-            storagePath: meta.storagePath,
+            fileId: meta.id,
             updatedAt: Date.now(),
           },
         }),
       );
       this.preferences.reload();
-      if (previousPath && previousPath !== meta.storagePath) {
-        await this._safeDelete(previousPath);
+      this._urlResource.reload();
+      if (previousFileId && previousFileId !== meta.id) {
+        await this._safeDelete(previousFileId);
       }
     } catch (err) {
-      if (newPath) {
-        await this._safeDelete(newPath);
+      if (newFileId) {
+        await this._safeDelete(newFileId);
       }
       this._toast.error('No se pudo guardar la imagen personalizada', String(err));
       throw err;
@@ -103,24 +126,28 @@ export class PreferencesService {
   }
 
   async clearCustomNasaImage(): Promise<void> {
-    const path = this.preferences.value()?.customNasaImage?.storagePath;
+    const fileId = this.preferences.value()?.customNasaImage?.fileId;
     try {
       await firstValueFrom(
-        this._repo.setDoc('singleton', { id: 'singleton' }),
+        this._repo.setDoc('singleton', {
+          id: 'singleton',
+          customNasaImage: deleteField() as unknown as undefined,
+        }),
       );
       this.preferences.reload();
+      this._urlResource.reload();
     } catch (err) {
       this._toast.error('No se pudo quitar la imagen personalizada', String(err));
       throw err;
     }
-    if (path) {
-      await this._safeDelete(path);
+    if (fileId) {
+      await this._safeDelete(fileId);
     }
   }
 
-  private async _safeDelete(storagePath: string): Promise<void> {
+  private async _safeDelete(fileId: string): Promise<void> {
     try {
-      await this._upload.deleteFile({ storagePath } as FileMetadataI);
+      await this._blob.deleteFile('nasa-image', fileId);
     } catch (err) {
       console.warn('[PreferencesService] cleanup failed', err);
     }
