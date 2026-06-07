@@ -75,6 +75,12 @@ service cloud.firestore {
     //   - type: string (required, <= 100)
     //   - storagePath: string (required, <= 512, immutable, must match users/{uid}/files/...)
     //   - uploadedAt: int (required, immutable)
+    //
+    // Subcollection: users/{userId}/preferences
+    // Document ID: 'singleton'
+    // Fields:
+    //   - id: string (required, must be 'singleton')
+    //   - customNasaImage?: { storagePath: string (<= 512, must match users/{uid}/nasa-image/.+), updatedAt: int (>= 0) }
     // ===============================================================
 
     // -------------------------------------------------------------------
@@ -176,6 +182,37 @@ service cloud.firestore {
                     && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'storagePath', 'uploadedAt']);
 
       allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // User preferences (singleton)
+    // -------------------------------------------------------------------
+    match /users/{userId}/preferences/{prefsId} {
+      allow read: if isOwner(userId)
+                  && prefsId == 'singleton';
+
+      allow create: if isOwner(userId)
+                    && prefsId == 'singleton'
+                    && isBoundedString(request.resource.data.id, 32)
+                    && request.resource.data.id == 'singleton'
+                    && (!('customNasaImage' in request.resource.data)
+                        || (isBoundedString(request.resource.data.customNasaImage.storagePath, 512)
+                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)
+                            && request.resource.data.customNasaImage.storagePath.matches('^users/' + userId + '/nasa-image/.+')))
+                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
+
+      allow update: if isOwner(userId)
+                    && prefsId == 'singleton'
+                    && isBoundedString(request.resource.data.id, 32)
+                    && request.resource.data.id == 'singleton'
+                    && (!('customNasaImage' in request.resource.data)
+                        || (isBoundedString(request.resource.data.customNasaImage.storagePath, 512)
+                            && isPositiveInt(request.resource.data.customNasaImage.updatedAt)
+                            && request.resource.data.customNasaImage.storagePath.matches('^users/' + userId + '/nasa-image/.+')))
+                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
+
+      allow delete: if isOwner(userId)
+                    && prefsId == 'singleton';
     }
 
     // -------------------------------------------------------------------
