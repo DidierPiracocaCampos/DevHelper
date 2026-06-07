@@ -39,19 +39,19 @@ Ninguna. Es el primer modulo que se trabaja.
 
 ### T3 · File-input con signals + Firebase Storage
 
-- [ ] T3.1 `FileRepository` con namespace `users/{uid}/files/{fileId}` (metadata Firestore + bytes Storage).
-- [ ] T3.2 Servicio de upload con `uploadBytesResumable` y emision de progreso.
-- [ ] T3.3 `FileInputField` signal-based: drag&drop, multiple, preview, validacion de tipo/tamano, barra de progreso.
-- [ ] T3.4 Integracion con T1 (acepta `FilterSchema` externo).
-- [ ] T3.5 Storage rules para limitar acceso al `userId` propietario.
-- [ ] T3.6 Tests de upload/download y de las reglas.
+- [x] T3.1 `FileRepository` con namespace `users/{uid}/files/{fileId}` (metadata Firestore + bytes Storage).
+- [x] T3.2 Servicio de upload con `uploadBytesResumable` y emision de progreso.
+- [x] T3.3 `FileInputField` signal-based: drag&drop, multiple, preview, validacion de tipo/tamano, barra de progreso.
+- [x] T3.4 Integracion con T1 (acepta `FilterSchema` externo).
+- [x] T3.5 Storage rules para limitar acceso al `userId` propietario.
+- [x] T3.6 Tests de upload/download y de las reglas.
 
 ### T4 · Modal de configuracion y preferencias
 
-- [ ] T4.1 Modelar `UserPreferencesI`: `id ('singleton'), customNasaImage? { storagePath, updatedAt }`.
-- [ ] T4.2 `PreferencesRepository` con path `['preferences']`, doc id `'singleton'`. Mixins: `withDocById, withSetDoc, withDocDelete`.
-- [ ] T4.3 `PreferencesService` con `customNasaImageUrl = resource(...)` que resuelve el `getDownloadURL` a partir de `storagePath`.
-- [ ] T4.4 Metodos `setCustomNasaImage(file)` (sube a Storage, actualiza preferencias, borra la anterior) y `clearCustomNasaImage()`.
-- [ ] T4.5 `<ui-config-modal>` modal a pantalla completa con secciones colapsables. Seccion 1 "Widget NASA" con preview, boton "Cambiar imagen" y "Quitar imagen personalizada" (visible solo si hay custom).
-- [ ] T4.6 En home: rewirear el boton `settings` para abrir el config modal, y mover `openVault()` al boton `data_object` (actualmente sin uso).
-- [ ] T4.7 Tests: preferences repo, upload/replace/delete en Storage, resource reactivo.
+- [x] T4.1 Modelar `UserPreferencesI`: `id ('singleton'), customNasaImage? { storagePath, updatedAt }`.
+- [x] T4.2 `PreferencesRepository` con path `['preferences']`, doc id `'singleton'`. Mixins: `withDocById, withSetDoc, withDocDelete`.
+- [x] T4.3 `PreferencesService` con `customNasaImageUrl = resource(...)` que resuelve el `getDownloadURL` a partir de `storagePath`.
+- [x] T4.4 Metodos `setCustomNasaImage(file)` (sube a Storage, actualiza preferencias, borra la anterior) y `clearCustomNasaImage()`.
+- [x] T4.5 `<ui-config-modal>` modal a pantalla completa con secciones colapsables. Seccion 1 "Widget NASA" con preview, boton "Cambiar imagen" y "Quitar imagen personalizada" (visible solo si hay custom).
+- [x] T4.6 En home: rewirear el boton `settings` para abrir el config modal, y mover `openVault()` al boton `data_object` (actualmente sin uso).
+- [x] T4.7 Tests: preferences repo, upload/replace/delete en Storage, resource reactivo.
