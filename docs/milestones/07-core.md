@@ -37,21 +37,21 @@ Ninguna. Es el primer modulo que se trabaja.
 - [x] T2.11 Anadir debounce a `firebasePasswordValidator`.
 - [x] T2.12 Tests de los nuevos componentes.
 
-### T3 · File-input con signals + Firebase Storage
+### T3 · File-input con signals + chunks en Firestore
 
-- [x] T3.1 `FileRepository` con namespace `users/{uid}/files/{fileId}` (metadata Firestore + bytes Storage).
-- [x] T3.2 Servicio de upload con `uploadBytesResumable` y emision de progreso.
+- [x] T3.1 `FileRepository` con namespace `users/{uid}/files/{fileId}` (metadata + chunks en subcollection).
+- [x] T3.2 `FileBlobService` con chunks de 700 KB, cifrado opcional con vaultKey, max 5 MB.
 - [x] T3.3 `FileInputField` signal-based: drag&drop, multiple, preview, validacion de tipo/tamano, barra de progreso.
 - [x] T3.4 Integracion con T1 (acepta `FilterSchema` externo).
-- [x] T3.5 Storage rules para limitar acceso al `userId` propietario.
+- [x] T3.5 Firestore rules para `files/{fileId}` y `files/{fileId}/chunks/{i}` (limite 700 KB por chunk).
 - [x] T3.6 Tests de upload/download y de las reglas.
 
 ### T4 · Modal de configuracion y preferencias
 
-- [x] T4.1 Modelar `UserPreferencesI`: `id ('singleton'), customNasaImage? { storagePath, updatedAt }`.
+- [x] T4.1 Modelar `UserPreferencesI`: `id ('singleton'), customNasaImage? { fileId, updatedAt }`.
 - [x] T4.2 `PreferencesRepository` con path `['preferences']`, doc id `'singleton'`. Mixins: `withDocById, withSetDoc, withDocDelete`.
-- [x] T4.3 `PreferencesService` con `customNasaImageUrl = resource(...)` que resuelve el `getDownloadURL` a partir de `storagePath`.
-- [x] T4.4 Metodos `setCustomNasaImage(file)` (sube a Storage, actualiza preferencias, borra la anterior) y `clearCustomNasaImage()`.
+- [x] T4.3 `PreferencesService` con `resolvedUrl = resource(...)` que obtiene bytes desde `nasa-image/{fileId}` y crea blob URL.
+- [x] T4.4 Metodos `setCustomNasaImage(file)` (sube via `FileBlobService` a `nasa-image`, actualiza preferencias, borra la anterior) y `clearCustomNasaImage()`.
 - [x] T4.5 `<ui-config-modal>` modal a pantalla completa con secciones colapsables. Seccion 1 "Widget NASA" con preview, boton "Cambiar imagen" y "Quitar imagen personalizada" (visible solo si hay custom).
 - [x] T4.6 En home: rewirear el boton `settings` para abrir el config modal, y mover `openVault()` al boton `data_object` (actualmente sin uso).
-- [x] T4.7 Tests: preferences repo, upload/replace/delete en Storage, resource reactivo.
+- [x] T4.7 Tests: preferences repo, upload/replace/delete en chunks, resource reactivo.
