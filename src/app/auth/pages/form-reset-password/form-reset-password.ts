@@ -2,14 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UiEmailField } from '../../../shared/forms/fields';
 import { RouterLink } from '@angular/router';
-import { Authenticator } from '../../../shared/service/authenticator';
+import { Authenticator, AuthErrorCode } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'app-form-reset-password',
   imports: [ReactiveFormsModule, UiEmailField, RouterLink],
   templateUrl: './form-reset-password.html',
-  styleUrl: './form-reset-password.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class FormResetPassword {
@@ -41,7 +40,7 @@ export default class FormResetPassword {
     this.loading = false;
     this._loader.hide();
 
-    if (result.success) {
+    if (result.success || result.error === AuthErrorCode.UserNotFound) {
       this.successMessage.set(true);
       this.form.reset();
     } else {
@@ -51,10 +50,7 @@ export default class FormResetPassword {
 
   private _getErrorMessage(errorCode: string | undefined): string {
     if (!errorCode) return 'Error desconocido';
-    if (errorCode === 'auth/user-not-found') {
-      return 'No existe una cuenta con este correo';
-    }
-    if (errorCode === 'auth/invalid-email') {
+    if (errorCode === AuthErrorCode.InvalidEmail) {
       return 'Correo electrónico inválido';
     }
     return 'Error al enviar el correo de recuperación';

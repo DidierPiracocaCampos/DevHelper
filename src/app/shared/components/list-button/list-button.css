@@ -72,28 +72,16 @@
   --color-base-content: var(--color-error-content);
   background: var(--color-error-bg);
   border-radius: 100%;
-  -webkit-border-radius: 100%;
-  -moz-border-radius: 100%;
-  -ms-border-radius: 100%;
-  -o-border-radius: 100%;
 }
 
 .list-btn-info:hover:not(:disabled) .icon {
   --color-base-content: var(--color-info-content);
   background: var(--color-info-bg);
   border-radius: 100%;
-  -webkit-border-radius: 100%;
-  -moz-border-radius: 100%;
-  -ms-border-radius: 100%;
-  -o-border-radius: 100%;
 }
 
 .list-btn-success:hover:not(:disabled) .icon {
   --color-base-content: var(--color-success-content);
   background: var(--color-success-bg);
   border-radius: 100%;
-  -webkit-border-radius: 100%;
-  -moz-border-radius: 100%;
-  -ms-border-radius: 100%;
-  -o-border-radius: 100%;
 }

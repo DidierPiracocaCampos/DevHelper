@@ -21,7 +21,6 @@ import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
     NasaImageSection,
   ],
   templateUrl: './home.html',
-  styleUrl: './home.css',
 })
 export default class Home {
   private _authenticator = inject(Authenticator);

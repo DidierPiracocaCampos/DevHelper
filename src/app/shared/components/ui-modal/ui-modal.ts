@@ -5,6 +5,7 @@ import {
   ElementRef,
   input,
   model,
+  output,
   viewChild,
 } from '@angular/core';
 
@@ -28,6 +29,7 @@ export class UiModal {
   static = input<boolean>(false);
   fullscreen = input<boolean>(false);
   isOpen = model<boolean>(false);
+  closed = output<void>();
 
   private _dialog = viewChild<ElementRef<HTMLDialogElement>>('dialogElement');
 
@@ -52,6 +54,7 @@ export class UiModal {
 
     const handleClose = () => {
       this.isOpen.set(false);
+      this.closed.emit();
     };
 
     dialog.addEventListener('close', handleClose);

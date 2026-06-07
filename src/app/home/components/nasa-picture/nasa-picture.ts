@@ -7,7 +7,6 @@ import { PreferencesService } from '../../../shared/preferences';
   selector: 'nasa-picture',
   imports: [NgOptimizedImage],
   templateUrl: './nasa-picture.html',
-  styleUrl: './nasa-picture.css',
 })
 export class NasaPicture {
   private _service = inject(NasaPictureResource);

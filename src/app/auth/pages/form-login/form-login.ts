@@ -9,7 +9,6 @@ import { Loader } from '../../../shared/service/loader';
   selector: 'app-form-login',
   imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, RouterLink],
   templateUrl: './form-login.html',
-  styleUrl: './form-login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class FormLogin {

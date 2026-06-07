@@ -5,7 +5,7 @@
       <p class="validator-hint">Este campo es obligatorio</p>
     </ng-template>
   </ui-password-field>
-  @if (form.errors?.['FirebaseError'] == 'auth/invalid-credential') {
+  @if (form.errors?.['FirebaseError'] === 'auth/invalid-credential') {
     <p class="text-error text-center">Correo o contraseña incorrectos</p>
   }
   @if (form.errors?.['customError']) {

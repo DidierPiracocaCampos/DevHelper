@@ -7,7 +7,6 @@ import { Loader } from '../../../shared/service/loader';
   selector: 'app-login',
   imports: [RouterOutlet],
   templateUrl: './login.html',
-  styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class Login {
