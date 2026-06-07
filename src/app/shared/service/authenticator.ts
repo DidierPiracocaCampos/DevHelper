@@ -1,11 +1,4 @@
-import {
-  computed,
-  inject,
-  Injectable,
-  Injector,
-  runInInjectionContext,
-  signal,
-} from '@angular/core';
+import { computed, inject, Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Auth,
@@ -23,40 +16,42 @@ import {
 import { EmailAuthProvider } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { firstValueFrom, Observable } from 'rxjs';
+import { AuthProvider } from 'firebase/auth';
+import { AuthResult } from './auth-result';
+import { BruteForceGuard } from './brute-force.guard';
+import { SessionManager } from './session-manager';
 import { ToastService } from './toast';
+
+export type { AuthResult } from './auth-result';
 
 export enum AuthErrorCode {
   InvalidCredential = 'auth/invalid-credential',
   TooManyRequests = 'auth/too-many-requests',
   UserNotFound = 'auth/user-not-found',
+  InvalidEmail = 'auth/invalid-email',
   NetworkError = 'auth/network-error',
 }
 
-export interface FailedAttempt {
-  timestamp: number;
-  email: string;
-}
-
 type FirebaseError = { code?: string };
+
+interface OAuthLoginConfig {
+  provider: AuthProvider;
+  errorTitle: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class Authenticator {
-  private readonly LOCKOUT_DURATION_MS = 15 * 60 * 1000;
-  private readonly MAX_FAILED_ATTEMPTS = 5;
-  private readonly FAILED_ATTEMPTS_WINDOW_MS = 5 * 60 * 1000;
-  private readonly SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-
   private _auth = inject(Auth);
   private _injector = inject(Injector);
   private _router = inject(Router);
   private _toastService = inject(ToastService);
-  readonly initialized = signal(false);
+  private _bruteForce = inject(BruteForceGuard);
+  private _session = inject(SessionManager);
+
   readonly user = toSignal(this.$userObservable(), { initialValue: null });
   readonly isLoggedIn = computed(() => !!this.user());
-  private _failedAttempts: FailedAttempt[] = [];
-  private _lastActivityTimestamp = signal<number>(Date.now());
 
   $userObservable(): Observable<User | null> {
     return runInInjectionContext(this._injector, () => authState(this._auth));
@@ -66,59 +61,13 @@ export class Authenticator {
     return firstValueFrom(this.$userObservable());
   }
 
-  private _isAccountLocked(email: string): boolean {
-    const now = Date.now();
-    const recentAttempts = this._failedAttempts.filter(
-      (a) =>
-        a.email.toLowerCase() === email.toLowerCase() &&
-        now - a.timestamp < this.FAILED_ATTEMPTS_WINDOW_MS,
-    );
-    if (recentAttempts.length >= this.MAX_FAILED_ATTEMPTS) {
-      const oldestAttempt = recentAttempts[0];
-      if (now - oldestAttempt.timestamp < this.LOCKOUT_DURATION_MS) {
-        return true;
-      }
-      this._failedAttempts = this._failedAttempts.filter(
-        (a) => a.timestamp > oldestAttempt.timestamp,
-      );
-    }
-    return false;
-  }
-
-  private _recordFailedAttempt(email: string): void {
-    this._failedAttempts.push({ timestamp: Date.now(), email });
-    if (this._failedAttempts.length > 100) {
-      this._failedAttempts = this._failedAttempts.slice(-50);
-    }
-  }
-
-  private _clearFailedAttempts(email: string): void {
-    this._failedAttempts = this._failedAttempts.filter(
-      (a) => a.email.toLowerCase() !== email.toLowerCase(),
-    );
-  }
-
-  refreshActivity(): void {
-    this._lastActivityTimestamp.set(Date.now());
-  }
-
-  isSessionExpired(): boolean {
-    if (!this.isLoggedIn()) return false;
-    const elapsed = Date.now() - this._lastActivityTimestamp();
-    return elapsed > this.SESSION_TIMEOUT_MS;
-  }
-
-  private _updateLastActivity(): void {
-    this.refreshActivity();
-  }
-
-  async register(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  async register(email: string, password: string): Promise<AuthResult> {
     return runInInjectionContext(this._injector, async () => {
       try {
         const result = await createUserWithEmailAndPassword(this._auth, email, password);
         await sendEmailVerification(result.user);
-        this._updateLastActivity();
-        this._router.navigate(['/']);
+        this._session.refresh();
+        await this._router.navigate(['/']);
         return { success: true };
       } catch (error) {
         const code = (error as FirebaseError).code;
@@ -128,19 +77,19 @@ export class Authenticator {
     });
   }
 
-  async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  async login(email: string, password: string): Promise<AuthResult> {
     return runInInjectionContext(this._injector, async () => {
-      if (this._isAccountLocked(email)) {
+      if (this._bruteForce.isAccountLocked(email)) {
         return { success: false, error: AuthErrorCode.TooManyRequests };
       }
       try {
         await signInWithEmailAndPassword(this._auth, email, password);
-        this._clearFailedAttempts(email);
-        this._updateLastActivity();
-        this._router.navigate(['/']);
+        this._bruteForce.clearFailedAttempts(email);
+        this._session.refresh();
+        await this._router.navigate(['/']);
         return { success: true };
       } catch (error) {
-        this._recordFailedAttempt(email);
+        this._bruteForce.recordFailedAttempt(email);
         const code = (error as FirebaseError).code;
         this._toastService.error('Error en inicio de sesión', code);
         return { success: false, error: code };
@@ -148,41 +97,21 @@ export class Authenticator {
     });
   }
 
-  async loginWithGoogle(): Promise<{ success: boolean; error?: string }> {
-    return runInInjectionContext(this._injector, async () => {
-      const provider = new GoogleAuthProvider();
-      try {
-        await signInWithPopup(this._auth, provider);
-        this._updateLastActivity();
-        this._router.navigate(['/']);
-        return { success: true };
-      } catch (error) {
-        const code = (error as FirebaseError).code;
-        console.error('Google login error:', code);
-        this._toastService.error('Error con Google', code);
-        return { success: false, error: code };
-      }
+  async loginWithGoogle(): Promise<AuthResult> {
+    return this._loginWithOAuth({
+      provider: new GoogleAuthProvider(),
+      errorTitle: 'Error con Google',
     });
   }
 
-  async loginWithGithub(): Promise<{ success: boolean; error?: string }> {
-    return runInInjectionContext(this._injector, async () => {
-      const provider = new GithubAuthProvider();
-      try {
-        await signInWithPopup(this._auth, provider);
-        this._updateLastActivity();
-        this._router.navigate(['/']);
-        return { success: true };
-      } catch (error) {
-        const code = (error as FirebaseError).code;
-        console.error('GitHub login error:', code);
-        this._toastService.error('Error con GitHub', code);
-        return { success: false, error: code };
-      }
+  async loginWithGithub(): Promise<AuthResult> {
+    return this._loginWithOAuth({
+      provider: new GithubAuthProvider(),
+      errorTitle: 'Error con GitHub',
     });
   }
 
-  async sendPasswordResetEmail(email: string): Promise<{ success: boolean; error?: string }> {
+  async sendPasswordResetEmail(email: string): Promise<AuthResult> {
     return runInInjectionContext(this._injector, async () => {
       try {
         await sendPasswordResetEmail(this._auth, email);
@@ -195,7 +124,7 @@ export class Authenticator {
     });
   }
 
-  async reauthenticate(password: string): Promise<{ success: boolean; error?: string }> {
+  async reauthenticate(password: string): Promise<AuthResult> {
     return runInInjectionContext(this._injector, async () => {
       const user = this._auth.currentUser;
       if (!user || !user.email) {
@@ -204,7 +133,7 @@ export class Authenticator {
       try {
         const credential = EmailAuthProvider.credential(user.email, password);
         await reauthenticateWithCredential(user, credential);
-        this._updateLastActivity();
+        this._session.refresh();
         return { success: true };
       } catch (error) {
         const code = (error as FirebaseError).code;
@@ -218,6 +147,21 @@ export class Authenticator {
     return runInInjectionContext(this._injector, async () => {
       await this._auth.signOut();
       await this._router.navigate(['/login']);
+    });
+  }
+
+  private async _loginWithOAuth({ provider, errorTitle }: OAuthLoginConfig): Promise<AuthResult> {
+    return runInInjectionContext(this._injector, async () => {
+      try {
+        await signInWithPopup(this._auth, provider);
+        this._session.refresh();
+        await this._router.navigate(['/']);
+        return { success: true };
+      } catch (error) {
+        const code = (error as FirebaseError).code;
+        this._toastService.error(errorTitle, code);
+        return { success: false, error: code };
+      }
     });
   }
 }

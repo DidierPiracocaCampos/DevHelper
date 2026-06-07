@@ -1,29 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Loader {
-  private get loader() {
-    return document.getElementById('app-loader');
+  private readonly _isVisible = signal(false);
+  readonly isVisible = this._isVisible.asReadonly();
+
+  show(): void {
+    this._isVisible.set(true);
   }
 
-  show() {
-    const el = this.loader;
-    if (el) {
-      el.classList.remove('hidden');
-      el.style.display = 'flex';
-    }
-  }
-
-  hide() {
-    const el = this.loader;
-    if (el) {
-      el.classList.add('hidden');
-
-      setTimeout(() => {
-        el.style.display = 'none';
-      }, 300);
-    }
+  hide(): void {
+    this._isVisible.set(false);
   }
 }
