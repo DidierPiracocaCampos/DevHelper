@@ -13,7 +13,8 @@
     "test:rules:all": "firebase emulators:exec --only firestore,storage \"ng test --watch=false\"",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "storage:cors": "gsutil cors set storage.cors.json gs://devhelper-a61ef.firebasestorage.app"
   },
   "private": true,
   "dependencies": {

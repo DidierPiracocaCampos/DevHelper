@@ -1,0 +1,25 @@
+<ui-modal
+  title="Configuración"
+  icon="settings"
+  [fullscreen]="true"
+  [size]="'xl'"
+  [(isOpen)]="isOpen"
+  (isOpenChange)="_onOpenChange($event)"
+>
+  <nav sectionsNav aria-label="Secciones de configuración">
+    <ul class="menu menu-lg w-full p-0 gap-1">
+      @for (section of sections; track section.id) {
+        <li>
+          <button type="button" class="flex items-center gap-3 justify-start" (click)="_captureFocus()">
+            <span class="icon">{{ section.icon }}</span>
+            <span>{{ section.label }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div sectionsBody class="space-y-6">
+    <ng-content />
+  </div>
+</ui-modal>
