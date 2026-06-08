@@ -1,0 +1,71 @@
+@if (loading()) {
+  <div class="flex flex-col gap-2 w-full h-full p-2">
+    <div class="skeleton min-h-[3.5rem] w-full"></div>
+    <div class="skeleton min-h-[3.5rem] w-full"></div>
+    <div class="skeleton min-h-[3.5rem] w-full"></div>
+  </div>
+} @else if (error() !== null && error() !== undefined) {
+  <div class="text-error text-center p-4">
+    Error al cargar los archivos.
+  </div>
+} @else {
+  <ul class="list space-y-2 w-full h-full overflow-y-auto">
+    @for (item of _items(); track trackById($index, item)) {
+      <li class="flex items-center gap-3 p-3 rounded-md bg-base-200 min-h-[3.5rem]">
+        @if (isImage(item.mimeType)) {
+          @if (thumb(item.id); as url) {
+            <img [src]="url" alt="" class="w-12 h-12 object-cover rounded-md bg-base-300" />
+          } @else {
+            <div class="skeleton w-12 h-12 rounded-md"></div>
+          }
+        } @else {
+          <div class="w-12 h-12 rounded-md bg-base-300 flex items-center justify-center">
+            <span class="icon text-base-100/60">description</span>
+          </div>
+        }
+        <div class="min-w-0 flex-1">
+          <div class="font-medium truncate flex items-center gap-2">
+            <span class="truncate">{{ item.name }}</span>
+            @if (item.encrypted) {
+              <span class="badge badge-sm badge-success gap-1">
+                <span class="icon text-xs">lock</span>
+                cifrado
+              </span>
+            }
+          </div>
+          <div class="text-xs opacity-60 flex gap-2 flex-wrap">
+            <span>{{ item.mimeType }}</span>
+            <span>·</span>
+            <span>{{ formatSize(item.size) }}</span>
+            @if (item.createdAt) {
+              <span>·</span>
+              <span>{{ formatDate(item.createdAt) }}</span>
+            }
+          </div>
+          @if (item.tags.length) {
+            <div class="flex gap-1 mt-1 flex-wrap">
+              @for (tag of item.tags; track tag) {
+                <span class="badge badge-xs badge-ghost">{{ tag }}</span>
+              }
+            </div>
+          }
+        </div>
+        <ul class="flex gap-1">
+          <ui-tooltip text="Ver" severity="info">
+            <ui-list-button icon="visibility" severity="info" (click)="onView(item)" />
+          </ui-tooltip>
+          <ui-tooltip text="Descargar" severity="success">
+            <ui-list-button icon="download" severity="success" (click)="onDownload(item)" />
+          </ui-tooltip>
+          <ui-tooltip text="Eliminar" severity="error">
+            <ui-list-button icon="delete" severity="error" (click)="onRemove(item)" />
+          </ui-tooltip>
+        </ul>
+      </li>
+    } @empty {
+      <div class="text-base-100/60 text-center m-auto p-4">
+        No hay archivos. Pulsa "Añadir" para subir el primero.
+      </div>
+    }
+  </ul>
+}

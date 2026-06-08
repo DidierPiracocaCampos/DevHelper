@@ -19,9 +19,17 @@
   </div>
   <nasa-picture class="col-span-4" />
   <ui-card class="col-span-6 min-h-0" title="Archivos">
+    <ui-file-list
+      class="h-full"
+      [files]="fileList()"
+      [loading]="fileLoading()"
+      [error]="fileError()"
+      [namespace]="namespace()"
+      (view)="onView($event)"
+      (remove)="onRemove($event)"
+    />
     <div actions>
-      <ui-card-button icon="filter_alt" />
-      <ui-card-button icon="add" shape="circle" severity="primary" />
+      <ui-card-button icon="add" shape="circle" severity="primary" (click)="openAdd()" />
     </div>
   </ui-card>
   <password-list class="col-span-6 min-h-0" />
@@ -32,3 +40,15 @@
 <ui-config-modal [(isOpen)]="isConfigOpen">
   <nasa-image-section />
 </ui-config-modal>
+
+<ui-add-file
+  [namespace]="namespace()"
+  [encrypt]="true"
+  [(isOpen)]="isAddOpen"
+  (added)="onAdded()"
+/>
+<ui-view-file
+  [file]="viewFile()"
+  [namespace]="namespace()"
+  [(isOpen)]="isViewOpen"
+/>

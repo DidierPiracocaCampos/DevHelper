@@ -7,8 +7,10 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import Home from './home';
 import { VaultSecurity } from '../../../shared/security';
 import { Authenticator } from '../../../shared/service/authenticator';
-import { FileBlobService } from '../../../shared/files';
+import { FileBlobService, FileRepository } from '../../../shared/files';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
+import { ScopeContext } from '../../../shared/scope/scope-context';
+import { ConfirmService } from '../../../shared/service/confirm.service';
 
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
@@ -20,8 +22,20 @@ if (!HTMLDialogElement.prototype.showModal) {
   };
 }
 
+if (typeof URL.createObjectURL !== 'function') {
+  (URL as { createObjectURL: typeof URL.createObjectURL }).createObjectURL = vi.fn(
+    () => 'blob:fake',
+  ) as typeof URL.createObjectURL;
+}
+if (typeof URL.revokeObjectURL !== 'function') {
+  (URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL = vi.fn() as typeof URL.revokeObjectURL;
+}
+
 class FakeVault {
   openUnlockVaultModal = vi.fn();
+  isUnlocked = vi.fn().mockReturnValue(true);
+  getVaultKey = vi.fn();
+  showModal = vi.fn();
 }
 
 class FakeAuth {
@@ -33,6 +47,27 @@ class FakeUpload {
   upload = vi.fn();
   deleteFile = vi.fn();
   getDownloadUrl = vi.fn();
+  getBytes = vi.fn();
+  getObjectUrl = vi.fn();
+}
+
+class FakeFileRepo {
+  readonly namespace = signal<'files'>('files');
+  readonly getCollection = vi.fn().mockReturnValue({
+    value: signal(undefined),
+    isLoading: signal(false),
+    error: signal(null),
+    reload: vi.fn(),
+  });
+  readonly deleteDoc = vi.fn().mockReturnValue({
+    subscribe: vi.fn(({ next }: { next: () => void }) => next()),
+  });
+}
+
+class FakeScopeContext {
+  setGlobal = vi.fn();
+  setIssue = vi.fn();
+  scope = signal<'global'>('global');
 }
 
 class FakePrefsService {
@@ -48,15 +83,24 @@ class FakePrefsService {
   clearCustomNasaImage = vi.fn();
 }
 
+class FakeConfirm {
+  delete = vi.fn().mockResolvedValue(true);
+  warning = vi.fn().mockResolvedValue(true);
+}
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
   let vault: FakeVault;
   let auth: FakeAuth;
+  let scope: FakeScopeContext;
+  let fileRepo: FakeFileRepo;
 
   beforeEach(async () => {
     vault = new FakeVault();
     auth = new FakeAuth();
+    scope = new FakeScopeContext();
+    fileRepo = new FakeFileRepo();
 
     await TestBed.configureTestingModule({
       imports: [Home],
@@ -66,7 +110,10 @@ describe('Home', () => {
         { provide: VaultSecurity, useValue: vault },
         { provide: Authenticator, useValue: auth },
         { provide: FileBlobService, useValue: new FakeUpload() },
+        { provide: FileRepository, useValue: fileRepo },
+        { provide: ScopeContext, useValue: scope },
         { provide: PreferencesService, useValue: new FakePrefsService() },
+        { provide: ConfirmService, useValue: new FakeConfirm() },
       ],
     }).compileComponents();
 
