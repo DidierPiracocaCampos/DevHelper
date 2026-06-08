@@ -89,13 +89,13 @@ export class FileInputField {
   }
 
   private _resolveRemoteUrl(item: FileItem): void {
-    if (!item.metadata || !item.metadata.id || !item.metadata.type) return;
+    if (!item.metadata || !item.metadata.id || !item.metadata.mimeType) return;
     const localId = item.localId;
     const fileId = item.metadata.id;
-    const type = item.metadata.type;
+    const mimeType = item.metadata.mimeType;
     of(fileId)
       .pipe(
-        switchMap((id) => from(this._upload.getObjectUrl('files', id, type))),
+        switchMap((id) => from(this._upload.getObjectUrl('files', id, mimeType))),
         catchError(() => of(null)),
         takeUntilDestroyed(this._destroyRef),
       )
@@ -107,7 +107,7 @@ export class FileInputField {
   }
 
   protected isImage(item: FileItem): boolean {
-    const type = item.file?.type ?? item.metadata?.type ?? '';
+    const type = item.file?.type ?? item.metadata?.mimeType ?? '';
     return IMAGE_PATTERN.test(type);
   }
 

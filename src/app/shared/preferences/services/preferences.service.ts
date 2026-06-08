@@ -83,7 +83,7 @@ export class PreferencesService {
       if (abortSignal.aborted) throw new Error('aborted');
       if (!metaSnap.exists()) return null;
       const type =
-        (metaSnap.data() as { type?: string } | undefined)?.type ?? 'application/octet-stream';
+        (metaSnap.data() as { mimeType?: string } | undefined)?.mimeType ?? 'application/octet-stream';
       const url = await this._blob.getObjectUrl('nasa-image', params.fileId, type);
       if (abortSignal.aborted) throw new Error('aborted');
       return url;

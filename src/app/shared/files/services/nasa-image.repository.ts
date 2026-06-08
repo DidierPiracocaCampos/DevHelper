@@ -20,11 +20,13 @@ export class NasaImageRepository extends withDocDelete()(
       return {
         name: data.name,
         size: data.size,
-        type: data.type,
+        mimeType: data.mimeType,
         chunkCount: data.chunkCount,
         updatedAt: data.updatedAt,
         encrypted: data.encrypted,
         iv: data.iv ?? null,
+        tags: data.tags ?? [],
+        createdAt: data.createdAt,
       };
     },
 
@@ -35,20 +37,25 @@ export class NasaImageRepository extends withDocDelete()(
       const data = snapshot.data() as {
         name?: string;
         size?: number;
-        type?: string;
+        mimeType?: string;
         chunkCount?: number;
         updatedAt?: number;
         encrypted?: boolean;
-        iv?: number[] | null;
+        iv?: string | null;
+        tags?: string[];
+        createdAt?: number;
       };
       return {
+        id: snapshot.id,
         name: data.name ?? '',
         size: data.size ?? 0,
-        type: data.type ?? 'application/octet-stream',
+        mimeType: data.mimeType ?? 'application/octet-stream',
         chunkCount: data.chunkCount ?? 1,
         updatedAt: data.updatedAt ?? 0,
         encrypted: data.encrypted ?? false,
         iv: data.iv ?? null,
+        tags: data.tags ?? [],
+        createdAt: data.createdAt ?? 0,
       };
     },
   };

@@ -107,11 +107,13 @@ describe('PreferencesService', () => {
         id: 'new-id',
         name: 'img.png',
         size: 10,
-        type: 'image/png',
+        mimeType: 'image/png',
         chunkCount: 1,
         updatedAt: 1,
         encrypted: false,
         iv: null,
+        tags: [],
+        createdAt: 1,
       };
       blob.upload.mockResolvedValue(newMeta);
       repo.setDoc.mockReturnValue(of(undefined));
@@ -139,11 +141,13 @@ describe('PreferencesService', () => {
         id: 'new-id',
         name: 'img.png',
         size: 10,
-        type: 'image/png',
+        mimeType: 'image/png',
         chunkCount: 1,
         updatedAt: 1,
         encrypted: false,
         iv: null,
+        tags: [],
+        createdAt: 1,
       });
       repo.setDoc.mockReturnValue(of(undefined));
       blob.deleteFile.mockResolvedValue(undefined);
@@ -164,11 +168,13 @@ describe('PreferencesService', () => {
         id: sameId,
         name: 'x.png',
         size: 10,
-        type: 'image/png',
+        mimeType: 'image/png',
         chunkCount: 1,
         updatedAt: 1,
         encrypted: false,
         iv: null,
+        tags: [],
+        createdAt: 1,
       });
       repo.setDoc.mockReturnValue(of(undefined));
 
@@ -182,11 +188,13 @@ describe('PreferencesService', () => {
         id: 'orphan',
         name: 'img.png',
         size: 10,
-        type: 'image/png',
+        mimeType: 'image/png',
         chunkCount: 1,
         updatedAt: 1,
         encrypted: false,
         iv: null,
+        tags: [],
+        createdAt: 1,
       };
       blob.upload.mockResolvedValue(newMeta);
       repo.setDoc.mockReturnValue(throwError(() => new Error('firestore down')));
