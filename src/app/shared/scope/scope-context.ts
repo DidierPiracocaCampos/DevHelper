@@ -1,16 +1,22 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 
-export type Scope = 'global' | { kind: 'project'; projectId: string };
+export type Scope =
+  | 'global'
+  | { kind: 'issue'; projectId: string; issueId: string };
 
 @Injectable({ providedIn: 'root' })
 export class ScopeContext {
   readonly scope = signal<Scope>('global');
 
+  readonly isGlobal = computed(() => this.scope() === 'global');
+
+  readonly isIssue = computed(() => this.scope() !== 'global');
+
   setGlobal(): void {
     this.scope.set('global');
   }
 
-  setProject(projectId: string): void {
-    this.scope.set({ kind: 'project', projectId });
+  setIssue(projectId: string, issueId: string): void {
+    this.scope.set({ kind: 'issue', projectId, issueId });
   }
 }

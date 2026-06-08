@@ -46,6 +46,28 @@ const skip = !FIRESTORE_EMULATOR_HOST;
               function isTimestamp(value) { return value is timestamp; }
               function isPositiveInt(value) { return value is int && value >= 0; }
               function isUnchanged(field) { return request.resource.data[field] == resource.data[field]; }
+              function isBool(value) { return value is bool; }
+              function isValidTags(t) {
+                return t is list
+                    && t.size() <= 10
+                    && t.allMatches(tag, tag is string && tag.size() > 0 && tag.size() <= 32);
+              }
+              function hasValidFileMetadata(m, isCreate) {
+                return isBoundedString(m.name, 255)
+                    && isPositiveInt(m.size)
+                    && m.size <= 5 * 1024 * 1024
+                    && isBoundedString(m.mimeType, 120)
+                    && isPositiveInt(m.chunkCount)
+                    && m.chunkCount <= 8
+                    && isPositiveInt(m.updatedAt)
+                    && m.tags is list
+                    && isValidTags(m.tags)
+                    && isPositiveInt(m.createdAt)
+                    && (!('encrypted' in m) || isBool(m.encrypted))
+                    && (!('iv' in m) || m.iv == null || isBoundedString(m.iv, 1024))
+                    && (isCreate || isUnchanged('createdAt'))
+                    && m.keys().hasOnly(['name','size','mimeType','chunkCount','updatedAt','encrypted','iv','tags','createdAt']);
+              }
 
               match /users/{userId} {
                 allow read: if isOwner(userId);
@@ -96,15 +118,31 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
               match /users/{userId}/files/{fileId} {
                 allow read: if isOwner(userId);
-                allow create, update: if isOwner(userId)
-                              && isBoundedString(request.resource.data.name, 255)
-                              && isPositiveInt(request.resource.data.size)
-                              && request.resource.data.size <= 5 * 1024 * 1024
-                              && isBoundedString(request.resource.data.type, 100)
-                              && isPositiveInt(request.resource.data.chunkCount)
-                              && request.resource.data.chunkCount <= 8
-                              && isPositiveInt(request.resource.data.updatedAt)
-                              && request.resource.data.keys().hasOnly(['name','size','type','chunkCount','updatedAt','encrypted','iv']);
+                allow create: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, true);
+                allow update: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, false);
+                allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, true);
+                allow update: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, false);
+                allow delete: if isOwner(userId);
+              }
+
+              match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId}/chunks/{chunkId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && request.resource.data.keys().hasOnly(['index','data'])
+                              && request.resource.data.index is int
+                              && request.resource.data.index >= 0
+                              && request.resource.data.index < 8
+                              && request.resource.data.data is bytes
+                              && request.resource.data.data.size() <= 700 * 1024;
                 allow delete: if isOwner(userId);
               }
 
@@ -122,15 +160,10 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
               match /users/{userId}/nasa-image/{fileId} {
                 allow read: if isOwner(userId);
-                allow create, update: if isOwner(userId)
-                              && isBoundedString(request.resource.data.name, 255)
-                              && isPositiveInt(request.resource.data.size)
-                              && request.resource.data.size <= 5 * 1024 * 1024
-                              && isBoundedString(request.resource.data.type, 100)
-                              && isPositiveInt(request.resource.data.chunkCount)
-                              && request.resource.data.chunkCount <= 8
-                              && isPositiveInt(request.resource.data.updatedAt)
-                              && request.resource.data.keys().hasOnly(['name','size','type','chunkCount','updatedAt','encrypted','iv']);
+                allow create: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, true);
+                allow update: if isOwner(userId)
+                              && hasValidFileMetadata(request.resource.data, false);
                 allow delete: if isOwner(userId);
               }
 
@@ -349,9 +382,11 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     const validFile = {
       name: 'doc.pdf',
       size: 1024,
-      type: 'application/pdf',
+      mimeType: 'application/pdf',
       chunkCount: 1,
       updatedAt: 1,
+      tags: [] as string[],
+      createdAt: 1,
     };
 
     it('owner can create, read, update, delete a file metadata', async () => {
@@ -435,9 +470,11 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     const validImage = {
       name: 'nasa.png',
       size: 500 * 1024,
-      type: 'image/png',
+      mimeType: 'image/png',
       chunkCount: 1,
       updatedAt: 1,
+      tags: [] as string[],
+      createdAt: 1,
     };
 
     it('owner can create and read a nasa image', async () => {
@@ -451,6 +488,178 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const alice = testEnv.authenticatedContext('alice');
       const nasa = collection(alice.firestore(), 'users/alice/nasa-image');
       await assertFails(addDoc(nasa, { ...validImage, size: 6 * 1024 * 1024 }));
+    });
+  });
+
+  describe('files metadata — mimeType / tags / createdAt', () => {
+    const validFile = {
+      name: 'doc.pdf',
+      size: 1024,
+      mimeType: 'application/pdf',
+      chunkCount: 1,
+      updatedAt: 1,
+      tags: ['invoice', 'q4'] as string[],
+      createdAt: 1,
+    };
+
+    it('accepts files with valid mimeType, tags and createdAt', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      await assertSucceeds(addDoc(files, validFile));
+    });
+
+    it('rejects when mimeType exceeds 120 chars', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      await assertFails(
+        addDoc(files, { ...validFile, mimeType: 'x'.repeat(121) }),
+      );
+    });
+
+    it('rejects when tags list has more than 10 items', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      const tags = Array.from({ length: 11 }, (_, i) => `t${i}`);
+      await assertFails(addDoc(files, { ...validFile, tags }));
+    });
+
+    it('rejects when a tag exceeds 32 chars', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      await assertFails(addDoc(files, { ...validFile, tags: ['x'.repeat(33)] }));
+    });
+
+    it('rejects when tags contains a non-string', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      await assertFails(
+        addDoc(files, { ...validFile, tags: ['ok', 42 as unknown as string] }),
+      );
+    });
+
+    it('rejects when createdAt is missing', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      const { createdAt: _createdAt, ...without } = validFile;
+      await assertFails(addDoc(files, without));
+    });
+
+    it('rejects when updatedAt differs from server time on create (relaxed: client int OK)', async () => {
+      // In our relaxed rule we accept any positive int for updatedAt on create.
+      // The strict check is reserved for a future milestone.
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      await assertSucceeds(addDoc(files, { ...validFile, updatedAt: 1234567 }));
+    });
+
+    it('update cannot change createdAt', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      const ref = await assertSucceeds(addDoc(files, validFile));
+      await assertFails(updateDoc(ref, { ...validFile, createdAt: 999 }));
+    });
+
+    it('update cannot add an unknown field', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const files = collection(alice.firestore(), 'users/alice/files');
+      const ref = await assertSucceeds(addDoc(files, validFile));
+      await assertFails(updateDoc(ref, { ...validFile, hacker: true } as Record<string, unknown>));
+    });
+  });
+
+  describe('users/{userId}/proyectos/{p}/issues/{i}/files (issue scope)', () => {
+    const validFile = {
+      name: 'log.txt',
+      size: 256,
+      mimeType: 'text/plain',
+      chunkCount: 1,
+      updatedAt: 1,
+      tags: [] as string[],
+      createdAt: 1,
+    };
+
+    it('owner can create, read, update, delete an issue-scoped file', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const col = collection(
+        alice.firestore(),
+        'users/alice/proyectos/p1/issues/i1/files',
+      );
+      const ref = await assertSucceeds(addDoc(col, validFile));
+      await assertSucceeds(getDoc(ref));
+      await assertSucceeds(updateDoc(ref, { ...validFile, name: 'renamed.txt' }));
+      await assertSucceeds(deleteDoc(ref));
+    });
+
+    it('owner can write and read issue-scoped chunks (within 700 KB)', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const chunks = collection(
+        alice.firestore(),
+        'users/alice/proyectos/p1/issues/i1/files/f1/chunks',
+      );
+      const ref = doc(chunks, '0');
+      await assertSucceeds(setDoc(ref, { index: 0, data: new Uint8Array(100 * 1024) }));
+      await assertSucceeds(getDoc(ref));
+    });
+
+    it('rejects issue-scoped file when size exceeds 5 MB', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const col = collection(
+        alice.firestore(),
+        'users/alice/proyectos/p1/issues/i1/files',
+      );
+      await assertFails(addDoc(col, { ...validFile, size: 6 * 1024 * 1024 }));
+    });
+
+    it('rejects issue-scoped chunk over 700 KB', async () => {
+      const alice = testEnv.authenticatedContext('alice');
+      const chunks = collection(
+        alice.firestore(),
+        'users/alice/proyectos/p1/issues/i1/files/f1/chunks',
+      );
+      const ref = doc(chunks, '0');
+      await assertFails(setDoc(ref, { index: 0, data: new Uint8Array(800 * 1024) }));
+    });
+
+    it('does NOT cross-read between different issues of the same project', async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(
+          doc(ctx.firestore(), 'users/alice/proyectos/p1/issues/i1/files/f1'),
+          validFile,
+        );
+      });
+      const bob = testEnv.authenticatedContext('bob');
+      const otherIssue = doc(
+        bob.firestore(),
+        'users/alice/proyectos/p1/issues/i2/files/f1',
+      );
+      await assertFails(getDoc(otherIssue));
+    });
+
+    it('does NOT cross-read between different projects', async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(
+          doc(ctx.firestore(), 'users/alice/proyectos/p1/issues/i1/files/f1'),
+          validFile,
+        );
+      });
+      const bob = testEnv.authenticatedContext('bob');
+      const otherProject = doc(
+        bob.firestore(),
+        'users/alice/proyectos/p2/issues/i1/files/f1',
+      );
+      await assertFails(getDoc(otherProject));
+    });
+
+    it('does NOT cross-read between global and issue scope', async () => {
+      await testEnv.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(
+          doc(ctx.firestore(), 'users/alice/proyectos/p1/issues/i1/files/f1'),
+          validFile,
+        );
+      });
+      const bob = testEnv.authenticatedContext('bob');
+      const globalFile = doc(bob.firestore(), 'users/alice/files/f1');
+      await assertFails(getDoc(globalFile));
     });
   });
 

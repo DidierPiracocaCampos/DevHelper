@@ -38,6 +38,29 @@ service cloud.firestore {
       return request.resource.data[field] == resource.data[field];
     }
 
+    function isValidTags(t) {
+      return t is list
+          && t.size() <= 10
+          && t.allMatches(tag, tag is string && tag.size() > 0 && tag.size() <= 32);
+    }
+
+    function hasValidFileMetadata(m, isCreate) {
+      return isBoundedString(m.name, 255)
+          && isPositiveInt(m.size)
+          && m.size <= 5 * 1024 * 1024
+          && isBoundedString(m.mimeType, 120)
+          && isPositiveInt(m.chunkCount)
+          && m.chunkCount <= 8
+          && isPositiveInt(m.updatedAt)
+          && m.tags is list
+          && isValidTags(m.tags)
+          && isPositiveInt(m.createdAt)
+          && (!('encrypted' in m) || isBool(m.encrypted))
+          && (!('iv' in m) || m.iv == null || isBoundedString(m.iv, 1024))
+          && (isCreate || isUnchanged('createdAt'))
+          && m.keys().hasOnly(['name', 'size', 'mimeType', 'chunkCount', 'updatedAt', 'encrypted', 'iv', 'tags', 'createdAt']);
+    }
+
     // ===============================================================
     // Data Model
     // ===============================================================
@@ -72,15 +95,27 @@ service cloud.firestore {
     // Fields:
     //   - name: string (required, <= 255)
     //   - size: int (required, <= 5 * 1024 * 1024)
-    //   - type: string (required, <= 100)
+    //   - mimeType: string (required, <= 120)
     //   - chunkCount: int (required, <= 8)
     //   - updatedAt: int (required)
+    //   - tags: list<string> (required, <= 10 items, each <= 32 chars)
+    //   - createdAt: int (required, immutable)
+    //   - encrypted: bool (optional)
+    //   - iv: string (optional)
     //
     // Subcollection: users/{userId}/files/{fileId}/chunks
     // Document ID: '0'..'7'
     // Fields:
     //   - index: int (required, >= 0)
     //   - data: bytes (required, <= 700 * 1024)
+    //
+    // Subcollection: users/{userId}/proyectos/{projectId}/issues/{issueId}/files
+    // Document ID: auto-generated
+    // Fields: same shape as users/{userId}/files
+    //
+    // Subcollection: users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId}/chunks
+    // Document ID: '0'..'7'
+    // Fields: same shape as files/chunks
     //
     // Subcollection: users/{userId}/nasa-image
     // Document ID: auto-generated (UUID)
@@ -176,15 +211,11 @@ service cloud.firestore {
     match /users/{userId}/files/{fileId} {
       allow read: if isOwner(userId);
 
-      allow create, update: if isOwner(userId)
-                    && isBoundedString(request.resource.data.name, 255)
-                    && isPositiveInt(request.resource.data.size)
-                    && request.resource.data.size <= 5 * 1024 * 1024
-                    && isBoundedString(request.resource.data.type, 100)
-                    && isPositiveInt(request.resource.data.chunkCount)
-                    && request.resource.data.chunkCount <= 8
-                    && isPositiveInt(request.resource.data.updatedAt)
-                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'chunkCount', 'updatedAt', 'encrypted', 'iv']);
+      allow create: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, true);
+
+      allow update: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, false);
 
       allow delete: if isOwner(userId);
     }
@@ -207,20 +238,46 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------
+    // Issue-scoped files metadata (M3 — mismo shape que files)
+    // Path: users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId}
+    // -------------------------------------------------------------------
+    match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, true);
+
+      allow update: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, false);
+
+      allow delete: if isOwner(userId);
+    }
+
+    match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId}/chunks/{chunkId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasOnly(['index', 'data'])
+                    && request.resource.data.index is int
+                    && request.resource.data.index >= 0
+                    && request.resource.data.index < 8
+                    && request.resource.data.data is bytes
+                    && request.resource.data.data.size() <= 700 * 1024;
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
     // NASA custom image metadata
     // -------------------------------------------------------------------
     match /users/{userId}/nasa-image/{fileId} {
       allow read: if isOwner(userId);
 
-      allow create, update: if isOwner(userId)
-                    && isBoundedString(request.resource.data.name, 255)
-                    && isPositiveInt(request.resource.data.size)
-                    && request.resource.data.size <= 5 * 1024 * 1024
-                    && isBoundedString(request.resource.data.type, 100)
-                    && isPositiveInt(request.resource.data.chunkCount)
-                    && request.resource.data.chunkCount <= 8
-                    && isPositiveInt(request.resource.data.updatedAt)
-                    && request.resource.data.keys().hasOnly(['name', 'size', 'type', 'chunkCount', 'updatedAt', 'encrypted', 'iv']);
+      allow create: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, true);
+
+      allow update: if isOwner(userId)
+                    && hasValidFileMetadata(request.resource.data, false);
 
       allow delete: if isOwner(userId);
     }
