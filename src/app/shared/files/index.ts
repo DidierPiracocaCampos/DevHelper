@@ -1,8 +1,11 @@
 export type { FileMetadataI, FileItem, FileItemStatus } from './models/file.model';
 export type { BlobChunkI, BlobNamespace } from './models/blob-chunk.model';
+export { BLOB_CHUNK_SIZE, BLOB_MAX_FILE_SIZE } from './models/blob-chunk.model';
+export { FILE_FILTER_SCHEMA } from './models/file-filter.schema';
 export { FileRepository } from './services/file-repository';
 export { NasaImageRepository } from './services/nasa-image.repository';
 export { FileBlobService, BlobValidationError } from './services/file-blob.service';
 export type { BlobUploadOptions, EncryptedFileMetadataI } from './services/file-blob.service';
 export { FileInputField } from './file-input-field/file-input-field';
 export type { UploadProgress, UploadOptions } from './file-input-field/file-input-field';
+export { makeThumbnail, THUMBNAIL_SIZE } from './utils/thumbnail';

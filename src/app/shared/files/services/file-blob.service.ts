@@ -28,7 +28,7 @@ export interface BlobUploadOptions {
 
 export interface EncryptedFileMetadataI extends FileMetadataI {
   encrypted: boolean;
-  iv?: number[] | null;
+  iv?: string | null;
 }
 
 export class BlobValidationError extends Error {
@@ -67,16 +67,21 @@ export class FileBlobService {
     encryptWith: CryptoKey | undefined,
   ): { metadata: EncryptedFileMetadataI; iv: Uint8Array | null } {
     const chunkCount = Math.max(1, Math.ceil(file.size / BLOB_CHUNK_SIZE));
+    const now = Date.now();
     const iv = encryptWith ? crypto.getRandomValues(new Uint8Array(12)) : null;
+    const ivString = iv ? FileBlobService.bytesToBase64(iv) : null;
     return {
       metadata: {
+        id,
         name: file.name,
         size: file.size,
-        type: file.type || 'application/octet-stream',
+        mimeType: file.type || 'application/octet-stream',
         chunkCount,
-        updatedAt: Date.now(),
+        updatedAt: now,
         encrypted: !!encryptWith,
-        iv: iv ? Array.from(iv) : null,
+        iv: ivString,
+        tags: [],
+        createdAt: now,
       },
       iv,
     };
@@ -100,6 +105,7 @@ export class FileBlobService {
 
     const id = crypto.randomUUID();
     const { metadata, iv } = FileBlobService.computeMetadata(file, id, options.encryptWith);
+    const segments = this._namespaceSegments(namespace);
 
     options.onProgress?.({ loaded: 0, total: file.size, pct: 0 });
 
@@ -123,7 +129,7 @@ export class FileBlobService {
           this._firestore,
           'users',
           user.uid,
-          namespace,
+          ...segments,
           id,
           'chunks',
           String(chunk.index),
@@ -139,7 +145,7 @@ export class FileBlobService {
     }
 
     await runInInjectionContext(this._injector, async () => {
-      const metaRef = doc(this._firestore, 'users', user.uid, namespace, id);
+      const metaRef = doc(this._firestore, 'users', user.uid, ...segments, id);
       await setDoc(metaRef, this._toFirestore(metadata));
     });
 
@@ -152,19 +158,21 @@ export class FileBlobService {
       throw new Error('No authenticated user');
     }
 
+    const segments = this._namespaceSegments(namespace);
+
     await runInInjectionContext(this._injector, async () => {
       const chunksRef = collection(
         this._firestore,
         'users',
         user.uid,
-        namespace,
+        ...segments,
         id,
         'chunks',
       );
       const chunkSnap = await getDocs(chunksRef);
       const batch = writeBatch(this._firestore);
       chunkSnap.forEach((c) => batch.delete(c.ref));
-      batch.delete(doc(this._firestore, 'users', user.uid, namespace, id));
+      batch.delete(doc(this._firestore, 'users', user.uid, ...segments, id));
       await batch.commit();
     });
   }
@@ -179,8 +187,10 @@ export class FileBlobService {
       throw new Error('No authenticated user');
     }
 
+    const segments = this._namespaceSegments(namespace);
+
     const { meta, sorted } = await runInInjectionContext(this._injector, async () => {
-      const metaRef = doc(this._firestore, 'users', user.uid, namespace, id);
+      const metaRef = doc(this._firestore, 'users', user.uid, ...segments, id);
       const metaSnap = await getDoc(metaRef);
       if (!metaSnap.exists()) {
         throw new Error(`Blob ${namespace}/${id} not found`);
@@ -191,7 +201,7 @@ export class FileBlobService {
         this._firestore,
         'users',
         user.uid,
-        namespace,
+        ...segments,
         id,
         'chunks',
       );
@@ -212,7 +222,7 @@ export class FileBlobService {
           bytes.byteOffset + bytes.byteLength,
         ) as ArrayBuffer;
         const plain = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: new Uint8Array(meta.iv) },
+          { name: 'AES-GCM', iv: FileBlobService.base64ToBytes(meta.iv) },
           decryptWith,
           slice,
         );
@@ -228,7 +238,7 @@ export class FileBlobService {
   async getObjectUrl(
     namespace: BlobNamespace,
     id: string,
-    type: string,
+    mimeType: string,
     decryptWith?: CryptoKey,
   ): Promise<string> {
     const bytes = await this.getBytes(namespace, id, decryptWith);
@@ -236,7 +246,7 @@ export class FileBlobService {
       bytes.byteOffset,
       bytes.byteOffset + bytes.byteLength,
     ) as ArrayBuffer;
-    const blob = new Blob([slice], { type });
+    const blob = new Blob([slice], { type: mimeType });
     return URL.createObjectURL(blob);
   }
 
@@ -251,15 +261,39 @@ export class FileBlobService {
     return out;
   }
 
+  private _namespaceSegments(namespace: BlobNamespace): readonly string[] {
+    return namespace.split('/');
+  }
+
   private _toFirestore(meta: EncryptedFileMetadataI): Record<string, unknown> {
     return {
       name: meta.name,
       size: meta.size,
-      type: meta.type,
+      mimeType: meta.mimeType,
       chunkCount: meta.chunkCount,
       updatedAt: meta.updatedAt,
       encrypted: meta.encrypted,
       iv: meta.iv ?? null,
+      tags: meta.tags ?? [],
+      createdAt: meta.createdAt,
     };
+  }
+
+  private static bytesToBase64(bytes: Uint8Array): string {
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  private static base64ToBytes(base64: string): Uint8Array<ArrayBuffer> {
+    const binary = atob(base64);
+    const buffer = new ArrayBuffer(binary.length);
+    const out = new Uint8Array(buffer);
+    for (let i = 0; i < binary.length; i++) {
+      out[i] = binary.charCodeAt(i);
+    }
+    return out;
   }
 }

@@ -9,22 +9,27 @@ describe('ScopeContext', () => {
 
   it('starts in global scope', () => {
     expect(service.scope()).toBe('global');
+    expect(service.isGlobal()).toBe(true);
+    expect(service.isIssue()).toBe(false);
   });
 
-  it('setProject switches scope to project', () => {
-    service.setProject('p1');
-    expect(service.scope()).toEqual({ kind: 'project', projectId: 'p1' });
+  it('setIssue switches scope to issue with projectId and issueId', () => {
+    service.setIssue('p1', 'i1');
+    expect(service.scope()).toEqual({ kind: 'issue', projectId: 'p1', issueId: 'i1' });
+    expect(service.isGlobal()).toBe(false);
+    expect(service.isIssue()).toBe(true);
   });
 
   it('setGlobal switches back to global', () => {
-    service.setProject('p1');
+    service.setIssue('p1', 'i1');
     service.setGlobal();
     expect(service.scope()).toBe('global');
+    expect(service.isGlobal()).toBe(true);
   });
 
-  it('setProject overrides the previous project', () => {
-    service.setProject('p1');
-    service.setProject('p2');
-    expect(service.scope()).toEqual({ kind: 'project', projectId: 'p2' });
+  it('setIssue overrides the previous issue', () => {
+    service.setIssue('p1', 'i1');
+    service.setIssue('p2', 'i2');
+    expect(service.scope()).toEqual({ kind: 'issue', projectId: 'p2', issueId: 'i2' });
   });
 });

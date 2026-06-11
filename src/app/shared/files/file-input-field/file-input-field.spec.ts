@@ -24,9 +24,11 @@ const baseMetadata = (id: string, name = 'x.png'): FileMetadataI & { id: string 
   id,
   name,
   size: 10,
-  type: 'image/png',
+  mimeType: 'image/png',
   chunkCount: 1,
   updatedAt: 1,
+  tags: [],
+  createdAt: 1,
 });
 
 describe('FileInputField', () => {

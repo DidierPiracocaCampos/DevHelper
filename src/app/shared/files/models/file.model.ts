@@ -1,10 +1,14 @@
 export interface FileMetadataI {
   id?: string;
   name: string;
+  mimeType: string;
   size: number;
-  type: string;
   chunkCount: number;
   updatedAt: number;
+  encrypted?: boolean;
+  iv?: string | null;
+  tags: string[];
+  createdAt: number;
 }
 
 export type FileItemStatus = 'pending' | 'uploading' | 'done' | 'error';

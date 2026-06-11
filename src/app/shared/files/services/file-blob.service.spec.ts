@@ -70,6 +70,10 @@ describe('FileBlobService', () => {
       expect(metadata.chunkCount).toBe(1);
       expect(metadata.size).toBe(100);
       expect(metadata.name).toBe('a.bin');
+      expect(metadata.mimeType).toBe('image/png');
+      expect(metadata.tags).toEqual([]);
+      expect(typeof metadata.createdAt).toBe('number');
+      expect(metadata.createdAt).toBeGreaterThan(0);
     });
 
     it('builds encrypted metadata with a 12-byte IV when a key is provided', async () => {
@@ -83,8 +87,8 @@ describe('FileBlobService', () => {
       expect(metadata.encrypted).toBe(true);
       expect(iv).toBeInstanceOf(Uint8Array);
       expect(iv?.length).toBe(12);
-      expect(metadata.iv).toBeInstanceOf(Array);
-      expect((metadata.iv as number[]).length).toBe(12);
+      expect(typeof metadata.iv).toBe('string');
+      expect((metadata.iv as string).length).toBeGreaterThan(0);
     });
   });
 
