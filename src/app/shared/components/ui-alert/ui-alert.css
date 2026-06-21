@@ -83,5 +83,5 @@
 .alert-message {
   font-size: var(--font-size-sm);
   line-height: 1.4;
-  color: var(--alert-message);
+  color: var(--color-text-secondary);
 }

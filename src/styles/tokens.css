@@ -46,25 +46,17 @@
 
 @layer tokens.severity {
   :root {
-    --color-error: oklch(70% 0.25 25);
-    --color-error-content: oklch(97% 0.013 17.38);
-    --color-error-bg: oklch(65% 0.27 25 / 0.15);
-    --color-error-border: oklch(70% 0.25 25 / 0.3);
+    --color-error-bg: color-mix(in oklch, var(--color-error) 15%, transparent);
+    --color-error-border: color-mix(in oklch, var(--color-error) 30%, transparent);
 
-    --color-warning: oklch(88% 0.18 85);
-    --color-warning-content: oklch(41% 0.112 45.904);
-    --color-warning-bg: oklch(88% 0.18 85 / 0.15);
-    --color-warning-border: oklch(88% 0.18 85 / 0.3);
+    --color-warning-bg: color-mix(in oklch, var(--color-warning) 15%, transparent);
+    --color-warning-border: color-mix(in oklch, var(--color-warning) 30%, transparent);
 
-    --color-info: oklch(70% 0.2 265);
-    --color-info-content: oklch(97% 0.004 265);
-    --color-info-bg: oklch(65% 0.2 265 / 0.15);
-    --color-info-border: oklch(70% 0.2 265 / 0.3);
+    --color-info-bg: color-mix(in oklch, var(--color-info) 15%, transparent);
+    --color-info-border: color-mix(in oklch, var(--color-info) 30%, transparent);
 
-    --color-success: oklch(55% 0.22 145);
-    --color-success-content: oklch(98% 0.003 250.3);
-    --color-success-bg: oklch(55% 0.22 145 / 0.15);
-    --color-success-border: oklch(55% 0.22 145 / 0.3);
+    --color-success-bg: color-mix(in oklch, var(--color-success) 15%, transparent);
+    --color-success-border: color-mix(in oklch, var(--color-success) 30%, transparent);
   }
 }
 
@@ -75,32 +67,6 @@
     --color-text-muted: oklch(var(--color-base-content) / 0.5);
     --color-text-disabled: oklch(var(--color-base-content) / 0.3);
     --color-text-inverse: var(--color-base-100);
-  }
-}
-
-@layer tokens.feedback {
-  :root {
-    --alert-error: var(--color-error);
-    --alert-error-bg: var(--color-error-bg);
-    --alert-error-border: var(--color-error-border);
-    --alert-error-content: var(--color-error-content);
-
-    --alert-warning: var(--color-warning);
-    --alert-warning-bg: var(--color-warning-bg);
-    --alert-warning-border: var(--color-warning-border);
-    --alert-warning-content: var(--color-warning-content);
-
-    --alert-info: var(--color-info);
-    --alert-info-bg: var(--color-info-bg);
-    --alert-info-border: var(--color-info-border);
-    --alert-info-content: var(--color-info-content);
-
-    --alert-success: var(--color-success);
-    --alert-success-bg: var(--color-success-bg);
-    --alert-success-border: var(--color-success-border);
-    --alert-success-content: var(--color-success-content);
-
-    --alert-message: oklch(92% 0.004 286.32 / 0.7);
   }
 }
 
