@@ -35,4 +35,4 @@ skills-lock.json
 .vscode/
 
 #enviroment
-src/environments/
+src/environment/environment.ts

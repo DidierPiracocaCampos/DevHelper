@@ -1,6 +1,6 @@
 import { httpResource } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environment/environment';
 import { NasaPictureI } from '../domain/nasa-picture.interface';
 
 @Injectable({
