@@ -8,7 +8,6 @@
 @plugin "daisyui/theme" {
   name: 'devhelper';
   default: true;
-  prefersdark: false;
   color-scheme: 'dark';
   --color-base-100: #171717;
   --color-base-200: #20201e;
