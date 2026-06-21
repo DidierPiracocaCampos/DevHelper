@@ -264,13 +264,13 @@ Resumen; el detalle completo esta en `docs/design-context.md` seccion 11.
 - **OK** 22 clases nativas de DaisyUI en uso (`btn`, `card`, `input`, `tabs`, `modal`, `alert`, `toast`, `loading`, etc.). `card card-xl` para cards, `btn btn-{severity}` para botones.
 - **OK** iconografia unica via Material Symbols Outlined (`icon` + `icon-sm` / `icon-lg`).
 - **OK** sin emojis en UI. Sin fuentes alternativas a Roboto.
-- **BUG B1** `button.css:36-75` autoreferencia - codigo muerto. Ver `design-context.md` B1.
-- **BUG B2** `tokens.css:49-67` redeclara colores de severidad que DaisyUI ya provee.
-- **BUG B3** `.text-error/warning/info/success` duplicado en `utilities.css` y `ui-alert.css`.
-- **BUG B4** `.input` en `utilities.css:20-30` colisiona con `input` nativo de DaisyUI.
-- **BUG B5** `.btn-base` en `utilities.css:40-57` reinventa defaults de DaisyUI.
-- **PARCIAL** `ui-toast` (164 lineas CSS) y `ui-alert` (87 lineas) reinventan lo que DaisyUI provee. Migrables.
-- **FALTA** `logs: false` en el bloque `@plugin "daisyui"` (consola ruidosa en dev).
+- **OK** `button.css:36-75` autoreferencia - codigo muerto. Ver `design-context.md` B1.
+- **OK** `tokens.css:49-67` redeclara colores de severidad que DaisyUI ya provee.
+- **OK** `.text-error/warning/info/success` duplicado en `utilities.css` y `ui-alert.css`.
+- **OK** `.input` en `utilities.css:20-30` colisiona con `input` nativo de DaisyUI.
+- **OK** `.btn-base` en `utilities.css:40-57` reinventa defaults de DaisyUI.
+- **OK** `ui-toast` (36 lineas CSS) y `ui-alert` (0 lineas, sin CSS) migrados a `toast` + `alert` nativo de DaisyUI con `alert-soft`.
+- **OK** `logs: false` configurado en el bloque `@plugin "daisyui"` (consola silenciosa en dev).
 - **FALTA** un segundo tema (no se anade hasta resolver primero la duplicacion de colores en `tokens.css`).
 
 ## 7. Resumen ejecutivo (1 linea)

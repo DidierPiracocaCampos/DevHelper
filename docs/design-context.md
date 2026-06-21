@@ -143,8 +143,8 @@ Patrones de uso:
 
 | Wrapper propio                     | DaisyUI nativo      | Estado                                                                                                                                                                       |
 | ---------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------ | -------- | -------- |
-| `ui-toast` (164 lineas CSS)        | `toast` + `alert`   | Reimplementado. Las 4 variantes (error/success/warning/info) son solo clases de severidad con bg/border. Se podria colapsar a `toast alert alert-{severity}` con variables.  |
-| `ui-alert` (87 lineas CSS)         | `alert`             | Reimplementado. Mismas 4 variantes + icono + titulo + mensaje. DaisyUI ya provee `alert alert-{severity}` con `alert-info`, `alert-success`, `alert-warning`, `alert-error`. |
+| `ui-toast` (36 lineas CSS)         | `toast` + `alert`   | Migrado a `toast` (container con placement) + `alert alert-soft alert-{severity}` (cada toast). Wrapper conserva solo `toast-details` (pre para errores expandidos) y la animacion `toast-fade-in`. |
+| `ui-alert` (0 lineas CSS)          | `alert`             | Migrado a `alert alert-soft alert-{severity}` puro. `icon` sigue como `input<string>()` (no se migro a `ng-content` para preservar los 7 consumidores). |
 | `item-list` + `list-row-custom`    | `list` + `list-row` | Reimplementado con multiples variantes (`item-list-primary                                                                                                                   | secondary | accent | outlined | plain`). |
 | `card-base` (envoltorio de `card`) | `card`              | Wrapper ligero con header/title/subtitle/actions via content projection. Vale la pena mantenerlo.                                                                            |
 | `card-button` (icono redondo)      | `btn btn-circle`    | Wrapper con `icon` Material Symbols.                                                                                                                                         |
@@ -207,10 +207,10 @@ Para anadir un nuevo componente UI:
 
 ### 12.2 Medias (medio día cada una)
 
-- **Migrar `ui-toast` a `toast` + `alert` de DaisyUI.** Reducir 164 lineas de CSS a ~20. Cambiar el HTML para usar `class="toast alert alert-{severity}"`. Mantener el wrapper solo para la logica de stack, expand, dismiss.
-- **Migrar `ui-alert` a `alert` nativo.** Reducir 87 lineas a ~10. Usar el `alert-icon` slot via `<ng-content select="[icon]">`.
-- **Anadir bloque `@plugin "daisyui" { logs: false; }` en `styles.css`.** Quita el `console.log` de daisyUI en dev.
-- **Reescribir `tokens.css` para derivar del theme.** En vez de redefinir `--color-error`, usar `color-mix(in oklch, var(--color-error) 15%, transparent)` para los `-bg` y lo mismo para `-border`. Asi si se cambia el tema, todo se mueve.
+- ~~**Migrar `ui-toast` a `toast` + `alert` de DaisyUI.**~~ **Hecho.** 161 → 36 lineas CSS. HTML usa `<div class="toast toast-top toast-end">` como contenedor y `<div class="alert alert-soft alert-{severity}">` por toast. Wrapper se mantiene para la logica de stack (`ToastService`), expand, dismiss. `toast-details` (pre para errores expandidos) sigue siendo CSS local.
+- ~~**Migrar `ui-alert` a `alert` nativo.**~~ **Hecho.** 71 → 0 lineas CSS. HTML usa `<div class="alert alert-soft alert-{severity}">` con `text-{severity}` para el color del icono. API publica preservada (`icon` sigue siendo `input<string>()`); cero cambios en los 7 consumidores.
+- ~~**Anadir bloque `@plugin "daisyui" { logs: false; }` en `styles.css`.**~~ **Hecho.** Consola silenciosa en dev.
+- ~~**Reescribir `tokens.css` para derivar del theme.**~~ **Hecho** (commit `a1e8627`). `--color-{severity}-bg/border` derivan via `color-mix` del theme DaisyUI. Si se cambia el tema, todo se mueve.
 
 ### 12.3 Grandes (refactors, varios días)
 
