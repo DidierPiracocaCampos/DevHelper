@@ -1,4 +1,77 @@
 @layer utilities {
+  /* Safelist: classes assembled at runtime via template literals in components
+    (e.g. `btn-${severity}` in ui-button, `tooltip-${placement}` in ui-tooltip).
+    Tailwind's scanner only picks up class names that appear as literal selectors
+    in source files, so these need to be referenced explicitly to be included
+     in the final bundle. The @apply to themselves is a no-op visually. */
+  .btn-neutral {
+    @apply btn-neutral;
+  }
+  .btn-primary {
+    @apply btn-primary;
+  }
+  .btn-secondary {
+    @apply btn-secondary;
+  }
+  .btn-accent {
+    @apply btn-accent;
+  }
+  .btn-info {
+    @apply btn-info;
+  }
+  .btn-success {
+    @apply btn-success;
+  }
+  .btn-warning {
+    @apply btn-warning;
+  }
+  .btn-error {
+    @apply btn-error;
+  }
+  .btn-sm {
+    @apply btn-sm;
+  }
+  .btn-md {
+    @apply btn-md;
+  }
+  .btn-lg {
+    @apply btn-lg;
+  }
+  .btn-outline {
+    @apply btn-outline;
+  }
+  .btn-ghost {
+    @apply btn-ghost;
+  }
+
+  .tooltip {
+    @apply tooltip;
+  }
+  .tooltip-top {
+    @apply tooltip-top;
+  }
+  .tooltip-bottom {
+    @apply tooltip-bottom;
+  }
+  .tooltip-left {
+    @apply tooltip-left;
+  }
+  .tooltip-right {
+    @apply tooltip-right;
+  }
+  .tooltip-info {
+    @apply tooltip-info;
+  }
+  .tooltip-success {
+    @apply tooltip-success;
+  }
+  .tooltip-warning {
+    @apply tooltip-warning;
+  }
+  .tooltip-error {
+    @apply tooltip-error;
+  }
+
   .icon {
     font-family: 'Material Symbols Outlined';
     font-size: var(--icon-size);
