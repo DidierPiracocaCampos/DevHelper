@@ -196,61 +196,6 @@ Para anadir un nuevo componente UI:
 4. Si es un componente presentacional con variantes (severity/size/shape), preferir un signal `input<VariantType>()` que devuelva la clase via `computed()` o getter, igual que `ui-button.ts:33-44`.
 5. Si introduce un nuevo token de diseno, agregarlo a `tokens.css` dentro del layer apropiado. No crear variables ad-hoc en el CSS del componente.
 
-## 11. Bugs y problemas conocidos
-
-Ordenados por severidad. Cada bug tiene una badge con la severidad para que se identifique de un vistazo.
-
-### B1 — Autoreferencia en `button.css` (BUG)
-
-![Severidad](https://img.shields.io/badge/Severidad-Bug-000000?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Codigo_muerto-666666?style=flat-square)
-
-`src/app/shared/components/ui-button/button.css:36-75` define clases `.btn-neutral`, `.btn-primary`, ..., `.btn-sm`, `.btn-lg`, `.btn-outline`, `.btn-ghost` que hacen `@apply btn-neutral;` etc. — autoreferencia. La clase se aplica via atributo en `button.html:2` (`getSeverityClass()` y `getSizeClass()` devuelven `btn-${severity}` y `btn-${size}`) que ya son clases nativas. Las del componente CSS son código muerto. **Eliminar el bloque entero.**
-
-### B2 — Colores de severidad duplicados (REDUNDANCIA)
-
-![Severidad](https://img.shields.io/badge/Severidad-Media-333333?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Redundancia-666666?style=flat-square)
-
-`tokens.css:49-67` redeclara `--color-error/warning/info/success` que DaisyUI ya provee en el theme. Usar los del theme directamente. Si se necesitan las versiones con alpha (`*-bg`, `*-border`), definirlas en una sola línea: `--color-error-bg: color-mix(in oklch, var(--color-error) 15%, transparent);` (o equivalente).
-
-### B3 — Selectores de texto duplicados (REDUNDANCIA)
-
-![Severidad](https://img.shields.io/badge/Severidad-Baja-666666?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Redundancia-333333?style=flat-square)
-
-`utilities.css:82-96` y `ui-alert.css:70-81` definen los mismos selectores `.text-error`, `.text-warning`, `.text-info`, `.text-success`. **Consolidar.**
-
-### B4 — Colisión `.input` con DaisyUI (REDUNDANCIA)
-
-![Severidad](https://img.shields.io/badge/Severidad-Bug-000000?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Colision_de_clase-333333?style=flat-square)
-
-`utilities.css:20-30` define `.input` con `@apply w-full bg-base-200 flex items-center;` y selectores anidados `input`, `.icon`. Esto colisiona con la clase nativa `input` de DaisyUI. Cualquier `<input class="input">` recibirá los dos sets. **Resolver renombrando el wrapper a `.ui-input-shell` o similar.**
-
-### B5 — `.btn-base` reinventa DaisyUI (REDUNDANCIA)
-
-![Severidad](https://img.shields.io/badge/Severidad-Baja-666666?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Redundancia-333333?style=flat-square)
-
-`utilities.css:40-57` define `.btn-base` que reescribe radio, transition, gap, disabled. DaisyUI ya provee todo esto vía `btn`. Aplicar las personalizaciones en `tokens.css` (`--btn-radius`, `--btn-font-weight` ya existen) o vía `class="btn btn-lg"` directo en el template.
-
-### B6 — `prefersdark` contradictorio (CONSISTENCIA)
-
-![Severidad](https://img.shields.io/badge/Severidad-Baja-666666?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Inconsistencia-333333?style=flat-square)
-
-`prefersdark: false` en el theme pero `color-scheme: 'dark'`. Si siempre es dark, no hay razón de chequear preferencia. Si en el futuro se añade un tema claro, será dentro del mismo bloque `@plugin "daisyui/theme"` con su propio `prefersdark: false`.
-
-### B7 — `@reference` innecesario (MANTENIMIENTO)
-
-![Severidad](https://img.shields.io/badge/Severidad-Muy_baja-999999?style=flat-square)
-![Tipo](https://img.shields.io/badge/Tipo-Mantenimiento-666666?style=flat-square)
-
-`@reference '../../../../styles.css';` aparece en casi todos los CSS de componentes. Si no se usa `@apply` con clases de `styles.css`, se puede borrar la línea. La mayoría de los CSS no usan `@apply` con clases globales, solo con tokens. Considerar agregar `--css-file` lint o pre-commit.
-
----
-
 ## 12. Mejoras recomendadas (ordenadas por impacto)
 
 ### 12.1 Rápidas (1-2h, alto retorno)
