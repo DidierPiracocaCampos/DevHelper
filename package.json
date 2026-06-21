@@ -35,6 +35,7 @@
     "@firebase/rules-unit-testing": "^5.0.1",
     "@tailwindcss/postcss": "^4.1.12",
     "daisyui": "^5.5.23",
+    "eslint": "10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jsdom": "^28.0.0",
