@@ -80,7 +80,7 @@ export class FileInputField {
       return url;
     }
     if (item.kind === 'remote' && item.metadata) {
-      let url = this._objectUrls.get(item.localId);
+      const url = this._objectUrls.get(item.localId);
       if (url) return url;
       this._resolveRemoteUrl(item);
       return null;

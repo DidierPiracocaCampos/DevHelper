@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { UiConfigModal } from './ui-config-modal';
-import { NasaImageSection } from '../nasa-image-section/nasa-image-section';
 import { PreferencesService } from '../../services/preferences.service';
 import { ConfirmService } from '../../../service/confirm.service';
 import { NasaPictureResource } from '../../../../home/service/nasa-picture';

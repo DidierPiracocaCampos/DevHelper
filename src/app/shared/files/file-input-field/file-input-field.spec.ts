@@ -87,7 +87,7 @@ describe('FileInputField', () => {
   });
 
   it('uploads a single file and emits value when done', async () => {
-    uploadSpy.mockImplementation((file: File) => Promise.resolve(baseMetadata('doc-1')));
+    uploadSpy.mockImplementation((_file: File) => Promise.resolve(baseMetadata('doc-1')));
     fixture.detectChanges();
 
     const emitted: (readonly FileMetadataI[] | null)[] = [];

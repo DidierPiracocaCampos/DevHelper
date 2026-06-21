@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { UiFileList } from './ui-file-list';
 import { FileBlobService } from '../../files/services/file-blob.service';
