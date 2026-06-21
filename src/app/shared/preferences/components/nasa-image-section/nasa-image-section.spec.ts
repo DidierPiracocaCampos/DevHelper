@@ -21,11 +21,7 @@ class FakeConfirm {
   delete = vi.fn().mockResolvedValue(true);
 }
 
-function callProtected<T extends object>(
-  obj: T,
-  method: string,
-  ...args: unknown[]
-): unknown {
+function callProtected<T extends object>(obj: T, method: string, ...args: unknown[]): unknown {
   const fn = (obj as unknown as Record<string, (...a: unknown[]) => unknown>)[method];
   return fn.apply(obj, args);
 }

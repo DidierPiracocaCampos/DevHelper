@@ -31,9 +31,7 @@ describe('NasaPicture', () => {
   });
 
   afterEach(() => {
-    const req = httpMock.expectOne(
-      (r) => r.url.startsWith('https://api.nasa.gov/planetary/apod'),
-    );
+    const req = httpMock.expectOne((r) => r.url.startsWith('https://api.nasa.gov/planetary/apod'));
     req.flush({
       url: 'https://apod.nasa.gov/apod/image/test.jpg',
       title: 'Test',

@@ -3,10 +3,7 @@ import { signal } from '@angular/core';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { of, throwError } from 'rxjs';
 import { Firestore } from '@angular/fire/firestore';
-import {
-  EncryptedFileMetadataI,
-  FileBlobService,
-} from '../../files/services/file-blob.service';
+import { EncryptedFileMetadataI, FileBlobService } from '../../files/services/file-blob.service';
 import { Authenticator } from '../../service/authenticator';
 import { ToastService } from '../../service/toast';
 import { PreferencesRepository } from './preferences.repository';
@@ -227,7 +224,10 @@ describe('PreferencesService', () => {
 
       await service.clearCustomNasaImage();
 
-      expect(repo.setDoc).toHaveBeenCalledWith('singleton', expect.objectContaining({ id: 'singleton' }));
+      expect(repo.setDoc).toHaveBeenCalledWith(
+        'singleton',
+        expect.objectContaining({ id: 'singleton' }),
+      );
       const setCall = repo.setDoc.mock.calls.at(-1)?.[1] as Record<string, unknown>;
       expect(setCall).toHaveProperty('customNasaImage');
       expect(setCall['customNasaImage']).toBeDefined();

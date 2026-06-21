@@ -2,10 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
 import { Firestore } from '@angular/fire/firestore';
-import {
-  FileBlobService,
-  BlobValidationError,
-} from './file-blob.service';
+import { FileBlobService, BlobValidationError } from './file-blob.service';
 import { BLOB_CHUNK_SIZE, BLOB_MAX_FILE_SIZE } from '../models/blob-chunk.model';
 import { Authenticator } from '../../service/authenticator';
 
@@ -77,11 +74,10 @@ describe('FileBlobService', () => {
     });
 
     it('builds encrypted metadata with a 12-byte IV when a key is provided', async () => {
-      const key = await crypto.subtle.generateKey(
-        { name: 'AES-GCM', length: 256 },
-        true,
-        ['encrypt', 'decrypt'],
-      );
+      const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
+        'encrypt',
+        'decrypt',
+      ]);
       const file = makeFile('s.bin', 500);
       const { metadata, iv } = FileBlobService.computeMetadata(file, 'id-2', key);
       expect(metadata.encrypted).toBe(true);
@@ -129,9 +125,9 @@ describe('FileBlobService', () => {
     it('throws when no user is signed in', async () => {
       const auth = TestBed.inject(Authenticator) as unknown as FakeAuthenticator;
       auth.user.set(null);
-      await expect(
-        service.upload(makeFile('a.bin', 10), 'files'),
-      ).rejects.toThrow('No authenticated user');
+      await expect(service.upload(makeFile('a.bin', 10), 'files')).rejects.toThrow(
+        'No authenticated user',
+      );
     });
   });
 });

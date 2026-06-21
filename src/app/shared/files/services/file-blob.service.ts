@@ -13,11 +13,7 @@ import {
 } from '@angular/fire/firestore';
 import { Authenticator } from '../../service/authenticator';
 import { FileMetadataI } from '../models/file.model';
-import {
-  BLOB_CHUNK_SIZE,
-  BLOB_MAX_FILE_SIZE,
-  BlobNamespace,
-} from '../models/blob-chunk.model';
+import { BLOB_CHUNK_SIZE, BLOB_MAX_FILE_SIZE, BlobNamespace } from '../models/blob-chunk.model';
 
 export type { FileMetadataI } from '../models/file.model';
 
@@ -112,15 +108,16 @@ export class FileBlobService {
     for (const chunk of FileBlobService.splitIntoChunks(file, this.CHUNK_SIZE)) {
       const slice = await file.slice(chunk.start, chunk.end).arrayBuffer();
       const plain = new Uint8Array(slice);
-      const dataBytes = options.encryptWith && iv
-        ? new Uint8Array(
-            await crypto.subtle.encrypt(
-              { name: 'AES-GCM', iv: iv as BufferSource },
-              options.encryptWith,
-              plain,
-            ),
-          )
-        : plain;
+      const dataBytes =
+        options.encryptWith && iv
+          ? new Uint8Array(
+              await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv: iv as BufferSource },
+                options.encryptWith,
+                plain,
+              ),
+            )
+          : plain;
 
       const bytes = Bytes.fromUint8Array(dataBytes);
 
@@ -161,14 +158,7 @@ export class FileBlobService {
     const segments = this._namespaceSegments(namespace);
 
     await runInInjectionContext(this._injector, async () => {
-      const chunksRef = collection(
-        this._firestore,
-        'users',
-        user.uid,
-        ...segments,
-        id,
-        'chunks',
-      );
+      const chunksRef = collection(this._firestore, 'users', user.uid, ...segments, id, 'chunks');
       const chunkSnap = await getDocs(chunksRef);
       const batch = writeBatch(this._firestore);
       chunkSnap.forEach((c) => batch.delete(c.ref));
@@ -197,14 +187,7 @@ export class FileBlobService {
       }
       const meta = metaSnap.data() as EncryptedFileMetadataI;
 
-      const chunksRef = collection(
-        this._firestore,
-        'users',
-        user.uid,
-        ...segments,
-        id,
-        'chunks',
-      );
+      const chunksRef = collection(this._firestore, 'users', user.uid, ...segments, id, 'chunks');
       const chunkSnap = await getDocs(query(chunksRef, where('index', '>=', 0)));
       const sorted = chunkSnap.docs
         .map((d) => d.data() as { index: number; data: Bytes | Uint8Array })

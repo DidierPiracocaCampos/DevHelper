@@ -8,11 +8,7 @@ import { Loader } from '../../../shared/service/loader';
 import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shared/security';
 import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
 import { ConfirmService } from '../../../shared/service/confirm.service';
-import {
-  BlobNamespace,
-  FileRepository,
-  FileMetadataI,
-} from '../../../shared/files';
+import { BlobNamespace, FileRepository, FileMetadataI } from '../../../shared/files';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import {
   FileRow,
@@ -91,7 +87,9 @@ export default class Home {
 
   async onRemove(item: FileRow): Promise<void> {
     if (!item.id) return;
-    const ok = await this._confirm.delete(`¿Eliminar "${item.name}"? Esta acción no se puede deshacer.`);
+    const ok = await this._confirm.delete(
+      `¿Eliminar "${item.name}"? Esta acción no se puede deshacer.`,
+    );
     if (!ok) return;
     this._repo.deleteDoc(item.id).subscribe({
       next: () => this.fileCollection.reload(),

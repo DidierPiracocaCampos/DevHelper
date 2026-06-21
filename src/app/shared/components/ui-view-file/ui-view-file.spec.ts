@@ -21,7 +21,8 @@ if (typeof URL.createObjectURL !== 'function') {
   ) as typeof URL.createObjectURL;
 }
 if (typeof URL.revokeObjectURL !== 'function') {
-  (URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL = vi.fn() as typeof URL.revokeObjectURL;
+  (URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL =
+    vi.fn() as typeof URL.revokeObjectURL;
 }
 
 class FakeBlob {
@@ -71,12 +72,28 @@ describe('UiViewFile', () => {
   });
 
   it('detects preview kind by mime type', () => {
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('image/png')).toBe('image');
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('video/mp4')).toBe('video');
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('audio/mp3')).toBe('audio');
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('application/pdf')).toBe('pdf');
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('text/plain')).toBe('text');
-    expect((component as unknown as { _detectKind: (m: string) => string })._detectKind('application/zip')).toBe('unsupported');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind('image/png'),
+    ).toBe('image');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind('video/mp4'),
+    ).toBe('video');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind('audio/mp3'),
+    ).toBe('audio');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind(
+        'application/pdf',
+      ),
+    ).toBe('pdf');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind('text/plain'),
+    ).toBe('text');
+    expect(
+      (component as unknown as { _detectKind: (m: string) => string })._detectKind(
+        'application/zip',
+      ),
+    ).toBe('unsupported');
   });
 
   it('loads text preview when file is opened', async () => {
@@ -122,5 +139,3 @@ describe('UiViewFile', () => {
     expect(clickSpy).toHaveBeenCalled();
   });
 });
-
-

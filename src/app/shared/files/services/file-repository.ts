@@ -13,9 +13,7 @@ import { ScopeContext } from '../../scope/scope-context';
 
 @Injectable({ providedIn: 'root' })
 export class FileRepository extends withDocDelete()(
-  withDocById<FileMetadataI>()(
-    withCollection<FileMetadataI>()(ApiBase<FileMetadataI>),
-  ),
+  withDocById<FileMetadataI>()(withCollection<FileMetadataI>()(ApiBase<FileMetadataI>)),
 ) {
   private readonly _scope = inject(ScopeContext);
 
@@ -46,10 +44,7 @@ export class FileRepository extends withDocDelete()(
       };
     },
 
-    fromFirestore(
-      snapshot: QueryDocumentSnapshot,
-      _options: SnapshotOptions,
-    ): FileMetadataI {
+    fromFirestore(snapshot: QueryDocumentSnapshot, _options: SnapshotOptions): FileMetadataI {
       const data = snapshot.data() as {
         name?: string;
         size?: number;

@@ -50,11 +50,5 @@
     <ui-alert severity="error" title="Error" [message]="err" icon="error" />
   }
 
-  <input
-    #picker
-    type="file"
-    [accept]="accept"
-    class="hidden"
-    (change)="onFileSelected($event)"
-  />
+  <input #picker type="file" [accept]="accept" class="hidden" (change)="onFileSelected($event)" />
 </section>

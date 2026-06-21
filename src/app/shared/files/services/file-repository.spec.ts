@@ -58,8 +58,6 @@ describe('FileRepository (scope-aware path signal)', () => {
 
   it('colRefSignal is undefined when no user is signed in', () => {
     fakeAuth.user.set(null);
-    expect(
-      (repo as unknown as { colRefSignal: () => unknown }).colRefSignal(),
-    ).toBeUndefined();
+    expect((repo as unknown as { colRefSignal: () => unknown }).colRefSignal()).toBeUndefined();
   });
 });

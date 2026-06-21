@@ -1,17 +1,15 @@
 import { describe, expect, it, vi, beforeAll } from 'vitest';
 import { makeThumbnail, THUMBNAIL_SIZE } from './thumbnail';
 
-type CreateImageBitmapFn = (
-  blob: Blob,
-  opts?: ImageBitmapOptions,
-) => Promise<ImageBitmap>;
+type CreateImageBitmapFn = (blob: Blob, opts?: ImageBitmapOptions) => Promise<ImageBitmap>;
 type CreateImageBitmapHolder = { createImageBitmap?: CreateImageBitmapFn };
 
 describe('makeThumbnail', () => {
   beforeAll(() => {
     if (typeof globalThis.URL.createObjectURL !== 'function') {
-      (globalThis.URL as { createObjectURL: typeof URL.createObjectURL }).createObjectURL =
-        vi.fn(() => 'blob:fake') as typeof URL.createObjectURL;
+      (globalThis.URL as { createObjectURL: typeof URL.createObjectURL }).createObjectURL = vi.fn(
+        () => 'blob:fake',
+      ) as typeof URL.createObjectURL;
     }
     if (typeof globalThis.URL.revokeObjectURL !== 'function') {
       (globalThis.URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL =
@@ -71,7 +69,8 @@ describe('makeThumbnail', () => {
     const fakeOffscreen = function () {
       return fakeCanvas;
     } as unknown as typeof OffscreenCanvas;
-    const origOffscreen = (globalThis as { OffscreenCanvas?: typeof OffscreenCanvas }).OffscreenCanvas;
+    const origOffscreen = (globalThis as { OffscreenCanvas?: typeof OffscreenCanvas })
+      .OffscreenCanvas;
     (globalThis as { OffscreenCanvas: typeof OffscreenCanvas }).OffscreenCanvas = fakeOffscreen;
     holder.createImageBitmap = vi.fn(async () => fakeBitmap) as unknown as CreateImageBitmapFn;
     try {

@@ -1,32 +1,26 @@
-import {
-  computed,
-  inject,
-  Injectable,
-  linkedSignal,
-  resource,
-  Resource,
-} from '@angular/core';
-import {
-  deleteField,
-  doc,
-  Firestore,
-  getDoc,
-} from '@angular/fire/firestore';
+import { computed, inject, Injectable, linkedSignal, resource, Resource } from '@angular/core';
+import { deleteField, doc, Firestore, getDoc } from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
 import { FileBlobService } from '../../files/services/file-blob.service';
 import { Authenticator } from '../../service/authenticator';
 import { ToastService } from '../../service/toast';
 import { PreferencesRepository } from './preferences.repository';
 
-function withPreviousValue<T>(input: Resource<T | null>, initial: T | null = null): Resource<T | null> {
+function withPreviousValue<T>(
+  input: Resource<T | null>,
+  initial: T | null = null,
+): Resource<T | null> {
   const valueSig = computed(() => input.value());
   const statusSig = computed(() => input.status());
   const key = computed(() => ({ status: statusSig(), value: valueSig() }));
 
-  const previous = linkedSignal<{
-    status: ReturnType<typeof statusSig>;
-    value: ReturnType<typeof valueSig>;
-  }, T | null>({
+  const previous = linkedSignal<
+    {
+      status: ReturnType<typeof statusSig>;
+      value: ReturnType<typeof valueSig>;
+    },
+    T | null
+  >({
     source: key,
     computation: (snap, prev) => {
       if (
@@ -45,7 +39,8 @@ function withPreviousValue<T>(input: Resource<T | null>, initial: T | null = nul
     status: input.status,
     error: input.error,
     isLoading: input.isLoading,
-    hasValue: (() => previous() !== null && previous() !== undefined) as Resource<T | null>['hasValue'],
+    hasValue: (() =>
+      previous() !== null && previous() !== undefined) as Resource<T | null>['hasValue'],
   };
 }
 
@@ -66,7 +61,7 @@ export class PreferencesService {
 
   readonly customNasaImageFileId = computed(() => {
     const p = this.preferences;
-    return p.hasValue() ? p.value()?.customNasaImage?.fileId ?? null : null;
+    return p.hasValue() ? (p.value()?.customNasaImage?.fileId ?? null) : null;
   });
 
   private readonly _urlResource = resource({
@@ -83,7 +78,8 @@ export class PreferencesService {
       if (abortSignal.aborted) throw new Error('aborted');
       if (!metaSnap.exists()) return null;
       const type =
-        (metaSnap.data() as { mimeType?: string } | undefined)?.mimeType ?? 'application/octet-stream';
+        (metaSnap.data() as { mimeType?: string } | undefined)?.mimeType ??
+        'application/octet-stream';
       const url = await this._blob.getObjectUrl('nasa-image', params.fileId, type);
       if (abortSignal.aborted) throw new Error('aborted');
       return url;

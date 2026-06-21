@@ -6,18 +6,12 @@ import {
   SnapshotOptions,
 } from 'firebase/firestore';
 import { ApiBase } from '../../api/api-base';
-import {
-  withDocById,
-  withDocDelete,
-  withSetDoc,
-} from '../../api/crud.mixins';
+import { withDocById, withDocDelete, withSetDoc } from '../../api/crud.mixins';
 import { CustomNasaImageI, UserPreferencesI } from '../models/preferences.model';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesRepository extends withDocDelete()(
-  withSetDoc<UserPreferencesI>()(
-    withDocById<UserPreferencesI>()(ApiBase<UserPreferencesI>),
-  ),
+  withSetDoc<UserPreferencesI>()(withDocById<UserPreferencesI>()(ApiBase<UserPreferencesI>)),
 ) {
   protected path = signal(['preferences'] as const);
 
@@ -29,10 +23,7 @@ export class PreferencesRepository extends withDocDelete()(
       };
     },
 
-    fromFirestore(
-      snapshot: QueryDocumentSnapshot,
-      _options: SnapshotOptions,
-    ): UserPreferencesI {
+    fromFirestore(snapshot: QueryDocumentSnapshot, _options: SnapshotOptions): UserPreferencesI {
       const data = snapshot.data() as {
         id?: unknown;
         customNasaImage?: CustomNasaImageI;

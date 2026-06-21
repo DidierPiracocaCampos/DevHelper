@@ -1,8 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-export type Scope =
-  | 'global'
-  | { kind: 'issue'; projectId: string; issueId: string };
+export type Scope = 'global' | { kind: 'issue'; projectId: string; issueId: string };
 
 @Injectable({ providedIn: 'root' })
 export class ScopeContext {

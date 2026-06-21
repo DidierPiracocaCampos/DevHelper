@@ -177,7 +177,11 @@ export class FileInputField {
   protected async retry(item: FileItem): Promise<void> {
     if (item.kind !== 'local' || !item.file) return;
     this.items.update((arr) =>
-      arr.map((i) => (i.localId === item.localId ? { ...i, status: 'uploading', progress: 0, error: undefined } : i)),
+      arr.map((i) =>
+        i.localId === item.localId
+          ? { ...i, status: 'uploading', progress: 0, error: undefined }
+          : i,
+      ),
     );
     try {
       const metadata = await this._upload.upload(item.file, 'files', {
@@ -271,7 +275,8 @@ export class FileInputField {
     for (const token of tokens) {
       if (token === file.type) return true;
       if (token.endsWith('/*') && file.type.startsWith(token.slice(0, -1))) return true;
-      if (token.startsWith('.') && file.name.toLowerCase().endsWith(token.toLowerCase())) return true;
+      if (token.startsWith('.') && file.name.toLowerCase().endsWith(token.toLowerCase()))
+        return true;
     }
     return false;
   }

@@ -47,8 +47,4 @@
   [(isOpen)]="isAddOpen"
   (added)="onAdded()"
 />
-<ui-view-file
-  [file]="viewFile()"
-  [namespace]="namespace()"
-  [(isOpen)]="isViewOpen"
-/>
+<ui-view-file [file]="viewFile()" [namespace]="namespace()" [(isOpen)]="isViewOpen" />

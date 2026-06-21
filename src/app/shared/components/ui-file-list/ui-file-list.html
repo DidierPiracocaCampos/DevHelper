@@ -5,9 +5,7 @@
     <div class="skeleton min-h-[3.5rem] w-full"></div>
   </div>
 } @else if (error() !== null && error() !== undefined) {
-  <div class="text-error text-center p-4">
-    Error al cargar los archivos.
-  </div>
+  <div class="text-error text-center p-4">Error al cargar los archivos.</div>
 } @else {
   <ul class="list space-y-2 w-full h-full overflow-y-auto">
     @for (item of _items(); track trackById($index, item)) {

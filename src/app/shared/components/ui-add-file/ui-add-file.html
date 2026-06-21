@@ -20,16 +20,12 @@
       (dragleave)="onDragLeave($event)"
       (drop)="onDrop($event)"
     >
-      <input
-        #picker
-        type="file"
-        multiple
-        class="hidden"
-        (change)="onPick($event)"
-      />
+      <input #picker type="file" multiple class="hidden" (change)="onPick($event)" />
       <span class="icon text-4xl text-base-100/60">cloud_upload</span>
       <p class="mt-2">Arrastra archivos o haz clic para seleccionar</p>
-      <p class="text-xs opacity-60 mt-1">Tamaño máximo por archivo: {{ maxSize() / 1024 / 1024 }} MB</p>
+      <p class="text-xs opacity-60 mt-1">
+        Tamaño máximo por archivo: {{ maxSize() / 1024 / 1024 }} MB
+      </p>
     </div>
 
     @if (_errorMsg()) {
@@ -49,7 +45,9 @@
             }
             <div class="flex-1 min-w-0">
               <div class="text-sm font-medium truncate">{{ item.file.name }}</div>
-              <div class="text-xs opacity-60">{{ sizeOf(item) }} · {{ item.file.type || 'desconocido' }}</div>
+              <div class="text-xs opacity-60">
+                {{ sizeOf(item) }} · {{ item.file.type || 'desconocido' }}
+              </div>
               @if (item.status === 'uploading' || item.status === 'done') {
                 <progress
                   class="progress progress-primary w-full mt-1 h-1"

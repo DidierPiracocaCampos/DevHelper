@@ -87,9 +87,7 @@ describe('FileInputField', () => {
   });
 
   it('uploads a single file and emits value when done', async () => {
-    uploadSpy.mockImplementation(
-      (file: File) => Promise.resolve(baseMetadata('doc-1')),
-    );
+    uploadSpy.mockImplementation((file: File) => Promise.resolve(baseMetadata('doc-1')));
     fixture.detectChanges();
 
     const emitted: (readonly FileMetadataI[] | null)[] = [];
@@ -132,7 +130,9 @@ describe('FileInputField', () => {
     expect(component['items']().length).toBe(1);
 
     const item = component['items']()[0];
-    await (component as unknown as { removeItem: (i: typeof item) => Promise<void> }).removeItem(item);
+    await (component as unknown as { removeItem: (i: typeof item) => Promise<void> }).removeItem(
+      item,
+    );
 
     expect(deleteFileSpy).toHaveBeenCalledWith('files', 'doc-1');
     expect(component['items']().length).toBe(0);
@@ -140,9 +140,10 @@ describe('FileInputField', () => {
 
   it('does not delete from storage when removing a local item', async () => {
     uploadSpy.mockImplementation(
-      () => new Promise(() => {
-        // never resolves
-      }),
+      () =>
+        new Promise(() => {
+          // never resolves
+        }),
     );
     fixture.detectChanges();
 

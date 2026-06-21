@@ -22,7 +22,8 @@ if (typeof URL.createObjectURL !== 'function') {
   ) as typeof URL.createObjectURL;
 }
 if (typeof URL.revokeObjectURL !== 'function') {
-  (URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL = vi.fn() as typeof URL.revokeObjectURL;
+  (URL as { revokeObjectURL: typeof URL.revokeObjectURL }).revokeObjectURL =
+    vi.fn() as typeof URL.revokeObjectURL;
 }
 
 class FakeBlob {

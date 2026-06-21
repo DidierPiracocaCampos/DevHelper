@@ -249,9 +249,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
       await assertFails(setDoc(profileRef, { createdAt: Timestamp.now() }));
       await assertFails(setDoc(profileRef, { email: 123, createdAt: Timestamp.now() }));
-      await assertFails(
-        setDoc(profileRef, { email: '', createdAt: Timestamp.now() }),
-      );
+      await assertFails(setDoc(profileRef, { email: '', createdAt: Timestamp.now() }));
     });
 
     it('create rejects extra fields', async () => {
@@ -273,9 +271,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const original = Timestamp.fromMillis(1000);
 
       await assertSucceeds(setDoc(profileRef, { email: 'a@b.c', createdAt: original }));
-      await assertFails(
-        updateDoc(profileRef, { createdAt: Timestamp.fromMillis(9999) }),
-      );
+      await assertFails(updateDoc(profileRef, { createdAt: Timestamp.fromMillis(9999) }));
     });
   });
 
@@ -310,29 +306,21 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     it('create rejects extra fields', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const passwords = collection(alice.firestore(), 'users/alice/passwords');
-      await assertFails(
-        addDoc(passwords, { ...validPassword, role: 'admin' }),
-      );
+      await assertFails(addDoc(passwords, { ...validPassword, role: 'admin' }));
     });
 
     it('create rejects oversized title or password', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const passwords = collection(alice.firestore(), 'users/alice/passwords');
-      await assertFails(
-        addDoc(passwords, { ...validPassword, title: 'x'.repeat(201) }),
-      );
-      await assertFails(
-        addDoc(passwords, { ...validPassword, password: 'x'.repeat(1025) }),
-      );
+      await assertFails(addDoc(passwords, { ...validPassword, title: 'x'.repeat(201) }));
+      await assertFails(addDoc(passwords, { ...validPassword, password: 'x'.repeat(1025) }));
     });
 
     it('update cannot change createdAt', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const passwords = collection(alice.firestore(), 'users/alice/passwords');
       const ref = await assertSucceeds(addDoc(passwords, validPassword));
-      await assertFails(
-        updateDoc(ref, { ...validPassword, createdAt: Timestamp.fromMillis(0) }),
-      );
+      await assertFails(updateDoc(ref, { ...validPassword, createdAt: Timestamp.fromMillis(0) }));
     });
 
     it('other user cannot read or write another users passwords', async () => {
@@ -357,9 +345,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const vault = collection(alice.firestore(), 'users/alice/vault');
       const ref = await assertSucceeds(addDoc(vault, validVault));
       await assertSucceeds(getDoc(ref));
-      await assertSucceeds(
-        updateDoc(ref, { ...validVault, encryptedMasterKey: 'CCCC' }),
-      );
+      await assertSucceeds(updateDoc(ref, { ...validVault, encryptedMasterKey: 'CCCC' }));
       await assertSucceeds(deleteDoc(ref));
     });
 
@@ -401,17 +387,13 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     it('create rejects when file size exceeds 5 MB', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
-      await assertFails(
-        addDoc(files, { ...validFile, size: 6 * 1024 * 1024 }),
-      );
+      await assertFails(addDoc(files, { ...validFile, size: 6 * 1024 * 1024 }));
     });
 
     it('create rejects when chunkCount exceeds 8', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
-      await assertFails(
-        addDoc(files, { ...validFile, chunkCount: 9 }),
-      );
+      await assertFails(addDoc(files, { ...validFile, chunkCount: 9 }));
     });
 
     it('create rejects when required fields are missing or wrong type', async () => {
@@ -511,9 +493,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     it('rejects when mimeType exceeds 120 chars', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
-      await assertFails(
-        addDoc(files, { ...validFile, mimeType: 'x'.repeat(121) }),
-      );
+      await assertFails(addDoc(files, { ...validFile, mimeType: 'x'.repeat(121) }));
     });
 
     it('rejects when tags list has more than 10 items', async () => {
@@ -532,9 +512,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     it('rejects when tags contains a non-string', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const files = collection(alice.firestore(), 'users/alice/files');
-      await assertFails(
-        addDoc(files, { ...validFile, tags: ['ok', 42 as unknown as string] }),
-      );
+      await assertFails(addDoc(files, { ...validFile, tags: ['ok', 42 as unknown as string] }));
     });
 
     it('rejects when createdAt is missing', async () => {
@@ -580,10 +558,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
     it('owner can create, read, update, delete an issue-scoped file', async () => {
       const alice = testEnv.authenticatedContext('alice');
-      const col = collection(
-        alice.firestore(),
-        'users/alice/proyectos/p1/issues/i1/files',
-      );
+      const col = collection(alice.firestore(), 'users/alice/proyectos/p1/issues/i1/files');
       const ref = await assertSucceeds(addDoc(col, validFile));
       await assertSucceeds(getDoc(ref));
       await assertSucceeds(updateDoc(ref, { ...validFile, name: 'renamed.txt' }));
@@ -603,10 +578,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
     it('rejects issue-scoped file when size exceeds 5 MB', async () => {
       const alice = testEnv.authenticatedContext('alice');
-      const col = collection(
-        alice.firestore(),
-        'users/alice/proyectos/p1/issues/i1/files',
-      );
+      const col = collection(alice.firestore(), 'users/alice/proyectos/p1/issues/i1/files');
       await assertFails(addDoc(col, { ...validFile, size: 6 * 1024 * 1024 }));
     });
 
@@ -628,10 +600,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
         );
       });
       const bob = testEnv.authenticatedContext('bob');
-      const otherIssue = doc(
-        bob.firestore(),
-        'users/alice/proyectos/p1/issues/i2/files/f1',
-      );
+      const otherIssue = doc(bob.firestore(), 'users/alice/proyectos/p1/issues/i2/files/f1');
       await assertFails(getDoc(otherIssue));
     });
 
@@ -643,10 +612,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
         );
       });
       const bob = testEnv.authenticatedContext('bob');
-      const otherProject = doc(
-        bob.firestore(),
-        'users/alice/proyectos/p2/issues/i1/files/f1',
-      );
+      const otherProject = doc(bob.firestore(), 'users/alice/proyectos/p2/issues/i1/files/f1');
       await assertFails(getDoc(otherProject));
     });
 
@@ -666,12 +632,8 @@ const skip = !FIRESTORE_EMULATOR_HOST;
   describe('default deny', () => {
     it('denies reads and writes to any other collection', async () => {
       const alice = testEnv.authenticatedContext('alice');
-      await assertFails(
-        setDoc(doc(alice.firestore(), 'some-collection/x'), { foo: 'bar' }),
-      );
-      await assertFails(
-        setDoc(doc(alice.firestore(), 'users/alice/other/x'), { foo: 'bar' }),
-      );
+      await assertFails(setDoc(doc(alice.firestore(), 'some-collection/x'), { foo: 'bar' }));
+      await assertFails(setDoc(doc(alice.firestore(), 'users/alice/other/x'), { foo: 'bar' }));
     });
   });
 });

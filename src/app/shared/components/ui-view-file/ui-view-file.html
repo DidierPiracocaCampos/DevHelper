@@ -1,4 +1,10 @@
-<ui-modal [title]="fileValue()?.name ?? 'Archivo'" icon="visibility" size="xl" [(isOpen)]="isOpen" (closed)="onClose()">
+<ui-modal
+  [title]="fileValue()?.name ?? 'Archivo'"
+  icon="visibility"
+  size="xl"
+  [(isOpen)]="isOpen"
+  (closed)="onClose()"
+>
   <div body class="min-h-[20rem] max-h-[70vh] overflow-auto">
     @if (loading()) {
       <div class="flex flex-col gap-2">
@@ -22,7 +28,10 @@
           <iframe [src]="previewUrl()" class="w-full h-[60vh]"></iframe>
         }
         @case ('text') {
-          <pre class="bg-base-200 p-4 rounded-md overflow-auto max-h-[60vh] text-sm whitespace-pre-wrap">{{ textPreview() }}</pre>
+          <pre
+            class="bg-base-200 p-4 rounded-md overflow-auto max-h-[60vh] text-sm whitespace-pre-wrap"
+            >{{ textPreview() }}</pre
+          >
         }
         @default {
           <div class="text-center p-8 opacity-60">

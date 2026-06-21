@@ -61,7 +61,12 @@
             <div class="bar" [style.width.%]="item.progress"></div>
           </div>
         } @else if (item.status === 'error') {
-          <button type="button" class="icon-btn" (click)="retry(item)" [attr.aria-label]="'Reintentar ' + displayName(item)">
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="retry(item)"
+            [attr.aria-label]="'Reintentar ' + displayName(item)"
+          >
             <span class="icon">refresh</span>
           </button>
         } @else {

@@ -98,7 +98,7 @@ export class UiViewFile {
     if (!f) return;
     const doDownload = async (): Promise<void> => {
       try {
-        const key = f.encrypted ? this._vault.getVaultKey() ?? undefined : undefined;
+        const key = f.encrypted ? (this._vault.getVaultKey() ?? undefined) : undefined;
         const bytes = await this._blob.getBytes(this.namespace(), f.id, key);
         const buffer = bytes.buffer.slice(
           bytes.byteOffset,
@@ -136,7 +136,7 @@ export class UiViewFile {
     this._blobUrl.set(null);
     this._text.set(null);
     try {
-      const key = f.encrypted ? this._vault.getVaultKey() ?? undefined : undefined;
+      const key = f.encrypted ? (this._vault.getVaultKey() ?? undefined) : undefined;
       const bytes = await this._blob.getBytes(this.namespace(), f.id, key);
       const buffer = bytes.buffer.slice(
         bytes.byteOffset,

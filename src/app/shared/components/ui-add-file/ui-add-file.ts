@@ -54,9 +54,7 @@ export class UiAddFile {
   closed = output<void>();
 
   protected readonly _items: WritableSignal<AddFileItem[]> = signal<AddFileItem[]>([]);
-  protected readonly _busy = computed(() =>
-    this._items().some((i) => i.status === 'uploading'),
-  );
+  protected readonly _busy = computed(() => this._items().some((i) => i.status === 'uploading'));
   protected readonly _canUpload = computed(() => {
     const items = this._items();
     return items.length > 0 && !this._busy();
@@ -125,7 +123,7 @@ export class UiAddFile {
       for (const item of items) {
         this._markStatus(item.localId, 'uploading');
         try {
-          const key = this.encrypt() ? this._vault.getVaultKey() ?? undefined : undefined;
+          const key = this.encrypt() ? (this._vault.getVaultKey() ?? undefined) : undefined;
           const meta = await this._blob.upload(item.file, this.namespace(), {
             encryptWith: key,
             onProgress: (p) => this._setProgress(item.localId, p.pct),
@@ -157,9 +155,7 @@ export class UiAddFile {
 
   protected async onClose(): Promise<void> {
     if (this._hasPending()) {
-      const ok = await this._confirm.warning(
-        'Hay subidas en curso. ¿Cerrar y cancelarlas?',
-      );
+      const ok = await this._confirm.warning('Hay subidas en curso. ¿Cerrar y cancelarlas?');
       if (!ok) return;
     }
     this.isOpen.set(false);
@@ -204,14 +200,14 @@ export class UiAddFile {
   }
 
   private _markStatus(localId: string, status: AddFileItem['status']): void {
-    this._items.update((arr) =>
-      arr.map((i) => (i.localId === localId ? { ...i, status } : i)),
-    );
+    this._items.update((arr) => arr.map((i) => (i.localId === localId ? { ...i, status } : i)));
   }
 
   private _markDone(localId: string, metadata: FileMetadataI & { id: string }): void {
     this._items.update((arr) =>
-      arr.map((i) => (i.localId === localId ? { ...i, status: 'done', progress: 100, metadata } : i)),
+      arr.map((i) =>
+        i.localId === localId ? { ...i, status: 'done', progress: 100, metadata } : i,
+      ),
     );
   }
 
