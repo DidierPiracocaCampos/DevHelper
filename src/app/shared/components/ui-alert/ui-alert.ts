@@ -6,7 +6,6 @@ export type UiAlertSeverity = 'error' | 'warning' | 'info' | 'success';
   selector: 'ui-alert',
   imports: [],
   templateUrl: './ui-alert.html',
-  styleUrl: './ui-alert.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiAlert {

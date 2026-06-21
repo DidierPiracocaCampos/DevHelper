@@ -1,9 +1,9 @@
-<div class="alert-custom alert-{{ severity() }}">
-  <span class="alert-icon icon icon-{{ severity() }}">{{ icon() }}</span>
-  <div class="alert-content">
+<div class="alert alert-soft alert-{{ severity() }}" role="alert">
+  <span class="icon text-{{ severity() }}">{{ icon() }}</span>
+  <div>
     @if (title()) {
-      <span class="alert-title text-{{ severity() }}">{{ title() }}</span>
+      <h3 class="font-semibold">{{ title() }}</h3>
     }
-    <span class="alert-message">{{ message() }}</span>
+    <div class="text-xs opacity-80">{{ message() }}</div>
   </div>
 </div>
