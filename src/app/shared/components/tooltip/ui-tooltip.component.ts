@@ -22,6 +22,7 @@ export type TooltipSeverity =
 @Component({
   selector: 'ui-tooltip',
   template: '<ng-content />',
+  styleUrl: './ui-tooltip.component.css',
 })
 export class UiTooltipComponent implements OnDestroy {
   text = input.required<string>({ alias: 'text' });
