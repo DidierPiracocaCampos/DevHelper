@@ -1,6 +1,4 @@
 @reference '../../../../styles.css';
-@reference '../../../../styles/tokens.css';
-@reference '../../../../styles/utilities.css';
 
 .card-title {
   font-size: var(--font-size-xl);

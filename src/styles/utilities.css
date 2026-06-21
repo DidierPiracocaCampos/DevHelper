@@ -110,25 +110,6 @@
     font-weight: var(--font-weight-medium);
   }
 
-  .btn-base {
-    border-radius: var(--btn-radius);
-    font-weight: var(--btn-font-weight);
-    letter-spacing: var(--btn-letter-spacing);
-    text-transform: var(--btn-text-transform);
-    transition: all var(--btn-transition);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-2);
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-  }
-
   .card-base {
     background: var(--card-bg);
     border-radius: var(--card-radius);
