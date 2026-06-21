@@ -15,5 +15,7 @@ export class NasaPicture {
   info = this._service.getPicture();
   customUrl = this._prefs.resolvedUrl;
 
-  imageUrl = computed(() => this.customUrl.value() ?? this.info.value()?.url ?? null);
+  imageUrl = computed(
+    () => this.customUrl.value() ?? (this.info.hasValue() ? this.info.value()?.url : null) ?? null,
+  );
 }
