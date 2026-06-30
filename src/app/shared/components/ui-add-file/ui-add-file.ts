@@ -19,6 +19,10 @@ import { ConfirmService } from '../../service/confirm.service';
 import { UiModal } from '../ui-modal/ui-modal';
 import { UiButton } from '../ui-button/button';
 import { UiAlert } from '../ui-alert/ui-alert';
+import { UiListItem } from '../item-list/item-list';
+import { UiListButton } from '../list-button/list-button';
+import { UiTooltipComponent } from '../tooltip';
+import { iconFor, MimeIcon } from '../../files/utils/mime-icon';
 
 export interface AddFileItem {
   localId: string;
@@ -34,7 +38,7 @@ const IMAGE_PATTERN = /^image\//;
 
 @Component({
   selector: 'ui-add-file',
-  imports: [UiModal, UiButton, UiAlert],
+  imports: [UiModal, UiButton, UiAlert, UiListItem, UiListButton, UiTooltipComponent],
   templateUrl: './ui-add-file.html',
   styleUrl: './ui-add-file.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -171,6 +175,14 @@ export class UiAddFile {
     if (b < 1024) return `${b} B`;
     if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
     return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  protected itemSub(item: AddFileItem): string {
+    return `${this.sizeOf(item)} · ${item.file.type || 'desconocido'}`;
+  }
+
+  protected itemIcon(item: AddFileItem): MimeIcon {
+    return iconFor(item.file.type);
   }
 
   private _accept(files: File[]): void {
