@@ -60,4 +60,10 @@ describe('FileRepository (scope-aware path signal)', () => {
     fakeAuth.user.set(null);
     expect((repo as unknown as { colRefSignal: () => unknown }).colRefSignal()).toBeUndefined();
   });
+
+  it('getFilteredCollection queda disponible tras aplicar withQuery', () => {
+    expect(
+      typeof (repo as unknown as { getFilteredCollection?: unknown }).getFilteredCollection,
+    ).toBe('function');
+  });
 });

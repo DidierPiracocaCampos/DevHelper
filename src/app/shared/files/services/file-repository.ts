@@ -6,14 +6,16 @@ import {
   SnapshotOptions,
 } from 'firebase/firestore';
 import { ApiBase, PathSegments } from '../../api/api-base';
-import { withCollection, withDocById, withDocDelete } from '../../api/crud.mixins';
+import { withCollection, withDocById, withDocDelete, withQuery } from '../../api/crud.mixins';
 import { FileMetadataI } from '../models/file.model';
 import { BlobNamespace } from '../models/blob-chunk.model';
 import { ScopeContext } from '../../scope/scope-context';
 
 @Injectable({ providedIn: 'root' })
 export class FileRepository extends withDocDelete()(
-  withDocById<FileMetadataI>()(withCollection<FileMetadataI>()(ApiBase<FileMetadataI>)),
+  withDocById<FileMetadataI>()(
+    withQuery<FileMetadataI>()(withCollection<FileMetadataI>()(ApiBase<FileMetadataI>)),
+  ),
 ) {
   private readonly _scope = inject(ScopeContext);
 
