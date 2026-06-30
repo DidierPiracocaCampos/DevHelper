@@ -160,25 +160,31 @@ service cloud.firestore {
       allow read: if isOwner(userId);
 
       allow create: if isOwner(userId)
-                    && isBoundedString(request.resource.data.title, 200)
-                    && isBoundedString(request.resource.data.password, 1024)
+                    && isBoundedString(request.resource.data.name, 200)
+                    && request.resource.data.password is map
+                    && request.resource.data.password.keys().hasOnly(['cipher', 'iv'])
+                    && request.resource.data.password.cipher is list
+                    && request.resource.data.password.iv is list
+                    && request.resource.data.password.cipher.size() <= 4096
+                    && request.resource.data.password.iv.size() <= 256
+                    && request.resource.data.secure is bool
                     && isTimestamp(request.resource.data.createdAt)
                     && isTimestamp(request.resource.data.updatedAt)
-                    && (!('username' in request.resource.data) || isBoundedString(request.resource.data.username, 200))
-                    && (!('url' in request.resource.data) || isBoundedString(request.resource.data.url, 500))
-                    && (!('notes' in request.resource.data) || isBoundedString(request.resource.data.notes, 5000))
-                    && request.resource.data.keys().hasOnly(['title', 'username', 'password', 'url', 'notes', 'createdAt', 'updatedAt']);
+                    && request.resource.data.keys().hasOnly(['name', 'password', 'secure', 'createdAt', 'updatedAt']);
 
       allow update: if isOwner(userId)
-                    && isBoundedString(request.resource.data.title, 200)
-                    && isBoundedString(request.resource.data.password, 1024)
+                    && isBoundedString(request.resource.data.name, 200)
+                    && request.resource.data.password is map
+                    && request.resource.data.password.keys().hasOnly(['cipher', 'iv'])
+                    && request.resource.data.password.cipher is list
+                    && request.resource.data.password.iv is list
+                    && request.resource.data.password.cipher.size() <= 4096
+                    && request.resource.data.password.iv.size() <= 256
+                    && request.resource.data.secure is bool
                     && isTimestamp(request.resource.data.createdAt)
                     && isTimestamp(request.resource.data.updatedAt)
                     && isUnchanged('createdAt')
-                    && (!('username' in request.resource.data) || isBoundedString(request.resource.data.username, 200))
-                    && (!('url' in request.resource.data) || isBoundedString(request.resource.data.url, 500))
-                    && (!('notes' in request.resource.data) || isBoundedString(request.resource.data.notes, 5000))
-                    && request.resource.data.keys().hasOnly(['title', 'username', 'password', 'url', 'notes', 'createdAt', 'updatedAt']);
+                    && request.resource.data.keys().hasOnly(['name', 'password', 'secure', 'createdAt', 'updatedAt']);
 
       allow delete: if isOwner(userId);
     }

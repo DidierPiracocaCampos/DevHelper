@@ -277,8 +277,9 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
   describe('users/{userId}/passwords', () => {
     const validPassword = {
-      title: 'Gmail',
-      password: 'super-secret',
+      name: 'Gmail',
+      password: { cipher: [1, 2, 3], iv: [4, 5, 6] },
+      secure: false,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
@@ -289,7 +290,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const ref = await assertSucceeds(addDoc(passwords, validPassword));
       await assertSucceeds(getDoc(ref));
       await assertSucceeds(
-        updateDoc(ref, { ...validPassword, password: 'rotated-1', updatedAt: Timestamp.now() }),
+        updateDoc(ref, { ...validPassword, name: 'rotated-1', updatedAt: Timestamp.now() }),
       );
       await assertSucceeds(deleteDoc(ref));
     });
@@ -297,9 +298,13 @@ const skip = !FIRESTORE_EMULATOR_HOST;
     it('create rejects when required fields are missing', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const passwords = collection(alice.firestore(), 'users/alice/passwords');
-      await assertFails(addDoc(passwords, { title: 'Gmail' }));
+      await assertFails(addDoc(passwords, { name: 'Gmail' }));
       await assertFails(
-        addDoc(passwords, { title: 'Gmail', password: 'x', createdAt: Timestamp.now() }),
+        addDoc(passwords, {
+          name: 'Gmail',
+          password: { cipher: [1], iv: [2] },
+          createdAt: Timestamp.now(),
+        }),
       );
     });
 
@@ -309,11 +314,10 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       await assertFails(addDoc(passwords, { ...validPassword, role: 'admin' }));
     });
 
-    it('create rejects oversized title or password', async () => {
+    it('create rejects oversized name', async () => {
       const alice = testEnv.authenticatedContext('alice');
       const passwords = collection(alice.firestore(), 'users/alice/passwords');
-      await assertFails(addDoc(passwords, { ...validPassword, title: 'x'.repeat(201) }));
-      await assertFails(addDoc(passwords, { ...validPassword, password: 'x'.repeat(1025) }));
+      await assertFails(addDoc(passwords, { ...validPassword, name: 'x'.repeat(201) }));
     });
 
     it('update cannot change createdAt', async () => {
