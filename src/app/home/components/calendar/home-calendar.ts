@@ -31,6 +31,7 @@ import {
   UiNumberField,
   UiDateField,
   UiTimeField,
+  UiLabel,
 } from '../../../shared/forms/fields';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
@@ -50,6 +51,7 @@ const TIME_FORMAT = /^(\d{2}):(\d{2})$/;
     UiNumberField,
     UiDateField,
     UiTimeField,
+    UiLabel,
     UiCard,
     UiCardButton,
     UiTooltipComponent,

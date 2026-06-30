@@ -1,7 +1,9 @@
 @if (labelText()) {
   <label class="label-field" [attr.for]="inputId()">{{ labelText() }}:</label>
 } @else if (label(); as l) {
-  <ng-container *ngTemplateOutlet="l.template" />
+  <label class="label-field" [attr.for]="inputId()">
+    <ng-container *ngTemplateOutlet="l.template" />
+  </label>
 }
 <div class="input input-lg w-full" [class.validator]="isInvalid()">
   <ng-content select="[prefix]" />
