@@ -106,26 +106,9 @@
       </ui-textarea-field>
 
       <div class="grid grid-cols-2 gap-3">
-        <label class="calendar-field">
-          <span class="calendar-field__label">Fecha</span>
-          <input
-            type="date"
-            class="input input-bordered w-full"
-            formControlName="atDate"
-            required
-          />
-        </label>
-
+        <ui-date-field labelText="Fecha" inputId="event-atDate" formControlName="atDate" />
         @if (!form.controls.isAllDay.value) {
-          <label class="calendar-field">
-            <span class="calendar-field__label">Hora</span>
-            <input
-              type="time"
-              class="input input-bordered w-full"
-              formControlName="atTime"
-              required
-            />
-          </label>
+          <ui-time-field labelText="Hora" inputId="event-atTime" formControlName="atTime" />
         }
       </div>
 
@@ -134,16 +117,13 @@
         <span>Todo el día</span>
       </label>
 
-      <label class="calendar-field">
-        <span class="calendar-field__label">Duración (minutos, opcional)</span>
-        <input
-          type="number"
-          min="0"
-          max="1440"
-          class="input input-bordered w-full"
-          formControlName="durationMinutes"
-        />
-      </label>
+      <ui-number-field
+        labelText="Duración (minutos, opcional)"
+        inputId="event-duration"
+        [min]="0"
+        [max]="1440"
+        formControlName="durationMinutes"
+      />
     </form>
   </div>
   <div footer class="flex justify-end gap-2">

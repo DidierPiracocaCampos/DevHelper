@@ -22,7 +22,13 @@ import {
 import { CalendarEvent, CalendarEventSeverity } from '../calendar-event/calendar-event';
 import { UiButton } from '../../../shared/components/ui-button/button';
 import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
-import { UiTextField, UiTextareaField, UiNumberField } from '../../../shared/forms/fields';
+import {
+  UiTextField,
+  UiTextareaField,
+  UiNumberField,
+  UiDateField,
+  UiTimeField,
+} from '../../../shared/forms/fields';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
 import { EventI, EventCreateInput, EventUpdateInput } from '../../domain/event.interface';
@@ -39,6 +45,8 @@ const TIME_FORMAT = /^(\d{2}):(\d{2})$/;
     UiTextField,
     UiTextareaField,
     UiNumberField,
+    UiDateField,
+    UiTimeField,
   ],
   templateUrl: './home-calendar.html',
   styleUrl: './home-calendar.css',
