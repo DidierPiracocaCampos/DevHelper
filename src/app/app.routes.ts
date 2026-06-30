@@ -9,7 +9,7 @@ export const routes: Routes = [
   },
   {
     path: 'calendar',
-    loadComponent: () => import('./home/pages/calendar/calendar').then((c) => c),
+    loadComponent: () => import('./home/components/calendar/home-calendar').then((c) => c),
     canMatch: [authCanMatch()],
   },
   {

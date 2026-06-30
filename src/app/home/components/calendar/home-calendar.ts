@@ -19,10 +19,7 @@ import {
   formatDayNumber,
   WEEKDAY_LABELS,
 } from '../../utils/calendar.utils';
-import {
-  CalendarEvent,
-  CalendarEventSeverity,
-} from '../../components/calendar-event/calendar-event';
+import { CalendarEvent, CalendarEventSeverity } from '../calendar-event/calendar-event';
 import { UiButton } from '../../../shared/components/ui-button/button';
 import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
 import { UiTextField, UiTextareaField, UiNumberField } from '../../../shared/forms/fields';
@@ -33,7 +30,7 @@ import { EventI, EventCreateInput, EventUpdateInput } from '../../domain/event.i
 const TIME_FORMAT = /^(\d{2}):(\d{2})$/;
 
 @Component({
-  selector: 'app-calendar',
+  selector: 'home-calendar',
   imports: [
     ReactiveFormsModule,
     CalendarEvent,
@@ -43,11 +40,11 @@ const TIME_FORMAT = /^(\d{2}):(\d{2})$/;
     UiTextareaField,
     UiNumberField,
   ],
-  templateUrl: './calendar.html',
-  styleUrl: './calendar.css',
+  templateUrl: './home-calendar.html',
+  styleUrl: './home-calendar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class Calendar {
+export default class HomeCalendar {
   private _repo = inject(EventRepository);
   private _fb = inject(FormBuilder).nonNullable;
   private _confirm = inject(ConfirmService);

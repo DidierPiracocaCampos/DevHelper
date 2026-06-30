@@ -4,7 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { resource, signal, Signal, WritableSignal } from '@angular/core';
 import { of } from 'rxjs';
 import { Timestamp } from '@angular/fire/firestore';
-import Calendar from './calendar';
+import HomeCalendar from './home-calendar';
 import { EventRepository } from '../../service/events.repository';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { Firestore } from '@angular/fire/firestore';
@@ -46,7 +46,7 @@ class FakeToast {
   error = vi.fn();
 }
 
-type TestableCalendar = Calendar & {
+type TestableHomeCalendar = HomeCalendar & {
   selectedDay: WritableSignal<Date>;
   weekStart: Signal<Date>;
   weekDays: Signal<Date[]>;
@@ -64,18 +64,18 @@ type TestableCalendar = Calendar & {
   isModalOpen: () => boolean;
 };
 
-function asTestable(c: Calendar): TestableCalendar {
-  return c as unknown as TestableCalendar;
+function asTestable(c: HomeCalendar): TestableHomeCalendar {
+  return c as unknown as TestableHomeCalendar;
 }
 
-describe('Calendar', () => {
-  let fixture: ComponentFixture<Calendar>;
-  let component: Calendar;
-  let t: TestableCalendar;
+describe('HomeCalendar', () => {
+  let fixture: ComponentFixture<HomeCalendar>;
+  let component: HomeCalendar;
+  let t: TestableHomeCalendar;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Calendar],
+      imports: [HomeCalendar],
       providers: [
         { provide: Authenticator, useClass: FakeAuth },
         { provide: EventRepository, useClass: FakeEventRepository },
@@ -84,7 +84,7 @@ describe('Calendar', () => {
         { provide: ToastService, useClass: FakeToast },
       ],
     }).compileComponents();
-    fixture = TestBed.createComponent(Calendar);
+    fixture = TestBed.createComponent(HomeCalendar);
     component = fixture.componentInstance;
     t = asTestable(component);
     fixture.detectChanges();
