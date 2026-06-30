@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { FormGroup } from '@angular/forms';
 import { resource, signal, Signal, WritableSignal } from '@angular/core';
+import { of } from 'rxjs';
+import { Timestamp } from '@angular/fire/firestore';
 import Calendar from './calendar';
 import { EventRepository } from '../../service/events.repository';
 import { Authenticator } from '../../../shared/service/authenticator';
@@ -38,7 +41,10 @@ class FakeConfirm {
   delete = vi.fn((_msg: string): Promise<boolean> => Promise.resolve(true));
 }
 
-class FakeToast {}
+class FakeToast {
+  success = vi.fn();
+  error = vi.fn();
+}
 
 type TestableCalendar = Calendar & {
   selectedDay: WritableSignal<Date>;
@@ -50,6 +56,12 @@ type TestableCalendar = Calendar & {
   goNextWeek: () => void;
   goToday: () => void;
   selectDay: (d: Date) => void;
+  form: FormGroup;
+  onSave: () => Promise<void>;
+  onDelete: () => Promise<void>;
+  openCreate: () => void;
+  openEdit: (ev: EventI) => void;
+  isModalOpen: () => boolean;
 };
 
 function asTestable(c: Calendar): TestableCalendar {
@@ -154,5 +166,149 @@ describe('Calendar', () => {
     t.selectDay(new Date());
     expect(t.isToday(t.selectedDay())).toBe(true);
     expect(t.isToday(new Date(2000, 0, 1))).toBe(false);
+  });
+
+  describe('form behaviour', () => {
+    it('exposes a form group with title, description, atDate, atTime, isAllDay, durationMinutes', () => {
+      const f = t.form;
+      expect(f.get('title')).toBeTruthy();
+      expect(f.get('description')).toBeTruthy();
+      expect(f.get('atDate')).toBeTruthy();
+      expect(f.get('atTime')).toBeTruthy();
+      expect(f.get('isAllDay')).toBeTruthy();
+      expect(f.get('durationMinutes')).toBeTruthy();
+    });
+
+    it('title is required and capped at 200', () => {
+      const ctrl = t.form.get('title')!;
+      ctrl.setValue('');
+      expect(ctrl.valid).toBe(false);
+      ctrl.setValue('a'.repeat(201));
+      expect(ctrl.valid).toBe(false);
+      ctrl.setValue('Reunion');
+      expect(ctrl.valid).toBe(true);
+    });
+
+    it('description is capped at 2000', () => {
+      const ctrl = t.form.get('description')!;
+      ctrl.setValue('x'.repeat(2001));
+      expect(ctrl.valid).toBe(false);
+      ctrl.setValue('hola');
+      expect(ctrl.valid).toBe(true);
+    });
+
+    it('durationMinutes is optional but bounded 0..1440', () => {
+      const ctrl = t.form.get('durationMinutes')!;
+      ctrl.setValue(null);
+      expect(ctrl.valid).toBe(true);
+      ctrl.setValue(-1);
+      expect(ctrl.valid).toBe(false);
+      ctrl.setValue(1441);
+      expect(ctrl.valid).toBe(false);
+      ctrl.setValue(60);
+      expect(ctrl.valid).toBe(true);
+    });
+  });
+
+  describe('create / edit / delete', () => {
+    let addSpy: ReturnType<typeof vi.fn>;
+    let updateSpy: ReturnType<typeof vi.fn>;
+    let deleteSpy: ReturnType<typeof vi.fn>;
+    let confirmDelete: ReturnType<typeof vi.fn>;
+    let fakeRepo: FakeEventRepository;
+    let fakeConfirm: FakeConfirm;
+
+    beforeEach(() => {
+      fakeRepo = TestBed.inject(EventRepository) as unknown as FakeEventRepository;
+      fakeConfirm = TestBed.inject(ConfirmService) as unknown as FakeConfirm;
+
+      addSpy = vi.fn().mockReturnValue(of({ id: 'e1' }));
+      updateSpy = vi.fn().mockReturnValue(of(undefined));
+      deleteSpy = vi.fn().mockReturnValue(of(undefined));
+      fakeRepo.addEvent = addSpy;
+      fakeRepo.updateEvent = updateSpy;
+      fakeRepo.deleteEvent = deleteSpy;
+
+      confirmDelete = vi.fn().mockResolvedValue(true);
+      fakeConfirm.delete = confirmDelete;
+    });
+
+    it('onSave create path calls addEvent and closes the modal', async () => {
+      t.openCreate();
+      t.form.setValue({
+        title: 'Demo',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '09:30',
+        isAllDay: false,
+        durationMinutes: null,
+      });
+      await t.onSave();
+      expect(addSpy).toHaveBeenCalledOnce();
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(t.isModalOpen()).toBe(false);
+    });
+
+    it('onSave update path calls updateEvent with the existing id', async () => {
+      t.openEdit({
+        id: 'e99',
+        title: 'X',
+        at: Timestamp.fromMillis(new Date(2024, 6, 15, 9, 30).getTime()),
+        isAllDay: false,
+        notified: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      t.form.setValue({
+        title: 'Editado',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '10:00',
+        isAllDay: false,
+        durationMinutes: null,
+      });
+      await t.onSave();
+      expect(updateSpy).toHaveBeenCalledOnce();
+      expect(updateSpy.mock.calls[0][0]).toBe('e99');
+      expect(addSpy).not.toHaveBeenCalled();
+    });
+
+    it('onSave blocks when the form is invalid', async () => {
+      t.openCreate();
+      t.form.patchValue({ title: '' });
+      await t.onSave();
+      expect(addSpy).not.toHaveBeenCalled();
+    });
+
+    it('onDelete confirms and calls deleteEvent on confirm', async () => {
+      t.openEdit({
+        id: 'e1',
+        title: 'X',
+        at: Timestamp.now(),
+        isAllDay: false,
+        notified: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      await t.onDelete();
+      expect(confirmDelete).toHaveBeenCalledOnce();
+      expect(deleteSpy).toHaveBeenCalledWith('e1');
+      expect(t.isModalOpen()).toBe(false);
+    });
+
+    it('onDelete does NOT call deleteEvent when the user cancels', async () => {
+      confirmDelete.mockResolvedValueOnce(false);
+      t.openEdit({
+        id: 'e1',
+        title: 'X',
+        at: Timestamp.now(),
+        isAllDay: false,
+        notified: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      await t.onDelete();
+      expect(deleteSpy).not.toHaveBeenCalled();
+    });
   });
 });

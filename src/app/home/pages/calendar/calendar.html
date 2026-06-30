@@ -84,13 +84,80 @@
   (closed)="closeModal()"
 >
   <div body>
-    <p class="opacity-60 text-sm">Formulario (pendiente Task 7)</p>
+    <form [formGroup]="form" class="calendar-form grid gap-3">
+      <ui-text-field label="Título" inputId="event-title" formControlName="title">
+        <ng-template errorMessage="required">
+          <p class="validator-hint">Este campo es obligatorio</p>
+        </ng-template>
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 200 caracteres</p>
+        </ng-template>
+      </ui-text-field>
+
+      <ui-textarea-field
+        label="Descripción"
+        inputId="event-description"
+        formControlName="description"
+        [rows]="3"
+      >
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 2000 caracteres</p>
+        </ng-template>
+      </ui-textarea-field>
+
+      <div class="grid grid-cols-2 gap-3">
+        <label class="calendar-field">
+          <span class="calendar-field__label">Fecha</span>
+          <input
+            type="date"
+            class="input input-bordered w-full"
+            formControlName="atDate"
+            required
+          />
+        </label>
+
+        @if (!form.controls.isAllDay.value) {
+          <label class="calendar-field">
+            <span class="calendar-field__label">Hora</span>
+            <input
+              type="time"
+              class="input input-bordered w-full"
+              formControlName="atTime"
+              required
+            />
+          </label>
+        }
+      </div>
+
+      <label class="calendar-checkbox">
+        <input type="checkbox" class="checkbox" formControlName="isAllDay" />
+        <span>Todo el día</span>
+      </label>
+
+      <label class="calendar-field">
+        <span class="calendar-field__label">Duración (minutos, opcional)</span>
+        <input
+          type="number"
+          min="0"
+          max="1440"
+          class="input input-bordered w-full"
+          formControlName="durationMinutes"
+        />
+      </label>
+    </form>
   </div>
   <div footer class="flex justify-end gap-2">
     @if (editing()) {
-      <ui-button label="Eliminar" severity="error" (click)="onDelete(editing()!.id ?? '')" />
+      <ui-button label="Eliminar" severity="error" (click)="onDelete()" />
     }
     <ui-button label="Cancelar" severity="secondary" variant="ghost" (click)="closeModal()" />
-    <ui-button label="Guardar" severity="primary" [loading]="saving()" (click)="onSave({})" />
+    <ui-button
+      label="Guardar"
+      severity="primary"
+      type="submit"
+      [loading]="saving()"
+      [disabled]="form.invalid"
+      (click)="onSave()"
+    />
   </div>
 </ui-modal>

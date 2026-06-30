@@ -133,3 +133,26 @@
   bottom: 1rem;
   right: 1rem;
 }
+
+.calendar-form {
+  padding-top: 0.25rem;
+}
+
+.calendar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.calendar-field__label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.calendar-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
