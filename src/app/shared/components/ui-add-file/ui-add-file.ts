@@ -34,8 +34,6 @@ export interface AddFileItem {
   metadata?: FileMetadataI & { id: string };
 }
 
-const IMAGE_PATTERN = /^image\//;
-
 @Component({
   selector: 'ui-add-file',
   imports: [UiModal, UiButton, UiAlert, UiListItem, UiListButton, UiTooltipComponent],
@@ -114,7 +112,6 @@ export class UiAddFile {
   }
 
   protected removeItem(item: AddFileItem): void {
-    if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
     this._items.update((arr) => arr.filter((i) => i.localId !== item.localId));
   }
 
@@ -166,10 +163,6 @@ export class UiAddFile {
     this.closed.emit();
   }
 
-  protected isImage(item: AddFileItem): boolean {
-    return IMAGE_PATTERN.test(item.file.type);
-  }
-
   protected sizeOf(item: AddFileItem): string {
     const b = item.file.size;
     if (b < 1024) return `${b} B`;
@@ -196,7 +189,7 @@ export class UiAddFile {
       accepted.push({
         localId: crypto.randomUUID(),
         file,
-        previewUrl: IMAGE_PATTERN.test(file.type) ? URL.createObjectURL(file) : null,
+        previewUrl: null,
         progress: 0,
         status: 'pending',
       });

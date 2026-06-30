@@ -208,10 +208,15 @@ describe('FileList', () => {
     expect(confirm.delete).toHaveBeenCalledWith(expect.stringContaining('foto.png'));
   });
 
-  it('filter.apply provoca que getFilteredCollection se invoque con nuevos options', () => {
-    filter.apply(component.filterSchema as Parameters<FilterService['apply']>[0], [
-      { key: 'name', op: '==', value: 'demo' },
-    ]);
-    expect(repo.getFilteredCollection).toHaveBeenCalled();
+  it('onFiltersApply provoca reload de la coleccion', () => {
+    const reload = vi.spyOn(component.collection, 'reload');
+    component.onFiltersApply([{ key: 'name', op: '==', value: 'demo' }]);
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('onFiltersClear provoca reload de la coleccion', () => {
+    const reload = vi.spyOn(component.collection, 'reload');
+    component.onFiltersClear();
+    expect(reload).toHaveBeenCalledTimes(1);
   });
 });
