@@ -1,0 +1,10 @@
+<button
+  type="button"
+  class="card-event w-full text-left"
+  [class.card-event-primary]="severity() === 'primary'"
+  [class.card-event-neutral]="severity() === 'neutral'"
+  (click)="onClick()"
+>
+  <span class="card-event__title">{{ event().title }}</span>
+  <span class="card-event__time">{{ timeLabel() }}</span>
+</button>
