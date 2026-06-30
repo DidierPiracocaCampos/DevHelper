@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
-import { signal, Signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
@@ -13,7 +13,6 @@ import { PreferencesService } from '../../../shared/preferences/services/prefere
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { EventRepository } from '../../service/events.repository';
-import { EventI } from '../../domain/event.interface';
 import { PasswordRepository } from '../../service/passwords.repository';
 import { ToastService } from '../../../shared/service/toast';
 
@@ -111,17 +110,17 @@ class FakeConfirm {
   warning = vi.fn().mockResolvedValue(true);
 }
 
-class FakeEventRepo {
-  readonly eventsValue = signal<EventI[] | undefined>(undefined);
-  eventsOfDay$(_day: Signal<Date>) {
-    return {
-      value: (): EventI[] | undefined => this.eventsValue(),
-      isLoading: (): boolean => false,
-      hasValue: (): boolean => false,
-      error: (): unknown => undefined,
-      reload: vi.fn(),
-    };
-  }
+class FakeEventRepository {
+  eventsOfDay$ = vi.fn().mockReturnValue({
+    value: (): unknown[] => [],
+    isLoading: (): boolean => false,
+    hasValue: (): boolean => false,
+    error: (): unknown => undefined,
+    reload: vi.fn(),
+  });
+  addEvent = vi.fn().mockResolvedValue(undefined);
+  updateEvent = vi.fn().mockResolvedValue(undefined);
+  deleteEvent = vi.fn().mockResolvedValue(undefined);
 }
 
 class FakePasswordRepository {
@@ -162,7 +161,6 @@ describe('Home', () => {
   let auth: FakeAuth;
   let scope: FakeScopeContext;
   let fileRepo: FakeFileRepo;
-  let eventsRepo: FakeEventRepo;
   let passwordRepo: FakePasswordRepository;
   let toast: FakeToast;
 
@@ -171,7 +169,6 @@ describe('Home', () => {
     auth = new FakeAuth();
     scope = new FakeScopeContext();
     fileRepo = new FakeFileRepo();
-    eventsRepo = new FakeEventRepo();
     passwordRepo = new FakePasswordRepository();
     toast = new FakeToast();
 
@@ -188,7 +185,7 @@ describe('Home', () => {
         { provide: ScopeContext, useValue: scope },
         { provide: PreferencesService, useValue: new FakePrefsService() },
         { provide: ConfirmService, useValue: new FakeConfirm() },
-        { provide: EventRepository, useValue: eventsRepo },
+        { provide: EventRepository, useValue: new FakeEventRepository() },
         { provide: PasswordRepository, useValue: passwordRepo },
         { provide: ToastService, useValue: toast },
       ],
@@ -212,16 +209,5 @@ describe('Home', () => {
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(false);
     component.openConfig();
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(true);
-  });
-
-  it('todayEventsCount defaults to 0 when the resource has no value', () => {
-    const count = (component as unknown as { todayEventsCount: () => number }).todayEventsCount;
-    expect(count()).toBe(0);
-  });
-
-  it('todayEventsCount reflects the number of events reported by the repo', () => {
-    eventsRepo.eventsValue.set([{ id: 'a' } as EventI, { id: 'b' } as EventI]);
-    const count = (component as unknown as { todayEventsCount: () => number }).todayEventsCount;
-    expect(count()).toBe(2);
   });
 });

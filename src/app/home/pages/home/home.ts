@@ -1,5 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
 import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { NasaPicture } from '../../components/nasa-picture/nasa-picture';
@@ -10,7 +9,7 @@ import { Loader } from '../../../shared/service/loader';
 import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shared/security';
 import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
 import { ScopeContext } from '../../../shared/scope/scope-context';
-import { EventRepository } from '../../service/events.repository';
+import HomeCalendar from '../../components/calendar/home-calendar';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +23,7 @@ import { EventRepository } from '../../service/events.repository';
     ModalUnlockVault,
     UiConfigModal,
     NasaImageSection,
-    RouterLink,
+    HomeCalendar,
   ],
   templateUrl: './home.html',
 })
@@ -33,15 +32,8 @@ export default class Home {
   private _loader = inject(Loader);
   private _vault = inject(VaultSecurity);
   private _scope = inject(ScopeContext);
-  private _eventsRepo = inject(EventRepository);
 
   protected readonly isConfigOpen = signal(false);
-
-  protected readonly today = signal(new Date());
-  protected readonly todayEventsResource = this._eventsRepo.eventsOfDay$(this.today);
-  protected readonly todayEventsCount = computed(
-    () => this.todayEventsResource.value()?.length ?? 0,
-  );
 
   async ngOnInit() {
     this._scope.setGlobal();
