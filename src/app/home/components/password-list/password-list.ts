@@ -60,6 +60,7 @@ export class PasswordList {
   readonly isViewModalOpen = signal(false);
   readonly addStatus = signal<AddStatus>({ loading: false });
   readonly viewStatus = signal<ViewStatus>({ loading: false, error: '', decrypted: '' });
+  readonly copyingId = signal<string | null>(null);
 
   async openAdd() {
     if (!this._vault.isUnlocked()) {
@@ -98,18 +99,23 @@ export class PasswordList {
   }
 
   async copyPassword(item: PasswordI) {
+    if (this.copyingId() !== null) return;
     if (!this._vault.isUnlocked()) {
       this._vault.showModal(() => this.copyPassword(item));
       return;
     }
     const vaultKey = this._vault.getVaultKey();
     if (!vaultKey) return;
+    this.copyingId.set(item.id ?? null);
     try {
       const decrypted = await this._repo.decryptPassword(item.password, vaultKey);
       await navigator.clipboard.writeText(decrypted);
       this._toastService.success('Contraseña copiada');
-    } catch (_err) {
+    } catch (err) {
+      console.error('Error copying password', err);
       this._toastService.error('Error al copiar contraseña');
+    } finally {
+      this.copyingId.set(null);
     }
   }
 
