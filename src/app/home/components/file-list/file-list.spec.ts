@@ -28,10 +28,23 @@ function makeRow(id = 'f1', overrides: Partial<FileRow> = {}): FileRow {
 class FakeFileRepository {
   private _all: FileRow[] = [];
   private _filtered: FileRow[] = [];
-  getCollection = vi.fn(() => this._resource(this._all));
-  getFilteredCollection = vi.fn((options: Signal<QueryOptions>) =>
-    this._resource(options().filters ? this._filtered : this._all),
-  );
+  getCollection = vi.fn(() => ({
+    isLoading: () => false,
+    hasValue: () => true,
+    value: () => this._all,
+    reload: vi.fn(),
+    error: vi.fn(),
+  }));
+  getFilteredCollection = vi.fn((options: Signal<QueryOptions>) => ({
+    isLoading: () => false,
+    hasValue: () => true,
+    value: () => {
+      const opts = options();
+      return opts.filters && opts.filters.length > 0 ? this._filtered : this._all;
+    },
+    reload: vi.fn(),
+    error: vi.fn(),
+  }));
   deleteDoc = vi.fn((_id: string) => ({
     subscribe: (o: { next: () => void }) => o.next(),
   }));
@@ -41,15 +54,6 @@ class FakeFileRepository {
   }
   setFiltered(items: FileRow[]): void {
     this._filtered = items;
-  }
-  private _resource(items: FileRow[]) {
-    return {
-      isLoading: () => false,
-      hasValue: () => true,
-      value: () => items,
-      reload: vi.fn(),
-      error: vi.fn(),
-    };
   }
 }
 
@@ -89,7 +93,6 @@ describe('FileList', () => {
   let filter: FilterService;
   let createObjectURL: ReturnType<typeof vi.fn>;
   let revokeObjectURL: ReturnType<typeof vi.fn>;
-  let click: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     repo = new FakeFileRepository();
@@ -110,14 +113,6 @@ describe('FileList', () => {
       configurable: true,
       writable: true,
     });
-    click = vi.fn();
-    const anchorMock = { href: '', download: '', click } as unknown as HTMLAnchorElement;
-    vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
-      if (tag === 'a') return anchorMock;
-      return document.createElement(tag);
-    });
-    vi.spyOn(document.body, 'appendChild').mockImplementation((node) => node);
-    vi.spyOn(document.body, 'removeChild').mockImplementation((node) => node);
 
     await TestBed.configureTestingModule({
       imports: [FileList],

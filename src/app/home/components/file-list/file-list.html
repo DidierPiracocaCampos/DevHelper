@@ -1,0 +1,44 @@
+<ui-card title="Archivos" class="w-full h-full">
+  <div class="p-2 bg-base-content w-full h-full rounded-2xl custom-scroll">
+    <ul class="list space-y-2 w-full h-full overflow-y-auto gap-1">
+      @if (!collection.isLoading()) {
+        @if (collection.hasValue()) {
+          @for (item of collection.value(); track item.id) {
+            <ui-list-item severity="secondary" [label]="item.name" [sub]="subLabel(item)">
+              <span leading class="icon icon-lg text-base-100/60">{{ iconFor(item.mimeType) }}</span>
+              <div actions>
+                <ul class="flex">
+                  <ui-tooltip text="Ver" severity="info">
+                    <ui-list-button icon="visibility" severity="info" (click)="onView(item)" />
+                  </ui-tooltip>
+                  <ui-tooltip text="Descargar" severity="success">
+                    <ui-list-button icon="download" severity="success" (click)="onDownload(item)" />
+                  </ui-tooltip>
+                  <ui-tooltip text="Eliminar" severity="error">
+                    <ui-list-button icon="delete" severity="error" (click)="onRemove(item)" />
+                  </ui-tooltip>
+                </ul>
+              </div>
+            </ui-list-item>
+          } @empty {
+            <div class="text-base-100/60 text-center m-auto p-4">
+              No hay archivos. Pulsa "Añadir" para subir el primero.
+            </div>
+          }
+        }
+      } @else {
+        <div class="skeleton min-h-[3.5rem] w-full"></div>
+        <div class="skeleton min-h-[3.5rem] w-full"></div>
+        <div class="skeleton min-h-[3.5rem] w-full"></div>
+      }
+    </ul>
+  </div>
+
+  <div actions>
+    <filter-bar [schema]="filterSchema" (apply)="onFiltersApply($event)" (clear)="onFiltersClear()" />
+    <ui-card-button icon="add" shape="circle" severity="primary" (click)="openAdd()" />
+  </div>
+</ui-card>
+
+<ui-add-file [namespace]="namespace()" [encrypt]="true" [(isOpen)]="isAddOpen" (added)="onAdded()" />
+<ui-view-file [file]="viewFile()" [namespace]="namespace()" [(isOpen)]="isViewOpen" (closed)="closeView()" />
