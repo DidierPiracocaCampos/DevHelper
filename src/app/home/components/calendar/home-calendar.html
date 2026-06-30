@@ -85,7 +85,8 @@
 >
   <div body>
     <form [formGroup]="form" class="calendar-form grid gap-3">
-      <ui-text-field label="Título" inputId="event-title" formControlName="title">
+      <ui-text-field inputId="event-title" formControlName="title">
+        <ng-template uiLabel>Título</ng-template>
         <ng-template errorMessage="required">
           <p class="validator-hint">Este campo es obligatorio</p>
         </ng-template>
@@ -95,11 +96,11 @@
       </ui-text-field>
 
       <ui-textarea-field
-        label="Descripción"
         inputId="event-description"
         formControlName="description"
         [rows]="3"
       >
+        <ng-template uiLabel>Descripción</ng-template>
         <ng-template errorMessage="maxlength">
           <p class="validator-hint">Máximo 2000 caracteres</p>
         </ng-template>
@@ -118,12 +119,13 @@
       </label>
 
       <ui-number-field
-        labelText="Duración (minutos, opcional)"
         inputId="event-duration"
         [min]="0"
         [max]="1440"
         formControlName="durationMinutes"
-      />
+      >
+        <ng-template uiLabel>Duración (minutos, opcional)</ng-template>
+      </ui-number-field>
     </form>
   </div>
   <div footer class="flex justify-end gap-2">
