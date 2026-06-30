@@ -9,12 +9,14 @@
   </ui-card>
   <ui-card class="col-span-5"></ui-card>
   <ui-card class="col-span-8 row-span-2" theme="light" title="Tareas"></ui-card>
-  <div class="col-span-4 min-h-0 flex flex-col justify-center items-center gap-4">
-    <ui-card-button icon="data_object" size="xl" (click)="openVault()" />
-    <ui-card-button icon="settings" size="xl" (click)="openConfig()" />
-    <ui-card-button icon="logout" size="xl" (click)="logout()" />
+  <div class="col-span-4 row-span-2 min-h-0 flex gap-4">
+    <div class="flex flex-col justify-center items-center gap-4">
+      <ui-card-button icon="data_object" size="xl" (click)="openVault()" />
+      <ui-card-button icon="settings" size="xl" (click)="openConfig()" />
+      <ui-card-button icon="logout" size="xl" (click)="logout()" />
+    </div>
+    <home-calendar class="flex-1 min-w-0" />
   </div>
-  <home-calendar class="col-span-4 row-span-2" />
   <nasa-picture class="col-span-4" />
   <file-list class="col-span-6 min-h-0" />
   <password-list class="col-span-6 min-h-0" />
