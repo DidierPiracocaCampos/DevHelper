@@ -5,6 +5,7 @@ interface DemoEntity {
   name: string;
   size: number;
   secure: boolean;
+  createdAt: Date;
 }
 
 const demoSchema: FilterSchema<DemoEntity> = {
@@ -13,6 +14,7 @@ const demoSchema: FilterSchema<DemoEntity> = {
     { key: 'name', label: 'Nombre', control: 'text', ops: ['==', '!='] },
     { key: 'size', label: 'Tamaño', control: 'number', ops: ['==', '>', '<'] },
     { key: 'secure', label: 'Seguro', control: 'boolean', ops: ['=='] },
+    { key: 'createdAt', label: 'Creado', control: 'date', ops: ['==', '>', '<'] },
   ],
 };
 
@@ -78,5 +80,21 @@ describe('FilterService', () => {
 
   it('queryOptions returns empty object when no filters', () => {
     expect(service.queryOptions()).toEqual({});
+  });
+
+  it('apply converts date string values to Date instances for date fields', () => {
+    const draft = [{ key: 'createdAt', op: '>' as const, value: '2026-01-15' }];
+    service.apply(demoSchema, draft);
+    const stored = service.state()[0];
+    expect(stored.value).toBeInstanceOf(Date);
+    expect((stored.value as Date).toISOString().slice(0, 10)).toBe('2026-01-15');
+  });
+
+  it('queryOptions returns the Date instance for date filters', () => {
+    const draft = [{ key: 'createdAt', op: '>' as const, value: '2026-01-15' }];
+    service.apply(demoSchema, draft);
+    expect(service.queryOptions()).toEqual({
+      filters: [['createdAt', '>', expect.any(Date)]],
+    });
   });
 });

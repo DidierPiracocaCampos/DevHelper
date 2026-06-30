@@ -2,12 +2,16 @@ import { computed, Injectable, signal } from '@angular/core';
 import { QueryOptions } from '../api/api.interfaces';
 import { ActiveFilters, FilterField, FilterOp, FilterSchema } from './filter.types';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class FilterService {
   readonly state = signal<ActiveFilters>([]);
 
   apply<T>(schema: FilterSchema<T>, draft: ActiveFilters): void {
-    const validated = draft.filter((f) => this._isValid(schema, f));
+    const validated = draft
+      .filter((f) => this._isValid(schema, f))
+      .map((f) => this._normalize(schema, f));
     this.state.set(validated);
   }
 
@@ -28,5 +32,16 @@ export class FilterService {
     const field = schema.fields.find((f) => (f as FilterField<T>).key === filter.key);
     if (!field) return false;
     return field.ops.includes(filter.op);
+  }
+
+  private _normalize<T>(
+    schema: FilterSchema<T>,
+    filter: ActiveFilters[number],
+  ): ActiveFilters[number] {
+    const field = schema.fields.find((f) => (f as FilterField<T>).key === filter.key);
+    if (field?.control === 'date' && typeof filter.value === 'string') {
+      return { ...filter, value: new Date(filter.value) };
+    }
+    return filter;
   }
 }

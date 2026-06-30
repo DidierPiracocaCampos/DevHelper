@@ -1,0 +1,27 @@
+<div class="relative inline-block">
+  <ui-button
+    data-testid="filter-trigger"
+    icon="filter_alt"
+    variant="ghost"
+    severity="neutral"
+    size="sm"
+    (click)="open()"
+  />
+  @if (count() > 0) {
+    <span
+      data-testid="filter-count"
+      class="badge badge-primary badge-sm absolute -top-1 -right-1 pointer-events-none"
+    >
+      {{ count() }}
+    </span>
+  }
+</div>
+
+<filter-modal
+  [schema]="schema()"
+  [initialFilters]="state()"
+  [title]="'Filtros'"
+  [(isOpen)]="isOpen"
+  (apply)="onApply($event)"
+  (clear)="onClear()"
+/>

@@ -29,14 +29,14 @@ describe('FilterChip', () => {
     component = fixture.componentInstance;
   });
 
-  it('renders field label, op and value', () => {
+  it('renders field label and value, without the operator', () => {
     fixture.componentRef.setInput('field', nameField as unknown as AnyFilterField);
     fixture.componentRef.setInput('value', { key: 'name', op: '==', value: 'foo' });
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
     expect(el.textContent).toContain('Nombre');
-    expect(el.textContent).toContain('==');
     expect(el.textContent).toContain('foo');
+    expect(el.textContent).not.toContain('==');
   });
 
   it('emits remove with the field key when close button is clicked', () => {
