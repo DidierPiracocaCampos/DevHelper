@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiListItem } from '../../../shared/components/item-list/item-list';
@@ -15,6 +16,8 @@ import { UiAlert } from '../../../shared/components/ui-alert/ui-alert';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
 import { UiTooltipComponent } from '../../../shared/components/tooltip';
+import { ActiveFilters, FilterBar, FilterService } from '../../../shared/filter';
+import { passwordFilterSchema } from '../../service/password-filter.schema';
 
 interface AddStatus {
   isEdit?: boolean;
@@ -43,6 +46,7 @@ interface ViewStatus {
     UiAlert,
     UiModal,
     UiTooltipComponent,
+    FilterBar,
   ],
   templateUrl: './password-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,8 +57,18 @@ export class PasswordList {
   private _vault = inject(VaultSecurity);
   private _confirmService = inject(ConfirmService);
   private _toastService = inject(ToastService);
+  private _filter = inject(FilterService);
 
-  readonly collection = this._repo.getCollection();
+  readonly filterSchema = passwordFilterSchema;
+  readonly collection = this._repo.getFilteredCollection(this._filter.queryOptions);
+
+  onFiltersApply(_filters: ActiveFilters): void {
+    this.collection.reload();
+  }
+
+  onFiltersClear(): void {
+    this.collection.reload();
+  }
 
   readonly isFormModalOpen = signal(false);
   readonly isViewModalOpen = signal(false);
@@ -145,17 +159,26 @@ export class PasswordList {
     if (!name || !password) return;
     const encryptedPassword = await this._repo.encryptPassword(password, vaultKey);
     this.addStatus.update((v) => ({ ...v, loading: true }));
-    this._repo.addDoc({ name, password: encryptedPassword, secure: secure ?? false }).subscribe({
-      next: () => {
-        this.isFormModalOpen.set(false);
-        this.collection.reload();
-        this._form.reset();
-        this.addStatus.set({ loading: false });
-      },
-      error: () => {
-        this.addStatus.update((v) => ({ ...v, loading: false }));
-      },
-    });
+    const now = Timestamp.now();
+    this._repo
+      .addDoc({
+        name,
+        password: encryptedPassword,
+        secure: secure ?? false,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .subscribe({
+        next: () => {
+          this.isFormModalOpen.set(false);
+          this.collection.reload();
+          this._form.reset();
+          this.addStatus.set({ loading: false });
+        },
+        error: () => {
+          this.addStatus.update((v) => ({ ...v, loading: false }));
+        },
+      });
   }
 
   async deletePassword(item: PasswordI) {

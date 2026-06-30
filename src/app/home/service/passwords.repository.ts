@@ -2,16 +2,16 @@ import { Injectable, inject, signal } from '@angular/core';
 import { PasswordI } from '../domain/password.interface';
 import { FirestoreDataConverter } from '@angular/fire/firestore';
 import { ApiBase } from '../../shared/api/api-base';
-import { withCollection } from '../../shared/api/crud.mixins';
-import { withAddDoc } from '../../shared/api/crud.mixins';
-import { withDocDelete } from '../../shared/api/crud.mixins';
+import { withAddDoc, withCollection, withDocDelete, withQuery } from '../../shared/api/crud.mixins';
 import { PasswordCrypto } from './password-crypto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PasswordRepository extends withDocDelete<PasswordI>()(
-  withAddDoc<PasswordI>()(withCollection<PasswordI>()(ApiBase<PasswordI>)),
+export class PasswordRepository extends withQuery<PasswordI>()(
+  withDocDelete<PasswordI>()(
+    withAddDoc<PasswordI>()(withCollection<PasswordI>()(ApiBase<PasswordI>)),
+  ),
 ) {
   private _crypto = inject(PasswordCrypto);
 

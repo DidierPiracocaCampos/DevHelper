@@ -18,16 +18,6 @@ function makeItem(id = 'p1'): PasswordI {
   };
 }
 
-function makeResource<T>(items: T[] | undefined) {
-  return {
-    isLoading: () => false,
-    hasValue: () => items !== undefined,
-    value: () => items,
-    reload: vi.fn(),
-    error: vi.fn(),
-  };
-}
-
 class FakePasswordRepository {
   private _decrypt: (item: PasswordI['password'], key: CryptoKey) => Promise<string> = async () =>
     'decrypted-secret';
@@ -39,10 +29,44 @@ class FakePasswordRepository {
   private _allItems: (PasswordI & { id: string })[] = [];
   private _filteredItems: (PasswordI & { id: string })[] = [];
 
-  getCollection = vi.fn(() => makeResource<(PasswordI & { id: string })[]>(this._allItems));
+  getCollection = vi.fn(
+    (): {
+      isLoading: () => boolean;
+      hasValue: () => boolean;
+      value: () => (PasswordI & { id: string })[] | undefined;
+      reload: () => void;
+      error: () => unknown;
+    } => {
+      const items = this._allItems;
+      return {
+        isLoading: () => false,
+        hasValue: () => items !== undefined,
+        value: () => items,
+        reload: vi.fn(),
+        error: vi.fn(),
+      };
+    },
+  );
 
-  getFilteredCollection = vi.fn((_options: Signal<QueryOptions>) =>
-    makeResource<(PasswordI & { id: string })[]>(this._filteredItems),
+  getFilteredCollection = vi.fn(
+    (
+      options: Signal<QueryOptions>,
+    ): {
+      isLoading: () => boolean;
+      hasValue: () => boolean;
+      value: () => (PasswordI & { id: string })[] | undefined;
+      reload: () => void;
+      error: () => unknown;
+    } => ({
+      isLoading: () => false,
+      hasValue: () => true,
+      value: () => {
+        const opts = options();
+        return opts.filters && opts.filters.length > 0 ? this._filteredItems : this._allItems;
+      },
+      reload: vi.fn(),
+      error: vi.fn(),
+    }),
   );
 
   setAllItems(items: (PasswordI & { id: string })[]): void {
