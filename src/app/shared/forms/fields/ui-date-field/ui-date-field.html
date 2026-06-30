@@ -1,0 +1,21 @@
+@if (labelText()) {
+  <label class="label-field" [attr.for]="inputId()">{{ labelText() }}:</label>
+} @else if (label(); as l) {
+  <ng-container *ngTemplateOutlet="l.template" />
+}
+<div class="input input-lg w-full" [class.validator]="isInvalid()">
+  <input
+    class="input-grow"
+    [id]="inputId()"
+    type="date"
+    [value]="value() ?? ''"
+    [min]="min() || null"
+    [max]="max() || null"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+</div>
+<ui-field-errors />

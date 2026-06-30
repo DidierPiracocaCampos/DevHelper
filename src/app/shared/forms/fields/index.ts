@@ -8,3 +8,5 @@ export { UiNumberField } from './ui-number-field/ui-number-field';
 export { UiSearchField } from './ui-search-field/ui-search-field';
 export { UiTextareaField } from './ui-textarea-field/ui-textarea-field';
 export { UiPinField } from './ui-pin-field/ui-pin-field';
+export { UiDateField } from './ui-date-field/ui-date-field';
+export { UiTimeField } from './ui-time-field/ui-time-field';
