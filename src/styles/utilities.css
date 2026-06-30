@@ -102,6 +102,12 @@
     }
   }
 
+  .input-grow,
+  .textarea-grow {
+    flex: 1 1 0%;
+    min-width: 0;
+  }
+
   .label-field {
     display: block;
     margin-bottom: var(--spacing-1);
