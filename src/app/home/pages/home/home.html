@@ -15,7 +15,14 @@
       <ui-card-button icon="settings" size="xl" (click)="openConfig()" />
       <ui-card-button icon="logout" size="xl" (click)="logout()" />
     </div>
-    <ui-card class="w-full" theme="light" title="Calendario"></ui-card>
+    <a routerLink="/calendar" class="block w-full h-full no-underline">
+      <ui-card class="w-full h-full cursor-pointer" theme="light" title="Calendario">
+        <div class="flex items-center gap-2 text-primary-content/70">
+          <span class="icon">event</span>
+          <span class="text-sm">{{ todayEventsCount() }} eventos hoy</span>
+        </div>
+      </ui-card>
+    </a>
   </div>
   <nasa-picture class="col-span-4" />
   <ui-card class="col-span-6 min-h-0" title="Archivos">

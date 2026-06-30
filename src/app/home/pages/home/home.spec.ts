@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
-import { signal } from '@angular/core';
+import { signal, Signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import Home from './home';
 import { VaultSecurity } from '../../../shared/security';
@@ -11,6 +12,10 @@ import { FileBlobService, FileRepository } from '../../../shared/files';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
+import { EventRepository } from '../../service/events.repository';
+import { EventI } from '../../domain/event.interface';
+import { PasswordRepository } from '../../service/passwords.repository';
+import { ToastService } from '../../../shared/service/toast';
 
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
@@ -37,6 +42,16 @@ class FakeVault {
   isUnlocked = vi.fn().mockReturnValue(true);
   getVaultKey = vi.fn();
   showModal = vi.fn();
+  haveUnlockKeyWithPin = signal(false);
+  haveUnlockKeyWithPasskey = signal(false);
+  vaultStatus = signal<'locked' | 'unlocked' | 'none'>('none');
+  isSecureModalOpen = signal(false);
+  isUnlockModalOpen = signal(false);
+  pinAttemptsRemaining = signal(3);
+  isPinLockedOut = signal(false);
+  pinLockoutRemainingMs = signal(0);
+  repositoryStatus = signal<unknown>(undefined);
+  isWebAuthnSupported = signal(false);
 }
 
 class FakeAuth {
@@ -89,6 +104,50 @@ class FakeConfirm {
   warning = vi.fn().mockResolvedValue(true);
 }
 
+class FakeEventRepo {
+  readonly eventsValue = signal<EventI[] | undefined>(undefined);
+  eventsOfDay$(_day: Signal<Date>) {
+    return {
+      value: (): EventI[] | undefined => this.eventsValue(),
+      isLoading: (): boolean => false,
+      hasValue: (): boolean => false,
+      error: (): unknown => undefined,
+      reload: vi.fn(),
+    };
+  }
+}
+
+class FakePasswordRepository {
+  getCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  getFilteredCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  decryptPassword = vi.fn();
+  deleteDoc = vi.fn();
+  addDoc = vi.fn();
+  updateDoc = vi.fn();
+}
+
+class FakeToast {
+  success = vi.fn();
+  error = vi.fn();
+  warning = vi.fn();
+  info = vi.fn();
+  show = vi.fn();
+  dismiss = vi.fn();
+  closeWithAnimation = vi.fn();
+}
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
@@ -96,18 +155,25 @@ describe('Home', () => {
   let auth: FakeAuth;
   let scope: FakeScopeContext;
   let fileRepo: FakeFileRepo;
+  let eventsRepo: FakeEventRepo;
+  let passwordRepo: FakePasswordRepository;
+  let toast: FakeToast;
 
   beforeEach(async () => {
     vault = new FakeVault();
     auth = new FakeAuth();
     scope = new FakeScopeContext();
     fileRepo = new FakeFileRepo();
+    eventsRepo = new FakeEventRepo();
+    passwordRepo = new FakePasswordRepository();
+    toast = new FakeToast();
 
     await TestBed.configureTestingModule({
       imports: [Home],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         { provide: VaultSecurity, useValue: vault },
         { provide: Authenticator, useValue: auth },
         { provide: FileBlobService, useValue: new FakeUpload() },
@@ -115,6 +181,9 @@ describe('Home', () => {
         { provide: ScopeContext, useValue: scope },
         { provide: PreferencesService, useValue: new FakePrefsService() },
         { provide: ConfirmService, useValue: new FakeConfirm() },
+        { provide: EventRepository, useValue: eventsRepo },
+        { provide: PasswordRepository, useValue: passwordRepo },
+        { provide: ToastService, useValue: toast },
       ],
     }).compileComponents();
 
@@ -136,5 +205,16 @@ describe('Home', () => {
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(false);
     component.openConfig();
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(true);
+  });
+
+  it('todayEventsCount defaults to 0 when the resource has no value', () => {
+    const count = (component as unknown as { todayEventsCount: () => number }).todayEventsCount;
+    expect(count()).toBe(0);
+  });
+
+  it('todayEventsCount reflects the number of events reported by the repo', () => {
+    eventsRepo.eventsValue.set([{ id: 'a' } as EventI, { id: 'b' } as EventI]);
+    const count = (component as unknown as { todayEventsCount: () => number }).todayEventsCount;
+    expect(count()).toBe(2);
   });
 });

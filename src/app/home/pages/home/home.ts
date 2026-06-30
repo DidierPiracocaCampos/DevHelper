@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { NasaPicture } from '../../components/nasa-picture/nasa-picture';
@@ -17,6 +18,8 @@ import {
   UiAddFile,
   UiViewFile,
 } from '../../../shared/components/file-components';
+import { EventRepository } from '../../service/events.repository';
+import { EventI } from '../../domain/event.interface';
 
 type FileItem = FileMetadataI & { id: string };
 
@@ -34,6 +37,7 @@ type FileItem = FileMetadataI & { id: string };
     UiFileList,
     UiAddFile,
     UiViewFile,
+    RouterLink,
   ],
   templateUrl: './home.html',
 })
@@ -44,6 +48,7 @@ export default class Home {
   private _repo = inject(FileRepository);
   private _scope = inject(ScopeContext);
   private _confirm = inject(ConfirmService);
+  private _eventsRepo = inject(EventRepository);
 
   protected readonly isConfigOpen = signal(false);
   protected readonly isAddOpen = signal(false);
@@ -58,6 +63,12 @@ export default class Home {
   protected readonly fileError = computed(() => this.fileCollection.error());
 
   protected readonly namespace = computed<BlobNamespace>(() => this._repo.namespace());
+
+  protected readonly today = signal(new Date());
+  protected readonly todayEventsResource = this._eventsRepo.eventsOfDay$(this.today);
+  protected readonly todayEventsCount = computed(
+    () => (this.todayEventsResource.value() as EventI[] | undefined)?.length ?? 0,
+  );
 
   async ngOnInit() {
     this._scope.setGlobal();
