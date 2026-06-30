@@ -61,6 +61,14 @@
   color: var(--color-text-secondary);
 }
 
+.item-list-leading {
+  display: flex;
+  align-items: center;
+  padding-right: var(--spacing-2);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
 .item-list-actions {
   display: flex;
   align-items: center;

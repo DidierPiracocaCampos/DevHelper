@@ -3,6 +3,9 @@
   [class.item-list-disabled]="disabled()"
   [class.item-list-selected]="selected()"
 >
+  <div class="item-list-leading">
+    <ng-content select="[leading]"></ng-content>
+  </div>
   <div class="item-list-content">
     @if (label()) {
       <span class="item-list-label">{{ label() }}</span>
