@@ -119,10 +119,8 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 - **OK** `PasswordRepository` con add/list/delete.
 - **OK** `PasswordCrypto` cifra con vault key.
 - **OK** UI `password-list` con add/list/view (descifra bajo demanda) / copy / edit / delete.
-- **BUG** modelo de datos incompatible con `firestore.rules:170-181`:
-  - Codigo: `{ name, password: EncryptedData {cipher, iv}, secure }`.
-  - Reglas: `{ title, username, password (string <=1024), url, notes, createdAt (timestamp), updatedAt (timestamp) }`.
-  - El codigo **fallara** al escribir en Firestore por `hasOnly` y por tipo `timestamp` faltante.
+- **OK** `PasswordI` model: `{ name, password: { cipher, iv }, secure, createdAt?, updatedAt? }`. Reglas y código alineados (filter integration, M3).
+- **PARCIAL** Filtros: operativo por `name`, `secure`, `createdAt` (filter-bar en `password-list`, sin persistencia entre recargas). Sin búsqueda full-text.
 - **FALTA** password-por-tarea: no existe ruta `proyectos/.../issues/.../passwords` ni en reglas ni en codigo.
 - **FALTA** "auto-ocultar tras N segundos" tras mostrar un password (proteccion shoulder-surf). Hoy se queda visible.
 - **FALTA** "codigo de recuperacion" del vault (mencionado en `casos-de-uso.md` como asuncion): no implementado. Si el usuario pierde el PIN y no tiene passkey sincronizada, los passwords son irrecuperables.
@@ -165,9 +163,7 @@ Agregar reglas para las colecciones que faltan. Mantener owner-only.
 
 Ademas:
 
-- **BUG fix** `users/{uid}/passwords`: alinear reglas a la realidad del codigo. Decidir:
-  - Opcion A (preferida): expandir reglas a `{ name, password: { cipher: list, iv: list }, secure, createdAt, updatedAt }`. Mantiene el modelo cifrado client-side.
-  - Opcion B: rehacer el codigo para que coincida con las reglas (title/username/url/notes/timestamps).
+- ~~**BUG fix** `users/{uid}/passwords`: alinear reglas a la realidad del codigo.~~ **Hecho** (filter integration, M3): reglas y código ahora coinciden en `{ name, password: { cipher, iv }, secure, createdAt, updatedAt }`. Forma del BUG resuelta.
 - **BUG fix** el campo `password` encriptado en base64 puede exceder 1024 chars para passwords largos. Subir limite o cambiar validacion.
 
 ### 4.2 Capa de servicios (Angular)
