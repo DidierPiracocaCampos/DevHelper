@@ -48,6 +48,10 @@ export class EventRepository extends withDocDelete<EventI>()(
     return this.updateDoc(id, { ...patch, updatedAt: Timestamp.now() });
   }
 
+  deleteEvent(id: string) {
+    return this.deleteDoc(id);
+  }
+
   eventsOfDay$(day: Signal<Date>) {
     return resource({
       params: () => ({ day: day(), ref: this.colRefSignal() }),
