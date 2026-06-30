@@ -1,4 +1,11 @@
-import { Injectable, resource, runInInjectionContext, signal, Signal } from '@angular/core';
+import {
+  Injectable,
+  resource,
+  ResourceRef,
+  runInInjectionContext,
+  signal,
+  Signal,
+} from '@angular/core';
 import {
   FirestoreDataConverter,
   query,
@@ -52,13 +59,14 @@ export class EventRepository extends withDocDelete<EventI>()(
     return this.deleteDoc(id);
   }
 
-  eventsOfDay$(day: Signal<Date>) {
+  eventsOfDay$(day: Signal<Date>): ResourceRef<EventI[]> {
     return resource({
       params: () => ({ day: day(), ref: this.colRefSignal() }),
+      defaultValue: [] as EventI[],
       loader: ({ params }) => {
         if (!params.ref) return Promise.resolve([] as EventI[]);
         const ref = params.ref;
-        return runInInjectionContext(this['_injector'], async () => {
+        return runInInjectionContext(this.injector, async () => {
           const sod = startOfDay(params.day);
           const eod = endOfDay(params.day);
           const q = query(

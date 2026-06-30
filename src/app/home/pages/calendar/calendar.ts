@@ -56,10 +56,7 @@ export default class Calendar {
   protected readonly selectedDay = signal(new Date());
   protected readonly today = signal(new Date());
   protected readonly eventsResource = this._repo.eventsOfDay$(this.selectedDay);
-  protected readonly events = computed<EventI[]>(() => {
-    const v = this.eventsResource.value();
-    return Array.isArray(v) ? (v as EventI[]) : [];
-  });
+  protected readonly events = computed<EventI[]>(() => this.eventsResource.value() ?? []);
   protected readonly editing = signal<EventI | null | undefined>(undefined);
   protected readonly isModalOpen = computed(() => this.editing() !== undefined);
   protected readonly saving = signal(false);

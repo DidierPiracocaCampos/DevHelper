@@ -11,7 +11,6 @@ import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shar
 import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { EventRepository } from '../../service/events.repository';
-import { EventI } from '../../domain/event.interface';
 
 @Component({
   selector: 'app-home',
@@ -41,7 +40,7 @@ export default class Home {
   protected readonly today = signal(new Date());
   protected readonly todayEventsResource = this._eventsRepo.eventsOfDay$(this.today);
   protected readonly todayEventsCount = computed(
-    () => (this.todayEventsResource.value() as EventI[] | undefined)?.length ?? 0,
+    () => this.todayEventsResource.value()?.length ?? 0,
   );
 
   async ngOnInit() {

@@ -30,6 +30,10 @@ export abstract class ApiBase<T extends { id?: string }> {
   protected _auth = inject(Authenticator);
   protected _injector = inject(Injector);
 
+  protected get injector() {
+    return this._injector;
+  }
+
   protected abstract path: Signal<PathSegments>;
   protected abstract converter: FirestoreDataConverter<T>;
   protected _user = this._auth.user;
