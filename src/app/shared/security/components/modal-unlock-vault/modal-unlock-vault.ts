@@ -86,6 +86,7 @@ export class ModalUnlockVault {
 
   protected onModalClose(): void {
     this.reset();
+    this._vault.closeUnlockModal();
   }
 
   protected async submitPin() {

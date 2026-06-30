@@ -192,6 +192,14 @@ export class VaultSecurity {
     this._modalState.openUnlock();
   }
 
+  closeUnlockModal() {
+    this._modalState.closeUnlock();
+  }
+
+  closeCreateModal() {
+    this._modalState.closeCreate();
+  }
+
   async changePin(oldPin: string, newPin: string): Promise<boolean> {
     try {
       if (this._pinLockout.isLocked()) {

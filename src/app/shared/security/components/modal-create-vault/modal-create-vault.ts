@@ -65,6 +65,7 @@ export class ModalCreateVault {
     if (this.isOpen()) {
       this.isOpen.set(false);
     }
+    this._vault.closeCreateModal();
   }
 
   async submitFormPin() {
