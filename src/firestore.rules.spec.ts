@@ -640,4 +640,102 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       await assertFails(setDoc(doc(alice.firestore(), 'users/alice/other/x'), { foo: 'bar' }));
     });
   });
+
+  describe('users/{uid}/events', () => {
+    const eventPath = (uid: string, id = 'e1') => `users/${uid}/events/${id}`;
+
+    const validEvent = () => ({
+      title: 'Reunion',
+      at: Timestamp.now(),
+      isAllDay: false,
+      notified: false,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    it('owner can create a valid event', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(setDoc(doc(ctx.firestore(), eventPath('u1')), validEvent()));
+    });
+
+    it('non-owner cannot create an event in another user collection', async () => {
+      const ctx = testEnv.authenticatedContext('u2');
+      await assertFails(setDoc(doc(ctx.firestore(), eventPath('u1')), validEvent()));
+    });
+
+    it('rejects event with empty title', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), eventPath('u1')), { ...validEvent(), title: '' }),
+      );
+    });
+
+    it('rejects event with title > 200 chars', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), eventPath('u1')), {
+          ...validEvent(),
+          title: 'x'.repeat(201),
+        }),
+      );
+    });
+
+    it('rejects event missing the at timestamp', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ev = validEvent() as Record<string, unknown>;
+      delete ev['at'];
+      await assertFails(setDoc(doc(ctx.firestore(), eventPath('u1')), ev));
+    });
+
+    it('rejects event with durationMinutes > 1440', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), eventPath('u1')), {
+          ...validEvent(),
+          durationMinutes: 1441,
+        }),
+      );
+    });
+
+    it('rejects event with unknown field', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), eventPath('u1')), {
+          ...validEvent(),
+          secret: 'x',
+        }),
+      );
+    });
+
+    it('owner can update keeping createdAt unchanged', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), eventPath('u1'));
+      await assertSucceeds(setDoc(ref, validEvent()));
+      await assertSucceeds(updateDoc(ref, { title: 'Otro' }));
+    });
+
+    it('rejects update that changes createdAt', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), eventPath('u1'));
+      await assertSucceeds(setDoc(ref, validEvent()));
+      await assertFails(updateDoc(ref, { createdAt: Timestamp.fromMillis(0) }));
+    });
+
+    it('owner can delete', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), eventPath('u1'));
+      await assertSucceeds(setDoc(ref, validEvent()));
+      await assertSucceeds(deleteDoc(ref));
+    });
+
+    it('non-owner cannot read or delete', async () => {
+      const ownerCtx = testEnv.authenticatedContext('u1');
+      const ref = doc(ownerCtx.firestore(), eventPath('u1'));
+      await assertSucceeds(setDoc(ref, validEvent()));
+
+      const strangerCtx = testEnv.authenticatedContext('u2');
+      await assertFails(getDoc(doc(strangerCtx.firestore(), eventPath('u1'))));
+      await assertFails(deleteDoc(doc(strangerCtx.firestore(), eventPath('u1'))));
+    });
+  });
 });

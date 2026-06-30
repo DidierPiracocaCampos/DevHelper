@@ -190,6 +190,40 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------
+    // Events
+    // -------------------------------------------------------------------
+    match /users/{userId}/events/{eventId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && request.resource.data.title.size() > 0
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                    && isTimestamp(request.resource.data.at)
+                    && isBool(request.resource.data.isAllDay)
+                    && isBool(request.resource.data.notified)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && (!('durationMinutes' in request.resource.data) || (isPositiveInt(request.resource.data.durationMinutes) && request.resource.data.durationMinutes <= 1440))
+                    && request.resource.data.keys().hasOnly(['title', 'description', 'at', 'isAllDay', 'durationMinutes', 'notified', 'createdAt', 'updatedAt']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && request.resource.data.title.size() > 0
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                    && isTimestamp(request.resource.data.at)
+                    && isBool(request.resource.data.isAllDay)
+                    && isBool(request.resource.data.notified)
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && isUnchanged('createdAt')
+                    && (!('durationMinutes' in request.resource.data) || (isPositiveInt(request.resource.data.durationMinutes) && request.resource.data.durationMinutes <= 1440))
+                    && request.resource.data.keys().hasOnly(['title', 'description', 'at', 'isAllDay', 'durationMinutes', 'notified', 'createdAt', 'updatedAt']);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
     // Vault (encrypted master keys)
     // -------------------------------------------------------------------
     match /users/{userId}/vault/{vaultDocId} {
