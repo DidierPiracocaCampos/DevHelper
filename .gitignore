@@ -32,6 +32,8 @@ AGENTS.md
 skills-lock.json
 .opencode/
 .agents/
+.superpowers/
+docs/superpowers/
 .vscode/
 
 #enviroment
