@@ -8,11 +8,6 @@ export const routes: Routes = [
     canMatch: [authCanMatch()],
   },
   {
-    path: 'calendar',
-    loadComponent: () => import('./home/components/calendar/home-calendar').then((c) => c),
-    canMatch: [authCanMatch()],
-  },
-  {
     path: '',
     loadChildren: () => import('./auth').then((c) => c.routesAuth),
     canMatch: [authCanMatch(true)],
