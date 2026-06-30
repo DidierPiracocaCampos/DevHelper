@@ -3,6 +3,7 @@
     <div
       class="alert alert-soft alert-{{ toast.severity }} cursor-pointer max-w-[420px] toast-fade-in"
       [class.toast-expanded]="toast.expanded"
+      [class.toast-fade-out]="toast.closing"
       (click)="onToastClick(toast)"
       role="alert"
       aria-live="polite"

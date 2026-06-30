@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ToastService, ToastI } from '../../service/toast';
 
 @Component({
@@ -7,6 +7,7 @@ import { ToastService, ToastI } from '../../service/toast';
   imports: [],
   templateUrl: './ui-toast.html',
   styleUrl: './ui-toast.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiToastComponent {
   protected toastService = inject(ToastService);
@@ -27,6 +28,6 @@ export class UiToastComponent {
 
   protected onDismiss(event: Event, id: string): void {
     event.stopPropagation();
-    this.toastService.dismiss(id);
+    this.toastService.closeWithAnimation(id);
   }
 }
