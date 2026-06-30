@@ -9,3 +9,5 @@ export type { BlobUploadOptions, EncryptedFileMetadataI } from './services/file-
 export { FileInputField } from './file-input-field/file-input-field';
 export type { UploadProgress, UploadOptions } from './file-input-field/file-input-field';
 export { makeThumbnail, THUMBNAIL_SIZE } from './utils/thumbnail';
+export { iconFor } from './utils/mime-icon';
+export type { MimeIcon } from './utils/mime-icon';
