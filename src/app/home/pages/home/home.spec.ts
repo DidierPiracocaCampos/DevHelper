@@ -75,6 +75,13 @@ class FakeFileRepo {
     error: signal(null),
     reload: vi.fn(),
   });
+  readonly getFilteredCollection = vi.fn().mockReturnValue({
+    value: signal(undefined),
+    isLoading: signal(false),
+    hasValue: signal(false),
+    error: signal(null),
+    reload: vi.fn(),
+  });
   readonly deleteDoc = vi.fn().mockReturnValue({
     subscribe: vi.fn(({ next }: { next: () => void }) => next()),
   });
