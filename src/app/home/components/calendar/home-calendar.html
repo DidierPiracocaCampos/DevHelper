@@ -1,26 +1,22 @@
-<div class="calendar-page">
-  <div class="calendar-card card card-xl bg-base-100 border border-base-300">
-    <header class="calendar-header">
-      <h2 class="calendar-month">{{ monthLabel() }}</h2>
-      <div class="calendar-nav">
+<ui-card title="Calendario" padding="sm" class="w-full h-full">
+  <div class="flex flex-col gap-2 h-full min-h-0">
+    <header class="home-calendar-header">
+      <h2 class="home-calendar-month">{{ monthLabel() }}</h2>
+      <div class="home-calendar-nav">
         <button
           type="button"
-          class="btn btn-ghost btn-sm icon-btn"
+          class="btn btn-ghost btn-sm"
           aria-label="Semana anterior"
           (click)="goPrevWeek()"
         >
           <span class="icon icon-sm">chevron_left</span>
         </button>
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm calendar-today"
-          (click)="goToday()"
-        >
+        <button type="button" class="btn btn-ghost btn-sm home-calendar-today" (click)="goToday()">
           Hoy
         </button>
         <button
           type="button"
-          class="btn btn-ghost btn-sm icon-btn"
+          class="btn btn-ghost btn-sm"
           aria-label="Semana siguiente"
           (click)="goNextWeek()"
         >
@@ -29,32 +25,31 @@
       </div>
     </header>
 
-    <div class="calendar-week" role="row">
+    <div class="home-calendar-week" role="row">
       @for (day of weekDays(); track day.getTime()) {
         <button
           type="button"
-          class="calendar-day"
-          [class.calendar-day--selected]="isSelected(day)"
-          [class.calendar-day--today]="isToday(day)"
+          class="home-calendar-day"
+          [class.home-calendar-day--selected]="isSelected(day)"
+          [class.home-calendar-day--today]="isToday(day)"
           (click)="selectDay(day)"
         >
-          <span class="calendar-day__weekday">{{ weekdayLabelFor(day) }}</span>
-          <span class="calendar-day__number">{{ dayNumberFor(day) }}</span>
+          <span class="home-calendar-day__weekday">{{ weekdayLabelFor(day) }}</span>
+          <span class="home-calendar-day__number">{{ dayNumberFor(day) }}</span>
           @if (isToday(day)) {
-            <span class="calendar-day__dot" aria-hidden="true"></span>
+            <span class="home-calendar-day__dot" aria-hidden="true"></span>
           }
         </button>
       }
     </div>
 
-    <div class="calendar-events">
+    <div class="home-calendar-events">
       @if (eventsResource.isLoading()) {
         <div class="skeleton min-h-[3rem] w-full"></div>
         <div class="skeleton min-h-[3rem] w-full"></div>
       } @else if (events().length === 0) {
-        <div class="calendar-empty">
-          <p class="calendar-empty__msg">No hay eventos este día</p>
-          <ui-button label="Crear evento" severity="primary" (click)="openCreate()" />
+        <div class="home-calendar-empty">
+          <p class="home-calendar-empty__msg">No hay eventos este día</p>
         </div>
       } @else {
         @for (ev of events(); track trackById($index, ev); let i = $index) {
@@ -66,16 +61,19 @@
         }
       }
     </div>
-
-    <ui-button
-      class="calendar-fab"
-      label="Añadir Evento"
-      icon="add"
-      severity="primary"
-      (click)="openCreate()"
-    />
   </div>
-</div>
+
+  <div actions>
+    <ui-tooltip text="Añadir evento" placement="left" severity="neutral">
+      <ui-card-button
+        icon="add"
+        shape="circle"
+        severity="primary"
+        (click)="openCreate()"
+      />
+    </ui-tooltip>
+  </div>
+</ui-card>
 
 <ui-modal
   [title]="editing() ? 'Editar evento' : 'Nuevo evento'"
@@ -84,7 +82,7 @@
   (closed)="closeModal()"
 >
   <div body>
-    <form [formGroup]="form" class="calendar-form grid gap-3">
+    <form [formGroup]="form" class="home-calendar-form grid gap-3">
       <ui-text-field inputId="event-title" formControlName="title">
         <ng-template uiLabel>Título</ng-template>
         <ng-template errorMessage="required">
@@ -113,7 +111,7 @@
         }
       </div>
 
-      <label class="calendar-checkbox">
+      <label class="home-calendar-checkbox">
         <input type="checkbox" class="checkbox" formControlName="isAllDay" />
         <span>Todo el día</span>
       </label>

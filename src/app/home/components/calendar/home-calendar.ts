@@ -22,6 +22,9 @@ import {
 import { CalendarEvent, CalendarEventSeverity } from '../calendar-event/calendar-event';
 import { UiButton } from '../../../shared/components/ui-button/button';
 import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
+import { UiCard } from '../../../shared/components/card-base/card-base';
+import { UiCardButton } from '../../../shared/components/card-button/card-button';
+import { UiTooltipComponent } from '../../../shared/components/tooltip';
 import {
   UiTextField,
   UiTextareaField,
@@ -47,6 +50,9 @@ const TIME_FORMAT = /^(\d{2}):(\d{2})$/;
     UiNumberField,
     UiDateField,
     UiTimeField,
+    UiCard,
+    UiCardButton,
+    UiTooltipComponent,
   ],
   templateUrl: './home-calendar.html',
   styleUrl: './home-calendar.css',
