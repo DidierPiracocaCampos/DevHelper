@@ -3,10 +3,10 @@
     <ng-container *ngTemplateOutlet="l.template" />
   </label>
 }
-<div class="textarea textarea-lg w-full" [class.validator]="isInvalid()">
+<div class="textarea-wrapper" [class.validator]="isInvalid()">
   <ng-content select="[prefix]" />
   <textarea
-    class="textarea-grow"
+    class="textarea textarea-lg textarea-grow"
     [id]="inputId()"
     [rows]="rows()"
     [value]="value() ?? ''"
