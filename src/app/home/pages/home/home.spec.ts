@@ -15,6 +15,7 @@ import { ConfirmService } from '../../../shared/service/confirm.service';
 import { EventRepository } from '../../service/events.repository';
 import { PasswordRepository } from '../../service/passwords.repository';
 import { ProjectRepository } from '../../service/projects.repository';
+import { IssueRepository } from '../../service/issues.repository';
 import { ToastService } from '../../../shared/service/toast';
 
 if (!HTMLDialogElement.prototype.showModal) {
@@ -178,6 +179,27 @@ class FakeProjectRepository {
   deleteProject = vi.fn();
 }
 
+class FakeIssueRepository {
+  getCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  getFilteredCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  addIssue = vi.fn();
+  updateIssue = vi.fn();
+  deleteIssue = vi.fn();
+  toggleStatus = vi.fn();
+}
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
@@ -212,6 +234,7 @@ describe('Home', () => {
         { provide: EventRepository, useValue: new FakeEventRepository() },
         { provide: PasswordRepository, useValue: passwordRepo },
         { provide: ProjectRepository, useValue: new FakeProjectRepository() },
+        { provide: IssueRepository, useValue: new FakeIssueRepository() },
         { provide: ToastService, useValue: toast },
       ],
     }).compileComponents();

@@ -11,6 +11,7 @@ import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import HomeCalendar from '../../components/calendar/home-calendar';
 import { ProjectList } from '../../components/project-list/project-list';
+import { IssueList } from '../../components/issue-list/issue-list';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ import { ProjectList } from '../../components/project-list/project-list';
     NasaImageSection,
     HomeCalendar,
     ProjectList,
+    IssueList,
   ],
   templateUrl: './home.html',
 })
