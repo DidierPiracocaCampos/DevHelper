@@ -1,5 +1,5 @@
-import { Injectable, computed, inject, Signal } from '@angular/core';
-import { FirestoreDataConverter, Timestamp } from '@angular/fire/firestore';
+import { Injectable, computed, inject, runInInjectionContext, Signal } from '@angular/core';
+import { doc, FirestoreDataConverter, getDoc, Timestamp } from '@angular/fire/firestore';
 import { ApiBase, PathSegments } from '../../shared/api/api-base';
 import {
   withCollection,
@@ -10,6 +10,11 @@ import {
 } from '../../shared/api/crud.mixins';
 import { IssueI, IssueCreateInput, IssueStatus, IssueUpdateInput } from '../domain/issue.interface';
 import { ScopeContext } from '../../shared/scope/scope-context';
+import { from } from 'rxjs/internal/observable/from';
+import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/internal/operators/map';
+import { switchMap } from 'rxjs/internal/operators/switchMap';
+import { Observable } from 'rxjs';
 
 const SENTINEL_PROJECT = '_no_project_';
 
@@ -65,5 +70,23 @@ export class IssueRepository extends withQuery<IssueI>()(
   toggleStatus(id: string, current: IssueStatus) {
     const next: IssueStatus = current === 'done' || current === null ? 'pending' : 'done';
     return this.updateIssue(id, { status: next });
+  }
+
+  getById(id: string): Observable<(IssueI & { id: string }) | null> {
+    return this.$userCollectionRef.pipe(
+      switchMap((ref) => {
+        if (!ref) return of(null);
+        return runInInjectionContext(this._injector, () => {
+          const docRef = doc(ref, id);
+          return from(getDoc(docRef)).pipe(
+            map((snap) =>
+              snap.exists()
+                ? ({ id: snap.id, ...(snap.data() as IssueI) } as IssueI & { id: string })
+                : null,
+            ),
+          );
+        });
+      }),
+    );
   }
 }

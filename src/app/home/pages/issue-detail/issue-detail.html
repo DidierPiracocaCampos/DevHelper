@@ -1,0 +1,82 @@
+<div class="issue-detail">
+  <form [formGroup]="_form" class="issue-detail-form" (ngSubmit)="save()">
+    <div class="issue-detail-header">
+      <div class="issue-detail-title-row">
+        <ui-text-field
+          labelText="Título"
+          inputId="issue-detail-title"
+          formControlName="title"
+          class="issue-detail-title-field"
+        >
+          <ng-template errorMessage="required">
+            <p class="validator-hint">Este campo es obligatorio</p>
+          </ng-template>
+          <ng-template errorMessage="maxlength">
+            <p class="validator-hint">Máximo 200 caracteres</p>
+          </ng-template>
+        </ui-text-field>
+
+        <button
+          type="button"
+          data-testid="status-circle"
+          class="status-circle"
+          [class]="statusCircleClass()"
+          [attr.aria-label]="
+            issue()?.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
+          "
+          (click)="toggleStatus()"
+        ></button>
+      </div>
+
+      <ui-textarea-field
+        inputId="issue-detail-description"
+        formControlName="description"
+        placeholder="Contexto del issue (opcional)"
+        [rows]="3"
+        [maxlength]="20000"
+      >
+        <ng-template uiLabel>Descripción</ng-template>
+      </ui-textarea-field>
+
+      <ui-textarea-field
+        inputId="issue-detail-solution"
+        formControlName="solution"
+        placeholder="¿Cómo se resolvió? (opcional)"
+        [rows]="4"
+        [maxlength]="20000"
+      >
+        <ng-template uiLabel>Solución</ng-template>
+      </ui-textarea-field>
+    </div>
+
+    <div class="issue-detail-panels">
+      <div class="issue-detail-panel">
+        <file-list />
+      </div>
+      <div class="issue-detail-panel">
+        <password-list />
+      </div>
+    </div>
+
+    <div class="issue-detail-footer">
+      <ui-button
+        icon="ios_share"
+        label="Exportar"
+        severity="secondary"
+        (press)="export()"
+      />
+      <ui-button
+        icon="delete"
+        label="Eliminar"
+        severity="error"
+        (press)="remove()"
+      />
+      <ui-button
+        icon="check"
+        label="Guardar"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</div>

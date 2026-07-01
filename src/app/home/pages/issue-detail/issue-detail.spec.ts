@@ -1,15 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
-import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
-import { Timestamp } from '@angular/fire/firestore';
+import { Firestore, Timestamp } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
 import { IssueDetail } from './issue-detail';
 import { IssueRepository } from '../../service/issues.repository';
 import { IssueI } from '../../domain/issue.interface';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
+import { FileRepository } from '../../../shared/files';
+import { PasswordRepository } from '../../service/passwords.repository';
+import { VaultSecurity } from '../../../shared/security';
+import { FileBlobService } from '../../../shared/files';
+import { Authenticator } from '../../../shared/service/authenticator';
+import { FilterService } from '../../../shared/filter';
 
 function makeIssue(overrides: Partial<IssueI> = {}): IssueI & { id: string } {
   const now = Timestamp.now();
@@ -36,9 +43,9 @@ class FakeIssueRepository {
   readonly getById = vi.fn((id: string) => {
     return of(this._current && this._current.id === id ? this._current : null);
   });
-  readonly updateIssue = vi.fn(() => of(undefined));
-  readonly deleteIssue = vi.fn(() => of(undefined));
-  readonly toggleStatus = vi.fn(() => of(undefined));
+  readonly updateIssue = vi.fn((_id: string, _patch: Partial<IssueI>) => of(undefined));
+  readonly deleteIssue = vi.fn((_id: string) => of(undefined));
+  readonly toggleStatus = vi.fn((_id: string, _current: IssueI['status']) => of(undefined));
   setCurrent(issue: (IssueI & { id: string }) | null): void {
     this._current = issue;
   }
@@ -58,6 +65,62 @@ class FakeToast {
   error = vi.fn();
   warning = vi.fn();
   info = vi.fn();
+}
+
+class FakeFileRepository {
+  getFilteredCollection = vi.fn(() => ({
+    isLoading: () => false,
+    hasValue: () => false,
+    value: () => [],
+    reload: vi.fn(),
+    error: () => undefined,
+  }));
+  namespace = vi.fn(() => 'global');
+  getDocResource = vi.fn();
+}
+
+class FakePasswordRepository {
+  getFilteredCollection = vi.fn(() => ({
+    isLoading: () => false,
+    hasValue: () => false,
+    value: () => [],
+    reload: vi.fn(),
+    error: () => undefined,
+  }));
+  decryptPassword = vi.fn();
+  deleteDoc = vi.fn();
+  addDoc = vi.fn();
+  updateDoc = vi.fn();
+}
+
+class FakeVault {
+  isUnlocked = vi.fn().mockReturnValue(true);
+  getVaultKey = vi.fn();
+  showModal = vi.fn();
+  openUnlockVaultModal = vi.fn();
+  haveUnlockKeyWithPin = signal(false);
+  haveUnlockKeyWithPasskey = signal(false);
+  vaultStatus = signal<'locked' | 'unlocked' | 'none'>('none');
+  isSecureModalOpen = signal(false);
+  isUnlockModalOpen = signal(false);
+  haveVault = signal(true);
+}
+
+class FakeAuthenticator {
+  user = signal(null);
+  logout = vi.fn();
+  loginWithGithub = vi.fn();
+  loginWithGoogle = vi.fn();
+  loginWithEmail = vi.fn();
+  registerWithEmail = vi.fn();
+  sendPasswordReset = vi.fn();
+  getIdToken = vi.fn();
+}
+
+class FakeFileBlobService {
+  uploadBytes = vi.fn();
+  getBytes = vi.fn();
+  delete = vi.fn();
 }
 
 describe('IssueDetail', () => {
@@ -82,6 +145,14 @@ describe('IssueDetail', () => {
         { provide: ScopeContext, useValue: scope },
         { provide: ConfirmService, useValue: confirm },
         { provide: ToastService, useValue: toast },
+        { provide: Firestore, useValue: {} },
+        { provide: Auth, useValue: {} },
+        { provide: FileRepository, useValue: new FakeFileRepository() },
+        { provide: PasswordRepository, useValue: new FakePasswordRepository() },
+        { provide: VaultSecurity, useValue: new FakeVault() },
+        { provide: Authenticator, useValue: new FakeAuthenticator() },
+        { provide: FileBlobService, useValue: new FakeFileBlobService() },
+        FilterService,
       ],
     }).compileComponents();
 
