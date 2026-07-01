@@ -92,6 +92,18 @@ service cloud.firestore {
     //   - createdAt: timestamp (required, immutable)
     //   - updatedAt: timestamp (required)
     //
+    // Subcollection: users/{userId}/proyectos/{projectId}/issues/{issueId}
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required, <= 200, non-empty)
+    //   - description: string (optional, <= 20000)
+    //   - status: 'pending' | 'done' | null (required; null only when isNote=true)
+    //   - isNote: bool (required)
+    //   - priority: 'normal' | 'high' (required)
+    //   - dueAt: timestamp (optional; forbidden when isNote=true)
+    //   - createdAt: timestamp (required, immutable)
+    //   - updatedAt: timestamp (required)
+    //
     // Subcollection: users/{userId}/proyectos/{projectId}/issues/{issueId}/files
     // Document ID: auto-generated
     // Fields: same shape as users/{userId}/files
@@ -300,6 +312,47 @@ service cloud.firestore {
                     && isTimestamp(request.resource.data.updatedAt)
                     && isUnchanged('createdAt')
                     && request.resource.data.keys().hasOnly(['name', 'tag', 'description', 'archived', 'createdAt', 'updatedAt']);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Issues (tareas y notas dentro de un proyecto)
+    // -------------------------------------------------------------------
+    match /users/{userId}/proyectos/{projectId}/issues/{issueId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && request.resource.data.title.size() > 0
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                    && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
+                    && isBool(request.resource.data.isNote)
+                    && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
+                    && (!('dueAt' in request.resource.data) || isTimestamp(request.resource.data.dueAt))
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    // Si es nota, status debe ser null y dueAt no debe estar presente
+                    && (request.resource.data.isNote
+                          ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
+                          : true)
+                    && request.resource.data.keys().hasOnly(['title', 'description', 'status', 'isNote', 'priority', 'dueAt', 'createdAt', 'updatedAt']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.title, 200)
+                    && request.resource.data.title.size() > 0
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                    && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
+                    && isBool(request.resource.data.isNote)
+                    && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
+                    && (!('dueAt' in request.resource.data) || isTimestamp(request.resource.data.dueAt))
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && isUnchanged('createdAt')
+                    && (request.resource.data.isNote
+                          ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
+                          : true)
+                    && request.resource.data.keys().hasOnly(['title', 'description', 'status', 'isNote', 'priority', 'dueAt', 'createdAt', 'updatedAt']);
 
       allow delete: if isOwner(userId);
     }

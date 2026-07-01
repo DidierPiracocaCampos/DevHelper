@@ -149,6 +149,40 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                 allow delete: if isOwner(userId);
               }
 
+              match /users/{userId}/proyectos/{projectId}/issues/{issueId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && isBoundedString(request.resource.data.title, 200)
+                              && request.resource.data.title.size() > 0
+                              && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                              && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
+                              && isBool(request.resource.data.isNote)
+                              && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
+                              && (!('dueAt' in request.resource.data) || isTimestamp(request.resource.data.dueAt))
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && (request.resource.data.isNote
+                                    ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
+                                    : true)
+                              && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
+                allow update: if isOwner(userId)
+                              && isBoundedString(request.resource.data.title, 200)
+                              && request.resource.data.title.size() > 0
+                              && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                              && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
+                              && isBool(request.resource.data.isNote)
+                              && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
+                              && (!('dueAt' in request.resource.data) || isTimestamp(request.resource.data.dueAt))
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && isUnchanged('createdAt')
+                              && (request.resource.data.isNote
+                                    ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
+                                    : true)
+                              && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
+                allow delete: if isOwner(userId);
+              }
+
               match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId} {
                 allow read: if isOwner(userId);
                 allow create: if isOwner(userId)
@@ -849,6 +883,150 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       await assertFails(getDoc(strangerRead));
       await assertFails(deleteDoc(strangerRead));
       await assertFails(setDoc(doc(strangerCtx.firestore(), projectPath('u1')), validProject()));
+    });
+  });
+
+  describe('users/{uid}/proyectos/{projectId}/issues/{issueId}', () => {
+    const issuePath = (uid: string, projectId = 'p1', issueId = 'i1') =>
+      `users/${uid}/proyectos/${projectId}/issues/${issueId}`;
+
+    const validTask = () => ({
+      title: 'Tarea de prueba',
+      status: 'pending',
+      isNote: false,
+      priority: 'normal',
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    const validNote = () => ({
+      title: 'Nota de prueba',
+      status: null,
+      isNote: true,
+      priority: 'normal',
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    it('owner can create a valid task', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(setDoc(doc(ctx.firestore(), issuePath('u1')), validTask()));
+    });
+
+    it('owner can create a valid note (status=null, no dueAt)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(setDoc(doc(ctx.firestore(), issuePath('u1')), validNote()));
+    });
+
+    it('non-owner cannot create an issue in another user project', async () => {
+      const ctx = testEnv.authenticatedContext('u2');
+      await assertFails(setDoc(doc(ctx.firestore(), issuePath('u1')), validTask()));
+    });
+
+    it('rejects issue with empty title', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), { ...validTask(), title: '' }),
+      );
+    });
+
+    it('rejects issue with title > 200 chars', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          title: 'x'.repeat(201),
+        }),
+      );
+    });
+
+    it('rejects issue with description > 20000 chars', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          description: 'x'.repeat(20001),
+        }),
+      );
+    });
+
+    it('rejects issue with invalid status', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), { ...validTask(), status: 'invalid' }),
+      );
+    });
+
+    it('rejects issue with invalid priority', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), { ...validTask(), priority: 'critical' }),
+      );
+    });
+
+    it('rejects note that has a status (must be null)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), { ...validNote(), status: 'pending' }),
+      );
+    });
+
+    it('rejects note that has a dueAt', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validNote(),
+          dueAt: Timestamp.now(),
+        }),
+      );
+    });
+
+    it('rejects task without status (null is only allowed for notes)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), { ...validTask(), status: null }),
+      );
+    });
+
+    it('rejects issue with unknown field', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          secret: 'x',
+        }),
+      );
+    });
+
+    it('owner can update keeping createdAt unchanged', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), issuePath('u1'));
+      await assertSucceeds(setDoc(ref, validTask()));
+      await assertSucceeds(updateDoc(ref, { title: 'Otro' }));
+    });
+
+    it('rejects update that changes createdAt', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), issuePath('u1'));
+      await assertSucceeds(setDoc(ref, validTask()));
+      await assertFails(updateDoc(ref, { createdAt: Timestamp.fromMillis(0) }));
+    });
+
+    it('owner can delete', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), issuePath('u1'));
+      await assertSucceeds(setDoc(ref, validTask()));
+      await assertSucceeds(deleteDoc(ref));
+    });
+
+    it('non-owner cannot read or delete', async () => {
+      const ownerCtx = testEnv.authenticatedContext('u1');
+      const ref = doc(ownerCtx.firestore(), issuePath('u1'));
+      await assertSucceeds(setDoc(ref, validTask()));
+
+      const strangerCtx = testEnv.authenticatedContext('u2');
+      await assertFails(getDoc(doc(strangerCtx.firestore(), issuePath('u1'))));
+      await assertFails(deleteDoc(doc(strangerCtx.firestore(), issuePath('u1'))));
     });
   });
 });
