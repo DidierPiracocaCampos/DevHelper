@@ -56,6 +56,13 @@ describe('FileRepository (scope-aware path signal)', () => {
     expect((repo as unknown as { path: () => readonly string[] }).path()).toEqual(['files']);
   });
 
+  it('returns the same path reference for global and project scopes (no reload on select)', () => {
+    const pathBefore = (repo as unknown as { path: () => readonly string[] }).path();
+    scope.setProject('p1');
+    const pathAfter = (repo as unknown as { path: () => readonly string[] }).path();
+    expect(pathAfter).toBe(pathBefore);
+  });
+
   it('colRefSignal is undefined when no user is signed in', () => {
     fakeAuth.user.set(null);
     expect((repo as unknown as { colRefSignal: () => unknown }).colRefSignal()).toBeUndefined();

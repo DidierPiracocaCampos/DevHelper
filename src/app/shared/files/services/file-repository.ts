@@ -11,6 +11,9 @@ import { FileMetadataI } from '../models/file.model';
 import { BlobNamespace } from '../models/blob-chunk.model';
 import { ScopeContext } from '../../scope/scope-context';
 
+const FILES_PATH: PathSegments = ['files'];
+const FILES_NAMESPACE: BlobNamespace = 'files';
+
 @Injectable({ providedIn: 'root' })
 export class FileRepository extends withDocDelete()(
   withDocById<FileMetadataI>()(
@@ -21,13 +24,13 @@ export class FileRepository extends withDocDelete()(
 
   protected override path: Signal<PathSegments> = computed<PathSegments>(() => {
     const s = this._scope.scope();
-    if (s === 'global') return ['files'];
+    if (s === 'global' || s.kind === 'project') return FILES_PATH;
     return ['proyectos', s.projectId, 'issues', s.issueId, 'files'];
   });
 
   readonly namespace: Signal<BlobNamespace> = computed<BlobNamespace>(() => {
     const s = this._scope.scope();
-    if (s === 'global') return 'files';
+    if (s === 'global' || s.kind === 'project') return FILES_NAMESPACE;
     return `proyectos/${s.projectId}/issues/${s.issueId}/files`;
   });
 
