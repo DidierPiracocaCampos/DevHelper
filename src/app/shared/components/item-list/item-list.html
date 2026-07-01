@@ -1,5 +1,5 @@
 <li
-  class="item-list-row item-list-{{ severity() }} item-list-{{ variant() }}"
+  class="item-list-row item-list-{{ severity() }}  item-list-{{ variant() }}"
   [class.item-list-disabled]="disabled()"
   [class.item-list-selected]="selected()"
 >
@@ -8,10 +8,10 @@
   </div>
   <div class="item-list-content">
     @if (label()) {
-      <span class="item-list-label">{{ label() }}</span>
+      <span class="item-list-label" [title]="label()">{{ label() }}</span>
     }
     @if (sub()) {
-      <span class="item-list-sub">{{ sub() }}</span>
+      <span class="item-list-sub" [title]="sub()">{{ sub() }}</span>
     }
   </div>
 
