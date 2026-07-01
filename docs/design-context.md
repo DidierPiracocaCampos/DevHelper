@@ -141,13 +141,13 @@ Patrones de uso:
 
 `ui-toast`, `ui-alert`, `item-list`, `card-base`, `list-button` existen como wrappers propios. Decision historica: la mayoria no son realmente necesarios y duplican CSS de DaisyUI.
 
-| Wrapper propio                     | DaisyUI nativo      | Estado                                                                                                                                                                       |
-| ---------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------ | -------- | -------- |
+| Wrapper propio                     | DaisyUI nativo      | Estado                                                                                                                                                                                              |
+| ---------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- | ------ | -------- | -------- |
 | `ui-toast` (36 lineas CSS)         | `toast` + `alert`   | Migrado a `toast` (container con placement) + `alert alert-soft alert-{severity}` (cada toast). Wrapper conserva solo `toast-details` (pre para errores expandidos) y la animacion `toast-fade-in`. |
-| `ui-alert` (0 lineas CSS)          | `alert`             | Migrado a `alert alert-soft alert-{severity}` puro. `icon` sigue como `input<string>()` (no se migro a `ng-content` para preservar los 7 consumidores). |
-| `item-list` + `list-row-custom`    | `list` + `list-row` | Reimplementado con multiples variantes (`item-list-primary                                                                                                                   | secondary | accent | outlined | plain`). |
-| `card-base` (envoltorio de `card`) | `card`              | Wrapper ligero con header/title/subtitle/actions via content projection. Vale la pena mantenerlo.                                                                            |
-| `card-button` (icono redondo)      | `btn btn-circle`    | Wrapper con `icon` Material Symbols.                                                                                                                                         |
+| `ui-alert` (0 lineas CSS)          | `alert`             | Migrado a `alert alert-soft alert-{severity}` puro. `icon` sigue como `input<string>()` (no se migro a `ng-content` para preservar los 7 consumidores).                                             |
+| `item-list` + `list-row-custom`    | `list` + `list-row` | Reimplementado con multiples variantes (`item-list-primary                                                                                                                                          | secondary | accent | outlined | plain`). |
+| `card-base` (envoltorio de `card`) | `card`              | Wrapper ligero con header/title/subtitle/actions via content projection. Vale la pena mantenerlo.                                                                                                   |
+| `card-button` (icono redondo)      | `btn btn-circle`    | Wrapper con `icon` Material Symbols.                                                                                                                                                                |
 
 **Regla de diseno:** antes de crear un componente custom, verificar que DaisyUI no lo provea nativamente. Si se necesita wrappear, que sea para composicion (slots, content projection), no para reescribir CSS.
 
