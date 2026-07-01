@@ -87,12 +87,12 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 ### CU-05 Gestion de proyectos
 
-- **FALTA** no existe coleccion `users/{uid}/proyectos/{projectId}` con metadatos (nombre, descripcion, archived, createdAt).
-- **FALTA** no existe `ProjectRepository` / servicio.
-- **FALTA** no existe UI: el card "Proyectos" en `home.html:4-9` es placeholder sin logica.
+- **OK** coleccion `users/{uid}/proyectos/{projectId}` con shape `{ name, tag?, description?, archived, createdAt, updatedAt }` (ver `firestore.rules` seccion "Proyectos" y `project.interface.ts`).
+- **OK** `ProjectRepository` con `addProject` / `updateProject` / `archiveProject` / `deleteProject` + mixin `withQuery` para filtrado (ver `projects.repository.ts`).
+- **OK** UI `project-list` con pills horizontales, seleccion (`ScopeContext.setProject`), filtro por `name`/`tag`/`archived`/`createdAt`, modal crear/editar con `name` (req, max 200), `tag` (opc, max 32), `description` (opc, max 2000), acciones inline archivar/eliminar con confirmacion. Reemplazo del placeholder en `home.html:4-9`.
 - **FALTA** no se valida el limite de 1 proyecto en plan gratuito.
-- **FALTA** no existe flujo de "archivar" ni "eliminar proyecto".
-- **BUG** `firestore.rules:112` y `firestore.rules:244-268` referencian `proyectos/{projectId}/issues/{issueId}/files` pero no hay reglas para `proyectos` ni `issues` en si. Las reglas de `proyectos/.../files` seran inalcanzables hasta que exista el modelo.
+- **FALTA** eliminar proyecto hoy borra solo el doc del proyecto; no borra en cascada sus `issues`/`files`/`passwords` asociadas (esos paths existen en reglas y en `ScopeContext` pero no tienen UI todavia).
+- **FALTA** UI para tareas dentro de proyecto (CU-06).
 
 ### CU-06 Gestion de tareas (normales y notas)
 
@@ -154,7 +154,7 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 Agregar reglas para las colecciones que faltan. Mantener owner-only.
 
-- `users/{uid}/proyectos/{projectId}`: `{ name (string <=200), description? (string <=2000), archived (bool), createdAt (timestamp) }`.
+- ~~`users/{uid}/proyectos/{projectId}`: `{ name (string <=200), description? (string <=2000), archived (bool), createdAt (timestamp) }`.~~ **Hecho (M3 + proyectos)**: shape actual incluye `tag? (string <=32)` y `updatedAt (timestamp)`. Reglas en `firestore.rules` seccion "Proyectos".
 - `users/{uid}/proyectos/{projectId}/issues/{issueId}`: `{ title (string <=200), description? (string <=20000), status ('pending'|'done'|null), isNote (bool), dueAt? (timestamp), createdAt (timestamp), updatedAt (timestamp) }`. `isNote=true` equivale a "nota": `status` debe ser null, `dueAt` debe ser null.
 - `users/{uid}/proyectos/{projectId}/issues/{issueId}/passwords/{passwordId}`: misma shape que `users/{uid}/passwords`.
 - `users/{uid}/proyectos/{projectId}/issues/{issueId}/files/{fileId}` + chunks: ya existe, verificar.
@@ -168,7 +168,7 @@ Ademas:
 
 ### 4.2 Capa de servicios (Angular)
 
-- Crear `ProjectRepository` (collection `proyectos` con CRUD + archive).
+- ~~Crear `ProjectRepository` (collection `proyectos` con CRUD + archive).~~ **Hecho (M3 + proyectos)**: `src/app/home/service/projects.repository.ts`.
 - Crear `IssueRepository` (subcollection `issues` con CRUD, incluye tipo `isNote`).
 - Crear `EventRepository` (collection `events` con CRUD).
 - Crear `SubscriptionRepository` (singleton `subscription`).
