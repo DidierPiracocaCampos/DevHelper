@@ -96,11 +96,11 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 ### CU-06 Gestion de tareas (normales y notas)
 
-- **FALTA** no existe coleccion `users/{uid}/proyectos/{projectId}/issues/{issueId}`.
-- **FALTA** no existe `IssueRepository` / servicio.
-- **FALTA** no existe UI: el card "Tareas" en `home.html:11` es placeholder.
-- **FALTA** no existe diferenciacion entre tarea "normal" (estado + fecha) y tarea "nota" (sin estado/fecha).
-- **FALTA** no existe flujo de edicion, marcar como hecha, archivar, eliminar.
+- **OK** coleccion `users/{uid}/proyectos/{projectId}/issues/{issueId}` con shape `{ title, description?, status ('pending'|'done'|null), isNote, priority ('normal'|'high'), dueAt?, createdAt, updatedAt }` (ver `firestore.rules` y `issue.interface.ts`).
+- **OK** `IssueRepository` con `addIssue` / `updateIssue` / `deleteIssue` / `toggleStatus` + mixin `withQuery` para filtrado (ver `issues.repository.ts`).
+- **OK** UI `issue-list` con filas (tareas + notas), modal crear/editar con `title` (req, max 200), `description` (opc, max 20000), `isNote`, `priority`, `dueAt` (solo para tareas), filtro, FAB "+", círculo de estado clickeable (cicla pending↔done; color: normal=gris, high=rojo, done=verde). Notas muestran icono `description` en lugar del círculo.
+- **PARCIAL** las notas no tienen orden dedicado: se mezclan con las tareas en la misma lista (sección única). Si se requiere separación visible, refactor futuro.
+- **PARCIAL** notificaciones / recordatorios por `dueAt` aún no implementados (CU-09 cubre recordatorios globales; las tareas con `dueAt` no disparan recordatorio todavía).
 - **BUG** `ScopeContext` ya define `kind: 'issue'` con `projectId` + `issueId`, pero nunca se setea (solo `setGlobal` se usa en `home.ts:67`). Codigo muerto.
 
 ### CU-07 Adjuntar ficheros
