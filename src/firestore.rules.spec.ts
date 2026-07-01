@@ -125,6 +125,30 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                 allow delete: if isOwner(userId);
               }
 
+              match /users/{userId}/proyectos/{projectId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && isBoundedString(request.resource.data.name, 200)
+                              && request.resource.data.name.size() > 0
+                              && (!('tag' in request.resource.data) || isBoundedString(request.resource.data.tag, 32))
+                              && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                              && request.resource.data.archived is bool
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && request.resource.data.keys().hasOnly(['name','tag','description','archived','createdAt','updatedAt']);
+                allow update: if isOwner(userId)
+                              && isBoundedString(request.resource.data.name, 200)
+                              && request.resource.data.name.size() > 0
+                              && (!('tag' in request.resource.data) || isBoundedString(request.resource.data.tag, 32))
+                              && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                              && request.resource.data.archived is bool
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && isUnchanged('createdAt')
+                              && request.resource.data.keys().hasOnly(['name','tag','description','archived','createdAt','updatedAt']);
+                allow delete: if isOwner(userId);
+              }
+
               match /users/{userId}/proyectos/{projectId}/issues/{issueId}/files/{fileId} {
                 allow read: if isOwner(userId);
                 allow create: if isOwner(userId)
@@ -736,6 +760,95 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const strangerCtx = testEnv.authenticatedContext('u2');
       await assertFails(getDoc(doc(strangerCtx.firestore(), eventPath('u1'))));
       await assertFails(deleteDoc(doc(strangerCtx.firestore(), eventPath('u1'))));
+    });
+  });
+
+  describe('users/{uid}/proyectos', () => {
+    const projectPath = (uid: string, id = 'p1') => `users/${uid}/proyectos/${id}`;
+
+    const validProject = () => ({
+      name: 'Yedra',
+      tag: 'frontend',
+      description: 'SPA workspace',
+      archived: false,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    it('owner can create, read, update and delete a project', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertSucceeds(setDoc(ref, validProject()));
+      await assertSucceeds(getDoc(ref));
+      await assertSucceeds(updateDoc(ref, { name: 'Yedra 2', updatedAt: Timestamp.now() }));
+      await assertSucceeds(deleteDoc(ref));
+    });
+
+    it('create accepts a project without optional fields', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1', 'p2'));
+      const minimal = {
+        name: 'Solo nombre',
+        archived: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      };
+      await assertSucceeds(setDoc(ref, minimal));
+    });
+
+    it('create rejects empty name', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), name: '' }));
+    });
+
+    it('create rejects oversized name (> 200)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), name: 'x'.repeat(201) }));
+    });
+
+    it('create rejects oversized tag (> 32)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), tag: 'x'.repeat(33) }));
+    });
+
+    it('create rejects oversized description (> 2000)', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), description: 'x'.repeat(2001) }));
+    });
+
+    it('create rejects when archived is not bool', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), archived: 'yes' }));
+    });
+
+    it('create rejects unknown field', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertFails(setDoc(ref, { ...validProject(), color: 'red' }));
+    });
+
+    it('update cannot change createdAt', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), projectPath('u1'));
+      await assertSucceeds(setDoc(ref, validProject()));
+      await assertFails(updateDoc(ref, { createdAt: Timestamp.fromMillis(0) }));
+    });
+
+    it('non-owner cannot read or write projects of another user', async () => {
+      const ownerCtx = testEnv.authenticatedContext('u1');
+      const ref = doc(ownerCtx.firestore(), projectPath('u1'));
+      await assertSucceeds(setDoc(ref, validProject()));
+
+      const strangerCtx = testEnv.authenticatedContext('u2');
+      const strangerRead = doc(strangerCtx.firestore(), projectPath('u1'));
+      await assertFails(getDoc(strangerRead));
+      await assertFails(deleteDoc(strangerRead));
+      await assertFails(setDoc(doc(strangerCtx.firestore(), projectPath('u1')), validProject()));
     });
   });
 });

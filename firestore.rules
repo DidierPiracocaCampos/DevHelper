@@ -82,6 +82,20 @@ service cloud.firestore {
     //   - createdAt: timestamp (required, immutable)
     //   - updatedAt: timestamp (required)
     //
+    // Subcollection: users/{userId}/proyectos
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required, <= 200, non-empty)
+    //   - tag: string (optional, <= 32)
+    //   - description: string (optional, <= 2000)
+    //   - archived: bool (required)
+    //   - createdAt: timestamp (required, immutable)
+    //   - updatedAt: timestamp (required)
+    //
+    // Subcollection: users/{userId}/proyectos/{projectId}/issues/{issueId}/files
+    // Document ID: auto-generated
+    // Fields: same shape as users/{userId}/files
+    //
     // Subcollection: users/{userId}/vault
     // Document ID: auto-generated
     // Fields:
@@ -256,6 +270,36 @@ service cloud.firestore {
 
       allow update: if isOwner(userId)
                     && hasValidFileMetadata(request.resource.data, false);
+
+      allow delete: if isOwner(userId);
+    }
+
+    // -------------------------------------------------------------------
+    // Proyectos
+    // -------------------------------------------------------------------
+    match /users/{userId}/proyectos/{projectId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+                    && isBoundedString(request.resource.data.name, 200)
+                    && request.resource.data.name.size() > 0
+                    && (!('tag' in request.resource.data) || isBoundedString(request.resource.data.tag, 32))
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                    && request.resource.data.archived is bool
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && request.resource.data.keys().hasOnly(['name', 'tag', 'description', 'archived', 'createdAt', 'updatedAt']);
+
+      allow update: if isOwner(userId)
+                    && isBoundedString(request.resource.data.name, 200)
+                    && request.resource.data.name.size() > 0
+                    && (!('tag' in request.resource.data) || isBoundedString(request.resource.data.tag, 32))
+                    && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 2000))
+                    && request.resource.data.archived is bool
+                    && isTimestamp(request.resource.data.createdAt)
+                    && isTimestamp(request.resource.data.updatedAt)
+                    && isUnchanged('createdAt')
+                    && request.resource.data.keys().hasOnly(['name', 'tag', 'description', 'archived', 'createdAt', 'updatedAt']);
 
       allow delete: if isOwner(userId);
     }
