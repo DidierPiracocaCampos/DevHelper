@@ -13,6 +13,7 @@ describe('UiCardButton', () => {
 
     fixture = TestBed.createComponent(UiCardButton);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('icon', 'add');
     fixture.detectChanges();
   });
 

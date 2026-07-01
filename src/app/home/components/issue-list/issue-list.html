@@ -1,4 +1,4 @@
-<ui-card title="Tareas" class="issue-list-card w-full h-full">
+<ui-card title="Tareas" theme="light" class="issue-list-card rounded-xl w-full h-full">
   <div class="issue-list-body">
     @if (!hasProject()) {
       <div data-testid="empty-no-project" class="issue-list-empty">
@@ -67,7 +67,7 @@
       (apply)="onFiltersApply($event)"
       (clear)="onFiltersClear()"
     />
-    <ui-card-button icon="add" shape="circle" severity="primary" (click)="openCreate()" />
+    <ui-card-button icon="add" shape="circle" (click)="openCreate()" />
   </div>
 </ui-card>
 
