@@ -1,0 +1,136 @@
+<ui-card title="Proyectos" class="w-full h-full">
+  <div class="w-full h-full rounded-xl custom-scroll overflow-hidden">
+    <div class="flex items-center gap-2 px-3 py-2 overflow-x-auto w-full h-full">
+      @if (!collection.isLoading()) {
+        @if (collection.hasValue()) {
+          @for (p of collection.value(); track p.id) {
+            <div
+              data-testid="project-pill"
+              role="button"
+              tabindex="0"
+              class="group shrink-0 rounded-full px-4 py-2 cursor-pointer flex items-center gap-2 transition-colors"
+              [class.bg-primary]="selectedId() === p.id"
+              [class.text-primary-content]="selectedId() === p.id"
+              [class.bg-base-200]="selectedId() !== p.id"
+              [class.text-base-content]="selectedId() !== p.id"
+              [class.border]="selectedId() !== p.id"
+              [class.border-base-300]="selectedId() !== p.id"
+              [class.opacity-60]="p.archived"
+              (click)="select(p)"
+              (keydown.enter)="select(p)"
+            >
+              @if (p.archived) {
+                <span class="icon text-sm">inventory_2</span>
+              }
+              <span class="font-semibold whitespace-nowrap">{{ p.name }}</span>
+              <div
+                class="flex items-center gap-1 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                (click)="$event.stopPropagation()"
+                (keydown.enter)="$event.stopPropagation()"
+              >
+                <ui-tooltip text="Editar" severity="info">
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-circle btn-ghost"
+                    (click)="openEdit(p)"
+                    aria-label="Editar proyecto"
+                  >
+                    <span class="icon text-sm">edit</span>
+                  </button>
+                </ui-tooltip>
+                <ui-tooltip text="Archivar" severity="warning">
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-circle btn-ghost"
+                    (click)="archive(p)"
+                    aria-label="Archivar proyecto"
+                  >
+                    <span class="icon text-sm">{{ p.archived ? 'unarchive' : 'inventory_2' }}</span>
+                  </button>
+                </ui-tooltip>
+                <ui-tooltip text="Eliminar" severity="error">
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-circle btn-ghost"
+                    (click)="deleteProject(p)"
+                    aria-label="Eliminar proyecto"
+                  >
+                    <span class="icon text-sm">delete</span>
+                  </button>
+                </ui-tooltip>
+              </div>
+            </div>
+          } @empty {
+            <div class="text-base-100/60 text-center m-auto text-sm w-full">
+              Crea tu primer proyecto
+            </div>
+          }
+        }
+      } @else {
+        <div class="skeleton h-8 w-32 rounded-full"></div>
+        <div class="skeleton h-8 w-24 rounded-full"></div>
+        <div class="skeleton h-8 w-28 rounded-full"></div>
+      }
+    </div>
+  </div>
+
+  <div actions>
+    <filter-bar
+      [schema]="filterSchema"
+      (apply)="onFiltersApply($event)"
+      (clear)="onFiltersClear()"
+    />
+    <ui-card-button icon="add" shape="circle" severity="primary" (click)="openCreate()" />
+  </div>
+</ui-card>
+
+<ui-modal
+  [title]="formStatus().editing ? 'Editar proyecto' : 'Nuevo proyecto'"
+  size="md"
+  [(isOpen)]="isFormModalOpen"
+>
+  <div body>
+    <form [formGroup]="_form" class="pt-2 grid gap-4" (reset)="cancelForm()" (ngSubmit)="save()">
+      <ui-text-field labelText="Nombre" inputId="name" formControlName="name">
+        <ng-template errorMessage="required">
+          <p class="validator-hint">Este campo es obligatorio</p>
+        </ng-template>
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 200 caracteres</p>
+        </ng-template>
+      </ui-text-field>
+      <ui-text-field
+        labelText="Tag"
+        inputId="tag"
+        formControlName="tag"
+        placeholder="frontend, backend, devops..."
+      >
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 32 caracteres</p>
+        </ng-template>
+      </ui-text-field>
+      <ui-textarea-field
+        inputId="description"
+        formControlName="description"
+        [rows]="3"
+        [maxlength]="2000"
+        placeholder="Contexto del proyecto (opcional)"
+      >
+        <ng-template uiLabel>Descripción</ng-template>
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 2000 caracteres</p>
+        </ng-template>
+      </ui-textarea-field>
+
+      <div class="flex space-x-3 pt-2 justify-end">
+        <ui-button label="Cancelar" severity="secondary" type="reset" />
+        <ui-button
+          [label]="formStatus().editing ? 'Guardar' : 'Crear'"
+          severity="primary"
+          type="submit"
+          [loading]="formStatus().loading"
+        />
+      </div>
+    </form>
+  </div>
+</ui-modal>
