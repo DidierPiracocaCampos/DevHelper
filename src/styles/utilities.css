@@ -160,4 +160,45 @@
   .text-success {
     color: var(--color-success);
   }
+
+  /* Auto-pair bg-* with its *-content so text is legible by default.
+     :where() keeps specificity at 0,0,0 so any text-* on the same element
+     or a child with text-* still wins. Variants (hover:/focus:/opacity) and
+     DaisyUI components are intentionally not touched. */
+  :where(.bg-base-100) {
+    color: var(--color-base-content);
+  }
+  :where(.bg-base-200) {
+    color: var(--color-base-content);
+  }
+  :where(.bg-base-300) {
+    color: var(--color-base-content);
+  }
+  :where(.bg-base-content) {
+    color: var(--color-base-100);
+  }
+  :where(.bg-primary) {
+    color: var(--color-primary-content);
+  }
+  :where(.bg-secondary) {
+    color: var(--color-secondary-content);
+  }
+  :where(.bg-accent) {
+    color: var(--color-accent-content);
+  }
+  :where(.bg-neutral) {
+    color: var(--color-neutral-content);
+  }
+  :where(.bg-info) {
+    color: var(--color-info-content);
+  }
+  :where(.bg-success) {
+    color: var(--color-success-content);
+  }
+  :where(.bg-warning) {
+    color: var(--color-warning-content);
+  }
+  :where(.bg-error) {
+    color: var(--color-error-content);
+  }
 }
