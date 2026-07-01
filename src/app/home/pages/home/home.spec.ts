@@ -14,6 +14,7 @@ import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { EventRepository } from '../../service/events.repository';
 import { PasswordRepository } from '../../service/passwords.repository';
+import { ProjectRepository } from '../../service/projects.repository';
 import { ToastService } from '../../../shared/service/toast';
 
 if (!HTMLDialogElement.prototype.showModal) {
@@ -89,7 +90,9 @@ class FakeFileRepo {
 class FakeScopeContext {
   setGlobal = vi.fn();
   setIssue = vi.fn();
-  scope = signal<'global'>('global');
+  setProject = vi.fn();
+  selectedProjectId = signal<string | null>(null);
+  scope = signal<'global' | { kind: 'project'; projectId: string }>('global');
 }
 
 class FakePrefsService {
@@ -154,6 +157,27 @@ class FakeToast {
   closeWithAnimation = vi.fn();
 }
 
+class FakeProjectRepository {
+  getCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  getFilteredCollection = vi.fn().mockReturnValue({
+    value: () => undefined,
+    isLoading: () => false,
+    hasValue: () => false,
+    error: () => undefined,
+    reload: vi.fn(),
+  });
+  addProject = vi.fn();
+  updateProject = vi.fn();
+  archiveProject = vi.fn();
+  deleteProject = vi.fn();
+}
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
@@ -187,6 +211,7 @@ describe('Home', () => {
         { provide: ConfirmService, useValue: new FakeConfirm() },
         { provide: EventRepository, useValue: new FakeEventRepository() },
         { provide: PasswordRepository, useValue: passwordRepo },
+        { provide: ProjectRepository, useValue: new FakeProjectRepository() },
         { provide: ToastService, useValue: toast },
       ],
     }).compileComponents();

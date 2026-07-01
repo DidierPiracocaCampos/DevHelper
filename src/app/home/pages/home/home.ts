@@ -10,6 +10,7 @@ import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shar
 import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import HomeCalendar from '../../components/calendar/home-calendar';
+import { ProjectList } from '../../components/project-list/project-list';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,7 @@ import HomeCalendar from '../../components/calendar/home-calendar';
     UiConfigModal,
     NasaImageSection,
     HomeCalendar,
+    ProjectList,
   ],
   templateUrl: './home.html',
 })
