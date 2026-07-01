@@ -22,6 +22,7 @@ import {
   addDoc,
   collection,
   Timestamp,
+  deleteField,
 } from 'firebase/firestore';
 
 const FIRESTORE_EMULATOR_HOST = process.env['FIRESTORE_EMULATOR_HOST'];
@@ -987,7 +988,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const ref = doc(ctx.firestore(), issuePath('u1'));
       await assertSucceeds(setDoc(ref, validTask()));
       await assertSucceeds(updateDoc(ref, { solution: 'nueva' }));
-      await assertSucceeds(updateDoc(ref, { solution: null as unknown as string }));
+      await assertSucceeds(updateDoc(ref, { solution: deleteField() }));
     });
 
     it('rejects issue with invalid status', async () => {
