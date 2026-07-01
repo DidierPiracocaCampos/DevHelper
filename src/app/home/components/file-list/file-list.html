@@ -1,11 +1,11 @@
 <ui-card title="Archivos" class="w-full h-full">
-  <div class="p-2 bg-base-content w-full h-full rounded-2xl custom-scroll">
+  <div class="w-full h-full rounded-xl custom-scroll">
     <ul class="list space-y-2 w-full h-full overflow-y-auto gap-1">
       @if (!collection.isLoading()) {
         @if (collection.hasValue()) {
           @for (item of collection.value(); track item.id) {
-            <ui-list-item severity="secondary" [label]="item.name" [sub]="subLabel(item)">
-              <span leading class="icon icon-lg text-base-100/60">
+            <ui-list-item severity="primary" [label]="item.name" [sub]="subLabel(item)">
+              <span leading class="icon icon-lg text-base-100">
                 {{ iconFor(item.mimeType) }}
               </span>
               <div actions>

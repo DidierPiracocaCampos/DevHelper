@@ -14,11 +14,11 @@
 }
 
 .card-header-custom {
-  margin-bottom: var(--spacing-3);
+  margin-bottom: var(--spacing-1);
 }
 
 :host ::ng-deep [actions] {
-  @apply flex flex-col gap-4 justify-center items-center;
+  @apply flex flex-col gap-2 justify-center items-center;
 }
 
 .card-content {
@@ -32,10 +32,10 @@
 .card-actions-custom {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4);
+  gap: var(--spacing-2);
   justify-content: center;
   align-items: center;
-  padding: var(--spacing-4);
+  padding: var(--spacing-2);
 }
 
 :host {
