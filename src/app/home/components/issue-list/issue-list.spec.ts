@@ -357,4 +357,42 @@ describe('IssueList', () => {
     expect(typeof message).toBe('string');
     expect(message.length).toBeGreaterThan(0);
   });
+
+  it('openInNewTab opens the detail route in a new browser tab', () => {
+    const issue = makeIssue({ id: 'i1' });
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    component.openInNewTab(issue);
+    expect(openSpy).toHaveBeenCalledWith('/proyect/p1/issues/i1', '_blank', 'noopener,noreferrer');
+  });
+
+  it('clicking the row body opens the detail in a new tab', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    repo.setAll([makeIssue({ id: 'a', title: 'A' })]);
+    fixture.detectChanges();
+    const body = fixture.nativeElement.querySelector('.issue-list-row-body') as HTMLElement;
+    body.click();
+    expect(openSpy).toHaveBeenCalledWith('/proyect/p1/issues/a', '_blank', 'noopener,noreferrer');
+  });
+
+  it('clicking the status circle does NOT open the detail in a new tab', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    repo.setAll([makeIssue({ id: 'a', status: 'pending' })]);
+    fixture.detectChanges();
+    const circle = fixture.nativeElement.querySelector(
+      '[data-testid="status-circle"]',
+    ) as HTMLButtonElement;
+    circle.click();
+    expect(openSpy).not.toHaveBeenCalled();
+  });
+
+  it('clicking an actions button does NOT open the detail in a new tab', () => {
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
+    repo.setAll([makeIssue({ id: 'a' })]);
+    fixture.detectChanges();
+    const deleteBtn = fixture.nativeElement.querySelector(
+      '[data-testid="issue-row"] ui-list-button[icon="delete"] button',
+    ) as HTMLButtonElement;
+    deleteBtn.click();
+    expect(openSpy).not.toHaveBeenCalled();
+  });
 });

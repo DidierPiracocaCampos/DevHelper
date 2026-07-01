@@ -10,19 +10,26 @@
         @if (!collection.isLoading()) {
           @if (collection.hasValue()) {
             @for (issue of collection.value(); track issue.id) {
-              <ui-list-item
-                data-testid="issue-row"
-                severity="secondary"
-                [label]="issue.title"
-                [sub]="issue.description ?? ''"
-              >
-                <div actions>
+              <li class="issue-list-row-shell" data-testid="issue-row">
+                <div
+                  class="issue-list-row-body"
+                  role="button"
+                  tabindex="0"
+                  (click)="openInNewTab(issue)"
+                  (keydown.enter)="openInNewTab(issue)"
+                >
+                  <span class="issue-list-row-title">{{ issue.title }}</span>
+                  @if (issue.description) {
+                    <span class="issue-list-row-sub">{{ issue.description }}</span>
+                  }
+                </div>
+                <div class="issue-list-row-actions">
                   <ul class="flex items-center gap-1">
                     <ui-tooltip text="Eliminar" severity="error">
                       <ui-list-button icon="delete" severity="error" (click)="remove(issue)" />
                     </ui-tooltip>
                     <ui-tooltip text="Editar" severity="info">
-                      <ui-list-button icon="edit" severity="info" (click)="openEdit(issue)" />
+                      <ui-list-button icon="edit" severity="info" (click)="openInNewTab(issue)" />
                     </ui-tooltip>
                     @if (issue.isNote) {
                       <span data-testid="note-icon" class="icon text-base-100/60" aria-label="Nota">
@@ -42,7 +49,7 @@
                     }
                   </ul>
                 </div>
-              </ui-list-item>
+              </li>
             } @empty {
               <div class="issue-list-empty">
                 <span class="icon icon-lg opacity-40">checklist</span>

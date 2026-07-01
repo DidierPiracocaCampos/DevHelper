@@ -16,7 +16,6 @@ import {
   UiDateField,
   ErrorMessage,
 } from '../../../shared/forms/fields';
-import { UiListItem } from '../../../shared/components/item-list/item-list';
 import { UiListButton } from '../../../shared/components/list-button/list-button';
 import { ActiveFilters, FilterBar, FilterService } from '../../../shared/filter';
 import { ConfirmService } from '../../../shared/service/confirm.service';
@@ -41,7 +40,6 @@ interface IssueFormStatus {
     UiTextareaField,
     UiDateField,
     ErrorMessage,
-    UiListItem,
     UiListButton,
     FilterBar,
   ],
@@ -193,6 +191,13 @@ export class IssueList {
       },
       error: () => this._toast.error('No se pudo eliminar'),
     });
+  }
+
+  openInNewTab(issue: IssueI & { id: string }): void {
+    const projectId = this._scope.selectedProjectId();
+    if (!projectId) return;
+    const url = `/proyect/${projectId}/issues/${issue.id}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   statusCircleClass(issue: IssueI): string {
