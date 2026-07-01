@@ -120,7 +120,7 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 - **OK** `PasswordCrypto` cifra con vault key.
 - **OK** UI `password-list` con add/list/view (descifra bajo demanda) / copy / edit / delete.
 - **OK** `PasswordI` model: `{ name, password: { cipher, iv }, secure, createdAt?, updatedAt? }`. Reglas y código alineados (filter integration, M3).
-- **PARCIAL** Filtros: operativo por `name`, `secure`, `createdAt` (filter-bar en `password-list`, sin persistencia entre recargas). Sin búsqueda full-text.
+- **PARCIAL** Filtros: operativo por `name`, `secure`, `createdAt` (filter-bar en `password-list`, sin persistencia entre recargas). Sin búsqueda full-text. `FilterService` es no-singleton: cada `PasswordList`/`FileList` declara `providers: [FilterService]`, por lo que los filtros de contraseñas y archivos están aislados (aplicar en uno no afecta al otro).
 - **FALTA** password-por-tarea: no existe ruta `proyectos/.../issues/.../passwords` ni en reglas ni en codigo.
 - **FALTA** "auto-ocultar tras N segundos" tras mostrar un password (proteccion shoulder-surf). Hoy se queda visible.
 - **FALTA** "codigo de recuperacion" del vault (mencionado en `casos-de-uso.md` como asuncion): no implementado. Si el usuario pierde el PIN y no tiene passkey sincronizada, los passwords son irrecuperables.
