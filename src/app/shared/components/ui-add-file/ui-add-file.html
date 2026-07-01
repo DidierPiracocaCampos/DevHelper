@@ -51,7 +51,11 @@
           </ui-list-item>
 
           @if (item.status === 'uploading' || item.status === 'done') {
-            <progress class="progress progress-primary w-full h-1" [value]="item.progress" max="100"></progress>
+            <progress
+              class="progress progress-primary w-full h-1"
+              [value]="item.progress"
+              max="100"
+            ></progress>
           } @else if (item.status === 'error' && item.error) {
             <p class="text-xs text-error">{{ item.error }}</p>
           }

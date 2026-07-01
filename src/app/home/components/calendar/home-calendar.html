@@ -12,7 +12,11 @@
           >
             <span class="icon icon-sm">chevron_left</span>
           </button>
-          <button type="button" class="btn btn-ghost btn-sm home-calendar-today" (click)="goToday()">
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm home-calendar-today"
+            (click)="goToday()"
+          >
             Hoy
           </button>
           <button
@@ -64,11 +68,7 @@
         </div>
       } @else {
         @for (ev of events(); track trackById($index, ev); let i = $index) {
-          <calendar-event
-            [event]="ev"
-            [severity]="severityFor(i)"
-            (edit)="openEdit($event)"
-          />
+          <calendar-event [event]="ev" [severity]="severityFor(i)" (edit)="openEdit($event)" />
         }
       }
     </div>
@@ -93,11 +93,7 @@
         </ng-template>
       </ui-text-field>
 
-      <ui-textarea-field
-        inputId="event-description"
-        formControlName="description"
-        [rows]="3"
-      >
+      <ui-textarea-field inputId="event-description" formControlName="description" [rows]="3">
         <ng-template uiLabel>Descripción</ng-template>
         <ng-template errorMessage="maxlength">
           <p class="validator-hint">Máximo 2000 caracteres</p>

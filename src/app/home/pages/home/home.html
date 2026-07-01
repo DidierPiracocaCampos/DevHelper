@@ -9,7 +9,9 @@
   </ui-card>
   <ui-card class="col-span-5" title="Buscador"></ui-card>
   <ui-card class="col-span-7 row-span-2" theme="light" title="Tareas"></ui-card>
-  <div class="col-span-1 w-fit justify-self-center self-center flex flex-col justify-center items-center gap-4">
+  <div
+    class="col-span-1 w-fit justify-self-center self-center flex flex-col justify-center items-center gap-4"
+  >
     <ui-card-button icon="data_object" size="lg" (click)="openVault()" />
     <ui-card-button icon="settings" size="lg" (click)="openConfig()" />
     <ui-card-button icon="logout" size="lg" (click)="logout()" />
@@ -25,4 +27,3 @@
 <ui-config-modal [(isOpen)]="isConfigOpen">
   <nasa-image-section />
 </ui-config-modal>
-

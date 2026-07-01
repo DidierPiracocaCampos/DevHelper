@@ -5,7 +5,9 @@
         @if (collection.hasValue()) {
           @for (item of collection.value(); track item.id) {
             <ui-list-item severity="secondary" [label]="item.name" [sub]="subLabel(item)">
-              <span leading class="icon icon-lg text-base-100/60">{{ iconFor(item.mimeType) }}</span>
+              <span leading class="icon icon-lg text-base-100/60">
+                {{ iconFor(item.mimeType) }}
+              </span>
               <div actions>
                 <ul class="flex">
                   <ui-tooltip text="Ver" severity="info">
@@ -35,10 +37,24 @@
   </div>
 
   <div actions>
-    <filter-bar [schema]="filterSchema" (apply)="onFiltersApply($event)" (clear)="onFiltersClear()" />
+    <filter-bar
+      [schema]="filterSchema"
+      (apply)="onFiltersApply($event)"
+      (clear)="onFiltersClear()"
+    />
     <ui-card-button icon="add" shape="circle" severity="primary" (click)="openAdd()" />
   </div>
 </ui-card>
 
-<ui-add-file [namespace]="namespace()" [encrypt]="true" [(isOpen)]="isAddOpen" (added)="onAdded()" />
-<ui-view-file [file]="viewFile()" [namespace]="namespace()" [(isOpen)]="isViewOpen" (closed)="closeView()" />
+<ui-add-file
+  [namespace]="namespace()"
+  [encrypt]="true"
+  [(isOpen)]="isAddOpen"
+  (added)="onAdded()"
+/>
+<ui-view-file
+  [file]="viewFile()"
+  [namespace]="namespace()"
+  [(isOpen)]="isViewOpen"
+  (closed)="closeView()"
+/>
