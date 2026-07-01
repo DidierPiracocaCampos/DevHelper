@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Timestamp, FieldValue, deleteField } from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
@@ -31,6 +32,7 @@ interface IssueFormStatus {
   selector: 'issue-list',
   imports: [
     ReactiveFormsModule,
+    NgClass,
     UiCard,
     UiCardButton,
     UiButton,

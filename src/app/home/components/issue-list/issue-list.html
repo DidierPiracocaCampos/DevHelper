@@ -36,16 +36,16 @@
                         description
                       </span>
                     } @else {
-                      <button
-                        type="button"
-                        data-testid="status-circle"
-                        class="status-circle"
-                        [class]="statusCircleClass(issue)"
-                        [attr.aria-label]="
-                          issue.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
-                        "
-                        (click)="toggleStatus(issue)"
-                      ></button>
+          <button
+            type="button"
+            data-testid="status-circle"
+            class="status-circle"
+            [ngClass]="statusCircleClass(issue)"
+            [attr.aria-label]="
+              issue.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
+            "
+            (click)="toggleStatus(issue)"
+          ></button>
                     }
                   </ul>
                 </div>

@@ -12,7 +12,7 @@ import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { IssueI, IssueUpdateInput } from '../../domain/issue.interface';
+import { IssueI, IssueStatus, IssueUpdateInput } from '../../domain/issue.interface';
 import { IssueRepository } from '../../service/issues.repository';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
@@ -142,10 +142,12 @@ export class IssueDetail implements OnDestroy {
   async toggleStatus(): Promise<void> {
     const it = this.issue();
     if (!it || it.isNote) return;
+    const next: IssueStatus = it.status === 'done' ? 'pending' : 'done';
+    this.issue.set({ ...it, status: next });
     try {
       await firstValueFrom(this._repo.toggleStatus(it.id!, it.status));
-      this.reload();
     } catch (_err) {
+      this.issue.set(it);
       this._toast.error('No se pudo cambiar el estado');
     }
   }
