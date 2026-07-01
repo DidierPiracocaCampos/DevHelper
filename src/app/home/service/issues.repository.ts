@@ -49,6 +49,7 @@ export class IssueRepository extends withQuery<IssueI>()(
       updatedAt: now,
     };
     if (input.description !== undefined) payload.description = input.description;
+    if (input.solution !== undefined) payload.solution = input.solution;
     if (!input.isNote && input.dueAt !== undefined) payload.dueAt = input.dueAt;
     return this.addDoc(payload);
   }

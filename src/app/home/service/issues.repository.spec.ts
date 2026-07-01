@@ -93,6 +93,31 @@ describe('IssueRepository (contract)', () => {
       expect(written.status).toBe('pending');
       expect(written.priority).toBe('normal');
     });
+
+    it('forwards solution when present', async () => {
+      const input: IssueCreateInput = {
+        title: 'Con solucion',
+        status: 'pending',
+        isNote: false,
+        priority: 'normal',
+        solution: 'Borrar cache y reiniciar',
+      };
+      await firstValueFrom(repo.addIssue(input));
+      const written = addDocSpy.mock.calls[0][0] as IssueI;
+      expect(written.solution).toBe('Borrar cache y reiniciar');
+    });
+
+    it('omits solution when input omits it', async () => {
+      const input: IssueCreateInput = {
+        title: 'Sin solucion',
+        status: 'pending',
+        isNote: false,
+        priority: 'normal',
+      };
+      await firstValueFrom(repo.addIssue(input));
+      const written = addDocSpy.mock.calls[0][0] as IssueI;
+      expect(written.solution).toBeUndefined();
+    });
   });
 
   describe('updateIssue', () => {
@@ -110,6 +135,12 @@ describe('IssueRepository (contract)', () => {
       expect(updatedMs).toBeGreaterThanOrEqual(before);
       expect(updatedMs).toBeLessThanOrEqual(after);
       expect((patch as { createdAt?: unknown }).createdAt).toBeUndefined();
+    });
+
+    it('forwards solution in the patch', async () => {
+      await firstValueFrom(repo.updateIssue('i1', { solution: 'nueva' }));
+      const patch = updateDocSpy.mock.calls[0][1] as Partial<IssueI>;
+      expect(patch.solution).toBe('nueva');
     });
   });
 
