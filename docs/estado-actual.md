@@ -17,11 +17,12 @@ Convenciones:
 - **Nombre:** DevHelper
 - **Tipo:** SPA Angular
 - **Stack:** Angular 20 + DaisyUI 5 + Tailwind 4 + Firebase 11 (Auth + Firestore)
-- **Estado:** pre-MVP. Auth, vault y elementos globales (passwords/files) funcionan; **proyectos, tareas, eventos, busqueda y membresia no existen**.
+- **Estado:** pre-MVP. Auth, vault, elementos globales (passwords/files), proyectos, tareas y vista detalle de issue funcionan; **eventos, busqueda y membresia no existen**.
 - **Package manager:** pnpm (workspace)
 - **Tests:** Karma (default Angular) + Vitest (instalado, sin uso visible)
 - **Lint/format:** ESLint + Prettier configurados
 - **CI:** ninguno
+- **Issue detail page**: ruta `/proyect/:projectId/issues/:issueId` (singular en URL; plural en Firestore). Pantalla completa con header form (titulo, descripcion, **solucion** - campo nuevo opcional), status circle, paneles embebidos de archivos y contrasenas, y 3 botones de accion (Exportar [placeholder], Eliminar, Guardar). Abre desde `<issue-list>` en una nueva pestana.
 
 ## 2. Estructura relevante
 
@@ -96,12 +97,13 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 ### CU-06 Gestion de tareas (normales y notas)
 
-- **OK** coleccion `users/{uid}/proyectos/{projectId}/issues/{issueId}` con shape `{ title, description?, status ('pending'|'done'|null), isNote, priority ('normal'|'high'), dueAt?, createdAt, updatedAt }` (ver `firestore.rules` y `issue.interface.ts`).
-- **OK** `IssueRepository` con `addIssue` / `updateIssue` / `deleteIssue` / `toggleStatus` + mixin `withQuery` para filtrado (ver `issues.repository.ts`).
-- **OK** UI `issue-list` con filas (tareas + notas), modal crear/editar con `title` (req, max 200), `description` (opc, max 20000), `isNote`, `priority`, `dueAt` (solo para tareas), filtro, FAB "+", círculo de estado clickeable (cicla pending↔done; color: normal=gris, high=rojo, done=verde). Notas muestran icono `description` en lugar del círculo.
+- **OK** coleccion `users/{uid}/proyectos/{projectId}/issues/{issueId}` con shape `{ title, description?, solution?, status ('pending'|'done'|null), isNote, priority ('normal'|'high'), dueAt?, createdAt, updatedAt }` (ver `firestore.rules` y `issue.interface.ts`).
+- **OK** `IssueRepository` con `addIssue` / `updateIssue` / `deleteIssue` / `toggleStatus` / `getById` + mixin `withQuery` para filtrado (ver `issues.repository.ts`).
+- **OK** UI `issue-list` con filas (tareas + notas), modal crear (solo "nuevo" — la edicion navega a la pagina detalle), filtro, FAB "+", círculo de estado clickeable (cicla pending↔done; color: normal=gris, high=rojo, done=verde). Notas muestran icono `description` en lugar del círculo. Click en fila abre `/proyect/:projectId/issues/:issueId` en una nueva pestana via `window.open(url, '_blank', 'noopener,noreferrer')`.
+- **OK** Pagina detalle `<issue-detail>` en `/proyect/:projectId/issues/:issueId` con header form (titulo, descripcion, **solucion** - campo nuevo opcional, status circle clickable), dos paneles lado-a-lado (`<file-list>` y `<password-list>` embebidos que siguen el scope automaticamente via `ScopeContext.setIssue`), y 3 botones de accion (Exportar [placeholder toast], Eliminar [con confirm + `window.close()` si fue abierto via `window.open`], Guardar).
 - **PARCIAL** las notas no tienen orden dedicado: se mezclan con las tareas en la misma lista (sección única). Si se requiere separación visible, refactor futuro.
 - **PARCIAL** notificaciones / recordatorios por `dueAt` aún no implementados (CU-09 cubre recordatorios globales; las tareas con `dueAt` no disparan recordatorio todavía).
-- **BUG** `ScopeContext` ya define `kind: 'issue'` con `projectId` + `issueId`, pero nunca se setea (solo `setGlobal` se usa en `home.ts:67`). Codigo muerto.
+- **OK** `ScopeContext.setIssue(projectId, issueId)` ahora se invoca desde `<issue-detail>` (en constructor) y `setGlobal()` se llama en `ngOnDestroy`. `FileRepository` y `PasswordRepository` siguen el scope automaticamente.
 
 ### CU-07 Adjuntar ficheros
 
@@ -121,7 +123,7 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 - **OK** UI `password-list` con add/list/view (descifra bajo demanda) / copy / edit / delete.
 - **OK** `PasswordI` model: `{ name, password: { cipher, iv }, secure, createdAt?, updatedAt? }`. Reglas y código alineados (filter integration, M3).
 - **PARCIAL** Filtros: operativo por `name`, `secure`, `createdAt` (filter-bar en `password-list`, sin persistencia entre recargas). Sin búsqueda full-text. `FilterService` es no-singleton: cada `PasswordList`/`FileList` declara `providers: [FilterService]`, por lo que los filtros de contraseñas y archivos están aislados (aplicar en uno no afecta al otro).
-- **FALTA** password-por-tarea: no existe ruta `proyectos/.../issues/.../passwords` ni en reglas ni en codigo.
+- **OK** password-por-tarea: ruta `users/{uid}/proyectos/{projectId}/issues/{issueId}/passwords/{passwordId}` con la misma shape que `users/{uid}/passwords`. `PasswordRepository` es scope-aware y reusa `<password-list>` dentro de `<issue-detail>`.
 - **FALTA** "auto-ocultar tras N segundos" tras mostrar un password (proteccion shoulder-surf). Hoy se queda visible.
 - **FALTA** "codigo de recuperacion" del vault (mencionado en `casos-de-uso.md` como asuncion): no implementado. Si el usuario pierde el PIN y no tiene passkey sincronizada, los passwords son irrecuperables.
 - **FALTA** UI para reautenticacion (`Authenticator.reauthenticate` existe en codigo pero sin pantalla).
