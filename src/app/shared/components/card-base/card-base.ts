@@ -26,7 +26,7 @@ export class UiCard {
 
   readonly _themeClass = computed<string>(() => {
     const theme = this.theme();
-    return theme === 'dark' ? 'bg-base-100' : 'bg-primary text-primary-content';
+    return theme === 'dark' ? 'bg-base-100' : 'bg-base-content text-base-100';
   });
 
   readonly _variantClass = computed<string>(() => {
