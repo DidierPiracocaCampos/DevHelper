@@ -122,12 +122,13 @@ describe('FileList', () => {
         { provide: VaultSecurity, useValue: vault },
         { provide: ConfirmService, useValue: confirm },
         { provide: ToastService, useValue: toast },
+        FilterService,
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FileList);
     component = fixture.componentInstance;
-    filter = TestBed.inject(FilterService);
+    filter = fixture.componentRef.injector.get(FilterService);
     filter.reset();
     fixture.detectChanges();
   });

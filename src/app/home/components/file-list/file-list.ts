@@ -30,6 +30,7 @@ import { UiViewFile } from '../../../shared/components/ui-view-file/ui-view-file
     UiAddFile,
     UiViewFile,
   ],
+  providers: [FilterService],
   templateUrl: './file-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

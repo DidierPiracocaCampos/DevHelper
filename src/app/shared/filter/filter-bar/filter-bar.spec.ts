@@ -36,6 +36,7 @@ describe('FilterBar', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FilterBar],
+      providers: [FilterService],
     }).compileComponents();
 
     fixture = TestBed.createComponent<FilterBar<DemoEntity>>(FilterBar);

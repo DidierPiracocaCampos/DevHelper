@@ -132,12 +132,13 @@ describe('PasswordList', () => {
         { provide: PasswordRepository, useValue: repo },
         { provide: VaultSecurity, useValue: vault },
         { provide: ToastService, useValue: toast },
+        FilterService,
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PasswordList);
     component = fixture.componentInstance;
-    filter = TestBed.inject(FilterService);
+    filter = fixture.componentRef.injector.get(FilterService);
     filter.reset();
     fixture.detectChanges();
   });

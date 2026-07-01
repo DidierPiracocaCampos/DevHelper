@@ -48,6 +48,7 @@ interface ViewStatus {
     UiTooltipComponent,
     FilterBar,
   ],
+  providers: [FilterService],
   templateUrl: './password-list.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -97,4 +97,14 @@ describe('FilterService', () => {
       filters: [['createdAt', '>', expect.any(Date)]],
     });
   });
+
+  it('instances are independent - filters applied to one do not leak to another', () => {
+    const serviceA = new FilterService();
+    const serviceB = new FilterService();
+    serviceA.apply(demoSchema, [{ key: 'name', op: '==' as const, value: 'foo' }]);
+    expect(serviceA.state()).toEqual([{ key: 'name', op: '==', value: 'foo' }]);
+    expect(serviceB.state()).toEqual([]);
+    expect(serviceA.queryOptions()).toEqual({ filters: [['name', '==', 'foo']] });
+    expect(serviceB.queryOptions()).toEqual({});
+  });
 });

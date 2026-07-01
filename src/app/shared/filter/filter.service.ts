@@ -2,9 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { QueryOptions } from '../api/api.interfaces';
 import { ActiveFilters, FilterField, FilterOp, FilterSchema } from './filter.types';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class FilterService {
   readonly state = signal<ActiveFilters>([]);
 
