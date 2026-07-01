@@ -18,6 +18,10 @@
   padding: 0.5rem;
 }
 
+.issue-list-body ui-list-item {
+  --item-list-row-padding-right: var(--spacing-4);
+}
+
 .issue-list-empty {
   display: flex;
   flex-direction: column;

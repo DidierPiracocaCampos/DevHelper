@@ -8,7 +8,8 @@
   justify-content: space-between;
   border-radius: var(--list-row-radius);
   transition: all var(--transition-fast);
-  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-3);
+  padding: var(--spacing-1) var(--item-list-row-padding-right, var(--spacing-1)) var(--spacing-1)
+    var(--spacing-3);
 }
 
 .item-list-primary {
