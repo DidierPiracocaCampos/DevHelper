@@ -103,6 +103,36 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                 allow delete: if isOwner(userId);
               }
 
+              match /users/{userId}/proyectos/{projectId}/issues/{issueId}/passwords/{passwordId} {
+                allow read: if isOwner(userId);
+                allow create: if isOwner(userId)
+                              && isBoundedString(request.resource.data.name, 200)
+                              && request.resource.data.password is map
+                              && request.resource.data.password.keys().hasOnly(['cipher', 'iv'])
+                              && request.resource.data.password.cipher is list
+                              && request.resource.data.password.iv is list
+                              && request.resource.data.password.cipher.size() <= 4096
+                              && request.resource.data.password.iv.size() <= 256
+                              && request.resource.data.secure is bool
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && request.resource.data.keys().hasOnly(['name', 'password', 'secure', 'createdAt', 'updatedAt']);
+                allow update: if isOwner(userId)
+                              && isBoundedString(request.resource.data.name, 200)
+                              && request.resource.data.password is map
+                              && request.resource.data.password.keys().hasOnly(['cipher', 'iv'])
+                              && request.resource.data.password.cipher is list
+                              && request.resource.data.password.iv is list
+                              && request.resource.data.password.cipher.size() <= 4096
+                              && request.resource.data.password.iv.size() <= 256
+                              && request.resource.data.secure is bool
+                              && isTimestamp(request.resource.data.createdAt)
+                              && isTimestamp(request.resource.data.updatedAt)
+                              && isUnchanged('createdAt')
+                              && request.resource.data.keys().hasOnly(['name', 'password', 'secure', 'createdAt', 'updatedAt']);
+                allow delete: if isOwner(userId);
+              }
+
               match /users/{userId}/vault/{vaultDocId} {
                 allow read: if isOwner(userId);
                 allow create: if isOwner(userId)
@@ -1068,6 +1098,52 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const strangerCtx = testEnv.authenticatedContext('u2');
       await assertFails(getDoc(doc(strangerCtx.firestore(), issuePath('u1'))));
       await assertFails(deleteDoc(doc(strangerCtx.firestore(), issuePath('u1'))));
+    });
+  });
+
+  describe('users/{uid}/proyectos/{projectId}/issues/{issueId}/passwords/{passwordId}', () => {
+    const pwdPath = (uid: string, projectId = 'p1', issueId = 'i1', passwordId = 'w1') =>
+      `users/${uid}/proyectos/${projectId}/issues/${issueId}/passwords/${passwordId}`;
+
+    const validPassword = () => ({
+      name: 'svc',
+      password: { cipher: [1, 2, 3], iv: [4, 5, 6] },
+      secure: true,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+
+    it('owner can create an issue-scoped password', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(setDoc(doc(ctx.firestore(), pwdPath('u1')), validPassword()));
+    });
+
+    it('non-owner cannot create an issue-scoped password', async () => {
+      const ctx = testEnv.authenticatedContext('u2');
+      await assertFails(setDoc(doc(ctx.firestore(), pwdPath('u1')), validPassword()));
+    });
+
+    it('rejects password with name > 200 chars', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), pwdPath('u1')), {
+          ...validPassword(),
+          name: 'x'.repeat(201),
+        }),
+      );
+    });
+
+    it('rejects password without the password field', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const { password: _password, ...rest } = validPassword();
+      await assertFails(setDoc(doc(ctx.firestore(), pwdPath('u1')), rest));
+    });
+
+    it('owner can delete an issue-scoped password', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), pwdPath('u1'));
+      await assertSucceeds(setDoc(ref, validPassword()));
+      await assertSucceeds(deleteDoc(ref));
     });
   });
 });
