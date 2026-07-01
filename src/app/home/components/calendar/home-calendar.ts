@@ -140,6 +140,7 @@ export default class HomeCalendar {
   }
 
   protected async onSave() {
+    if (this.saving()) return;
     if (this.form.invalid) {
       this.form.markAllAsDirty();
       return;
@@ -155,7 +156,7 @@ export default class HomeCalendar {
           description: v.description.trim() || undefined,
           at,
           isAllDay: v.isAllDay,
-          durationMinutes: v.durationMinutes ?? undefined,
+          ...(v.durationMinutes != null ? { durationMinutes: v.durationMinutes } : {}),
         };
         await firstValueFrom(this._repo.updateEvent(editing.id, patch));
         this._toast.success('Evento actualizado');
@@ -165,7 +166,7 @@ export default class HomeCalendar {
           description: v.description.trim() || undefined,
           at,
           isAllDay: v.isAllDay,
-          durationMinutes: v.durationMinutes ?? undefined,
+          ...(v.durationMinutes != null ? { durationMinutes: v.durationMinutes } : {}),
         };
         await firstValueFrom(this._repo.addEvent(input));
         this._toast.success('Evento creado');

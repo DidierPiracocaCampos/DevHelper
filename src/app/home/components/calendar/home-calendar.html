@@ -1,27 +1,38 @@
-<ui-card title="Calendario" padding="sm" class="w-full h-full">
+<ui-card title="Calendario" padding="sm" class="w-full h-full" [actions]="false">
   <div class="flex flex-col gap-2 h-full min-h-0">
     <header class="home-calendar-header">
       <h2 class="home-calendar-month">{{ monthLabel() }}</h2>
-      <div class="home-calendar-nav">
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm"
-          aria-label="Semana anterior"
-          (click)="goPrevWeek()"
-        >
-          <span class="icon icon-sm">chevron_left</span>
-        </button>
-        <button type="button" class="btn btn-ghost btn-sm home-calendar-today" (click)="goToday()">
-          Hoy
-        </button>
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm"
-          aria-label="Semana siguiente"
-          (click)="goNextWeek()"
-        >
-          <span class="icon icon-sm">chevron_right</span>
-        </button>
+      <div class="flex items-center gap-1">
+        <div class="home-calendar-nav">
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            aria-label="Semana anterior"
+            (click)="goPrevWeek()"
+          >
+            <span class="icon icon-sm">chevron_left</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm home-calendar-today" (click)="goToday()">
+            Hoy
+          </button>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            aria-label="Semana siguiente"
+            (click)="goNextWeek()"
+          >
+            <span class="icon icon-sm">chevron_right</span>
+          </button>
+        </div>
+        <ui-tooltip text="Añadir evento" placement="bottom" severity="neutral">
+          <ui-card-button
+            icon="add"
+            shape="circle"
+            severity="primary"
+            size="lg"
+            (click)="openCreate()"
+          />
+        </ui-tooltip>
       </div>
     </header>
 
@@ -61,17 +72,6 @@
         }
       }
     </div>
-  </div>
-
-  <div actions>
-    <ui-tooltip text="Añadir evento" placement="left" severity="neutral">
-      <ui-card-button
-        icon="add"
-        shape="circle"
-        severity="primary"
-        (click)="openCreate()"
-      />
-    </ui-tooltip>
   </div>
 </ui-card>
 
@@ -128,16 +128,16 @@
   </div>
   <div footer class="flex justify-end gap-2">
     @if (editing()) {
-      <ui-button label="Eliminar" severity="error" (click)="onDelete()" />
+      <ui-button label="Eliminar" severity="error" (press)="onDelete()" />
     }
-    <ui-button label="Cancelar" severity="secondary" variant="ghost" (click)="closeModal()" />
+    <ui-button label="Cancelar" severity="secondary" variant="ghost" (press)="closeModal()" />
     <ui-button
       label="Guardar"
       severity="primary"
-      type="submit"
+      type="button"
       [loading]="saving()"
-      [disabled]="form.invalid"
-      (click)="onSave()"
+      [disabled]="form.invalid || saving()"
+      (press)="onSave()"
     />
   </div>
 </ui-modal>

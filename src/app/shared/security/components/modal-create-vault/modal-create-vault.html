@@ -41,7 +41,7 @@
               type="button"
               [disabled]="creatingUnlockWithPasskey()"
               [loading]="creatingUnlockWithPasskey()"
-              (click)="registerPasskey()"
+              (press)="registerPasskey()"
             />
           </div>
         } @else {
@@ -68,7 +68,7 @@
                 btnClass="w-full"
                 label="Crear PIN"
                 severity="primary"
-                (click)="checked.set('PIN'); createUnlockWithPasskey.set(false)"
+                (press)="checked.set('PIN'); createUnlockWithPasskey.set(false)"
               />
             }
             <ui-button
@@ -76,7 +76,7 @@
               btnClass="w-full"
               label="Listo"
               severity="secondary"
-              (click)="isOpen.set(false)"
+              (press)="isOpen.set(false)"
             />
           </div>
         }
@@ -182,7 +182,7 @@
                 btnClass="w-full"
                 label="Crear PassKey"
                 severity="primary"
-                (click)="checked.set('PASSKEY'); createUnlockWithPin.set(false)"
+                (press)="checked.set('PASSKEY'); createUnlockWithPin.set(false)"
               />
             }
             <ui-button
@@ -190,7 +190,7 @@
               btnClass="w-full"
               label="Salir"
               severity="secondary"
-              (click)="isOpen.set(false)"
+              (press)="isOpen.set(false)"
             />
           </div>
         }

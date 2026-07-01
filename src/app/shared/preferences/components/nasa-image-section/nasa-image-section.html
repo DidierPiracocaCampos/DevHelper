@@ -31,7 +31,7 @@
       severity="primary"
       [loading]="isBusy()"
       [disabled]="isBusy()"
-      (click)="changeImage()"
+      (press)="changeImage()"
     />
     @if (hasCustomImage()) {
       <ui-button
@@ -41,7 +41,7 @@
         variant="ghost"
         [loading]="isBusy()"
         [disabled]="isBusy()"
-        (click)="clearImage()"
+        (press)="clearImage()"
       />
     }
   </div>

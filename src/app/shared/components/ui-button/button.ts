@@ -28,7 +28,7 @@ export class UiButton {
   label = input<string>();
   loading = input<boolean>(false);
   disabled = input<boolean>(false);
-  click = output();
+  press = output<void>();
 
   getSeverityClass(): string {
     const variant = this.variant();

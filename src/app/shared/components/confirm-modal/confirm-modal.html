@@ -24,12 +24,12 @@
     class="flex gap-2 justify-end pt-4"
   >
     @if (_confirmService.config()?.showCancel) {
-      <ui-button variant="outline" label="Cancelar" (click)="onCancel()" />
+      <ui-button variant="outline" label="Cancelar" (press)="onCancel()" />
     }
     <ui-button
       [severity]="_severityClass[_confirmService.config()?.severity ?? 'info']"
       [label]="_confirmService.config()?.confirmLabel ?? 'Confirmar'"
-      (click)="onConfirm()"
+      (press)="onConfirm()"
     />
   </div>
 </ui-modal>

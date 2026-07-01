@@ -61,14 +61,14 @@
   </div>
 
   <div footer class="flex justify-end gap-2">
-    <ui-button label="Cancelar" severity="secondary" (click)="onClose()" />
+    <ui-button label="Cancelar" severity="secondary" (press)="onClose()" />
     <ui-button
       label="Subir"
       icon="cloud_upload"
       severity="primary"
       [loading]="_busy()"
       [disabled]="!_canUpload()"
-      (click)="uploadAll()"
+      (press)="uploadAll()"
     />
   </div>
 </ui-modal>

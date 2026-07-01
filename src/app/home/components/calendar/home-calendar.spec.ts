@@ -280,6 +280,71 @@ describe('HomeCalendar', () => {
       expect(addSpy).not.toHaveBeenCalled();
     });
 
+    it('onSave create path is valid with null durationMinutes (duration is optional)', async () => {
+      t.openCreate();
+      t.form.setValue({
+        title: 'Sin duracion',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '09:30',
+        isAllDay: false,
+        durationMinutes: null,
+      });
+      expect(t.form.valid).toBe(true);
+      await t.onSave();
+      expect(addSpy).toHaveBeenCalledOnce();
+    });
+
+    it('onSave omits durationMinutes from Firestore payload when null (Firestore rejects undefined)', async () => {
+      t.openCreate();
+      t.form.setValue({
+        title: 'Sin duracion',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '09:30',
+        isAllDay: false,
+        durationMinutes: null,
+      });
+      await t.onSave();
+      expect(addSpy).toHaveBeenCalledOnce();
+      const payload = addSpy.mock.calls[0][0] as Record<string, unknown>;
+      expect('durationMinutes' in payload).toBe(false);
+    });
+
+    it('onSave includes durationMinutes in Firestore payload when set', async () => {
+      t.openCreate();
+      t.form.setValue({
+        title: 'Con duracion',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '09:30',
+        isAllDay: false,
+        durationMinutes: 45,
+      });
+      await t.onSave();
+      expect(addSpy).toHaveBeenCalledOnce();
+      const payload = addSpy.mock.calls[0][0] as Record<string, unknown>;
+      expect(payload['durationMinutes']).toBe(45);
+    });
+
+    it('onSave blocks concurrent calls (no double-submit on rapid double click)', async () => {
+      addSpy = vi.fn().mockReturnValue(new Promise(() => {}));
+      fakeRepo.addEvent = addSpy;
+      t.openCreate();
+      t.form.setValue({
+        title: 'Demo',
+        description: '',
+        atDate: '2024-06-15',
+        atTime: '09:30',
+        isAllDay: false,
+        durationMinutes: null,
+      });
+      const p1 = t.onSave();
+      const p2 = t.onSave();
+      await Promise.all([p1, p2]);
+      expect(addSpy).toHaveBeenCalledOnce();
+    });
+
     it('onDelete confirms and calls deleteEvent on confirm', async () => {
       t.openEdit({
         id: 'e1',

@@ -72,7 +72,8 @@ describe('FilterBar', () => {
     const trigger = fixture.nativeElement.querySelector(
       '[data-testid="filter-trigger"]',
     ) as HTMLElement;
-    trigger.click();
+    const innerButton = trigger.querySelector('button') as HTMLButtonElement;
+    innerButton.click();
     fixture.detectChanges();
     expect(component.isOpen()).toBe(true);
   });
