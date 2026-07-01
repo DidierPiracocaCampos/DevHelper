@@ -19,25 +19,15 @@
                 <div actions>
                   <ul class="flex items-center gap-1">
                     <ui-tooltip text="Eliminar" severity="error">
-                      <ui-list-button
-                        icon="delete"
-                        severity="error"
-                        (click)="remove(issue)"
-                      />
+                      <ui-list-button icon="delete" severity="error" (click)="remove(issue)" />
                     </ui-tooltip>
                     <ui-tooltip text="Editar" severity="info">
-                      <ui-list-button
-                        icon="edit"
-                        severity="info"
-                        (click)="openEdit(issue)"
-                      />
+                      <ui-list-button icon="edit" severity="info" (click)="openEdit(issue)" />
                     </ui-tooltip>
                     @if (issue.isNote) {
-                      <span
-                        data-testid="note-icon"
-                        class="icon text-base-100/60"
-                        aria-label="Nota"
-                      >description</span>
+                      <span data-testid="note-icon" class="icon text-base-100/60" aria-label="Nota">
+                        description
+                      </span>
                     } @else {
                       <button
                         type="button"
@@ -77,17 +67,18 @@
       (apply)="onFiltersApply($event)"
       (clear)="onFiltersClear()"
     />
-    <ui-card-button
-      icon="add"
-      shape="circle"
-      severity="primary"
-      (click)="openCreate()"
-    />
+    <ui-card-button icon="add" shape="circle" severity="primary" (click)="openCreate()" />
   </div>
 </ui-card>
 
 <ui-modal
-  [title]="formStatus().editing ? (formStatus().editing!.isNote ? 'Editar nota' : 'Editar tarea') : 'Nueva entrada'"
+  [title]="
+    formStatus().editing
+      ? formStatus().editing!.isNote
+        ? 'Editar nota'
+        : 'Editar tarea'
+      : 'Nueva entrada'
+  "
   size="md"
   [(isOpen)]="isFormModalOpen"
 >
