@@ -162,25 +162,6 @@ describe('FileList', () => {
     expect(leadings[2].textContent.trim()).toBe('movie');
   });
 
-  it('click Ver abre el modal de view (isViewOpen=true, viewFile seteado)', () => {
-    const row = makeRow('a');
-    repo.setAll([row]);
-    fixture.detectChanges();
-    component.onView(row);
-    expect(component.isViewOpen()).toBe(true);
-    expect(component.viewFile()?.id).toBe('a');
-  });
-
-  it('click Ver con vault bloqueado encola la accion en vault.showModal', () => {
-    vault.unlocked.set(false);
-    const row = makeRow('a');
-    repo.setAll([row]);
-    fixture.detectChanges();
-    component.onView(row);
-    expect(vault.showModal).toHaveBeenCalled();
-    expect(component.isViewOpen()).toBe(false);
-  });
-
   it('click Descargar invoca getBytes y crea un anchor con download', async () => {
     const row = makeRow('a');
     repo.setAll([row]);

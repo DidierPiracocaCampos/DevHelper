@@ -5,7 +5,7 @@ import {
   FILE_FILTER_SCHEMA,
   iconFor,
 } from '../../../shared/files';
-import { FileRow, FileView } from '../../../shared/components/file-components';
+import { FileRow } from '../../../shared/components/file-components';
 import { VaultSecurity } from '../../../shared/security/vault-security';
 import { ActiveFilters, FilterBar, FilterService } from '../../../shared/filter';
 import { ConfirmService } from '../../../shared/service/confirm.service';
@@ -16,7 +16,6 @@ import { UiListItem } from '../../../shared/components/item-list/item-list';
 import { UiListButton } from '../../../shared/components/list-button/list-button';
 import { UiTooltipComponent } from '../../../shared/components/tooltip';
 import { UiAddFile } from '../../../shared/components/ui-add-file/ui-add-file';
-import { UiViewFile } from '../../../shared/components/ui-view-file/ui-view-file';
 
 @Component({
   selector: 'file-list',
@@ -28,7 +27,6 @@ import { UiViewFile } from '../../../shared/components/ui-view-file/ui-view-file
     UiTooltipComponent,
     FilterBar,
     UiAddFile,
-    UiViewFile,
   ],
   providers: [FilterService],
   templateUrl: './file-list.html',
@@ -47,8 +45,6 @@ export class FileList {
   readonly namespace = this._repo.namespace;
 
   readonly isAddOpen = signal(false);
-  readonly isViewOpen = signal(false);
-  readonly viewFile = signal<FileView | null>(null);
 
   onFiltersApply(_filters: ActiveFilters): void {
     this.collection.reload();
@@ -64,15 +60,6 @@ export class FileList {
       return;
     }
     this.isAddOpen.set(true);
-  }
-
-  onView(item: FileRow): void {
-    if (!this._vault.isUnlocked()) {
-      this._vault.showModal(() => this.onView(item));
-      return;
-    }
-    this.viewFile.set(item);
-    this.isViewOpen.set(true);
   }
 
   async onDownload(item: FileRow): Promise<void> {
@@ -114,11 +101,6 @@ export class FileList {
 
   onAdded(): void {
     this.collection.reload();
-  }
-
-  closeView(): void {
-    this.isViewOpen.set(false);
-    this.viewFile.set(null);
   }
 
   protected subLabel(file: FileRow): string {

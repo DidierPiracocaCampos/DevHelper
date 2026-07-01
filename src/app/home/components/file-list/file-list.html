@@ -10,9 +10,6 @@
               </span>
               <div actions>
                 <ul class="flex">
-                  <ui-tooltip text="Ver" severity="info">
-                    <ui-list-button icon="visibility" severity="info" (click)="onView(item)" />
-                  </ui-tooltip>
                   <ui-tooltip text="Descargar" severity="success">
                     <ui-list-button icon="download" severity="success" (click)="onDownload(item)" />
                   </ui-tooltip>
@@ -51,10 +48,4 @@
   [encrypt]="true"
   [(isOpen)]="isAddOpen"
   (added)="onAdded()"
-/>
-<ui-view-file
-  [file]="viewFile()"
-  [namespace]="namespace()"
-  [(isOpen)]="isViewOpen"
-  (closed)="closeView()"
 />
