@@ -1,5 +1,5 @@
 <div
-  class="h-screen overflow-hidden grid grid-cols-12 grid-rows-[1fr_2fr_1fr_2fr] gap-4 px-4 pt-4 bg-base-100"
+  class="h-screen overflow-hidden grid grid-cols-12 grid-rows-[1fr_2.5fr_2fr_2fr] gap-4 px-4 pt-4 bg-base-100"
 >
   <ui-card class="col-span-7" title="Proyectos">
     <div actions>
@@ -7,17 +7,15 @@
       <ui-card-button icon="add" shape="circle" severity="primary" />
     </div>
   </ui-card>
-  <ui-card class="col-span-5"></ui-card>
-  <ui-card class="col-span-8 row-span-2" theme="light" title="Tareas"></ui-card>
-  <div class="col-span-4 row-span-2 min-h-0 flex gap-4">
-    <div class="flex flex-col justify-center items-center gap-4">
-      <ui-card-button icon="data_object" size="xl" (click)="openVault()" />
-      <ui-card-button icon="settings" size="xl" (click)="openConfig()" />
-      <ui-card-button icon="logout" size="xl" (click)="logout()" />
-    </div>
-    <home-calendar class="flex-1 min-w-0" />
+  <ui-card class="col-span-5" title="Buscador"></ui-card>
+  <ui-card class="col-span-7 row-span-2" theme="light" title="Tareas"></ui-card>
+  <div class="col-span-1 w-fit justify-self-center self-center flex flex-col justify-center items-center gap-4">
+    <ui-card-button icon="data_object" size="lg" (click)="openVault()" />
+    <ui-card-button icon="settings" size="lg" (click)="openConfig()" />
+    <ui-card-button icon="logout" size="lg" (click)="logout()" />
   </div>
-  <nasa-picture class="col-span-4" />
+  <home-calendar class="col-span-4" />
+  <nasa-picture class="col-span-5" />
   <file-list class="col-span-6 min-h-0" />
   <password-list class="col-span-6 min-h-0" />
 </div>

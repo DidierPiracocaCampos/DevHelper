@@ -153,7 +153,7 @@ Patrones de uso:
 
 ## 7. Layout y motion
 
-- **Grid en home:** `grid grid-cols-12 grid-rows-[1fr_2fr_1fr_2fr]` (`home.html:2`). Decidir el grid template a nivel de pagina.
+- **Grid en home:** `grid grid-cols-12 grid-rows-[1fr_2.5fr_2fr_2fr]` (`home.html:2`). Reparto por celdas: fila 1 `Proyectos` (col-span-7) + `Buscador` (col-span-5); filas 2-3 `Tareas` (col-span-7 row-span-2) + `botonera` (col-span-1, w-fit justify-self-center self-center, botones `size="lg"`) + `Calendario` (col-span-4) en fila 2 + `Nasa` (col-span-5) en fila 3; fila 4 `Archivos` (col-span-6) + `Contrasenas` (col-span-6). Decidir el grid template a nivel de pagina.
 - **Cards en grid:** siempre `h-full` en `:host` para que el card llene su celda (ver `card-base.css:43-50`).
 - **Motion tokens:** `--transition-fast/base/slow`, `--view-transition-duration`, `--animate-{fade-slide-in,spin,pulse,bounce}`.
 - **View transitions:** activadas en `app.config.ts:6` (`withViewTransitions()`). Usar la variante `rotate-in/out` definida en `src/styles.css:94-110` con keyframes.
