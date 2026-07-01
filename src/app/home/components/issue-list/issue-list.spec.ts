@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
-import { signal, Signal } from '@angular/core';
+import { computed, signal, Signal } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { of } from 'rxjs';
 import { IssueList } from './issue-list';
@@ -27,20 +27,44 @@ function makeIssue(overrides: Partial<IssueI> = {}): IssueI & { id: string } {
 }
 
 class FakeIssueRepository {
-  private _all: (IssueI & { id: string })[] = [];
-  private _filtered: (IssueI & { id: string })[] = [];
+  private _allItemsSignal = signal<(IssueI & { id: string })[]>([]);
+  private _filteredItemsSignal = signal<(IssueI & { id: string })[]>([]);
+  private _loadingSignal = signal(false);
+
   readonly addIssueSpy = vi.fn();
   readonly updateIssueSpy = vi.fn();
   readonly deleteIssueSpy = vi.fn();
   readonly toggleStatusSpy = vi.fn();
 
-  getCollection = vi.fn(() => this._resource(this._all));
-  getFilteredCollection = vi.fn(
-    (options: Signal<QueryOptions>) =>
-      this._resource(options().filters && options().filters!.length > 0 ? this._filtered : this._all),
-  );
+  getCollection = vi.fn(() => ({
+    isLoading: this._loadingSignal,
+    hasValue: (): boolean => true,
+    value: this._allItemsSignal,
+    reload: vi.fn(),
+    error: (): unknown => undefined,
+  }));
 
-  addIssue(input: { title: string; status?: 'pending' | 'done' | null; isNote: boolean; priority: 'normal' | 'high' }) {
+  getFilteredCollection = vi.fn((options: Signal<QueryOptions>) => ({
+    isLoading: this._loadingSignal,
+    hasValue: (): boolean => true,
+    value: computed(() => {
+      const opts = options();
+      return opts.filters && opts.filters.length > 0
+        ? this._filteredItemsSignal()
+        : this._allItemsSignal();
+    }),
+    reload: vi.fn(),
+    error: (): unknown => undefined,
+  }));
+
+  addIssue(input: {
+    title: string;
+    description?: string;
+    status?: 'pending' | 'done' | null;
+    isNote: boolean;
+    priority: 'normal' | 'high';
+    dueAt?: Timestamp;
+  }) {
     const now = Timestamp.now();
     const payload: IssueI = {
       title: input.title,
@@ -50,6 +74,8 @@ class FakeIssueRepository {
       createdAt: now,
       updatedAt: now,
     };
+    if (input.description !== undefined) payload.description = input.description;
+    if (input.dueAt !== undefined) payload.dueAt = input.dueAt;
     this.addIssueSpy(payload);
     return of({ id: 'new-id', ...payload });
   }
@@ -70,19 +96,10 @@ class FakeIssueRepository {
   }
 
   setAll(items: (IssueI & { id: string })[]): void {
-    this._all = items;
+    this._allItemsSignal.set(items);
   }
   setFiltered(items: (IssueI & { id: string })[]): void {
-    this._filtered = items;
-  }
-  private _resource(items: (IssueI & { id: string })[]) {
-    return {
-      isLoading: (): boolean => false,
-      hasValue: (): boolean => true,
-      value: (): (IssueI & { id: string })[] => items,
-      reload: vi.fn(),
-      error: (): unknown => undefined,
-    };
+    this._filteredItemsSignal.set(items);
   }
 }
 

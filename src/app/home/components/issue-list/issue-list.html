@@ -1,0 +1,152 @@
+<ui-card title="Tareas" class="issue-list-card w-full h-full">
+  <div class="issue-list-body">
+    @if (!hasProject()) {
+      <div data-testid="empty-no-project" class="issue-list-empty">
+        <span class="icon icon-lg opacity-40">folder_off</span>
+        <p class="text-sm opacity-60 m-0">Selecciona un proyecto para ver sus tareas</p>
+      </div>
+    } @else {
+      <ul class="list space-y-2 w-full h-full overflow-y-auto gap-1">
+        @if (!collection.isLoading()) {
+          @if (collection.hasValue()) {
+            @for (issue of collection.value(); track issue.id) {
+              <ui-list-item
+                data-testid="issue-row"
+                severity="secondary"
+                [label]="issue.title"
+                [sub]="issue.description ?? ''"
+              >
+                <div actions>
+                  <ul class="flex items-center gap-1">
+                    <ui-tooltip text="Eliminar" severity="error">
+                      <ui-list-button
+                        icon="delete"
+                        severity="error"
+                        (click)="remove(issue)"
+                      />
+                    </ui-tooltip>
+                    <ui-tooltip text="Editar" severity="info">
+                      <ui-list-button
+                        icon="edit"
+                        severity="info"
+                        (click)="openEdit(issue)"
+                      />
+                    </ui-tooltip>
+                    @if (issue.isNote) {
+                      <span
+                        data-testid="note-icon"
+                        class="icon text-base-100/60"
+                        aria-label="Nota"
+                      >description</span>
+                    } @else {
+                      <button
+                        type="button"
+                        data-testid="status-circle"
+                        class="status-circle"
+                        [class]="statusCircleClass(issue)"
+                        [attr.aria-label]="
+                          issue.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
+                        "
+                        (click)="toggleStatus(issue)"
+                      ></button>
+                    }
+                  </ul>
+                </div>
+              </ui-list-item>
+            } @empty {
+              <div class="issue-list-empty">
+                <span class="icon icon-lg opacity-40">checklist</span>
+                <p class="text-sm opacity-60 m-0">
+                  No hay tareas todavía. Pulsa "+" para crear la primera.
+                </p>
+              </div>
+            }
+          }
+        } @else {
+          <div class="skeleton min-h-[3.5rem] w-full"></div>
+          <div class="skeleton min-h-[3.5rem] w-full"></div>
+          <div class="skeleton min-h-[3.5rem] w-full"></div>
+        }
+      </ul>
+    }
+  </div>
+
+  <div actions>
+    <filter-bar
+      [schema]="filterSchema"
+      (apply)="onFiltersApply($event)"
+      (clear)="onFiltersClear()"
+    />
+    <ui-card-button
+      icon="add"
+      shape="circle"
+      severity="primary"
+      (click)="openCreate()"
+    />
+  </div>
+</ui-card>
+
+<ui-modal
+  [title]="formStatus().editing ? (formStatus().editing!.isNote ? 'Editar nota' : 'Editar tarea') : 'Nueva entrada'"
+  size="md"
+  [(isOpen)]="isFormModalOpen"
+>
+  <div body>
+    <form [formGroup]="_form" class="pt-2 grid gap-4" (reset)="cancelForm()" (ngSubmit)="save()">
+      <ui-text-field labelText="Título" inputId="issue-title" formControlName="title">
+        <ng-template errorMessage="required">
+          <p class="validator-hint">Este campo es obligatorio</p>
+        </ng-template>
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 200 caracteres</p>
+        </ng-template>
+      </ui-text-field>
+
+      <ui-textarea-field
+        inputId="issue-description"
+        formControlName="description"
+        [rows]="3"
+        [maxlength]="20000"
+        placeholder="Descripción (opcional)"
+      >
+        <ng-template uiLabel>Descripción</ng-template>
+        <ng-template errorMessage="maxlength">
+          <p class="validator-hint">Máximo 20000 caracteres</p>
+        </ng-template>
+      </ui-textarea-field>
+
+      <div class="grid grid-cols-2 gap-3">
+        <label class="issue-list-checkbox">
+          <input type="checkbox" class="checkbox" formControlName="isNote" />
+          <span>Es una nota (sin estado ni fecha)</span>
+        </label>
+
+        <label class="issue-list-checkbox">
+          <span class="text-sm">Prioridad</span>
+          <select class="select select-bordered w-full" formControlName="priority">
+            <option value="normal">Normal</option>
+            <option value="high">Alta</option>
+          </select>
+        </label>
+      </div>
+
+      @if (!_form.controls.isNote.value) {
+        <ui-date-field
+          labelText="Vencimiento (opcional)"
+          inputId="issue-dueDate"
+          formControlName="dueDate"
+        />
+      }
+
+      <div class="flex space-x-3 pt-2 justify-end">
+        <ui-button label="Cancelar" severity="secondary" type="reset" />
+        <ui-button
+          [label]="formStatus().editing ? 'Guardar' : 'Crear'"
+          severity="primary"
+          type="submit"
+          [loading]="formStatus().loading"
+        />
+      </div>
+    </form>
+  </div>
+</ui-modal>
