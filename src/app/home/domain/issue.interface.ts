@@ -7,6 +7,7 @@ export interface IssueI {
   id?: string;
   title: string;
   description?: string;
+  solution?: string;
   status: IssueStatus;
   isNote: boolean;
   priority: IssuePriority;

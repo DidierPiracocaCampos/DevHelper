@@ -155,6 +155,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && isBoundedString(request.resource.data.title, 200)
                               && request.resource.data.title.size() > 0
                               && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                              && (!('solution' in request.resource.data) || isBoundedString(request.resource.data.solution, 20000))
                               && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
                               && isBool(request.resource.data.isNote)
                               && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
@@ -164,11 +165,12 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && (request.resource.data.isNote
                                     ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
                                     : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
-                              && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
+                              && request.resource.data.keys().hasOnly(['title','description','solution','status','isNote','priority','dueAt','createdAt','updatedAt']);
                 allow update: if isOwner(userId)
                               && isBoundedString(request.resource.data.title, 200)
                               && request.resource.data.title.size() > 0
                               && (!('description' in request.resource.data) || isBoundedString(request.resource.data.description, 20000))
+                              && (!('solution' in request.resource.data) || isBoundedString(request.resource.data.solution, 20000))
                               && (request.resource.data.status == 'pending' || request.resource.data.status == 'done' || request.resource.data.status == null)
                               && isBool(request.resource.data.isNote)
                               && (request.resource.data.priority == 'normal' || request.resource.data.priority == 'high')
@@ -179,7 +181,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && (request.resource.data.isNote
                                     ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
                                     : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
-                              && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
+                              && request.resource.data.keys().hasOnly(['title','description','solution','status','isNote','priority','dueAt','createdAt','updatedAt']);
                 allow delete: if isOwner(userId);
               }
 
@@ -948,6 +950,44 @@ const skip = !FIRESTORE_EMULATOR_HOST;
           description: 'x'.repeat(20001),
         }),
       );
+    });
+
+    it('owner can create an issue with a valid solution', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          solution: 'Reiniciar el servicio tras limpiar la cache.',
+        }),
+      );
+    });
+
+    it('rejects issue with solution > 20000 chars', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          solution: 'x'.repeat(20001),
+        }),
+      );
+    });
+
+    it('rejects issue with solution that is not a string', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), issuePath('u1')), {
+          ...validTask(),
+          solution: 12345,
+        }),
+      );
+    });
+
+    it('owner can update an issue to add or remove solution', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), issuePath('u1'));
+      await assertSucceeds(setDoc(ref, validTask()));
+      await assertSucceeds(updateDoc(ref, { solution: 'nueva' }));
+      await assertSucceeds(updateDoc(ref, { solution: null as unknown as string }));
     });
 
     it('rejects issue with invalid status', async () => {
