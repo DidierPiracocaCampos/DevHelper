@@ -1,11 +1,8 @@
 <div class="relative inline-block">
-  <ui-button
+  <ui-card-button
     data-testid="filter-trigger"
     icon="filter_alt"
-    variant="ghost"
-    severity="neutral"
-    size="sm"
-    (press)="open()"
+    (click)="open()"
   />
   @if (count() > 0) {
     <span

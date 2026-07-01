@@ -10,11 +10,11 @@ import {
 import { FilterService } from '../filter.service';
 import { ActiveFilters, FilterSchema } from '../filter.types';
 import { FilterModal } from '../filter-modal/filter-modal';
-import { UiButton } from '../../components/ui-button/button';
+import { UiCardButton } from '../../components/card-button/card-button';
 
 @Component({
   selector: 'filter-bar',
-  imports: [FilterModal, UiButton],
+  imports: [FilterModal, UiCardButton],
   templateUrl: './filter-bar.html',
   styleUrl: './filter-bar.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
