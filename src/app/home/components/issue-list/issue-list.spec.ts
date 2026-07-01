@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { computed, signal, Signal } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
-import { of } from 'rxjs';
+import { Timestamp, FieldValue } from '@angular/fire/firestore';
+import { of, throwError } from 'rxjs';
 import { IssueList } from './issue-list';
 import { IssueRepository } from '../../service/issues.repository';
 import { IssueI } from '../../domain/issue.interface';
@@ -310,5 +310,51 @@ describe('IssueList', () => {
   it('filter.apply causes getFilteredCollection to be invoked with new options', () => {
     filter.apply(component.filterSchema, [{ key: 'priority', op: '==', value: 'high' }]);
     expect(repo.getFilteredCollection).toHaveBeenCalled();
+  });
+
+  it('edit with empty description sets patch.description to a deleteField sentinel', async () => {
+    const issue = makeIssue({ id: 'a', description: 'original desc' });
+    component.openEdit(issue);
+    const form = (component as unknown as { _form: { patchValue: (v: unknown) => void } })._form;
+    form.patchValue({
+      title: 'Edited',
+      description: '',
+      isNote: false,
+      priority: 'normal',
+      dueDate: '',
+    });
+    await component.save();
+    expect(repo.updateIssueSpy).toHaveBeenCalled();
+    const patch = repo.updateIssueSpy.mock.calls[0][1] as Partial<IssueI>;
+    expect(patch.description).toBeInstanceOf(FieldValue);
+  });
+
+  it('toggling task→note (with a dueDate set) sets patch.dueAt to a deleteField sentinel', async () => {
+    const issue = makeIssue({ id: 'a', isNote: false, dueAt: Timestamp.now() });
+    component.openEdit(issue);
+    const form = (component as unknown as { _form: { patchValue: (v: unknown) => void } })._form;
+    form.patchValue({
+      title: 'Convert to note',
+      description: '',
+      isNote: true,
+      priority: 'normal',
+      dueDate: '',
+    });
+    await component.save();
+    expect(repo.updateIssueSpy).toHaveBeenCalled();
+    const patch = repo.updateIssueSpy.mock.calls[0][1] as Partial<IssueI>;
+    expect(patch.dueAt).toBeInstanceOf(FieldValue);
+  });
+
+  it('toggleStatus shows a toast when the repository errors', async () => {
+    const issue = makeIssue({ id: 'a', isNote: false, status: 'pending' });
+    (repo as unknown as { toggleStatus: () => ReturnType<typeof throwError> }).toggleStatus = vi
+      .fn()
+      .mockReturnValue(throwError(() => new Error('boom')));
+    await component.toggleStatus(issue);
+    expect(toast.error).toHaveBeenCalled();
+    const message = toast.error.mock.calls[0][0] as string;
+    expect(typeof message).toBe('string');
+    expect(message.length).toBeGreaterThan(0);
   });
 });

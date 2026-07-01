@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Timestamp } from '@angular/fire/firestore';
+import { Timestamp, FieldValue, deleteField } from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
-import { IssueI, IssueCreateInput } from '../../domain/issue.interface';
+import { IssueI, IssueCreateInput, IssueUpdateInput } from '../../domain/issue.interface';
 import { IssueRepository } from '../../service/issues.repository';
 import { issueFilterSchema } from '../../service/issue-filter.schema';
 import { UiCard } from '../../../shared/components/card-base/card-base';
@@ -133,14 +133,20 @@ export class IssueList {
 
     try {
       if (editing?.id) {
-        const patch: Partial<IssueI> = { title, isNote, priority };
-        if (description !== undefined) patch.description = description;
+        const patch: {
+          title: string;
+          isNote: boolean;
+          priority: 'normal' | 'high';
+          description?: string | FieldValue;
+          dueAt?: Timestamp | FieldValue;
+        } = { title, isNote, priority };
+        patch.description = description === undefined ? deleteField() : description;
         if (!isNote && raw.dueDate) {
           patch.dueAt = Timestamp.fromDate(new Date(raw.dueDate));
         } else {
-          patch.dueAt = undefined;
+          patch.dueAt = deleteField();
         }
-        await firstValueFrom(this._repo.updateIssue(editing.id, patch));
+        await firstValueFrom(this._repo.updateIssue(editing.id, patch as IssueUpdateInput));
         this._toast.success('Tarea actualizada');
       } else {
         const input: IssueCreateInput = {
@@ -167,8 +173,12 @@ export class IssueList {
 
   async toggleStatus(issue: IssueI & { id: string }): Promise<void> {
     if (issue.isNote) return;
-    await firstValueFrom(this._repo.toggleStatus(issue.id, issue.status));
-    this.collection.reload();
+    try {
+      await firstValueFrom(this._repo.toggleStatus(issue.id, issue.status));
+      this.collection.reload();
+    } catch (_err) {
+      this._toast.error('No se pudo cambiar el estado');
+    }
   }
 
   async remove(issue: IssueI & { id: string }): Promise<void> {
