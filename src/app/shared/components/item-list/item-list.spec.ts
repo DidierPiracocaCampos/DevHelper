@@ -23,6 +23,36 @@ class TestHostLeadingComponent {}
 })
 class TestHostPlainComponent {}
 
+@Component({
+  selector: 'test-host-primary',
+  standalone: true,
+  imports: [UiListItem],
+  template: `
+    <ui-list-item severity="primary" label="demo" sub="info"></ui-list-item>
+  `,
+})
+class TestHostPrimaryComponent {}
+
+@Component({
+  selector: 'test-host-secondary',
+  standalone: true,
+  imports: [UiListItem],
+  template: `
+    <ui-list-item severity="secondary" label="demo" sub="info"></ui-list-item>
+  `,
+})
+class TestHostSecondaryComponent {}
+
+@Component({
+  selector: 'test-host-accent',
+  standalone: true,
+  imports: [UiListItem],
+  template: `
+    <ui-list-item severity="accent" label="demo" sub="info"></ui-list-item>
+  `,
+})
+class TestHostAccentComponent {}
+
 describe('UiListItem', () => {
   let component: UiListItem;
   let fixture: ComponentFixture<UiListItem>;
@@ -70,5 +100,53 @@ describe('UiListItem - leading slot', () => {
     expect(leading.children.length).toBe(0);
     const label = fixturePlain.nativeElement.querySelector('.item-list-label');
     expect(label.textContent).toContain('demo');
+  });
+});
+
+describe('UiListItem - color por severity', () => {
+  let fixturePrimary: ComponentFixture<TestHostPrimaryComponent>;
+  let fixtureSecondary: ComponentFixture<TestHostSecondaryComponent>;
+  let fixtureAccent: ComponentFixture<TestHostAccentComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TestHostPrimaryComponent, TestHostSecondaryComponent, TestHostAccentComponent],
+    }).compileComponents();
+    fixturePrimary = TestBed.createComponent(TestHostPrimaryComponent);
+    fixturePrimary.detectChanges();
+    fixtureSecondary = TestBed.createComponent(TestHostSecondaryComponent);
+    fixtureSecondary.detectChanges();
+    fixtureAccent = TestBed.createComponent(TestHostAccentComponent);
+    fixtureAccent.detectChanges();
+  });
+
+  it('primary: expone --item-list-text-color apuntando a base-100', () => {
+    const row = fixturePrimary.nativeElement.querySelector('.item-list-row');
+    const value = getComputedStyle(row).getPropertyValue('--item-list-text-color').trim();
+    expect(value).toContain('base-100');
+  });
+
+  it('secondary: expone --item-list-text-color apuntando a base-content', () => {
+    const row = fixtureSecondary.nativeElement.querySelector('.item-list-row');
+    const value = getComputedStyle(row).getPropertyValue('--item-list-text-color').trim();
+    expect(value).toContain('base-content');
+  });
+
+  it('accent: expone --item-list-text-color apuntando a base-content', () => {
+    const row = fixtureAccent.nativeElement.querySelector('.item-list-row');
+    const value = getComputedStyle(row).getPropertyValue('--item-list-text-color').trim();
+    expect(value).toContain('base-content');
+  });
+
+  it('primary y secondary producen colores opuestos', () => {
+    const rowPrimary = fixturePrimary.nativeElement.querySelector('.item-list-row');
+    const rowSecondary = fixtureSecondary.nativeElement.querySelector('.item-list-row');
+    const valuePrimary = getComputedStyle(rowPrimary)
+      .getPropertyValue('--item-list-text-color')
+      .trim();
+    const valueSecondary = getComputedStyle(rowSecondary)
+      .getPropertyValue('--item-list-text-color')
+      .trim();
+    expect(valuePrimary).not.toBe(valueSecondary);
   });
 });
