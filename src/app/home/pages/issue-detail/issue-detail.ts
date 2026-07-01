@@ -8,6 +8,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -25,6 +26,7 @@ import { UiTextField, UiTextareaField, ErrorMessage } from '../../../shared/form
   selector: 'issue-detail',
   imports: [
     ReactiveFormsModule,
+    NgClass,
     UiTextField,
     UiTextareaField,
     ErrorMessage,
@@ -129,6 +131,9 @@ export class IssueDetail implements OnDestroy {
     try {
       await firstValueFrom(this._repo.deleteIssue(it.id!));
       this._toast.success('Issue eliminada');
+      if (window.opener) {
+        window.close();
+      }
     } catch (_err) {
       this._toast.error('No se pudo eliminar');
     }

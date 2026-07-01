@@ -20,7 +20,7 @@
           type="button"
           data-testid="status-circle"
           class="status-circle"
-          [class]="statusCircleClass()"
+          [ngClass]="statusCircleClass()"
           [attr.aria-label]="
             issue()?.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
           "
