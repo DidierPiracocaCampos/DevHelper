@@ -163,7 +163,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && isTimestamp(request.resource.data.updatedAt)
                               && (request.resource.data.isNote
                                     ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
-                                    : true)
+                                    : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
                               && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
                 allow update: if isOwner(userId)
                               && isBoundedString(request.resource.data.title, 200)
@@ -178,7 +178,7 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && isUnchanged('createdAt')
                               && (request.resource.data.isNote
                                     ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
-                                    : true)
+                                    : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
                               && request.resource.data.keys().hasOnly(['title','description','status','isNote','priority','dueAt','createdAt','updatedAt']);
                 allow delete: if isOwner(userId);
               }

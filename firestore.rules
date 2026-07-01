@@ -332,10 +332,10 @@ service cloud.firestore {
                     && (!('dueAt' in request.resource.data) || isTimestamp(request.resource.data.dueAt))
                     && isTimestamp(request.resource.data.createdAt)
                     && isTimestamp(request.resource.data.updatedAt)
-                    // Si es nota, status debe ser null y dueAt no debe estar presente
+                    // Status==null solo para notas; status!=null solo para tareas
                     && (request.resource.data.isNote
                           ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
-                          : true)
+                          : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
                     && request.resource.data.keys().hasOnly(['title', 'description', 'status', 'isNote', 'priority', 'dueAt', 'createdAt', 'updatedAt']);
 
       allow update: if isOwner(userId)
@@ -349,9 +349,10 @@ service cloud.firestore {
                     && isTimestamp(request.resource.data.createdAt)
                     && isTimestamp(request.resource.data.updatedAt)
                     && isUnchanged('createdAt')
+                    // Status==null solo para notas; status!=null solo para tareas
                     && (request.resource.data.isNote
                           ? (request.resource.data.status == null && !('dueAt' in request.resource.data))
-                          : true)
+                          : (request.resource.data.status == 'pending' || request.resource.data.status == 'done'))
                     && request.resource.data.keys().hasOnly(['title', 'description', 'status', 'isNote', 'priority', 'dueAt', 'createdAt', 'updatedAt']);
 
       allow delete: if isOwner(userId);
