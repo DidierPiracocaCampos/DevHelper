@@ -1,4 +1,5 @@
 <button
+  type="button"
   class="list-btn list-btn-{{ variant() }} list-btn-{{ severity() }}"
   [disabled]="disabled() || loading()"
   (click)="click.emit()"

@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+export type UiCardButtonType = 'submit' | 'button' | 'reset';
+
 export type UiCardButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type UiCardButtonShape = 'square' | 'circle';
 export type UiCardButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent';
@@ -16,6 +18,7 @@ export class UiCardButton {
   size = input<UiCardButtonSize>('lg');
   shape = input<UiCardButtonShape>('square');
   severity = input<UiCardButtonSeverity>('secondary');
+  type = input<UiCardButtonType>('button');
   disabled = input<boolean>(false);
   click = output();
 }

@@ -1,4 +1,5 @@
 <button
+  [attr.type]="type()"
   class="btn btn-{{ severity() }} btn-{{ size() }} {{
     shape() === 'circle' ? 'btn-circle-custom' : 'btn-square-custom'
   }}"
