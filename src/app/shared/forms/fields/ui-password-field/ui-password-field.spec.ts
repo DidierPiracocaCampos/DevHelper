@@ -1,5 +1,8 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { UiPasswordField } from './ui-password-field';
+import { ErrorMessage } from '../ui-field/error-message';
 
 describe('UiPasswordField', () => {
   let fixture: ComponentFixture<UiPasswordField>;
@@ -56,5 +59,82 @@ describe('UiPasswordField', () => {
 
     expect(component.value()).toBe('secret');
     expect(onChange).toHaveBeenCalledWith('secret');
+  });
+});
+
+@Component({
+  selector: 'test-password-host-literal',
+  imports: [ReactiveFormsModule, UiPasswordField, ErrorMessage],
+  template: `
+    <ui-password-field inputId="pwd" [formControl]="control">
+      <ng-template errorMessage="firebasePassword" [visible]="true" let-error>
+        <p class="req">requirements-list</p>
+      </ng-template>
+    </ui-password-field>
+  `,
+})
+class TestPasswordHostLiteral {
+  control = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
+}
+
+@Component({
+  selector: 'test-password-host-visible',
+  imports: [ReactiveFormsModule, UiPasswordField, ErrorMessage],
+  template: `
+    <ui-password-field inputId="pwd" [formControl]="control">
+      <ng-template errorMessage="firebasePassword" [visible]="visible" let-error>
+        <p class="req">requirements-list</p>
+      </ng-template>
+    </ui-password-field>
+  `,
+})
+class TestPasswordHostVisible {
+  control = new FormControl<string>('', { nonNullable: true, validators: [Validators.required] });
+  visible = true;
+}
+
+describe('UiPasswordField with projected error template', () => {
+  it('renders the projected <ng-template errorMessage="firebasePassword"> when errors are set and field is touched', () => {
+    @Component({
+      selector: 'test-password-host-errors',
+      imports: [ReactiveFormsModule, UiPasswordField, ErrorMessage],
+      template: `
+        <ui-password-field inputId="pwd" [formControl]="control">
+          <ng-template errorMessage="firebasePassword" let-error>
+            <p class="req">requirements-list</p>
+          </ng-template>
+        </ui-password-field>
+      `,
+    })
+    class TestPasswordHostErrors {
+      control = new FormControl<string>('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      });
+    }
+
+    const f = TestBed.createComponent(TestPasswordHostErrors);
+    const c = f.componentInstance;
+    f.detectChanges();
+    c.control.markAsTouched();
+    c.control.setErrors({ firebasePassword: { minLength: false } });
+    f.detectChanges();
+
+    const html = f.nativeElement as HTMLElement;
+    expect(html.querySelector('.req')).toBeTruthy();
+  });
+
+  it('renders the projected <ng-template errorMessage="firebasePassword" [visible]="true"> from the start (literal)', () => {
+    const f = TestBed.createComponent(TestPasswordHostLiteral);
+    f.detectChanges();
+    const html = f.nativeElement as HTMLElement;
+    expect(html.querySelector('.req')).toBeTruthy();
+  });
+
+  it('renders the projected <ng-template errorMessage="firebasePassword" [visible]="true"> from the start (expression)', () => {
+    const f = TestBed.createComponent(TestPasswordHostVisible);
+    f.detectChanges();
+    const html = f.nativeElement as HTMLElement;
+    expect(html.querySelector('.req')).toBeTruthy();
   });
 });
