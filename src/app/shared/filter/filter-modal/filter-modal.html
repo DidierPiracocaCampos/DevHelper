@@ -12,20 +12,20 @@
           {{ field.label }}
         </label>
 
-        <div class="flex gap-2">
+        <div class="grid grid-cols-2 gap-2">
           @if (field.ops.length > 1) {
-            <select
-              class="select select-lg"
-              [value]="entryFor(field.key).op"
-              (change)="onOpChange(field.key, $any($event.target).value)"
-            >
-              @for (op of field.ops; track op) {
-                <option [value]="op">{{ op }}</option>
-              }
-            </select>
+            <ui-select-field
+              [inputId]="'op-' + field.key"
+              [options]="opOptionsFor(field)"
+              [ngModel]="entryFor(field.key).op"
+              (ngModelChange)="onOpChange(field.key, $event)"
+            />
           } @else {
-            <span class="select select-lg flex items-center px-3 opacity-70">
-              {{ field.ops[0] }}
+            <span
+              class="flex items-center px-3 text-sm opacity-70 self-stretch rounded"
+              [attr.data-testid]="'op-label-' + field.key"
+            >
+              {{ opLabel(field.ops[0]) }}
             </span>
           }
 
@@ -33,7 +33,7 @@
             @case ('text') {
               <input
                 type="text"
-                class="input input-lg w-full"
+                class="input input-lg w-full min-w-0"
                 [placeholder]="field.placeholder ?? ''"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, $event)"
@@ -42,7 +42,7 @@
             @case ('number') {
               <input
                 type="number"
-                class="input input-lg w-full"
+                class="input input-lg w-full min-w-0"
                 [placeholder]="field.placeholder ?? ''"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, +$event)"
@@ -51,31 +51,26 @@
             @case ('date') {
               <input
                 type="date"
-                class="input input-lg w-full"
+                class="input input-lg w-full min-w-0"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, $event)"
               />
             }
             @case ('boolean') {
-              <select
-                class="select select-lg"
+              <ui-select-field
+                [inputId]="'val-' + field.key"
+                [options]="booleanOptions"
                 [ngModel]="entryFor(field.key).value ? 'true' : 'false'"
                 (ngModelChange)="onValueChange(field.key, $event === 'true')"
-              >
-                <option value="true">Sí</option>
-                <option value="false">No</option>
-              </select>
+              />
             }
             @case ('select') {
-              <select
-                class="select select-lg w-full"
+              <ui-select-field
+                [inputId]="'val-' + field.key"
+                [options]="valueOptionsFor(field)"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, $event)"
-              >
-                @for (opt of field.options ?? []; track opt.value) {
-                  <option [ngValue]="opt.value">{{ opt.label }}</option>
-                }
-              </select>
+              />
             }
           }
         </div>
@@ -84,7 +79,7 @@
   </div>
 
   <div footer class="flex justify-end gap-2">
-    <ui-button label="Limpiar" variant="ghost" (press)="onClear()" />
+    <ui-button label="Limpiar" severity="secondary" (press)="onClear()" />
     <ui-button label="Aplicar" variant="filled" (press)="onApply()" />
   </div>
 </ui-modal>

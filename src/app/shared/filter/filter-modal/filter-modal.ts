@@ -10,7 +10,15 @@ import {
 import { FormsModule } from '@angular/forms';
 import { UiModal } from '../../components/ui-modal/ui-modal';
 import { UiButton } from '../../components/ui-button/button';
-import { ActiveFilter, ActiveFilters, FilterField, FilterOp, FilterSchema } from '../filter.types';
+import { SelectOption, UiSelectField } from '../../forms/fields';
+import {
+  ActiveFilter,
+  ActiveFilters,
+  FilterField,
+  FilterOp,
+  FilterSchema,
+  OP_LABELS,
+} from '../filter.types';
 
 interface DraftEntry {
   key: string;
@@ -21,7 +29,7 @@ interface DraftEntry {
 
 @Component({
   selector: 'filter-modal',
-  imports: [FormsModule, UiModal, UiButton],
+  imports: [FormsModule, UiModal, UiButton, UiSelectField],
   templateUrl: './filter-modal.html',
   styleUrl: './filter-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +47,23 @@ export class FilterModal<T> {
   protected draft = signal<DraftEntry[]>([]);
 
   protected readonly fields = (): ReadonlyArray<FilterField<T>> => this.schema().fields;
+
+  protected opOptionsFor(field: FilterField<T>): ReadonlyArray<SelectOption<string>> {
+    return field.ops.map((op) => ({ value: op, label: OP_LABELS[op] }));
+  }
+
+  protected opLabel(op: FilterOp): string {
+    return OP_LABELS[op];
+  }
+
+  protected valueOptionsFor(field: FilterField<T>): ReadonlyArray<SelectOption<string>> {
+    return (field.options ?? []) as ReadonlyArray<SelectOption<string>>;
+  }
+
+  protected readonly booleanOptions: ReadonlyArray<SelectOption<string>> = [
+    { value: 'true', label: 'Sí' },
+    { value: 'false', label: 'No' },
+  ];
 
   protected entryFor(key: string): DraftEntry {
     const entries = this.draft();

@@ -86,4 +86,31 @@ describe('FilterModal', () => {
     expect(cleared.length).toBe(1);
     expect(component.isOpen()).toBe(false);
   });
+
+  it('shows a human-readable Spanish label for fields with a single operator', () => {
+    const tagsSchema: FilterSchema<DemoEntity> = {
+      entity: 'demo',
+      fields: [{ key: 'name', label: 'Etiqueta', control: 'text', ops: ['array-contains'] }],
+    };
+    fixture.componentRef.setInput('schema', tagsSchema);
+    fixture.detectChanges();
+
+    const opLabel = fixture.nativeElement.querySelector(
+      '[data-testid="op-label-name"]',
+    ) as HTMLElement | null;
+
+    expect(opLabel).not.toBeNull();
+    expect(opLabel?.textContent?.trim()).toBe('contiene');
+  });
+
+  it('uses human-readable Spanish labels in the multi-operator select options', () => {
+    const opSelect = fixture.nativeElement.querySelector(
+      'ui-select-field select',
+    ) as HTMLSelectElement | null;
+    expect(opSelect).not.toBeNull();
+    const optTexts = Array.from(opSelect!.querySelectorAll('option')).map((o) =>
+      o.textContent?.trim(),
+    );
+    expect(optTexts).toEqual(expect.arrayContaining(['igual a', 'diferente de']));
+  });
 });
