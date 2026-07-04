@@ -65,23 +65,16 @@
         <password-list />
       </div>
     </div>
-
-    <div class="issue-detail-footer">
-      <ui-tooltip text="Exportar" placement="top" severity="secondary">
-        <ui-card-button icon="ios_share" severity="secondary" size="xl" (click)="export()" />
-      </ui-tooltip>
-      <ui-tooltip text="Eliminar" placement="top" severity="neutral">
-        <ui-card-button icon="delete" severity="neutral" size="xl" (click)="remove()" />
-      </ui-tooltip>
-      <ui-tooltip text="Guardar" placement="top" severity="accent">
-        <ui-card-button
-          icon="check"
-          severity="accent"
-          size="xl"
-          type="submit"
-          (click)="save()"
-        />
-      </ui-tooltip>
-    </div>
   </form>
+  <div class="issue-detail-footer">
+    <ui-tooltip text="Exportar" placement="top" severity="neutral">
+      <ui-card-button icon="ios_share" severity="secondary" size="xl" (press)="export()" />
+    </ui-tooltip>
+    <ui-tooltip text="Eliminar" placement="top" severity="neutral">
+      <ui-card-button icon="delete" severity="secondary" size="xl" (press)="remove()" />
+    </ui-tooltip>
+    <ui-tooltip text="Guardar" placement="top" severity="neutral">
+      <ui-card-button icon="check" severity="secondary" size="xl" (press)="save()" />
+    </ui-tooltip>
+  </div>
 </div>
