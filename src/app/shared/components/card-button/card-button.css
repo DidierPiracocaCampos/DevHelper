@@ -9,13 +9,9 @@ button {
   justify-content: center;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .icon {
   font-size: var(--icon-size);
+  color: inherit;
 }
 
 .btn-xl {
@@ -50,4 +46,31 @@ button:disabled {
 
 .btn-light:hover {
   background: oklch(var(--color-base-content) / 0.75);
+}
+
+button.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.card-btn-neutral:disabled {
+  background-color: var(--color-neutral);
+  color: var(--color-neutral-content);
+  opacity: 0.7;
+}
+
+button.card-btn-error {
+  background-color: transparent;
+}
+
+button.card-btn-error:hover:not(:disabled) {
+  background-color: var(--color-error);
+}
+
+.card-btn-error .icon {
+  color: var(--color-error);
+}
+
+button.card-btn-error:hover:not(:disabled) .icon {
+  color: var(--color-error-content);
 }

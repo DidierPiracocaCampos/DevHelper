@@ -4,7 +4,15 @@ export type UiCardButtonType = 'submit' | 'button' | 'reset';
 
 export type UiCardButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type UiCardButtonShape = 'square' | 'circle';
-export type UiCardButtonSeverity = 'neutral' | 'primary' | 'secondary' | 'accent';
+export type UiCardButtonSeverity =
+  | 'neutral'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error';
 
 @Component({
   selector: 'ui-card-button',
@@ -20,5 +28,5 @@ export class UiCardButton {
   severity = input<UiCardButtonSeverity>('secondary');
   type = input<UiCardButtonType>('button');
   disabled = input<boolean>(false);
-  click = output();
+  press = output();
 }

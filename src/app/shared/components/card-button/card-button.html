@@ -1,10 +1,10 @@
 <button
   [attr.type]="type()"
-  class="btn btn-{{ severity() }} btn-{{ size() }} {{
+  class="btn btn-{{ severity() }} card-btn-{{ severity() }} btn-{{ size() }} {{
     shape() === 'circle' ? 'btn-circle-custom' : 'btn-square-custom'
   }}"
   [disabled]="disabled()"
-  (click)="click.emit()"
+  (click)="press.emit()"
 >
   <span class="icon">{{ icon() }}</span>
 </button>
