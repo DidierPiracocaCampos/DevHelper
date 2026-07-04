@@ -1,19 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, merge, map } from 'rxjs';
 import { Authenticator } from '../../../shared/service/authenticator';
-import { UiEmailField, UiPasswordField } from '../../../shared/forms/fields';
+import { UiEmailField, UiPasswordField, ErrorMessage } from '../../../shared/forms/fields';
 import firebasePasswordValidator from '../../../shared/forms/validators/password.validator';
-import { ErrorMessage } from '../../../shared/forms/fields';
-import { NgClass } from '@angular/common';
+import {
+  PASSWORD_RULES,
+  type PasswordRuleKey,
+  type PasswordRuleStates,
+  evaluatePasswordRules,
+} from '../../../shared/forms/validators/password-rules';
 import { matchOtherValidator } from '../../../shared/forms/validators/match.validator';
 import { RouterLink } from '@angular/router';
 import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'auth-form-register',
-  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, ErrorMessage, NgClass, RouterLink],
+  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, ErrorMessage, RouterLink],
   templateUrl: './form-register.html',
   styleUrl: './form-register.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,66 +26,58 @@ export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _authenticator = inject(Authenticator);
   private _loader = inject(Loader);
-  private _destroyRef = inject(DestroyRef);
 
   loading = false;
   showVerificationMessage = false;
 
+  readonly rules = PASSWORD_RULES;
+
   form = this._formBuilder.group({
     email: this._formBuilder.control<string>('', [Validators.email, Validators.required]),
-    password: this._formBuilder.control<string>(
-      '',
-      [Validators.required],
-      [firebasePasswordValidator(this._destroyRef)],
-    ),
+    password: this._formBuilder.control<string>('', [
+      Validators.required,
+      firebasePasswordValidator(),
+    ]),
     verifyPassword: this._formBuilder.control<string>('', [
       Validators.required,
       matchOtherValidator('password'),
     ]),
   });
 
-  private _password = this.form.controls.password;
-
+  private readonly _password = this.form.controls.password;
   private readonly _blurTick$ = new Subject<void>();
-
-  private readonly _passwordChanges$ = merge(
-    this._password.valueChanges,
-    this.form.statusChanges,
-    this._blurTick$,
-  );
 
   readonly passwordValue = toSignal(this._password.valueChanges, {
     initialValue: this._password.value,
   });
 
-  readonly passwordErrors = toSignal(
-    this._passwordChanges$.pipe(map(() => this._password.errors)),
-    { initialValue: this._password.errors },
-  );
-
   readonly passwordTouched = toSignal(
-    this._passwordChanges$.pipe(map(() => this._password.touched)),
+    merge(this._password.valueChanges, this._password.statusChanges, this._blurTick$).pipe(
+      map(() => this._password.touched),
+    ),
     { initialValue: this._password.touched },
   );
 
-  readonly passwordStatus = toSignal(
-    this._passwordChanges$.pipe(map(() => this._password.status)),
-    { initialValue: this._password.status },
+  readonly ruleStates = computed<PasswordRuleStates>(() =>
+    evaluatePasswordRules(this.passwordValue()),
   );
-
-  readonly passwordValid = computed(() => this.passwordStatus() === 'VALID');
 
   onFormFocusOut() {
     this._blurTick$.next();
   }
 
-  constructor() {
-    this.form.controls.password.valueChanges.subscribe(() => {
-      this.form.controls.verifyPassword.updateValueAndValidity({
-        onlySelf: true,
-        emitEvent: false,
-      });
-    });
+  rowClass(key: PasswordRuleKey): { success: boolean; error: boolean } {
+    const met = this.ruleStates()[key];
+    const touched = this.passwordTouched();
+    return {
+      success: met,
+      error: !met && touched,
+    };
+  }
+
+  rowIcon(key: PasswordRuleKey): string {
+    const met = this.ruleStates()[key];
+    return met ? 'check' : this.passwordTouched() ? 'error' : 'remove';
   }
 
   async onSubmit() {

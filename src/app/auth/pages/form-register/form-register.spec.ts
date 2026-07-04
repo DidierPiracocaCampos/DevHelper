@@ -4,6 +4,10 @@ import { vi } from 'vitest';
 import FormRegister from './form-register';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
+import {
+  PASSWORD_RULES,
+  type PasswordRuleKey,
+} from '../../../shared/forms/validators/password-rules';
 
 describe('FormRegister password requirements list', () => {
   let fixture: ComponentFixture<FormRegister>;
@@ -24,104 +28,158 @@ describe('FormRegister password requirements list', () => {
     fixture.detectChanges();
   });
 
-  function rowIcon(rowIndex: number): HTMLElement {
+  function rows(): HTMLElement[] {
     const list = fixture.nativeElement.querySelector('ul.list') as HTMLElement;
-    const rows = list.querySelectorAll('li.list-row');
-    return rows[rowIndex].querySelector('span.icon') as HTMLElement;
+    return Array.from(list.querySelectorAll('li.list-row')) as HTMLElement[];
   }
-
-  function touchAndFocusOut() {
+  function iconOf(row: HTMLElement): HTMLElement {
+    return row.querySelector('span.icon') as HTMLElement;
+  }
+  function labelOf(row: HTMLElement): string {
+    return (row.querySelector('div') as HTMLElement).textContent?.trim() ?? '';
+  }
+  function rowByKey(key: PasswordRuleKey): HTMLElement {
+    return rows()[PASSWORD_RULES.findIndex((r) => r.key === key)];
+  }
+  function touch() {
     component.form.controls.password.markAsTouched();
     component.onFormFocusOut();
     fixture.detectChanges();
   }
 
-  it('all 5 rows render with danger style when password is empty (default state, required fails)', () => {
-    touchAndFocusOut();
+  it('renderiza 5 filas con etiquetas correctas', () => {
+    fixture.detectChanges();
+    const r = rows();
+    expect(r.length).toBe(5);
+    expect(r.map(labelOf)).toEqual(PASSWORD_RULES.map((rule) => rule.label));
+  });
 
-    for (let i = 0; i < 5; i++) {
-      const icon = rowIcon(i);
+  it('antes de blur con password vacio: 5 filas neutras (remove)', () => {
+    const password = component.form.controls.password;
+    password.setValue('');
+    fixture.detectChanges();
+    for (const row of rows()) {
+      const icon = iconOf(row);
+      expect(icon.classList.contains('success')).toBe(false);
+      expect(icon.classList.contains('error')).toBe(false);
+      expect(icon.textContent?.trim()).toBe('remove');
+    }
+  });
+
+  it('antes de blur con password valida completa: 5 filas verde/check inmediatamente', () => {
+    const password = component.form.controls.password;
+    password.setValue('Abcdef1!');
+    fixture.detectChanges();
+    for (const row of rows()) {
+      const icon = iconOf(row);
+      expect(icon.classList.contains('success')).toBe(true);
+      expect(icon.classList.contains('error')).toBe(false);
+      expect(icon.textContent?.trim()).toBe('check');
+    }
+  });
+
+  it('antes de blur "p": lower en verde, los otros 4 neutros (no rojo) - verde individual sin espera', () => {
+    const password = component.form.controls.password;
+    password.setValue('p');
+    fixture.detectChanges();
+    for (const row of rows()) {
+      const icon = iconOf(row);
+      expect(icon.classList.contains('error')).toBe(false);
+    }
+    const lowerIcon = iconOf(rowByKey('lower'));
+    expect(lowerIcon.classList.contains('success')).toBe(true);
+    expect(lowerIcon.textContent?.trim()).toBe('check');
+    for (const rule of PASSWORD_RULES) {
+      if (rule.key === 'lower') continue;
+      const icon = iconOf(rowByKey(rule.key));
+      expect(icon.classList.contains('success')).toBe(false);
+      expect(icon.textContent?.trim()).toBe('remove');
+    }
+  });
+
+  it('tras blur con password valida: 5 filas success/check', () => {
+    const password = component.form.controls.password;
+    password.setValue('Abcdef1!');
+    touch();
+    for (const row of rows()) {
+      const icon = iconOf(row);
+      expect(icon.classList.contains('success')).toBe(true);
+      expect(icon.classList.contains('error')).toBe(false);
+      expect(icon.textContent?.trim()).toBe('check');
+    }
+  });
+
+  it('bug fix: una sola letra minuscula NO marca todas como success', () => {
+    const password = component.form.controls.password;
+    password.setValue('p');
+    touch();
+
+    const icons = rows().map(iconOf);
+    const successCount = icons.filter((i) => i.classList.contains('success')).length;
+    expect(successCount).toBe(1);
+    const lowerIcon = iconOf(rowByKey('lower'));
+    expect(lowerIcon.classList.contains('success')).toBe(true);
+    expect(lowerIcon.textContent?.trim()).toBe('check');
+
+    for (const rule of PASSWORD_RULES) {
+      if (rule.key === 'lower') continue;
+      const icon = iconOf(rowByKey(rule.key));
+      expect(icon.classList.contains('success')).toBe(false);
+      expect(icon.classList.contains('error')).toBe(true);
+      expect(icon.textContent?.trim()).toBe('error');
+    }
+  });
+
+  it('tras blur "Abc1": cumplidas en verde (lower, upper, number), no-cumplidas en rojo (minLength, special)', () => {
+    const password = component.form.controls.password;
+    password.setValue('Abc1');
+    touch();
+
+    for (const rule of PASSWORD_RULES) {
+      const icon = iconOf(rowByKey(rule.key));
+      if (rule.test('Abc1')) {
+        expect(icon.classList.contains('success')).toBe(true);
+        expect(icon.classList.contains('error')).toBe(false);
+      } else {
+        expect(icon.classList.contains('success')).toBe(false);
+        expect(icon.classList.contains('error')).toBe(true);
+      }
+    }
+  });
+
+  it('vacio + touched: 5 filas en rojo (error)', () => {
+    touch();
+    for (const row of rows()) {
+      const icon = iconOf(row);
       expect(icon.classList.contains('error')).toBe(true);
       expect(icon.classList.contains('success')).toBe(false);
     }
   });
 
-  it('bug fix: typing a single lowercase letter does not mark all rows as success', () => {
+  it('ruleStates se actualiza por keystroke', () => {
     const password = component.form.controls.password;
-    touchAndFocusOut();
-    password.setValue('p');
+    password.setValue('');
     fixture.detectChanges();
+    expect(component.ruleStates().lower).toBe(false);
 
-    for (let i = 0; i < 5; i++) {
-      const icon = rowIcon(i);
-      expect(icon.classList.contains('success')).toBe(false);
-      expect(icon.classList.contains('error')).toBe(false);
-    }
-  });
-
-  it('during PENDING (after typing, before async resolves), no row is danger either', () => {
-    const password = component.form.controls.password;
-    touchAndFocusOut();
-    password.setValue('p');
+    password.setValue('a');
     fixture.detectChanges();
+    expect(component.ruleStates().lower).toBe(true);
+    expect(component.ruleStates().upper).toBe(false);
 
-    for (let i = 0; i < 5; i++) {
-      expect(rowIcon(i).classList.contains('error')).toBe(false);
-    }
-  });
-
-  it('unmet rows are danger and met rows are neutral when INVALID (set via setErrors)', () => {
-    const password = component.form.controls.password;
-    touchAndFocusOut();
-    password.setErrors({
-      firebasePassword: {
-        minLength: false,
-        lower: true,
-        upper: false,
-        number: false,
-        special: false,
-      },
-    });
+    password.setValue('A');
     fixture.detectChanges();
-
-    expect(rowIcon(0).classList.contains('error')).toBe(true);
-    expect(rowIcon(1).classList.contains('error')).toBe(false);
-    expect(rowIcon(1).classList.contains('success')).toBe(false);
-    expect(rowIcon(2).classList.contains('error')).toBe(true);
-    expect(rowIcon(3).classList.contains('error')).toBe(true);
-    expect(rowIcon(4).classList.contains('error')).toBe(true);
+    expect(component.ruleStates().upper).toBe(true);
+    expect(component.ruleStates().minLength).toBe(false);
   });
 
-  it('rows stay neutral when not touched even if status is INVALID', () => {
-    const password = component.form.controls.password;
-    password.setErrors({ firebasePassword: { minLength: false } });
-    password.updateValueAndValidity();
-    fixture.detectChanges();
-
-    for (let i = 0; i < 5; i++) {
-      expect(rowIcon(i).classList.contains('error')).toBe(false);
-      expect(rowIcon(i).classList.contains('success')).toBe(false);
-    }
+  it('passwordTouched reacciona al blur del formulario', () => {
+    expect(component.passwordTouched()).toBe(false);
+    touch();
+    expect(component.passwordTouched()).toBe(true);
   });
 
-  it('passwordStatus signal reflects INVALID transitions synchronously', () => {
-    const password = component.form.controls.password;
-
-    expect(component.passwordStatus()).toBe('INVALID');
-    expect(component.passwordValid()).toBe(false);
-
-    password.setErrors({ firebasePassword: { minLength: false } });
-    password.updateValueAndValidity();
-    expect(component.passwordStatus()).toBe('INVALID');
-    expect(component.passwordValid()).toBe(false);
-
-    password.setErrors({ required: true });
-    password.updateValueAndValidity();
-    expect(component.passwordStatus()).toBe('INVALID');
-    expect(component.passwordValid()).toBe(false);
-  });
-
-  it('passwordValue signal updates on setValue', () => {
+  it('passwordValue signal refleja setValue', () => {
     expect(component.passwordValue()).toBe('');
     component.form.controls.password.setValue('abc');
     expect(component.passwordValue()).toBe('abc');
@@ -129,9 +187,13 @@ describe('FormRegister password requirements list', () => {
     expect(component.passwordValue()).toBe('xyz');
   });
 
-  it('passwordTouched signal updates on form focus out', () => {
-    expect(component.passwordTouched()).toBe(false);
-    touchAndFocusOut();
-    expect(component.passwordTouched()).toBe(true);
+  it('no flicker VALID->INVALID: status sincrono en setValue', () => {
+    const password = component.form.controls.password;
+    password.setValue('p');
+    expect(password.status).toBe('INVALID');
+    password.setValue('Abcdef1!');
+    expect(password.status).toBe('VALID');
+    password.setValue('Abcdef1');
+    expect(password.status).toBe('INVALID');
   });
 });

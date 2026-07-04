@@ -6,107 +6,19 @@
     </div>
   } @else {
     <ui-email-field inputId="email" formControlName="email" />
-    @let pwdValid = passwordValid();
-    @let pwdInvalid = passwordStatus() === 'INVALID';
-    @let pwdTouched = passwordTouched();
     <ui-password-field inputId="password" formControlName="password" autocomplete="new-password">
-      <ng-template errorMessage="firebasePassword" [visible]="true" let-error>
+      <ng-template errorMessage="firebasePassword" [visible]="true">
         <ul class="list">
           <li class="py-2 text-xs opacity-60 tracking-wide">Tu contraseña debe tener:</li>
-          <li class="list-row">
-            <span
-              class="icon"
-              [ngClass]="{
-                success: pwdTouched && pwdValid,
-                error: pwdTouched && pwdInvalid && !error?.minLength,
-              }"
-            >
-              {{
-                pwdTouched && pwdValid
-                  ? 'check'
-                  : pwdTouched && pwdInvalid && !error?.minLength
-                    ? 'error'
-                    : 'remove'
-              }}
-            </span>
-            <div class="text-xs">Mínimo 8 caracteres</div>
-          </li>
-
-          <li class="list-row">
-            <span
-              class="icon"
-              [ngClass]="{
-                success: pwdTouched && pwdValid,
-                error: pwdTouched && pwdInvalid && !error?.lower,
-              }"
-            >
-              {{
-                pwdTouched && pwdValid
-                  ? 'check'
-                  : pwdTouched && pwdInvalid && !error?.lower
-                    ? 'error'
-                    : 'remove'
-              }}
-            </span>
-            <div class="text-xs">Letra minúscula</div>
-          </li>
-
-          <li class="list-row">
-            <span
-              class="icon"
-              [ngClass]="{
-                success: pwdTouched && pwdValid,
-                error: pwdTouched && pwdInvalid && !error?.upper,
-              }"
-            >
-              {{
-                pwdTouched && pwdValid
-                  ? 'check'
-                  : pwdTouched && pwdInvalid && !error?.upper
-                    ? 'error'
-                    : 'remove'
-              }}
-            </span>
-            <div class="text-xs">Letra mayúscula</div>
-          </li>
-
-          <li class="list-row">
-            <span
-              class="icon"
-              [ngClass]="{
-                success: pwdTouched && pwdValid,
-                error: pwdTouched && pwdInvalid && !error?.number,
-              }"
-            >
-              {{
-                pwdTouched && pwdValid
-                  ? 'check'
-                  : pwdTouched && pwdInvalid && !error?.number
-                    ? 'error'
-                    : 'remove'
-              }}
-            </span>
-            <div class="text-xs">Número</div>
-          </li>
-
-          <li class="list-row">
-            <span
-              class="icon"
-              [ngClass]="{
-                success: pwdTouched && pwdValid,
-                error: pwdTouched && pwdInvalid && !error?.special,
-              }"
-            >
-              {{
-                pwdTouched && pwdValid
-                  ? 'check'
-                  : pwdTouched && pwdInvalid && !error?.special
-                    ? 'error'
-                    : 'remove'
-              }}
-            </span>
-            <div class="text-xs">Carácter especial</div>
-          </li>
+          @for (rule of rules; track rule.key) {
+            @let cls = rowClass(rule.key);
+            <li class="list-row">
+              <span class="icon" [class.success]="cls.success" [class.error]="cls.error">
+                {{ rowIcon(rule.key) }}
+              </span>
+              <div class="text-xs">{{ rule.label }}</div>
+            </li>
+          }
         </ul>
       </ng-template>
       <ng-template errorMessage="required">
