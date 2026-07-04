@@ -25,12 +25,12 @@
 }
 
 .card-event-neutral {
-  background-color: var(--color-base-200, #20201e);
-  color: var(--color-base-content, #e8e8e8);
+  background-color: oklch(0 0 0 / 0.08);
+  color: var(--color-base-100);
 }
 
 .card-event-neutral:hover {
-  background-color: var(--color-base-300, #363633);
+  background-color: oklch(0 0 0 / 0.15);
 }
 
 .card-event__title {

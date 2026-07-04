@@ -1,4 +1,4 @@
-<ui-card title="Calendario" padding="sm" class="w-full h-full" [actions]="false">
+<ui-card padding="sm" class="w-full h-full" theme="light" [actions]="false">
   <div class="flex flex-col gap-2 h-full min-h-0">
     <header class="home-calendar-header">
       <h2 class="home-calendar-month">{{ monthLabel() }}</h2>
@@ -32,9 +32,9 @@
           <ui-card-button
             icon="add"
             shape="circle"
-            severity="primary"
+            severity="secondary"
             size="lg"
-            (click)="openCreate()"
+            (press)="openCreate()"
           />
         </ui-tooltip>
       </div>
