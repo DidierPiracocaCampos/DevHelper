@@ -36,16 +36,16 @@
                         description
                       </span>
                     } @else {
-          <button
-            type="button"
-            data-testid="status-circle"
-            class="status-circle"
-            [ngClass]="statusCircleClass(issue)"
-            [attr.aria-label]="
-              issue.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
-            "
-            (click)="toggleStatus(issue)"
-          ></button>
+                      <button
+                        type="button"
+                        data-testid="status-circle"
+                        class="status-circle"
+                        [ngClass]="statusCircleClass(issue)"
+                        [attr.aria-label]="
+                          issue.status === 'done' ? 'Marcar como pendiente' : 'Marcar como hecho'
+                        "
+                        (click)="toggleStatus(issue)"
+                      ></button>
                     }
                   </ul>
                 </div>
@@ -121,10 +121,12 @@
 
         <label class="issue-list-checkbox">
           <span class="text-sm">Prioridad</span>
-          <select class="select select-bordered w-full" formControlName="priority">
-            <option value="normal">Normal</option>
-            <option value="high">Alta</option>
-          </select>
+          <ui-select-field
+            class="flex-1"
+            inputId="issue-priority"
+            [options]="priorityOptions"
+            formControlName="priority"
+          />
         </label>
       </div>
 

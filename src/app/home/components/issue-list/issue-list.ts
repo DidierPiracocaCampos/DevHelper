@@ -15,6 +15,8 @@ import {
   UiTextField,
   UiTextareaField,
   UiDateField,
+  UiSelectField,
+  type SelectOption,
   ErrorMessage,
 } from '../../../shared/forms/fields';
 import { UiListButton } from '../../../shared/components/list-button/list-button';
@@ -41,6 +43,7 @@ interface IssueFormStatus {
     UiTextField,
     UiTextareaField,
     UiDateField,
+    UiSelectField,
     ErrorMessage,
     UiListButton,
     FilterBar,
@@ -64,6 +67,11 @@ export class IssueList {
 
   readonly isFormModalOpen = signal(false);
   readonly formStatus = signal<IssueFormStatus>({ loading: false });
+
+  protected readonly priorityOptions: ReadonlyArray<SelectOption<'normal' | 'high'>> = [
+    { value: 'normal', label: 'Normal' },
+    { value: 'high', label: 'Alta' },
+  ];
 
   protected readonly _form = this._formBuilder.group({
     title: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),
