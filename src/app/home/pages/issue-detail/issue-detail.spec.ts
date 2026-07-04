@@ -178,13 +178,14 @@ describe('IssueDetail', () => {
     expect(component.issue()?.title).toBe('Cargado');
   });
 
-  it('save() forwards trimmed values to updateIssue including solution', async () => {
-    repo.setCurrent(makeIssue({ id: 'i1', title: 'Antiguo' }));
+  it('save() forwards trimmed values to updateIssue including solution and priority', async () => {
+    repo.setCurrent(makeIssue({ id: 'i1', title: 'Antiguo', priority: 'normal' }));
     component.reload();
     component['_form'].patchValue({
       title: '  Nuevo  ',
       description: '  desc  ',
       solution: '  Reiniciar  ',
+      priority: 'high',
     });
     await component.save();
     expect(repo.updateIssue).toHaveBeenCalled();
@@ -192,6 +193,14 @@ describe('IssueDetail', () => {
     expect((patch as Partial<IssueI>).title).toBe('Nuevo');
     expect((patch as Partial<IssueI>).description).toBe('desc');
     expect((patch as Partial<IssueI>).solution).toBe('Reiniciar');
+    expect((patch as Partial<IssueI>).priority).toBe('high');
+  });
+
+  it('loads the issue priority into the form', () => {
+    repo.setCurrent(makeIssue({ id: 'i1', priority: 'high' }));
+    component.reload();
+    fixture.detectChanges();
+    expect(component['_form'].controls.priority.value).toBe('high');
   });
 
   it('save() emits success toast and does not reload the page', async () => {

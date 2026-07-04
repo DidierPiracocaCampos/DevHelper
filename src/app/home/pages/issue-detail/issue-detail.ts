@@ -12,15 +12,23 @@ import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { IssueI, IssueStatus, IssueUpdateInput } from '../../domain/issue.interface';
+import { IssueI, IssueStatus, IssuePriority, IssueUpdateInput } from '../../domain/issue.interface';
 import { IssueRepository } from '../../service/issues.repository';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
 import { FileList } from '../../components/file-list/file-list';
 import { PasswordList } from '../../components/password-list/password-list';
-import { UiButton } from '../../../shared/components/ui-button/button';
-import { UiTextField, UiTextareaField, ErrorMessage } from '../../../shared/forms/fields';
+import { UiCardButton } from '../../../shared/components/card-button/card-button';
+import { UiTooltipComponent } from '../../../shared/components/tooltip';
+import {
+  UiLabel,
+  UiTextField,
+  UiTextareaField,
+  UiSelectField,
+  SelectOption,
+  ErrorMessage,
+} from '../../../shared/forms/fields';
 
 @Component({
   selector: 'issue-detail',
@@ -29,8 +37,11 @@ import { UiTextField, UiTextareaField, ErrorMessage } from '../../../shared/form
     NgClass,
     UiTextField,
     UiTextareaField,
+    UiLabel,
+    UiSelectField,
     ErrorMessage,
-    UiButton,
+    UiCardButton,
+    UiTooltipComponent,
     FileList,
     PasswordList,
   ],
@@ -50,7 +61,13 @@ export class IssueDetail implements OnDestroy {
     title: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),
     description: this._formBuilder.control<string>(''),
     solution: this._formBuilder.control<string>(''),
+    priority: this._formBuilder.control<IssuePriority>('normal'),
   });
+
+  protected readonly priorityOptions: ReadonlyArray<SelectOption<IssuePriority>> = [
+    { value: 'normal', label: 'Normal' },
+    { value: 'high', label: 'Alta' },
+  ];
 
   readonly projectId = signal<string>('');
   readonly issueId = signal<string>('');
@@ -80,6 +97,7 @@ export class IssueDetail implements OnDestroy {
             title: it.title,
             description: it.description ?? '',
             solution: it.solution ?? '',
+            priority: it.priority ?? 'normal',
           },
           { emitEvent: false },
         );
@@ -111,6 +129,7 @@ export class IssueDetail implements OnDestroy {
       title: raw.title.trim(),
       description: raw.description.trim() || undefined,
       solution: raw.solution.trim() || undefined,
+      priority: raw.priority,
     };
     try {
       await firstValueFrom(this._repo.updateIssue(id, patch));

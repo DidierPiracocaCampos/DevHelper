@@ -16,6 +16,14 @@
           </ng-template>
         </ui-text-field>
 
+        <ui-select-field
+          labelText="Prioridad"
+          inputId="issue-detail-priority"
+          [options]="priorityOptions"
+          formControlName="priority"
+          class="issue-detail-priority-field"
+        />
+
         <button
           type="button"
           data-testid="status-circle"
@@ -59,24 +67,21 @@
     </div>
 
     <div class="issue-detail-footer">
-      <ui-button
-        icon="ios_share"
-        label="Exportar"
-        severity="secondary"
-        (press)="export()"
-      />
-      <ui-button
-        icon="delete"
-        label="Eliminar"
-        severity="error"
-        (press)="remove()"
-      />
-      <ui-button
-        icon="check"
-        label="Guardar"
-        severity="primary"
-        type="submit"
-      />
+      <ui-tooltip text="Exportar" placement="top" severity="secondary">
+        <ui-card-button icon="ios_share" severity="secondary" size="xl" (click)="export()" />
+      </ui-tooltip>
+      <ui-tooltip text="Eliminar" placement="top" severity="neutral">
+        <ui-card-button icon="delete" severity="neutral" size="xl" (click)="remove()" />
+      </ui-tooltip>
+      <ui-tooltip text="Guardar" placement="top" severity="accent">
+        <ui-card-button
+          icon="check"
+          severity="accent"
+          size="xl"
+          type="submit"
+          (click)="save()"
+        />
+      </ui-tooltip>
     </div>
   </form>
 </div>
