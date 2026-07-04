@@ -6,7 +6,9 @@
     </div>
   } @else {
     <ui-email-field inputId="email" formControlName="email" />
-    @let valid = form.get('password')?.valid;
+    @let pwdValid = passwordValid();
+    @let pwdInvalid = passwordStatus() === 'INVALID';
+    @let pwdTouched = passwordTouched();
     <ui-password-field inputId="password" formControlName="password" autocomplete="new-password">
       <ng-template errorMessage="firebasePassword" [visible]="true" let-error>
         <ul class="list">
@@ -14,9 +16,18 @@
           <li class="list-row">
             <span
               class="icon"
-              [ngClass]="{ success: error?.minLength || valid, error: error && !error.minLength }"
+              [ngClass]="{
+                success: pwdTouched && pwdValid,
+                error: pwdTouched && pwdInvalid && !error?.minLength,
+              }"
             >
-              {{ error?.minLength || valid ? 'check' : 'error' }}
+              {{
+                pwdTouched && pwdValid
+                  ? 'check'
+                  : pwdTouched && pwdInvalid && !error?.minLength
+                    ? 'error'
+                    : 'remove'
+              }}
             </span>
             <div class="text-xs">Mínimo 8 caracteres</div>
           </li>
@@ -24,9 +35,18 @@
           <li class="list-row">
             <span
               class="icon"
-              [ngClass]="{ success: error?.lower || valid, error: error && !error.lower }"
+              [ngClass]="{
+                success: pwdTouched && pwdValid,
+                error: pwdTouched && pwdInvalid && !error?.lower,
+              }"
             >
-              {{ error?.lower || valid ? 'check' : 'error' }}
+              {{
+                pwdTouched && pwdValid
+                  ? 'check'
+                  : pwdTouched && pwdInvalid && !error?.lower
+                    ? 'error'
+                    : 'remove'
+              }}
             </span>
             <div class="text-xs">Letra minúscula</div>
           </li>
@@ -34,9 +54,18 @@
           <li class="list-row">
             <span
               class="icon"
-              [ngClass]="{ success: error?.upper || valid, error: error && !error.upper }"
+              [ngClass]="{
+                success: pwdTouched && pwdValid,
+                error: pwdTouched && pwdInvalid && !error?.upper,
+              }"
             >
-              {{ error?.upper || valid ? 'check' : 'error' }}
+              {{
+                pwdTouched && pwdValid
+                  ? 'check'
+                  : pwdTouched && pwdInvalid && !error?.upper
+                    ? 'error'
+                    : 'remove'
+              }}
             </span>
             <div class="text-xs">Letra mayúscula</div>
           </li>
@@ -44,9 +73,18 @@
           <li class="list-row">
             <span
               class="icon"
-              [ngClass]="{ success: error?.number || valid, error: error && !error.number }"
+              [ngClass]="{
+                success: pwdTouched && pwdValid,
+                error: pwdTouched && pwdInvalid && !error?.number,
+              }"
             >
-              {{ error?.number || valid ? 'check' : 'error' }}
+              {{
+                pwdTouched && pwdValid
+                  ? 'check'
+                  : pwdTouched && pwdInvalid && !error?.number
+                    ? 'error'
+                    : 'remove'
+              }}
             </span>
             <div class="text-xs">Número</div>
           </li>
@@ -54,9 +92,18 @@
           <li class="list-row">
             <span
               class="icon"
-              [ngClass]="{ success: error?.special || valid, error: error && !error.special }"
+              [ngClass]="{
+                success: pwdTouched && pwdValid,
+                error: pwdTouched && pwdInvalid && !error?.special,
+              }"
             >
-              {{ error?.special || valid ? 'check' : 'error' }}
+              {{
+                pwdTouched && pwdValid
+                  ? 'check'
+                  : pwdTouched && pwdInvalid && !error?.special
+                    ? 'error'
+                    : 'remove'
+              }}
             </span>
             <div class="text-xs">Carácter especial</div>
           </li>
