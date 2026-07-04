@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { merge, map } from 'rxjs';
+import { Subject, merge, map } from 'rxjs';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { UiEmailField, UiPasswordField } from '../../../shared/forms/fields';
 import firebasePasswordValidator from '../../../shared/forms/validators/password.validator';
@@ -42,32 +42,38 @@ export default class FormRegister {
 
   private _password = this.form.controls.password;
 
+  private readonly _blurTick$ = new Subject<void>();
+
+  private readonly _passwordChanges$ = merge(
+    this._password.valueChanges,
+    this.form.statusChanges,
+    this._blurTick$,
+  );
+
   readonly passwordValue = toSignal(this._password.valueChanges, {
     initialValue: this._password.value,
   });
 
   readonly passwordErrors = toSignal(
-    merge(this._password.valueChanges, this._password.statusChanges).pipe(
-      map(() => this._password.errors),
-    ),
+    this._passwordChanges$.pipe(map(() => this._password.errors)),
     { initialValue: this._password.errors },
   );
 
   readonly passwordTouched = toSignal(
-    merge(this._password.valueChanges, this._password.statusChanges).pipe(
-      map(() => this._password.touched),
-    ),
+    this._passwordChanges$.pipe(map(() => this._password.touched)),
     { initialValue: this._password.touched },
   );
 
   readonly passwordStatus = toSignal(
-    merge(this._password.valueChanges, this._password.statusChanges).pipe(
-      map(() => this._password.status),
-    ),
+    this._passwordChanges$.pipe(map(() => this._password.status)),
     { initialValue: this._password.status },
   );
 
   readonly passwordValid = computed(() => this.passwordStatus() === 'VALID');
+
+  onFormFocusOut() {
+    this._blurTick$.next();
+  }
 
   constructor() {
     this.form.controls.password.valueChanges.subscribe(() => {

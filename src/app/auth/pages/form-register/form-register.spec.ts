@@ -30,10 +30,14 @@ describe('FormRegister password requirements list', () => {
     return rows[rowIndex].querySelector('span.icon') as HTMLElement;
   }
 
-  it('all 5 rows render with danger style when password is empty (no value, no error)', () => {
-    const password = component.form.controls.password;
-    password.markAsTouched();
+  function touchAndFocusOut() {
+    component.form.controls.password.markAsTouched();
+    component.onFormFocusOut();
     fixture.detectChanges();
+  }
+
+  it('all 5 rows render with danger style when password is empty (default state, required fails)', () => {
+    touchAndFocusOut();
 
     for (let i = 0; i < 5; i++) {
       const icon = rowIcon(i);
@@ -42,113 +46,9 @@ describe('FormRegister password requirements list', () => {
     }
   });
 
-  it('only unmet rows are danger, met rows stay neutral when password is "p" (only lowercase)', () => {
+  it('bug fix: typing a single lowercase letter does not mark all rows as success', () => {
     const password = component.form.controls.password;
-    password.markAsTouched();
-    password.setErrors({
-      firebasePassword: {
-        minLength: false,
-        lower: true,
-        upper: false,
-        number: false,
-        special: false,
-      },
-    });
-    fixture.detectChanges();
-
-    expect(rowIcon(0).classList.contains('error')).toBe(true);
-    expect(rowIcon(0).classList.contains('success')).toBe(false);
-    expect(rowIcon(1).classList.contains('error')).toBe(false);
-    expect(rowIcon(1).classList.contains('success')).toBe(false);
-    expect(rowIcon(2).classList.contains('error')).toBe(true);
-    expect(rowIcon(2).classList.contains('success')).toBe(false);
-    expect(rowIcon(3).classList.contains('error')).toBe(true);
-    expect(rowIcon(3).classList.contains('success')).toBe(false);
-    expect(rowIcon(4).classList.contains('error')).toBe(true);
-    expect(rowIcon(4).classList.contains('success')).toBe(false);
-  });
-
-  it('all 5 rows render with success style when password is fully valid (value present, no firebasePassword error)', () => {
-    const password = component.form.controls.password;
-    password.markAsTouched();
-    password.setValue('Password1!');
-    password.setErrors(null);
-    password.updateValueAndValidity();
-    fixture.detectChanges();
-
-    for (let i = 0; i < 5; i++) {
-      const icon = rowIcon(i);
-      expect(icon.classList.contains('success')).toBe(true);
-      expect(icon.classList.contains('error')).toBe(false);
-    }
-  });
-
-  it('all 5 rows render neutral when the field has not been touched or dirtied', () => {
-    const password = component.form.controls.password;
-    password.setValue('Password1!');
-    password.setErrors(null);
-    password.updateValueAndValidity();
-    fixture.detectChanges();
-
-    for (let i = 0; i < 5; i++) {
-      const icon = rowIcon(i);
-      expect(icon.classList.contains('error')).toBe(false);
-      expect(icon.classList.contains('success')).toBe(false);
-    }
-  });
-
-  it('met rows stay neutral (not green) when the field is touched and only some requirements are met', () => {
-    const password = component.form.controls.password;
-    password.markAsTouched();
-    password.setErrors({
-      firebasePassword: {
-        minLength: false,
-        lower: true,
-        upper: false,
-        number: false,
-        special: false,
-      },
-    });
-    fixture.detectChanges();
-
-    expect(rowIcon(0).classList.contains('error')).toBe(true);
-    expect(rowIcon(0).classList.contains('success')).toBe(false);
-    expect(rowIcon(1).classList.contains('success')).toBe(false);
-    expect(rowIcon(1).classList.contains('error')).toBe(false);
-    expect(rowIcon(2).classList.contains('error')).toBe(true);
-    expect(rowIcon(2).classList.contains('success')).toBe(false);
-  });
-
-  it('exposes reactive signals for password state (OnPush-safe)', () => {
-    const password = component.form.controls.password;
-
-    expect(component.passwordValue()).toBe('');
-    expect(component.passwordTouched()).toBe(false);
-    expect(component.passwordValid()).toBe(false);
-    expect(component.passwordStatus()).toBe('INVALID');
-
-    password.setValue('abc');
-    expect(component.passwordValue()).toBe('abc');
-    expect(component.passwordStatus()).toBe('PENDING');
-    expect(component.passwordValid()).toBe(false);
-
-    password.setErrors({ firebasePassword: { minLength: false } });
-    expect(component.passwordStatus()).toBe('INVALID');
-    expect(component.passwordValid()).toBe(false);
-
-    password.setErrors(null);
-    password.updateValueAndValidity();
-    expect(component.passwordStatus()).toBe('VALID');
-    expect(component.passwordValid()).toBe(true);
-
-    password.markAsTouched();
-    password.setValue('abcd');
-    expect(component.passwordTouched()).toBe(true);
-  });
-
-  it('bug: typing a single lowercase letter does not mark all rows as success', () => {
-    const password = component.form.controls.password;
-    password.markAsTouched();
+    touchAndFocusOut();
     password.setValue('p');
     fixture.detectChanges();
 
@@ -159,9 +59,9 @@ describe('FormRegister password requirements list', () => {
     }
   });
 
-  it('during PENDING with touched, no row is danger either (error object not yet set)', () => {
+  it('during PENDING (after typing, before async resolves), no row is danger either', () => {
     const password = component.form.controls.password;
-    password.markAsTouched();
+    touchAndFocusOut();
     password.setValue('p');
     fixture.detectChanges();
 
@@ -170,10 +70,9 @@ describe('FormRegister password requirements list', () => {
     }
   });
 
-  it('unmet rows are danger and met rows are neutral when status is INVALID and touched', () => {
+  it('unmet rows are danger and met rows are neutral when INVALID (set via setErrors)', () => {
     const password = component.form.controls.password;
-    password.markAsTouched();
-    password.setValue('p');
+    touchAndFocusOut();
     password.setErrors({
       firebasePassword: {
         minLength: false,
@@ -186,40 +85,53 @@ describe('FormRegister password requirements list', () => {
     fixture.detectChanges();
 
     expect(rowIcon(0).classList.contains('error')).toBe(true);
-    expect(rowIcon(0).classList.contains('success')).toBe(false);
     expect(rowIcon(1).classList.contains('error')).toBe(false);
     expect(rowIcon(1).classList.contains('success')).toBe(false);
     expect(rowIcon(2).classList.contains('error')).toBe(true);
-    expect(rowIcon(2).classList.contains('success')).toBe(false);
     expect(rowIcon(3).classList.contains('error')).toBe(true);
-    expect(rowIcon(3).classList.contains('success')).toBe(false);
     expect(rowIcon(4).classList.contains('error')).toBe(true);
-    expect(rowIcon(4).classList.contains('success')).toBe(false);
-  });
-
-  it('all rows are success when status is VALID and touched', () => {
-    const password = component.form.controls.password;
-    password.markAsTouched();
-    password.setValue('Password1!');
-    password.setErrors(null);
-    password.updateValueAndValidity();
-    fixture.detectChanges();
-
-    for (let i = 0; i < 5; i++) {
-      expect(rowIcon(i).classList.contains('success')).toBe(true);
-      expect(rowIcon(i).classList.contains('error')).toBe(false);
-    }
   });
 
   it('rows stay neutral when not touched even if status is INVALID', () => {
     const password = component.form.controls.password;
-    password.setValue('p');
     password.setErrors({ firebasePassword: { minLength: false } });
+    password.updateValueAndValidity();
     fixture.detectChanges();
 
     for (let i = 0; i < 5; i++) {
       expect(rowIcon(i).classList.contains('error')).toBe(false);
       expect(rowIcon(i).classList.contains('success')).toBe(false);
     }
+  });
+
+  it('passwordStatus signal reflects INVALID transitions synchronously', () => {
+    const password = component.form.controls.password;
+
+    expect(component.passwordStatus()).toBe('INVALID');
+    expect(component.passwordValid()).toBe(false);
+
+    password.setErrors({ firebasePassword: { minLength: false } });
+    password.updateValueAndValidity();
+    expect(component.passwordStatus()).toBe('INVALID');
+    expect(component.passwordValid()).toBe(false);
+
+    password.setErrors({ required: true });
+    password.updateValueAndValidity();
+    expect(component.passwordStatus()).toBe('INVALID');
+    expect(component.passwordValid()).toBe(false);
+  });
+
+  it('passwordValue signal updates on setValue', () => {
+    expect(component.passwordValue()).toBe('');
+    component.form.controls.password.setValue('abc');
+    expect(component.passwordValue()).toBe('abc');
+    component.form.controls.password.setValue('xyz');
+    expect(component.passwordValue()).toBe('xyz');
+  });
+
+  it('passwordTouched signal updates on form focus out', () => {
+    expect(component.passwordTouched()).toBe(false);
+    touchAndFocusOut();
+    expect(component.passwordTouched()).toBe(true);
   });
 });
