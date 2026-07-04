@@ -15,6 +15,10 @@ import { UiFieldErrors } from '../ui-field/ui-field-errors';
       useExisting: forwardRef(() => UiTimeField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiTimeField),
+    },
   ],
 })
 export class UiTimeField extends UiField<string> {

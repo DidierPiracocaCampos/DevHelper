@@ -16,6 +16,10 @@ import { UiFieldErrors } from '../ui-field/ui-field-errors';
       useExisting: forwardRef(() => UiTextareaField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiTextareaField),
+    },
   ],
 })
 export class UiTextareaField extends UiField<string> {

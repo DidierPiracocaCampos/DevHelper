@@ -25,6 +25,10 @@ import { UiFieldErrors } from '../ui-field/ui-field-errors';
       useExisting: forwardRef(() => UiPinField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiPinField),
+    },
   ],
 })
 export class UiPinField extends UiField<string> implements AfterViewInit {

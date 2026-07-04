@@ -21,6 +21,10 @@ export interface SelectOption<T = string> {
       useExisting: forwardRef(() => UiSelectField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiSelectField),
+    },
   ],
 })
 export class UiSelectField<T extends string = string> extends UiField<T> {

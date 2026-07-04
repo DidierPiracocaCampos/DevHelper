@@ -22,6 +22,10 @@ import { UiFieldErrors } from '../ui-field/ui-field-errors';
       useExisting: forwardRef(() => UiPasswordField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiPasswordField),
+    },
   ],
 })
 export class UiPasswordField extends UiField<string> {

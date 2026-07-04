@@ -1,7 +1,9 @@
 import {
+  AfterContentInit,
   computed,
   contentChild,
   contentChildren,
+  DestroyRef,
   Directive,
   inject,
   Injector,
@@ -9,6 +11,7 @@ import {
   signal,
   TemplateRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NgControl, ValidationErrors } from '@angular/forms';
 import { ErrorMessage } from './error-message';
 
@@ -20,9 +23,10 @@ export class UiLabel {
 }
 
 @Directive()
-export abstract class UiField<T = string> implements ControlValueAccessor {
+export abstract class UiField<T = string> implements ControlValueAccessor, AfterContentInit {
   private _ngControl: NgControl | null = null;
   private _injector = inject(Injector);
+  private _destroyRef = inject(DestroyRef);
 
   readonly label = contentChild(UiLabel);
   readonly prefix = contentChild('[prefix]', { read: TemplateRef });
@@ -44,6 +48,26 @@ export abstract class UiField<T = string> implements ControlValueAccessor {
 
   ngOnInit() {
     this._ngControl = this._injector.get(NgControl, null);
+  }
+
+  ngAfterContentInit() {
+    this._bindToControl();
+  }
+
+  private _bindToControl() {
+    if (!this._ngControl?.control) return;
+    this._syncFromControl();
+    this._ngControl.control.statusChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => this._syncFromControl());
+  }
+
+  private _syncFromControl() {
+    const control = this._ngControl?.control;
+    if (!control) return;
+    this.errors.set(control.errors);
+    if (control.touched) this.touched.set(true);
+    if (control.dirty) this.dirty.set(true);
   }
 
   writeValue(value: T | null): void {

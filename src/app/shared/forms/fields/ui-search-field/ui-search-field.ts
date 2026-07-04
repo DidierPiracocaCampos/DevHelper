@@ -23,6 +23,10 @@ import { UiFieldErrors } from '../ui-field/ui-field-errors';
       useExisting: forwardRef(() => UiSearchField),
       multi: true,
     },
+    {
+      provide: UiField,
+      useExisting: forwardRef(() => UiSearchField),
+    },
   ],
 })
 export class UiSearchField extends UiField<string> {
