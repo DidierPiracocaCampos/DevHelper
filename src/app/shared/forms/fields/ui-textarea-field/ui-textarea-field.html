@@ -18,9 +18,9 @@
     (blur)="onBlur()"
   ></textarea>
   <ng-content select="[suffix]" />
-  @if (maxlength() !== null) {
-    <span class="text-xs opacity-60 self-end mt-1">{{ charCount() }} / {{ maxlength() }}</span>
-  }
 </div>
+@if (maxlength() !== null) {
+  <span class="textarea-counter text-xs mt-1 block text-right">{{ charCount() }} / {{ maxlength() }}</span>
+}
 
 <ui-field-errors />
