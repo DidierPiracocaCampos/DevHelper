@@ -7,9 +7,9 @@
   <div
     class="col-span-1 w-fit justify-self-center self-center flex flex-col justify-center items-center gap-4"
   >
-    <ui-card-button icon="data_object" size="lg" (click)="openVault()" />
-    <ui-card-button icon="settings" size="lg" (click)="openConfig()" />
-    <ui-card-button icon="logout" size="lg" (click)="logout()" />
+    <ui-card-button icon="data_object" size="lg" (press)="openVault()" />
+    <ui-card-button icon="settings" size="lg" (press)="openConfig()" />
+    <ui-card-button icon="logout" size="lg" (press)="logout()" />
   </div>
   <home-calendar class="col-span-4" />
   <nasa-picture class="col-span-5" />
