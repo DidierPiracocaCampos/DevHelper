@@ -10,3 +10,4 @@ export { UiTextareaField } from './ui-textarea-field/ui-textarea-field';
 export { UiPinField } from './ui-pin-field/ui-pin-field';
 export { UiDateField } from './ui-date-field/ui-date-field';
 export { UiTimeField } from './ui-time-field/ui-time-field';
+export { UiSelectField, type SelectOption } from './ui-select-field/ui-select-field';
