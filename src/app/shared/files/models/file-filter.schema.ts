@@ -22,7 +22,7 @@ export const FILE_FILTER_SCHEMA: FilterSchema<FileMetadataI> = {
       key: 'tags',
       label: 'Etiqueta',
       control: 'text',
-      ops: ['array-contains'],
+      ops: ['==', 'array-contains'],
       placeholder: 'ej. trabajo',
     },
   ],
