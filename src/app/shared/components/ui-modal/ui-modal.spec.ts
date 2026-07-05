@@ -67,3 +67,47 @@ describe('UiModal · fullscreen + section slots', () => {
     expect(regularModal.querySelector('.config-layout')).toBeNull();
   });
 });
+
+describe('UiModal · close button', () => {
+  @Component({
+    imports: [UiModal],
+    selector: 'host-enclosing-form',
+    template: `
+      <form (submit)="onSubmit($event)">
+        <ui-modal [(isOpen)]="open" title="Test">
+          <div body>content</div>
+        </ui-modal>
+      </form>
+    `,
+  })
+  class HostEnclosingForm {
+    open = true;
+    submitted = false;
+    onSubmit(e: Event) {
+      e.preventDefault();
+      this.submitted = true;
+    }
+  }
+
+  let fixture: ComponentFixture<HostEnclosingForm>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HostEnclosingForm],
+    }).compileComponents();
+    fixture = TestBed.createComponent(HostEnclosingForm);
+    fixture.detectChanges();
+  });
+
+  it('X close button has type="button" (does not submit enclosing form)', () => {
+    const closeBtn = fixture.nativeElement.querySelector('.modal-box .btn-circle');
+    expect(closeBtn).not.toBeNull();
+    expect(closeBtn.getAttribute('type')).toBe('button');
+  });
+
+  it('clicking the X close button does NOT submit an enclosing form (regression: issue-detail save-on-close)', () => {
+    const closeBtn = fixture.nativeElement.querySelector('.modal-box .btn-circle');
+    closeBtn.click();
+    expect(fixture.componentInstance.submitted).toBe(false);
+  });
+});

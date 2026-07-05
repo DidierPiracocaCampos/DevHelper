@@ -19,7 +19,11 @@
       </h3>
 
       @if (showCloseButton() && !static()) {
-        <button class="btn btn-sm btn-circle btn-ghost icon" (click)="isOpen.set(false)">
+        <button
+          type="button"
+          class="btn btn-sm btn-circle btn-ghost icon"
+          (click)="isOpen.set(false)"
+        >
           close
         </button>
       }
