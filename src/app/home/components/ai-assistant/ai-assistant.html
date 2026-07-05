@@ -5,7 +5,7 @@
     <p class="text-sm text-base-content/60 text-center max-w-xs">
       100% en tu navegador. Cero red. ~470 MB de descarga única, queda en caché.
     </p>
-    <ui-button severity="primary" (press)="enable()">Activar asistente</ui-button>
+    <ui-button label="Activar asistente" severity="primary" (press)="enable()" />
   </div>
 } @else if (status() === 'downloading') {
   <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
@@ -15,7 +15,7 @@
       <progress class="progress progress-primary w-full max-w-xs" [value]="p.loaded" [max]="p.total"></progress>
       <p class="text-xs text-base-content/60">{{ formatBytes(p.loaded) }} / {{ formatBytes(p.total) }}</p>
     }
-    <ui-button variant="ghost" (press)="disable()">Cancelar</ui-button>
+    <ui-button label="Cancelar" variant="ghost" (press)="disable()" />
   </div>
 } @else {
   <div class="card card-xl h-full p-3 flex flex-col gap-2">
