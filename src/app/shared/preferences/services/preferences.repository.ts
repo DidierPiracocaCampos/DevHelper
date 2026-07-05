@@ -20,6 +20,7 @@ export class PreferencesRepository extends withDocDelete()(
       return {
         id: data.id,
         customNasaImage: data.customNasaImage,
+        aiAssistantEnabled: data.aiAssistantEnabled,
       };
     },
 
@@ -27,10 +28,12 @@ export class PreferencesRepository extends withDocDelete()(
       const data = snapshot.data() as {
         id?: unknown;
         customNasaImage?: CustomNasaImageI;
+        aiAssistantEnabled?: boolean;
       };
       return {
         id: 'singleton',
         customNasaImage: data.customNasaImage,
+        aiAssistantEnabled: data.aiAssistantEnabled,
       };
     },
   };

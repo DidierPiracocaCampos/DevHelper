@@ -5,7 +5,6 @@ import { FileBlobService } from '../../files/services/file-blob.service';
 import { Authenticator } from '../../service/authenticator';
 import { ToastService } from '../../service/toast';
 import { PreferencesRepository } from './preferences.repository';
-import { UserPreferencesI } from '../models/preferences.model';
 
 function withPreviousValue<T>(
   input: Resource<T | null>,
@@ -153,7 +152,7 @@ export class PreferencesService {
         this._repo.setDoc('singleton', {
           id: 'singleton',
           aiAssistantEnabled: enabled,
-        } as UserPreferencesI),
+        }),
       );
       this.preferences.reload();
     } catch (err) {
