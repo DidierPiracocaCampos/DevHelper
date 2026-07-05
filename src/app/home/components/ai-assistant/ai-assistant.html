@@ -1,0 +1,59 @@
+@if (!enabled()) {
+  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
+    <span class="icon icon-lg">psychology</span>
+    <h3 class="text-lg font-medium">Asistente IA local</h3>
+    <p class="text-sm text-base-content/60 text-center max-w-xs">
+      100% en tu navegador. Cero red. ~470 MB de descarga única, queda en caché.
+    </p>
+    <ui-button severity="primary" (press)="enable()">Activar asistente</ui-button>
+  </div>
+} @else if (status() === 'downloading') {
+  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
+    <span class="icon icon-lg">cloud_download</span>
+    <h3 class="text-lg font-medium">Descargando modelo...</h3>
+    @if (downloadProgress(); as p) {
+      <progress class="progress progress-primary w-full max-w-xs" [value]="p.loaded" [max]="p.total"></progress>
+      <p class="text-xs text-base-content/60">{{ formatBytes(p.loaded) }} / {{ formatBytes(p.total) }}</p>
+    }
+    <ui-button variant="ghost" (press)="disable()">Cancelar</ui-button>
+  </div>
+} @else {
+  <div class="card card-xl h-full p-3 flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="icon">psychology</span>
+        <span class="text-sm font-medium">Asistente IA local</span>
+      </div>
+      <ui-button variant="ghost" size="sm" icon="power_settings_new" (press)="disable()"></ui-button>
+    </div>
+    <ui-search-field
+      inputId="ai-assistant-query"
+      (search)="ask($event)"
+      placeholder="Pregunta sobre tu workspace..."
+    ></ui-search-field>
+    @if (isProcessing()) {
+      <div class="flex items-center gap-2 text-sm text-base-content/60">
+        <span class="loading loading-infinity loading-sm"></span>
+        <span>Procesando...</span>
+      </div>
+    }
+    @if (lastResult(); as result) {
+      <div class="card bg-base-200 p-3 text-sm">
+        <p>{{ result.answer }}</p>
+        @if (result.matched.length > 0) {
+          <details class="mt-2 text-xs text-base-content/60">
+            <summary>Coincidencias ({{ result.matched.length }})</summary>
+            <ul class="mt-1 space-y-1">
+              @for (m of result.matched; track m.id) {
+                <li>{{ m.title }} <span class="text-base-content/40">({{ m.score | number: '1.2-2' }})</span></li>
+              }
+            </ul>
+          </details>
+        }
+      </div>
+    }
+    <p class="text-xs text-base-content/40 mt-auto">
+      IA local · multilingual-MiniLM-L12 · 470 MB en caché
+    </p>
+  </div>
+}
