@@ -47,6 +47,7 @@ Catálogo de escenarios en los que el desarrollador usuario interactúa con DevH
 | CU-09 | Gestión de eventos / recordatorios   |  Importante   |
 | CU-10 | Búsqueda y recuperación              |    Crítico    |
 | CU-11 | Gestión de la membresía              |  Importante   |
+| CU-12 | Consultas al asistente local     |  Importante   |
 
 ## 3. Detalle de casos de uso
 
@@ -278,6 +279,28 @@ Catálogo de escenarios en los que el desarrollador usuario interactúa con DevH
 - **Postcondiciones:** el plan y los limites del usuario reflejan el estado real.
 - **Excepciones:** imposibilidad de contactar con la pasarela de pago -> el sistema muestra "estado pendiente" y reintenta mas tarde; no se aplica el cargo hasta confirmacion.
 
+### CU-12 — Consultas al asistente local
+
+![Prioridad](https://img.shields.io/badge/Prioridad-Importante-666666?style=flat-square)
+
+- **Descripcion:** el usuario hace una pregunta estructurada al asistente IA local y recibe una respuesta basada en el contenido de su workspace.
+- **Actores:** Desarrollador usuario.
+- **Precondiciones:** sesion abierta; vault desbloqueado; asistente IA activado (toggle en home); modelo descargado y cacheado.
+- **Flujo principal:**
+  1. El usuario abre el card "Asistente IA local" en el home.
+  2. Escribe una pregunta estructurada (ej. "qué tareas tengo pendientes").
+  3. Pulsa Enter o el boton de busqueda.
+  4. El sistema clasifica la intencion de la pregunta.
+  5. Recupera los documentos relevantes del workspace descifrado.
+  6. Formatea la respuesta con una plantilla determinista.
+  7. Muestra la respuesta al usuario.
+- **Flujos alternativos:**
+  - Pregunta no clasificada → mensaje "no entendi tu pregunta" + sugerencias.
+  - Vault bloqueado → error explicito "desbloquea el vault para usar el asistente".
+  - Modelo no descargado → estado "descargando" con progress bar.
+- **Postcondiciones:** el usuario recibe una respuesta estructurada.
+- **Excepciones:** el asistente no genera texto libre, no resume con NLG, no mantiene conversacion.
+
 ## 4. Flujos críticos
 
 ### 4.1 Flujo crítico: setup inicial del usuario nuevo
@@ -331,7 +354,7 @@ El producto **no** ofrece los siguientes casos de uso. Si un usuario los necesit
 | Integrar el workspace con GitHub, Jira o Slack                        |                                       No soportado en el MVP                                       |
 | Importar notas desde Notion, Evernote u Obsidian                      |                                       No soportado en el MVP                                       |
 | Conectar con Google Calendar o Outlook                                |                                       No soportado en el MVP                                       |
-| Pedir a una IA un resumen de un proyecto o una sugerencia de password |                                       No soportado en el MVP                                       |
+| Pedir a la IA un resumen libre en lenguaje natural (no extractivo) |                                No soportado en esta versión                                |
 | Crear más de 1 proyecto en el plan gratuito                           | No soportado (ver [CU-05](#cu-05--gestión-de-proyectos), [CU-11](#cu-11--gestión-de-la-membresía)) |
 | Sincronización con un cliente de escritorio nativo                    |                                       No soportado en el MVP                                       |
 | Exportar el workspace completo a JSON / PDF                           |                                       No soportado en el MVP                                       |
