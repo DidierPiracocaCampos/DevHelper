@@ -3,12 +3,14 @@ import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { Validators } from '@angular/forms';
 import { of } from 'rxjs';
 import { Firestore, Timestamp } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { IssueDetail } from './issue-detail';
 import { IssueRepository } from '../../service/issues.repository';
 import { IssueI } from '../../domain/issue.interface';
+import type { IssueUpdateInput } from '../../domain/issue.interface';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
@@ -265,5 +267,25 @@ describe('IssueDetail', () => {
     title.setTitle.mockClear();
     component.ngOnDestroy();
     expect(title.setTitle).toHaveBeenCalledWith('DevhelperWeb');
+  });
+
+  it('solution form control has no Validators.required', () => {
+    expect(component['_form'].controls.solution.hasValidator(Validators.required)).toBe(false);
+  });
+
+  it('save() with empty solution sends deleteField() for solution', async () => {
+    repo.setCurrent(makeIssue({ id: 'i1', title: 'Antiguo', solution: 'Vieja' }));
+    component.reload();
+    component['_form'].patchValue({
+      title: 'X',
+      description: '',
+      solution: '',
+      priority: 'normal',
+    });
+    await component.save();
+    expect(repo.updateIssue).toHaveBeenCalled();
+    const [, patch] = repo.updateIssue.mock.calls[0] as [string, IssueUpdateInput];
+    expect(patch.solution).toBeDefined();
+    expect(typeof patch.solution).not.toBe('string');
   });
 });

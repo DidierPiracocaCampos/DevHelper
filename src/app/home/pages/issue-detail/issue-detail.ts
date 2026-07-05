@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { deleteField } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
@@ -131,10 +132,13 @@ export class IssueDetail implements OnDestroy {
     const id = this.issueId();
     if (!id) return;
     const raw = this._form.getRawValue();
+    const solutionTrim = raw.solution.trim();
     const patch: IssueUpdateInput = {
       title: raw.title.trim(),
       description: raw.description.trim() || undefined,
-      solution: raw.solution.trim() || undefined,
+      solution: solutionTrim
+        ? solutionTrim
+        : (deleteField() as unknown as IssueUpdateInput['solution']),
       priority: raw.priority,
     };
     try {
