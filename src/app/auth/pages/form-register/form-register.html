@@ -1,4 +1,9 @@
-<form [formGroup]="form" class="p-4 min-w-[25rem] grid gap-4" (focusout)="onFormFocusOut()" (ngSubmit)="onSubmit()">
+<form
+  [formGroup]="form"
+  class="p-4 min-w-[25rem] grid gap-4"
+  (focusout)="onFormFocusOut()"
+  (ngSubmit)="onSubmit()"
+>
   @if (showVerificationMessage) {
     <div class="alert alert-success">
       <span class="icon">mark_email_unread</span>
