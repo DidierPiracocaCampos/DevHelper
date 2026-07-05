@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { Timestamp, FirestoreDataConverter } from '@angular/fire/firestore';
 import { ApiBase } from '../../shared/api/api-base';
 import {
@@ -21,6 +21,10 @@ export class ProjectRepository extends withQuery<ProjectI>()(
   ),
 ) {
   protected path = signal(['proyectos'] as const);
+
+  readonly allDocs = computed<ProjectI[]>(() =>
+    (this.getCollection().value() ?? []).filter((p) => !p.archived),
+  );
 
   protected converter: FirestoreDataConverter<ProjectI> = {
     toFirestore: (data: ProjectI) => {

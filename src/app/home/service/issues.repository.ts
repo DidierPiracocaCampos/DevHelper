@@ -35,6 +35,8 @@ export class IssueRepository extends withQuery<IssueI>()(
       : (['proyectos', SENTINEL_PROJECT, 'issues'] as const);
   });
 
+  readonly allDocs = computed<IssueI[]>(() => this.getCollection().value() ?? []);
+
   protected converter: FirestoreDataConverter<IssueI> = {
     toFirestore: (data: IssueI) => {
       const { id: _id, ...rest } = data;
