@@ -11,6 +11,7 @@ import {
 import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
 import { IssueI, IssueStatus, IssuePriority, IssueUpdateInput } from '../../domain/issue.interface';
 import { IssueRepository } from '../../service/issues.repository';
@@ -56,6 +57,7 @@ export class IssueDetail implements OnDestroy {
   private _confirm = inject(ConfirmService);
   private _toast = inject(ToastService);
   private _formBuilder = inject(FormBuilder).nonNullable;
+  private _title = inject(Title);
 
   protected readonly _form = this._formBuilder.group({
     title: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),
@@ -68,6 +70,8 @@ export class IssueDetail implements OnDestroy {
     { value: 'normal', label: 'Normal' },
     { value: 'high', label: 'Alta' },
   ];
+
+  private readonly _defaultTitle = 'DevhelperWeb';
 
   readonly projectId = signal<string>('');
   readonly issueId = signal<string>('');
@@ -101,12 +105,14 @@ export class IssueDetail implements OnDestroy {
           },
           { emitEvent: false },
         );
+        this._title.setTitle(it.title);
       });
     });
   }
 
   ngOnDestroy(): void {
     this._scope.setGlobal();
+    this._title.setTitle(this._defaultTitle);
   }
 
   reload(): void {

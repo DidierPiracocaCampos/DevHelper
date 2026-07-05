@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { Firestore, Timestamp } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
@@ -130,12 +131,14 @@ describe('IssueDetail', () => {
   let scope: FakeScopeContext;
   let confirm: FakeConfirm;
   let toast: FakeToast;
+  let title: { setTitle: ReturnType<typeof vi.fn>; getTitle: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
     repo = new FakeIssueRepository();
     scope = new FakeScopeContext();
     confirm = new FakeConfirm();
     toast = new FakeToast();
+    title = { setTitle: vi.fn(), getTitle: vi.fn().mockReturnValue('DevhelperWeb') };
 
     await TestBed.configureTestingModule({
       imports: [IssueDetail],
@@ -153,6 +156,7 @@ describe('IssueDetail', () => {
         { provide: Authenticator, useValue: new FakeAuthenticator() },
         { provide: FileBlobService, useValue: new FakeFileBlobService() },
         FilterService,
+        { provide: Title, useValue: title },
       ],
     }).compileComponents();
 
@@ -245,5 +249,21 @@ describe('IssueDetail', () => {
     repo.setCurrent(makeIssue({ priority: 'high', status: 'pending' }));
     component.reload();
     expect(component.statusCircleClass()).toBe('status-circle--high');
+  });
+
+  it('sets the document title to the issue title when the issue loads', () => {
+    repo.setCurrent(makeIssue({ id: 'i1', title: 'Error - 43235' }));
+    component.reload();
+    fixture.detectChanges();
+    expect(title.setTitle).toHaveBeenCalledWith('Error - 43235');
+  });
+
+  it('restores the default document title on destroy', () => {
+    repo.setCurrent(makeIssue({ id: 'i1', title: 'X' }));
+    component.reload();
+    fixture.detectChanges();
+    title.setTitle.mockClear();
+    component.ngOnDestroy();
+    expect(title.setTitle).toHaveBeenCalledWith('DevhelperWeb');
   });
 });
