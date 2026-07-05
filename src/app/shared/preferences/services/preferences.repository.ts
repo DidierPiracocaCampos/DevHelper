@@ -17,11 +17,11 @@ export class PreferencesRepository extends withDocDelete()(
 
   protected converter: FirestoreDataConverter<UserPreferencesI, DocumentData> = {
     toFirestore(data: UserPreferencesI): DocumentData {
-      return {
-        id: data.id,
-        customNasaImage: data.customNasaImage,
-        aiAssistantEnabled: data.aiAssistantEnabled,
-      };
+      const out: DocumentData = { id: data.id };
+      if (data.customNasaImage !== undefined) out['customNasaImage'] = data.customNasaImage;
+      if (data.aiAssistantEnabled !== undefined)
+        out['aiAssistantEnabled'] = data.aiAssistantEnabled;
+      return out;
     },
 
     fromFirestore(snapshot: QueryDocumentSnapshot, _options: SnapshotOptions): UserPreferencesI {

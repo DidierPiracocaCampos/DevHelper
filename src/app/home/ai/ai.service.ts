@@ -59,7 +59,9 @@ export class AiService {
         onProgress?.(loaded, total);
       });
       this.status.set('ready');
-      void this.reindexAll();
+      this.reindexAll().catch((err) => {
+        console.error('[AiService] reindex failed', err);
+      });
     } catch (err) {
       this.status.set('error');
       throw err;

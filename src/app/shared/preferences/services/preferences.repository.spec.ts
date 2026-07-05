@@ -80,4 +80,40 @@ describe('PreferencesRepository (path signal + singleton)', () => {
     expect(read.id).toBe('singleton');
     expect(read.aiAssistantEnabled).toBe(true);
   });
+
+  it('converter omits customNasaImage when caller did not pass it (aiAssistantEnabled: true)', () => {
+    const converter = (
+      repo as unknown as {
+        converter: {
+          toFirestore: (data: UserPreferencesI) => Record<string, unknown>;
+        };
+      }
+    ).converter;
+
+    const written = converter.toFirestore({
+      id: 'singleton',
+      aiAssistantEnabled: true,
+    });
+
+    expect('customNasaImage' in written).toBe(false);
+    expect(written['aiAssistantEnabled']).toBe(true);
+  });
+
+  it('converter omits customNasaImage when caller did not pass it (aiAssistantEnabled: false)', () => {
+    const converter = (
+      repo as unknown as {
+        converter: {
+          toFirestore: (data: UserPreferencesI) => Record<string, unknown>;
+        };
+      }
+    ).converter;
+
+    const written = converter.toFirestore({
+      id: 'singleton',
+      aiAssistantEnabled: false,
+    });
+
+    expect('customNasaImage' in written).toBe(false);
+    expect(written['aiAssistantEnabled']).toBe(false);
+  });
 });
