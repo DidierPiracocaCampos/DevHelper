@@ -6,4 +6,5 @@ export interface CustomNasaImageI {
 export interface UserPreferencesI {
   id: 'singleton';
   customNasaImage?: CustomNasaImageI;
+  aiAssistantEnabled?: boolean;
 }

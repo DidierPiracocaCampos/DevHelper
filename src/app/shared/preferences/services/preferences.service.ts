@@ -5,6 +5,7 @@ import { FileBlobService } from '../../files/services/file-blob.service';
 import { Authenticator } from '../../service/authenticator';
 import { ToastService } from '../../service/toast';
 import { PreferencesRepository } from './preferences.repository';
+import { UserPreferencesI } from '../models/preferences.model';
 
 function withPreviousValue<T>(
   input: Resource<T | null>,
@@ -62,6 +63,11 @@ export class PreferencesService {
   readonly customNasaImageFileId = computed(() => {
     const p = this.preferences;
     return p.hasValue() ? (p.value()?.customNasaImage?.fileId ?? null) : null;
+  });
+
+  readonly aiAssistantEnabled = computed(() => {
+    const p = this.preferences;
+    return p.hasValue() ? (p.value()?.aiAssistantEnabled ?? false) : false;
   });
 
   private readonly _urlResource = resource({
@@ -138,6 +144,21 @@ export class PreferencesService {
     }
     if (fileId) {
       await this._safeDelete(fileId);
+    }
+  }
+
+  async setAiAssistantEnabled(enabled: boolean): Promise<void> {
+    try {
+      await firstValueFrom(
+        this._repo.setDoc('singleton', {
+          id: 'singleton',
+          aiAssistantEnabled: enabled,
+        } as UserPreferencesI),
+      );
+      this.preferences.reload();
+    } catch (err) {
+      this._toast.error('No se pudo guardar la preferencia del asistente', String(err));
+      throw err;
     }
   }
 
