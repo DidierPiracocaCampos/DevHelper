@@ -34,7 +34,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": ["src/styles.css"],
+            "externalDependencies": ["@xenova/transformers", "onnxruntime-web", "sharp"]
           },
           "configurations": {
             "production": {

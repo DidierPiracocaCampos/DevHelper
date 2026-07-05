@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { NasaPicture } from '../../components/nasa-picture/nasa-picture';
 import { Authenticator } from '../../../shared/service/authenticator';
@@ -12,11 +11,11 @@ import { ScopeContext } from '../../../shared/scope/scope-context';
 import HomeCalendar from '../../components/calendar/home-calendar';
 import { ProjectList } from '../../components/project-list/project-list';
 import { IssueList } from '../../components/issue-list/issue-list';
+import { AiAssistant } from '../../components/ai-assistant/ai-assistant';
 
 @Component({
   selector: 'app-home',
   imports: [
-    UiCard,
     UiCardButton,
     NasaPicture,
     PasswordList,
@@ -28,6 +27,7 @@ import { IssueList } from '../../components/issue-list/issue-list';
     HomeCalendar,
     ProjectList,
     IssueList,
+    AiAssistant,
   ],
   templateUrl: './home.html',
 })

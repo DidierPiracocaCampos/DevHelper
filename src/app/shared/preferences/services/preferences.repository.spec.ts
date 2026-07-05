@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { vi, beforeEach, describe, it, expect } from 'vitest';
-import { Firestore } from '@angular/fire/firestore';
+import { Firestore, QueryDocumentSnapshot, SnapshotOptions } from '@angular/fire/firestore';
 import { isObservable, of } from 'rxjs';
 import { Authenticator } from '../../service/authenticator';
+import { UserPreferencesI } from '../models/preferences.model';
 import { PreferencesRepository } from './preferences.repository';
 
 class FakeAuthenticator {
@@ -49,5 +50,70 @@ describe('PreferencesRepository (path signal + singleton)', () => {
     expect(isObservable(setResult)).toBe(true);
     expect(isObservable(delResult)).toBe(true);
     (repo as unknown as { $userCollectionRef: unknown }).$userCollectionRef = original;
+  });
+
+  it('converter round-trips aiAssistantEnabled: true', () => {
+    const converter = (
+      repo as unknown as {
+        converter: {
+          toFirestore: (data: UserPreferencesI) => Record<string, unknown>;
+          fromFirestore: (
+            snap: QueryDocumentSnapshot,
+            options: SnapshotOptions,
+          ) => UserPreferencesI;
+        };
+      }
+    ).converter;
+
+    const input: UserPreferencesI = {
+      id: 'singleton',
+      aiAssistantEnabled: true,
+    };
+
+    const written = converter.toFirestore(input);
+    expect(written['aiAssistantEnabled']).toBe(true);
+
+    const read = converter.fromFirestore(
+      { data: () => written } as unknown as QueryDocumentSnapshot,
+      {} as SnapshotOptions,
+    );
+    expect(read.id).toBe('singleton');
+    expect(read.aiAssistantEnabled).toBe(true);
+  });
+
+  it('converter omits customNasaImage when caller did not pass it (aiAssistantEnabled: true)', () => {
+    const converter = (
+      repo as unknown as {
+        converter: {
+          toFirestore: (data: UserPreferencesI) => Record<string, unknown>;
+        };
+      }
+    ).converter;
+
+    const written = converter.toFirestore({
+      id: 'singleton',
+      aiAssistantEnabled: true,
+    });
+
+    expect('customNasaImage' in written).toBe(false);
+    expect(written['aiAssistantEnabled']).toBe(true);
+  });
+
+  it('converter omits customNasaImage when caller did not pass it (aiAssistantEnabled: false)', () => {
+    const converter = (
+      repo as unknown as {
+        converter: {
+          toFirestore: (data: UserPreferencesI) => Record<string, unknown>;
+        };
+      }
+    ).converter;
+
+    const written = converter.toFirestore({
+      id: 'singleton',
+      aiAssistantEnabled: false,
+    });
+
+    expect('customNasaImage' in written).toBe(false);
+    expect(written['aiAssistantEnabled']).toBe(false);
   });
 });

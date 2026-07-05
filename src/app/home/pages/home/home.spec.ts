@@ -105,8 +105,10 @@ class FakePrefsService {
   resolvedUrl = { value: () => null as string | null, hasValue: () => false };
   hasCustomImage = signal(false);
   customNasaImageUrl = signal(null as string | null);
+  aiAssistantEnabled = signal(false);
   setCustomNasaImage = vi.fn();
   clearCustomNasaImage = vi.fn();
+  setAiAssistantEnabled = vi.fn().mockResolvedValue(undefined);
 }
 
 class FakeConfirm {

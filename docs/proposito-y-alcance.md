@@ -72,6 +72,15 @@ Workspace (único por usuario)
 - Búsqueda y recuperación de entradas previamente registradas.
 - Límites del plan gratuito y ampliación mediante membresía mensual (ver [sección 6](#6-modelo-de-monetización-límites-del-mvp)).
 
+### 3.4 Asistente IA local (opcional, opt-in)
+
+- Asistente Q&A estructurado que responde a consultas sobre el workspace del usuario.
+- 100% client-side: el modelo y los datos nunca salen del dispositivo.
+- Activable manualmente desde un card dedicado en el home. Por defecto desactivado.
+- Limitado a preguntas estructuradas (lista de pendientes, búsqueda por proyecto/tag, etc.).
+- No genera texto libre, no mantiene conversación, no resume con NLG.
+- Detalles en `docs/superpowers/specs/2026-07-05-ai-assistant-local-design.md`.
+
 ---
 
 ## 4. Fuera de alcance (out of scope)
@@ -82,7 +91,6 @@ Quedan **explícitamente fuera** de esta versión:
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Colaboración y compartición**        | No hay compartir proyectos, ni equipos, ni roles, ni co-edición. El workspace es 100% individual.                  |
 | **Integraciones externas en el MVP**   | No hay GitHub, Jira, Slack, Google Calendar, ni importadores de Notion/Evernote. Todo se crea dentro de DevHelper. |
-| **Funciones de IA**                    | No hay resúmenes automáticos, asistente, sugerencias ni generación de contenido. Toda la gestión es manual.        |
 | **Más de 1 proyecto en plan gratuito** | Ver [sección 6](#6-modelo-de-monetización-límites-del-mvp) sobre los límites.                                      |
 
 > **No prometido al usuario:** cualquiera de estos features puede aparecer en versiones futuras, pero **no se aceptan compromisos de roadmap** sobre ellos en esta versión.

@@ -29,6 +29,8 @@ export class PasswordRepository extends withQuery<PasswordI>()(
     return `proyectos/${s.projectId}/issues/${s.issueId}/passwords`;
   });
 
+  readonly allDocs = computed<PasswordI[]>(() => this.getCollection().value() ?? []);
+
   protected converter: FirestoreDataConverter<PasswordI> = {
     toFirestore: (data: PasswordI) => {
       const { id: _id, ...rest } = data;

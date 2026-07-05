@@ -20,7 +20,9 @@
   <ng-content select="[suffix]" />
 </div>
 @if (maxlength() !== null) {
-  <span class="textarea-counter text-xs mt-1 block text-right">{{ charCount() }} / {{ maxlength() }}</span>
+  <span class="textarea-counter text-xs mt-1 block text-right">
+    {{ charCount() }} / {{ maxlength() }}
+  </span>
 }
 
 <ui-field-errors />
