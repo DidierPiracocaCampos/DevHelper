@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import { signal } from '@angular/core';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { By } from '@angular/platform-browser';
 import { Title } from '@angular/platform-browser';
 import { Validators } from '@angular/forms';
 import { of } from 'rxjs';
@@ -101,12 +102,17 @@ class FakeVault {
   getVaultKey = vi.fn();
   showModal = vi.fn();
   openUnlockVaultModal = vi.fn();
+  closeUnlockModal = vi.fn();
+  closeCreateModal = vi.fn();
   haveUnlockKeyWithPin = signal(false);
   haveUnlockKeyWithPasskey = signal(false);
   vaultStatus = signal<'locked' | 'unlocked' | 'none'>('none');
   isSecureModalOpen = signal(false);
   isUnlockModalOpen = signal(false);
   haveVault = signal(true);
+  pinAttemptsRemaining = signal(3);
+  isPinLockedOut = signal(false);
+  pinLockoutRemainingMs = signal(0);
 }
 
 class FakeAuthenticator {
@@ -287,5 +293,11 @@ describe('IssueDetail', () => {
     const [, patch] = repo.updateIssue.mock.calls[0] as [string, IssueUpdateInput];
     expect(patch.solution).toBeDefined();
     expect(typeof patch.solution).not.toBe('string');
+  });
+
+  it('renders the vault create and unlock modal hosts so Add can surface when locked', () => {
+    fixture.detectChanges();
+    expect(fixture.debugElement.query(By.css('secure-create-vault'))).not.toBeNull();
+    expect(fixture.debugElement.query(By.css('secure-unlock-vault'))).not.toBeNull();
   });
 });
