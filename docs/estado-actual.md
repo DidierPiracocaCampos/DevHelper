@@ -17,7 +17,7 @@ Convenciones:
 - **Nombre:** DevHelper
 - **Tipo:** SPA Angular
 - **Stack:** Angular 20 + DaisyUI 5 + Tailwind 4 + Firebase 11 (Auth + Firestore)
-- **Estado:** pre-MVP. Auth, vault, elementos globales (passwords/files), proyectos, tareas y vista detalle de issue funcionan; **eventos, busqueda y membresia no existen**.
+- **Estado:** pre-MVP. Auth, vault, elementos globales (passwords/files), proyectos, tareas y vista detalle de issue funcionan; **eventos, busqueda tradicional y membresia no existen**. Asistente IA local opcional (opt-in, 100% client-side) — no existe.
 - **Package manager:** pnpm (workspace)
 - **Tests:** Karma (default Angular) + Vitest (instalado, sin uso visible)
 - **Lint/format:** ESLint + Prettier configurados
@@ -150,6 +150,10 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 - **FALTA** no hay pasarela de pago integrada.
 - **FALTA** no se distingue plan gratuito vs plan pago; no se enforza limite de 1 proyecto.
 
+### CU-12 Consultas al asistente local
+
+- **FALTA** no existe el componente `ai-assistant`, ni los servicios `AiService` / `EmbeddingService` / `QueryIntentService`, ni la integracion con los repositorios. Spec aprobado en `docs/superpowers/specs/2026-07-05-ai-assistant-local-design.md`.
+
 ## 4. Cambios necesarios (orden sugerido)
 
 ### 4.1 Modelo de datos Firestore (reglas)
@@ -176,6 +180,7 @@ Ademas:
 - Crear `SubscriptionRepository` (singleton `subscription`).
 - Crear `SearchService` (consulta paralela a todas las colecciones, filtra passwords por label/URL, devuelve resultados agrupados por tipo).
 - Crear `QuotaService` (lee `subscription`, expone `canCreateProject()`, `canAttachFile()`, contadores actuales).
+- Crear `AiService` + `EmbeddingService` + `QueryIntentService` (singletons en `src/app/home/ai/`) + 10 templates (funciones puras por intención).
 - Refactor `PasswordRepository` para soportar scope "global" y scope "issue" (similar a `FileRepository`). Hoy solo es global.
 - Refactor `FileRepository.setIssue()` ya existe, agregar `setProject()` (no es necesario, el path se deriva de issue) - ya esta OK.
 - Mover constantes hardcoded a config: `MAX_PIN_ATTEMPTS`, `PIN_LOCKOUT_DURATION_MS`, `BLOB_MAX_FILE_SIZE`, `BLOB_CHUNK_SIZE`, `SESSION_TIMEOUT_MS`, limites de plan.
@@ -195,6 +200,7 @@ Reorganizar `home` para reflejar la jerarquia:
 - Reemplazar `<nasa-picture />` en `home.html:20` (decorativo, no aporta al producto) o mover a vista de "fondo" en preferencias.
 - Vista de Plan/Facturacion (settings).
 - Buscador global en header, visible en todas las vistas autenticadas.
+- Reemplazar el card "Buscador" en `home.html:5` por `<ai-assistant />`.
 - Modal de cambio de PIN (usar `VaultSecurity.changePin`).
 - Pantalla de reautenticacion (usar `Authenticator.reauthenticate`).
 - Quitar boton "Continuar con GitHub" (extra) o documentarlo.
