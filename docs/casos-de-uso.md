@@ -3,9 +3,9 @@
 Catálogo de escenarios en los que el desarrollador usuario interactúa con DevHelper: detalle paso a paso, flujos críticos y casos que el producto no soporta.
 
 ![Status](https://img.shields.io/badge/Estado-Vivo-000000?style=flat-square)
-![Cobertura](https://img.shields.io/badge/CU_cubiertos-11-333333?style=flat-square)
+![Cobertura](https://img.shields.io/badge/CU_cubiertos-12-333333?style=flat-square)
 ![Prioridad](https://img.shields.io/badge/CU_criticos-8-000000?style=flat-square)
-![Prioridad](https://img.shields.io/badge/CU_importantes-2-666666?style=flat-square)
+![Prioridad](https://img.shields.io/badge/CU_importantes-3-666666?style=flat-square)
 
 > **Documentos relacionados:** [`proposito-y-alcance.md`](proposito-y-alcance.md) (qué se resuelve y para quién) · [`estado-actual.md`](estado-actual.md) (qué casos ya funcionan) · [`design-context.md`](design-context.md) (cómo se presentan visualmente los flujos al usuario)
 
