@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import FormRegister from './form-register';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
+import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
 import {
   PASSWORD_RULES,
   type PasswordRuleKey,
@@ -20,6 +21,10 @@ describe('FormRegister password requirements list', () => {
         provideRouter([]),
         { provide: Authenticator, useValue: { register: vi.fn() } },
         { provide: Loader, useValue: { show: vi.fn(), hide: vi.fn() } },
+        {
+          provide: PreferencesService,
+          useValue: { setAiAssistantEnabled: vi.fn().mockResolvedValue(undefined) },
+        },
       ],
     }).compileComponents();
 
@@ -195,5 +200,65 @@ describe('FormRegister password requirements list', () => {
     expect(password.status).toBe('VALID');
     password.setValue('Abcdef1');
     expect(password.status).toBe('INVALID');
+  });
+});
+
+describe('FormRegister accept-terms', () => {
+  let fixture: ComponentFixture<FormRegister>;
+  let component: FormRegister;
+  let auth: { register: ReturnType<typeof vi.fn> };
+  let prefs: { setAiAssistantEnabled: ReturnType<typeof vi.fn> };
+
+  function fillValid(): void {
+    component.form.controls.email.setValue('user@example.com');
+    component.form.controls.password.setValue('Abcdef1!');
+    component.form.controls.verifyPassword.setValue('Abcdef1!');
+  }
+
+  beforeEach(async () => {
+    auth = { register: vi.fn() };
+    prefs = { setAiAssistantEnabled: vi.fn().mockResolvedValue(undefined) };
+    await TestBed.configureTestingModule({
+      imports: [FormRegister],
+      providers: [
+        provideRouter([]),
+        { provide: Authenticator, useValue: auth },
+        { provide: Loader, useValue: { show: vi.fn(), hide: vi.fn() } },
+        { provide: PreferencesService, useValue: prefs },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(FormRegister);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('form is invalid when acceptTerms is unchecked (even with valid email/passwords)', () => {
+    fillValid();
+    component.form.controls.acceptTerms.setValue(false);
+    expect(component.form.invalid).toBe(true);
+  });
+
+  it('form becomes valid when acceptTerms is checked (with valid email/passwords)', () => {
+    fillValid();
+    component.form.controls.acceptTerms.setValue(true);
+    expect(component.form.valid).toBe(true);
+  });
+
+  it('onSubmit persists aiAssistantEnabled=true when registration succeeds', async () => {
+    auth.register.mockResolvedValue({ success: true });
+    fillValid();
+    component.form.controls.acceptTerms.setValue(true);
+    await component.onSubmit();
+    await vi.waitFor(() => expect(prefs.setAiAssistantEnabled).toHaveBeenCalledWith(true));
+    expect(component.showVerificationMessage).toBe(true);
+  });
+
+  it('onSubmit does not persist aiAssistantEnabled when registration fails', async () => {
+    auth.register.mockResolvedValue({ success: false, error: 'auth/email-already-in-use' });
+    fillValid();
+    component.form.controls.acceptTerms.setValue(true);
+    await component.onSubmit();
+    expect(prefs.setAiAssistantEnabled).not.toHaveBeenCalled();
+    expect(component.showVerificationMessage).toBe(false);
   });
 });

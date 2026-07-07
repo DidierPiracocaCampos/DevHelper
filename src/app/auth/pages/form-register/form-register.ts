@@ -14,6 +14,7 @@ import {
 import { matchOtherValidator } from '../../../shared/forms/validators/match.validator';
 import { RouterLink } from '@angular/router';
 import { Loader } from '../../../shared/service/loader';
+import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
 
 @Component({
   selector: 'auth-form-register',
@@ -26,6 +27,7 @@ export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _authenticator = inject(Authenticator);
   private _loader = inject(Loader);
+  private _prefs = inject(PreferencesService);
 
   loading = false;
   showVerificationMessage = false;
@@ -42,6 +44,7 @@ export default class FormRegister {
       Validators.required,
       matchOtherValidator('password'),
     ]),
+    acceptTerms: this._formBuilder.control<boolean>(false, [Validators.requiredTrue]),
   });
 
   private readonly _password = this.form.controls.password;
@@ -96,6 +99,11 @@ export default class FormRegister {
     this._loader.hide();
 
     if (result.success) {
+      try {
+        await this._prefs.setAiAssistantEnabled(true);
+      } catch (err) {
+        console.warn('[FormRegister] could not enable AI assistant preference', err);
+      }
       this.showVerificationMessage = true;
       this.form.reset();
     }

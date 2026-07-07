@@ -44,6 +44,21 @@
       </ng-template>
     </ui-password-field>
 
+    <label class="label cursor-pointer justify-start gap-3 items-start py-1">
+      <input
+        type="checkbox"
+        class="checkbox checkbox-primary mt-0.5"
+        formControlName="acceptTerms"
+      />
+      <span class="text-xs text-base-content/80 leading-relaxed">
+        Acepto los Términos y Condiciones, incluida la descarga inicial del modelo de IA local
+        (~470 MB, queda en caché del navegador).
+      </span>
+    </label>
+    @if (form.controls.acceptTerms.touched && form.controls.acceptTerms.invalid) {
+      <p class="text-error text-xs -mt-2">Debes aceptar los términos para continuar.</p>
+    }
+
     <div></div>
     <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
       @if (loading) {
