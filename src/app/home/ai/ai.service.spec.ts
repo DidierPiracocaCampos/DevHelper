@@ -78,4 +78,59 @@ describe('AiService', () => {
     expect(result.intent).toBe('list_pending');
     expect(result.answer).toContain('X');
   });
+
+  it('enable() sets status to "loading" when model is already in cache', async () => {
+    const fakeCache = {
+      keys: vi.fn().mockResolvedValue([
+        {
+          url: 'https://huggingface.co/Xenova/paraphrase-multilingual-MiniLM-L12-v2/resolve/main/model.safetensors',
+        },
+      ]),
+    };
+    const originalCaches = (globalThis as { caches?: unknown }).caches;
+    (globalThis as { caches?: unknown }).caches = {
+      open: vi.fn().mockResolvedValue(fakeCache),
+    };
+    const statusSignal = (service as unknown as { status: { set: (v: string) => void } }).status;
+    const seenStatuses: string[] = [];
+    const originalSet = statusSignal.set.bind(statusSignal);
+    statusSignal.set = (v: string) => {
+      seenStatuses.push(v);
+      originalSet(v);
+    };
+    try {
+      await service.enable();
+      expect(service.status()).toBe('ready');
+      expect(seenStatuses).toContain('loading');
+      expect(seenStatuses).not.toContain('downloading');
+    } finally {
+      statusSignal.set = originalSet;
+      (globalThis as { caches?: unknown }).caches = originalCaches;
+    }
+  });
+
+  it('enable() sets status to "downloading" when cache is empty', async () => {
+    const fakeCache = {
+      keys: vi.fn().mockResolvedValue([]),
+    };
+    const originalCaches = (globalThis as { caches?: unknown }).caches;
+    (globalThis as { caches?: unknown }).caches = {
+      open: vi.fn().mockResolvedValue(fakeCache),
+    };
+    const statusSignal = (service as unknown as { status: { set: (v: string) => void } }).status;
+    const seenStatuses: string[] = [];
+    const originalSet = statusSignal.set.bind(statusSignal);
+    statusSignal.set = (v: string) => {
+      seenStatuses.push(v);
+      originalSet(v);
+    };
+    try {
+      await service.enable();
+      expect(service.status()).toBe('ready');
+      expect(seenStatuses).toContain('downloading');
+    } finally {
+      statusSignal.set = originalSet;
+      (globalThis as { caches?: unknown }).caches = originalCaches;
+    }
+  });
 });

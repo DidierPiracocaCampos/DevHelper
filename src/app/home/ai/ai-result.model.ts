@@ -1,6 +1,6 @@
 import type { AiIntent } from './ai-intent.enum';
 
-export type AiStatus = 'disabled' | 'downloading' | 'ready' | 'error';
+export type AiStatus = 'disabled' | 'downloading' | 'loading' | 'ready' | 'error';
 
 export interface AiMatchedDoc {
   id: string;

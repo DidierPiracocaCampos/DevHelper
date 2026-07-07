@@ -10,21 +10,28 @@
 } @else if (status() === 'downloading') {
   <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
     <span class="icon icon-lg">cloud_download</span>
-    <h3 class="text-lg font-medium">Descargando modelo...</h3>
+    <h3 class="text-lg font-medium">Descargando modelo por primera vez...</h3>
     @if (downloadProgress(); as p) {
-      <progress class="progress progress-primary w-full max-w-xs" [value]="p.loaded" [max]="p.total"></progress>
-      <p class="text-xs text-base-content/60">{{ formatBytes(p.loaded) }} / {{ formatBytes(p.total) }}</p>
+      <progress
+        class="progress progress-primary w-full max-w-xs"
+        [value]="p.loaded"
+        [max]="p.total"
+      ></progress>
+      <p class="text-xs text-base-content/60">
+        {{ formatBytes(p.loaded) }} / {{ formatBytes(p.total) }}
+      </p>
     }
     <ui-button label="Cancelar" variant="ghost" (press)="disable()" />
   </div>
+} @else if (status() === 'loading') {
+  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
+    <span class="icon icon-lg">psychology</span>
+    <h3 class="text-lg font-medium">Cargando modelo desde caché...</h3>
+    <span class="loading loading-infinity loading-md"></span>
+    <p class="text-xs text-base-content/40">Esto tarda solo unos segundos</p>
+  </div>
 } @else if (status() === 'ready') {
   <div class="card card-xl h-full p-3 flex flex-col gap-2">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="icon">psychology</span>
-        <span class="text-sm font-medium">Asistente IA local</span>
-      </div>
-    </div>
     @if (searcherEnabled()) {
       @if (vaultUnlocked()) {
         <ui-search-field
@@ -64,23 +71,27 @@
             <summary>Coincidencias ({{ result.matched.length }})</summary>
             <ul class="mt-1 space-y-1">
               @for (m of result.matched; track m.id) {
-                <li>{{ m.title }} <span class="text-base-content/40">({{ m.score | number: '1.2-2' }})</span></li>
+                <li>
+                  {{ m.title }}
+                  <span class="text-base-content/40">({{ m.score | number: '1.2-2' }})</span>
+                </li>
               }
             </ul>
           </details>
         }
       </div>
     }
-    <p class="text-xs text-base-content/40 mt-auto">
-      IA local · multilingual-MiniLM-L12 · 470 MB en caché
-    </p>
   </div>
 } @else {
   <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
     <span class="icon icon-lg">psychology</span>
     <h3 class="text-lg font-medium">Asistente IA local</h3>
     <p class="text-sm text-base-content/60 text-center max-w-xs">
-      {{ status() === 'error' ? 'Error al cargar el modelo. Reintenta la activación.' : 'El modelo se ha descargado antes pero no está cargado en memoria. Actívalo para empezar a preguntar.' }}
+      {{
+        status() === 'error'
+          ? 'Error al cargar el modelo. Reintenta la activación.'
+          : 'El modelo está en caché pero no cargado en memoria. Actívalo para empezar a preguntar.'
+      }}
     </p>
     <ui-button label="Activar modelo" severity="primary" (press)="enable()" />
   </div>

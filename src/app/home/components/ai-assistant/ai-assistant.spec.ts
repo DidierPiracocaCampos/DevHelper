@@ -14,7 +14,7 @@ describe('AiAssistant', () => {
 
   beforeEach(() => {
     mockAi = {
-      status: signal<'disabled' | 'downloading' | 'ready' | 'error'>('disabled'),
+      status: signal<'disabled' | 'downloading' | 'loading' | 'ready' | 'error'>('disabled'),
       downloadProgress: signal(null),
       isProcessing: signal(false),
       lastResult: signal(null),
@@ -77,7 +77,7 @@ describe('AiAssistant template (4 states)', () => {
 
   beforeEach(async () => {
     mockAi = {
-      status: signal<'disabled' | 'downloading' | 'ready' | 'error'>('disabled'),
+      status: signal<'disabled' | 'downloading' | 'loading' | 'ready' | 'error'>('disabled'),
       downloadProgress: signal(null),
       isProcessing: signal(false),
       lastResult: signal(null),
@@ -187,5 +187,24 @@ describe('AiAssistant template (4 states)', () => {
 
     const searchField = fixture.nativeElement.querySelector('ui-search-field');
     expect(searchField).toBeTruthy();
+  });
+
+  it('renders "Cargando modelo desde caché" spinner when status=loading', () => {
+    mockPrefs.aiAssistantEnabled.set(true);
+    mockAi.status.set('loading');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent ?? '';
+    expect(text).toMatch(/Cargando modelo desde caché/i);
+    expect(fixture.nativeElement.querySelector('.loading-infinity')).toBeTruthy();
+  });
+
+  it('renders "Descargando modelo por primera vez" when status=downloading', () => {
+    mockPrefs.aiAssistantEnabled.set(true);
+    mockAi.status.set('downloading');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent ?? '';
+    expect(text).toMatch(/Descargando modelo por primera vez/i);
   });
 });

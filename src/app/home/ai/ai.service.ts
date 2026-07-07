@@ -52,7 +52,17 @@ export class AiService {
 
   async enable(onProgress?: (loaded: number, total: number) => void): Promise<void> {
     if (this.status() === 'ready') return;
-    this.status.set('downloading');
+    let isCached = false;
+    try {
+      if (typeof caches !== 'undefined') {
+        const cache = await caches.open('transformers-cache');
+        const keys = await cache.keys();
+        isCached = keys.some((r) => r.url.includes('paraphrase-multilingual-MiniLM-L12-v2'));
+      }
+    } catch {
+      /* cache check failed — assume not cached */
+    }
+    this.status.set(isCached ? 'loading' : 'downloading');
     try {
       await this._embedding.ensureModel((loaded, total) => {
         this.downloadProgress.set({ loaded, total });

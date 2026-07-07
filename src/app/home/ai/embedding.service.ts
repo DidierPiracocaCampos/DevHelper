@@ -36,7 +36,7 @@ export class EmbeddingService {
     this.modelStatus.set('loading');
     this.loadingPromise = (async () => {
       try {
-        const mod = await import('@xenova/transformers');
+        const mod = await import('@xenova/transformers/dist/transformers.min.js');
         const transformers = mod as unknown as {
           pipeline: (
             task: string,

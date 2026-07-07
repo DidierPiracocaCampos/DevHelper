@@ -213,7 +213,7 @@ class FakeIssueRepository {
 }
 
 class FakeAiService {
-  status = signal<'disabled' | 'downloading' | 'ready' | 'error'>('disabled');
+  status = signal<'disabled' | 'downloading' | 'loading' | 'ready' | 'error'>('disabled');
   downloadProgress = signal<{ loaded: number; total: number } | null>(null);
   isProcessing = signal(false);
   lastResult = signal<unknown>(null);
