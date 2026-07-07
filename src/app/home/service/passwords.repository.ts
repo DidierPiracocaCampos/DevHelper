@@ -6,6 +6,9 @@ import { withAddDoc, withCollection, withDocDelete, withQuery } from '../../shar
 import { PasswordCrypto } from './password-crypto';
 import { ScopeContext } from '../../shared/scope/scope-context';
 
+const PASSWORDS_PATH: PathSegments = ['passwords'];
+const PASSWORDS_NAMESPACE = 'passwords';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,13 +22,13 @@ export class PasswordRepository extends withQuery<PasswordI>()(
 
   protected override path: Signal<PathSegments> = computed<PathSegments>(() => {
     const s = this._scope.scope();
-    if (s === 'global' || s.kind === 'project') return ['passwords'];
+    if (s === 'global' || s.kind === 'project') return PASSWORDS_PATH;
     return ['proyectos', s.projectId, 'issues', s.issueId, 'passwords'];
   });
 
   readonly namespace: Signal<string> = computed<string>(() => {
     const s = this._scope.scope();
-    if (s === 'global' || s.kind === 'project') return 'passwords';
+    if (s === 'global' || s.kind === 'project') return PASSWORDS_NAMESPACE;
     return `proyectos/${s.projectId}/issues/${s.issueId}/passwords`;
   });
 
