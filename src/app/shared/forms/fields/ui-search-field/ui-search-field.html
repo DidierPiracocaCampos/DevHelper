@@ -15,6 +15,7 @@
     [attr.aria-invalid]="isInvalid() ? true : null"
     (input)="onInput($event)"
     (blur)="onBlur()"
+    (keyup.enter)="emit()"
   />
   @if (hasValue() && !disabled()) {
     <button
@@ -24,6 +25,17 @@
       (click)="clear()"
     >
       close
+    </button>
+  }
+  @if (!disabled()) {
+    <button
+      type="button"
+      class="icon text-base-content/60 hover:text-base-content"
+      aria-label="Buscar"
+      [disabled]="!hasValue()"
+      (click)="emit()"
+    >
+      search
     </button>
   }
   <ng-content select="[suffix]" />

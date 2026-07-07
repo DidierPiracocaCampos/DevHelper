@@ -51,4 +51,9 @@ export class UiSearchField extends UiField<string> {
   clear() {
     this.emitValue('');
   }
+
+  emit(): void {
+    if (this.disabled() || !this.hasValue()) return;
+    this.search.emit(this.value() ?? '');
+  }
 }
