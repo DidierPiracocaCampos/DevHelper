@@ -4,6 +4,11 @@
   logs: false;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 @import './styles/tokens.css';
 @import './styles/utilities.css';
 
