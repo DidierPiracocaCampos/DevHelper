@@ -19,6 +19,7 @@ export class UiConfigModal {
 
   protected readonly sections: ConfigSection[] = [
     { id: 'nasa', label: 'Widget NASA', icon: 'image' },
+    { id: 'ai-searcher', label: 'Buscador de IA', icon: 'search' },
   ];
 
   protected _onOpenChange(open: boolean): void {

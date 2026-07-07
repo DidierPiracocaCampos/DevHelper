@@ -3,3 +3,4 @@ export { PreferencesRepository } from './services/preferences.repository';
 export { PreferencesService } from './services/preferences.service';
 export { UiConfigModal } from './components/ui-config-modal/ui-config-modal';
 export { NasaImageSection } from './components/nasa-image-section/nasa-image-section';
+export { AiSearcherSection } from './components/ai-searcher-section/ai-searcher-section';

@@ -261,4 +261,45 @@ describe('PreferencesService', () => {
       expect(blob.getObjectUrl).not.toHaveBeenCalled();
     });
   });
+
+  describe('aiSearcherEnabled', () => {
+    it('aiSearcherEnabled defaults to true when pref is missing', () => {
+      expect(service.aiSearcherEnabled()).toBe(true);
+    });
+
+    it('aiSearcherEnabled reflects stored value', () => {
+      repo.setValue({ id: 'singleton' as const, aiSearcherEnabled: false });
+      expect(service.aiSearcherEnabled()).toBe(false);
+    });
+
+    it('setAiSearcherEnabled(true) persists and reloads', async () => {
+      repo.setDoc.mockReturnValue(of(undefined));
+      await service.setAiSearcherEnabled(true);
+      expect(repo.setDoc).toHaveBeenCalledWith('singleton', {
+        id: 'singleton',
+        aiSearcherEnabled: true,
+      });
+      expect(repo.preferences.reload).toHaveBeenCalled();
+    });
+
+    it('setAiSearcherEnabled(false) persists and reloads', async () => {
+      repo.setDoc.mockReturnValue(of(undefined));
+      await service.setAiSearcherEnabled(false);
+      expect(repo.setDoc).toHaveBeenCalledWith('singleton', {
+        id: 'singleton',
+        aiSearcherEnabled: false,
+      });
+    });
+
+    it('setAiSearcherEnabled surfaces errors via toast and rethrows', async () => {
+      repo.setDoc.mockReturnValue({
+        subscribe: (observer: { error: (e: Error) => void }) => {
+          observer.error(new Error('boom'));
+          return { unsubscribe: () => {} };
+        },
+      });
+      await expect(service.setAiSearcherEnabled(true)).rejects.toThrow('boom');
+      expect(toast.error).toHaveBeenCalled();
+    });
+  });
 });

@@ -69,6 +69,11 @@ export class PreferencesService {
     return p.hasValue() ? (p.value()?.aiAssistantEnabled ?? false) : false;
   });
 
+  readonly aiSearcherEnabled = computed(() => {
+    const p = this.preferences;
+    return p.hasValue() ? (p.value()?.aiSearcherEnabled ?? true) : true;
+  });
+
   private readonly _urlResource = resource({
     params: () => {
       const fileId = this.customNasaImageFileId();
@@ -157,6 +162,21 @@ export class PreferencesService {
       this.preferences.reload();
     } catch (err) {
       this._toast.error('No se pudo guardar la preferencia del asistente', String(err));
+      throw err;
+    }
+  }
+
+  async setAiSearcherEnabled(enabled: boolean): Promise<void> {
+    try {
+      await firstValueFrom(
+        this._repo.setDoc('singleton', {
+          id: 'singleton',
+          aiSearcherEnabled: enabled,
+        }),
+      );
+      this.preferences.reload();
+    } catch (err) {
+      this._toast.error('No se pudo guardar la preferencia del buscador', String(err));
       throw err;
     }
   }

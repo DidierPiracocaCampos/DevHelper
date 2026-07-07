@@ -21,6 +21,7 @@ export class PreferencesRepository extends withDocDelete()(
       if (data.customNasaImage !== undefined) out['customNasaImage'] = data.customNasaImage;
       if (data.aiAssistantEnabled !== undefined)
         out['aiAssistantEnabled'] = data.aiAssistantEnabled;
+      if (data.aiSearcherEnabled !== undefined) out['aiSearcherEnabled'] = data.aiSearcherEnabled;
       return out;
     },
 
@@ -29,11 +30,13 @@ export class PreferencesRepository extends withDocDelete()(
         id?: unknown;
         customNasaImage?: CustomNasaImageI;
         aiAssistantEnabled?: boolean;
+        aiSearcherEnabled?: boolean;
       };
       return {
         id: 'singleton',
         customNasaImage: data.customNasaImage,
         aiAssistantEnabled: data.aiAssistantEnabled,
+        aiSearcherEnabled: data.aiSearcherEnabled,
       };
     },
   };

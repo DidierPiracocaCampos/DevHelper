@@ -1,0 +1,18 @@
+<header class="space-y-1">
+  <h3 class="text-base font-medium">Buscador de IA</h3>
+  <p class="text-xs text-base-content/60">
+    Oculta el campo de búsqueda dentro de la tarjeta del asistente.
+    El modelo sigue descargado y se puede reactivar cuando quieras.
+  </p>
+</header>
+
+<label class="label cursor-pointer justify-start gap-3">
+  <input
+    type="checkbox"
+    class="toggle toggle-primary"
+    [checked]="enabled()"
+    [disabled]="isBusy()"
+    (change)="onToggle($event)"
+  />
+  <span class="label-text">Desactivar buscador</span>
+</label>
