@@ -4,6 +4,8 @@ import { UiButton } from '../../../shared/components/ui-button/button';
 import { UiSearchField } from '../../../shared/forms/fields/ui-search-field/ui-search-field';
 import { AiService } from '../../ai/ai.service';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
+import { VaultSecurity } from '../../../shared/security';
+import { VaultModalState } from '../../../shared/security/services/vault-modal-state';
 
 @Component({
   selector: 'ai-assistant',
@@ -16,12 +18,16 @@ import { PreferencesService } from '../../../shared/preferences/services/prefere
 export class AiAssistant {
   private readonly _ai = inject(AiService);
   private readonly _prefs = inject(PreferencesService);
+  private readonly _vault = inject(VaultSecurity);
+  private readonly _vaultModal = inject(VaultModalState);
 
   readonly status = this._ai.status;
   readonly downloadProgress = this._ai.downloadProgress;
   readonly isProcessing = this._ai.isProcessing;
   readonly lastResult = this._ai.lastResult;
   readonly enabled = this._prefs.aiAssistantEnabled;
+  readonly searcherEnabled = this._prefs.aiSearcherEnabled;
+  readonly vaultUnlocked = this._vault.isUnlocked;
 
   readonly progressPct = computed(() => {
     const p = this.downloadProgress();
@@ -33,6 +39,7 @@ export class AiAssistant {
     try {
       await this._ai.enable();
       await this._prefs.setAiAssistantEnabled(true);
+      await this._prefs.setAiSearcherEnabled(true);
     } catch (err) {
       console.error('AI assistant enable failed', err);
     }
@@ -43,10 +50,18 @@ export class AiAssistant {
     await this._prefs.setAiAssistantEnabled(false);
   }
 
-  async ask(text: string): Promise<void> {
+  openVaultUnlock(): void {
+    this._vaultModal.openUnlock();
+  }
+
+  async ask(text: unknown): Promise<void> {
+    if (typeof text !== 'string') return;
     const q = text.trim();
     if (!q) return;
     try {
+      if (this._ai.status() !== 'ready') {
+        await this._ai.enable();
+      }
       await this._ai.query(q);
     } catch (err) {
       console.error('AI query failed', err);

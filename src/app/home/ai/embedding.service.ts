@@ -43,10 +43,17 @@ export class EmbeddingService {
             model: string,
             opts: { quantized: boolean; progress_callback: (p: ModelProgressEvent) => void },
           ) => Promise<FeatureExtractor>;
-          env: { useFS: boolean; allowLocalModels: boolean };
+          env: {
+            useFS: boolean;
+            allowLocalModels: boolean;
+            useBrowserCache: boolean;
+            allowRemoteModels: boolean;
+          };
         };
         transformers.env.useFS = false;
         transformers.env.allowLocalModels = false;
+        transformers.env.useBrowserCache = true;
+        transformers.env.allowRemoteModels = true;
 
         this.pipeline = await transformers.pipeline(
           'feature-extraction',

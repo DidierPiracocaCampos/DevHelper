@@ -21,4 +21,11 @@
 <secure-unlock-vault />
 <ui-config-modal [(isOpen)]="isConfigOpen">
   <nasa-image-section />
+  <ai-searcher-section />
 </ui-config-modal>
+
+<app-welcome-ai-modal
+  [isOpen]="isWelcomeAiOpen()"
+  (accept)="acceptWelcomeAi()"
+  (dismiss)="closeWelcomeAi()"
+/>

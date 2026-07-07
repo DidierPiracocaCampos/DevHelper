@@ -17,6 +17,7 @@ import { PasswordRepository } from '../../service/passwords.repository';
 import { ProjectRepository } from '../../service/projects.repository';
 import { IssueRepository } from '../../service/issues.repository';
 import { ToastService } from '../../../shared/service/toast';
+import { AiService } from '../../ai/ai.service';
 
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
@@ -97,8 +98,11 @@ class FakeScopeContext {
 }
 
 class FakePrefsService {
+  private _prefsSnapshot = signal<{ id: 'singleton'; aiAssistantEnabled?: boolean }>({
+    id: 'singleton',
+  });
   preferences = {
-    value: () => ({ id: 'singleton' as const }),
+    value: () => this._prefsSnapshot(),
     hasValue: () => true,
     reload: vi.fn(),
   };
@@ -106,9 +110,15 @@ class FakePrefsService {
   hasCustomImage = signal(false);
   customNasaImageUrl = signal(null as string | null);
   aiAssistantEnabled = signal(false);
+  aiSearcherEnabled = signal(true);
   setCustomNasaImage = vi.fn();
   clearCustomNasaImage = vi.fn();
   setAiAssistantEnabled = vi.fn().mockResolvedValue(undefined);
+  setAiSearcherEnabled = vi.fn().mockResolvedValue(undefined);
+
+  setSnapshot(v: { id: 'singleton'; aiAssistantEnabled?: boolean }): void {
+    this._prefsSnapshot.set(v);
+  }
 }
 
 class FakeConfirm {
@@ -202,6 +212,17 @@ class FakeIssueRepository {
   toggleStatus = vi.fn();
 }
 
+class FakeAiService {
+  status = signal<'disabled' | 'downloading' | 'ready' | 'error'>('disabled');
+  downloadProgress = signal<{ loaded: number; total: number } | null>(null);
+  isProcessing = signal(false);
+  lastResult = signal<unknown>(null);
+  enable = vi.fn().mockResolvedValue(undefined);
+  disable = vi.fn();
+  query = vi.fn().mockResolvedValue({ intent: 'unknown', answer: '', matched: [] });
+  reindexAll = vi.fn().mockResolvedValue(undefined);
+}
+
 describe('Home', () => {
   let component: Home;
   let fixture: ComponentFixture<Home>;
@@ -211,6 +232,8 @@ describe('Home', () => {
   let fileRepo: FakeFileRepo;
   let passwordRepo: FakePasswordRepository;
   let toast: FakeToast;
+  let ai: FakeAiService;
+  let prefs: FakePrefsService;
 
   beforeEach(async () => {
     vault = new FakeVault();
@@ -219,6 +242,8 @@ describe('Home', () => {
     fileRepo = new FakeFileRepo();
     passwordRepo = new FakePasswordRepository();
     toast = new FakeToast();
+    ai = new FakeAiService();
+    prefs = new FakePrefsService();
 
     await TestBed.configureTestingModule({
       imports: [Home],
@@ -231,33 +256,79 @@ describe('Home', () => {
         { provide: FileBlobService, useValue: new FakeUpload() },
         { provide: FileRepository, useValue: fileRepo },
         { provide: ScopeContext, useValue: scope },
-        { provide: PreferencesService, useValue: new FakePrefsService() },
+        { provide: PreferencesService, useValue: prefs },
         { provide: ConfirmService, useValue: new FakeConfirm() },
         { provide: EventRepository, useValue: new FakeEventRepository() },
         { provide: PasswordRepository, useValue: passwordRepo },
         { provide: ProjectRepository, useValue: new FakeProjectRepository() },
         { provide: IssueRepository, useValue: new FakeIssueRepository() },
         { provide: ToastService, useValue: toast },
+        { provide: AiService, useValue: ai },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Home);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   it('openVault delegates to vault.openUnlockVaultModal', () => {
+    fixture.detectChanges();
     component.openVault();
     expect(vault.openUnlockVaultModal).toHaveBeenCalled();
   });
 
   it('openConfig sets isConfigOpen to true', () => {
+    fixture.detectChanges();
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(false);
     component.openConfig();
     expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(true);
+  });
+
+  it('opens welcome modal when aiAssistantEnabled is undefined (legacy user)', () => {
+    prefs.setSnapshot({ id: 'singleton' });
+    fixture.detectChanges();
+    expect((component as unknown as { isWelcomeAiOpen: () => boolean }).isWelcomeAiOpen()).toBe(
+      true,
+    );
+  });
+
+  it('auto-enables AI when aiAssistantEnabled=true and status=disabled', async () => {
+    prefs.setSnapshot({ id: 'singleton', aiAssistantEnabled: true });
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(ai.enable).toHaveBeenCalled());
+  });
+
+  it('does not auto-enable when aiAssistantEnabled=false', () => {
+    prefs.setSnapshot({ id: 'singleton', aiAssistantEnabled: false });
+    fixture.detectChanges();
+    expect(ai.enable).not.toHaveBeenCalled();
+    expect((component as unknown as { isWelcomeAiOpen: () => boolean }).isWelcomeAiOpen()).toBe(
+      false,
+    );
+  });
+
+  it('acceptWelcomeAi persists aiAssistantEnabled=true and triggers enable', async () => {
+    prefs.setSnapshot({ id: 'singleton' });
+    fixture.detectChanges();
+    await (component as unknown as { acceptWelcomeAi: () => Promise<void> }).acceptWelcomeAi();
+    expect(prefs.setAiAssistantEnabled).toHaveBeenCalledWith(true);
+    expect(ai.enable).toHaveBeenCalled();
+    expect((component as unknown as { isWelcomeAiOpen: () => boolean }).isWelcomeAiOpen()).toBe(
+      false,
+    );
+  });
+
+  it('closeWelcomeAi closes the modal without persisting', () => {
+    fixture.detectChanges();
+    (component as unknown as { closeWelcomeAi: () => void }).closeWelcomeAi();
+    expect((component as unknown as { isWelcomeAiOpen: () => boolean }).isWelcomeAiOpen()).toBe(
+      false,
+    );
+    expect(prefs.setAiAssistantEnabled).not.toHaveBeenCalled();
   });
 });

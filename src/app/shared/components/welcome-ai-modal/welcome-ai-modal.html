@@ -1,0 +1,33 @@
+<ui-modal
+  title="Activa la IA local"
+  icon="psychology"
+  iconBg="primary"
+  size="md"
+  [static]="true"
+  [showCloseButton]="false"
+  [isOpen]="isOpen()"
+  (closed)="dismissAction()"
+  (isOpenChange)="onOpenChange($event)"
+>
+  <div body class="space-y-3 text-sm text-base-content/80">
+    <p>
+      DevHelper incluye un asistente de IA que corre 100% en tu navegador. Sin servidores, sin red,
+      sin telemetría.
+    </p>
+    <p>
+      La primera vez se descarga el modelo
+      <code class="kbd kbd-sm">paraphrase-multilingual-MiniLM-L12-v2</code> (~470 MB). Queda
+      almacenado en la caché del navegador, así que las próximas veces se carga en segundos.
+    </p>
+    <ul class="list list-inside text-xs text-base-content/60 space-y-1">
+      <li>Buscador semántico sobre proyectos, tareas y contraseñas.</li>
+      <li>Preguntas en lenguaje natural sobre tu workspace.</li>
+      <li>Tus datos salen cifrados desde el vault solo en el momento de buscar.</li>
+    </ul>
+  </div>
+
+  <div footer class="modal-action justify-end gap-2 pt-2">
+    <ui-button label="Ahora no" variant="ghost" (press)="dismissAction()" />
+    <ui-button label="Activar IA local" severity="primary" (press)="acceptAction()" />
+  </div>
+</ui-modal>

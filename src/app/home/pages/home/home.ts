@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { NasaPicture } from '../../components/nasa-picture/nasa-picture';
 import { Authenticator } from '../../../shared/service/authenticator';
@@ -6,12 +6,19 @@ import { PasswordList } from '../../components/password-list/password-list';
 import { FileList } from '../../components/file-list/file-list';
 import { Loader } from '../../../shared/service/loader';
 import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shared/security';
-import { NasaImageSection, UiConfigModal } from '../../../shared/preferences';
+import {
+  AiSearcherSection,
+  NasaImageSection,
+  PreferencesService,
+  UiConfigModal,
+} from '../../../shared/preferences';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import HomeCalendar from '../../components/calendar/home-calendar';
 import { ProjectList } from '../../components/project-list/project-list';
 import { IssueList } from '../../components/issue-list/issue-list';
 import { AiAssistant } from '../../components/ai-assistant/ai-assistant';
+import { AiService } from '../../ai/ai.service';
+import { WelcomeAiModal } from '../../../shared/components/welcome-ai-modal/welcome-ai-modal';
 
 @Component({
   selector: 'app-home',
@@ -24,10 +31,12 @@ import { AiAssistant } from '../../components/ai-assistant/ai-assistant';
     ModalUnlockVault,
     UiConfigModal,
     NasaImageSection,
+    AiSearcherSection,
     HomeCalendar,
     ProjectList,
     IssueList,
     AiAssistant,
+    WelcomeAiModal,
   ],
   templateUrl: './home.html',
 })
@@ -36,8 +45,39 @@ export default class Home {
   private _loader = inject(Loader);
   private _vault = inject(VaultSecurity);
   private _scope = inject(ScopeContext);
+  private _prefs = inject(PreferencesService);
+  private _ai = inject(AiService);
 
   protected readonly isConfigOpen = signal(false);
+  protected readonly isWelcomeAiOpen = signal(false);
+  private _aiEnabledTriggered = false;
+
+  constructor() {
+    effect(() => {
+      const user = this._authenticator.user();
+      const prefsReady = this._prefs.preferences.hasValue();
+      if (!user || !prefsReady) return;
+
+      const enabledFlag = this._prefs.preferences.value()?.aiAssistantEnabled;
+      const status = this._ai.status();
+
+      if (enabledFlag === undefined) {
+        if (!this._aiEnabledTriggered) {
+          this._aiEnabledTriggered = true;
+          this.isWelcomeAiOpen.set(true);
+        }
+        return;
+      }
+
+      if (enabledFlag === true && status === 'disabled' && !this._aiEnabledTriggered) {
+        this._aiEnabledTriggered = true;
+        this._ai.enable().catch((err) => {
+          console.error('[Home] auto-enable AI failed', err);
+          this._aiEnabledTriggered = false;
+        });
+      }
+    });
+  }
 
   async ngOnInit() {
     this._scope.setGlobal();
@@ -54,5 +94,22 @@ export default class Home {
 
   openConfig() {
     this.isConfigOpen.set(true);
+  }
+
+  closeWelcomeAi(): void {
+    this.isWelcomeAiOpen.set(false);
+  }
+
+  async acceptWelcomeAi(): Promise<void> {
+    try {
+      await this._prefs.setAiAssistantEnabled(true);
+      await this._ai.enable().catch((err) => {
+        console.error('[Home] AI enable after welcome failed', err);
+      });
+    } catch (err) {
+      console.error('[Home] could not persist AI preference from welcome modal', err);
+    } finally {
+      this.isWelcomeAiOpen.set(false);
+    }
   }
 }
