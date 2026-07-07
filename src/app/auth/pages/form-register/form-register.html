@@ -1,6 +1,6 @@
 <form
   [formGroup]="form"
-  class="p-4 min-w-[25rem] grid gap-4"
+  class="p-4 grid gap-4"
   (focusout)="onFormFocusOut()"
   (ngSubmit)="onSubmit()"
 >
@@ -47,12 +47,12 @@
     <label class="label cursor-pointer justify-start gap-3 items-start py-1">
       <input
         type="checkbox"
-        class="checkbox checkbox-primary mt-0.5"
+        class="checkbox checkbox-primary mt-0.5 shrink-0"
         formControlName="acceptTerms"
       />
-      <span class="text-xs text-base-content/80 leading-relaxed">
-        Acepto los Términos y Condiciones, incluida la descarga inicial del modelo de IA local
-        (~470 MB, queda en caché del navegador).
+      <span class="text-xs text-base-content/80 leading-relaxed whitespace-normal flex-1 min-w-0 max-w-[20rem] break-words">
+        Acepto los Términos y Condiciones, incluida la descarga inicial del modelo de IA local (~470
+        MB, queda en caché del navegador).
       </span>
     </label>
     @if (form.controls.acceptTerms.touched && form.controls.acceptTerms.invalid) {

@@ -8,6 +8,7 @@ import { Loader } from '../../../shared/service/loader';
   imports: [RouterOutlet],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block w-full overflow-x-hidden' },
 })
 export default class Login {
   private _loader = inject(Loader);

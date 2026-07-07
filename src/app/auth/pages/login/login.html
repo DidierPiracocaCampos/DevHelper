@@ -1,17 +1,15 @@
-<div class="login-bg min-h-screen w-full flex flex-col items-center justify-center py-10">
+<div class="min-h-screen w-full overflow-x-hidden flex flex-col items-center justify-center py-10 px-4">
   <div class="bg-base-content h-35 w-35 flex justify-center items-center rounded-2xl mb-10">
     <span class="icon text-base-100 text-8xl!">data_object</span>
   </div>
 
-  <div>
-    <router-outlet />
-  </div>
+  <router-outlet />
 
   <hr class="m-5 w-full max-w-[22rem] opacity-30" />
 
-  <div class="w-full">
+  <div class="w-full flex flex-col items-center">
     <button
-      class="btn btn-outline btn-lg mt-4 m-auto w-full max-w-[25rem] flex items-center justify-center"
+      class="btn btn-outline btn-lg mt-4 w-full max-w-[25rem] flex items-center justify-center"
       (click)="loginWithGoogle()"
     >
       <img src="/icons/google.svg" width="20" alt="google logo" class="mr-2" />
@@ -19,7 +17,7 @@
     </button>
 
     <button
-      class="btn btn-outline btn-lg mt-3 m-auto w-full max-w-[25rem] flex items-center justify-center"
+      class="btn btn-outline btn-lg mt-3 w-full max-w-[25rem] flex items-center justify-center"
       (click)="loginWithGithub()"
     >
       <img src="/icons/github.svg" width="20" alt="github logo" class="mr-2" />
