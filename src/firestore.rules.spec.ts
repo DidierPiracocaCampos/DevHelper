@@ -279,7 +279,11 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                               && (!('customNasaImage' in request.resource.data)
                                   || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
                                       && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
-                              && request.resource.data.keys().hasOnly(['id','customNasaImage']);
+                              && (!('aiAssistantEnabled' in request.resource.data)
+                                  || isBool(request.resource.data.aiAssistantEnabled))
+                              && (!('aiSearcherEnabled' in request.resource.data)
+                                  || isBool(request.resource.data.aiSearcherEnabled))
+                              && request.resource.data.keys().hasOnly(['id','customNasaImage','aiAssistantEnabled','aiSearcherEnabled']);
                 allow delete: if isOwner(userId) && prefsId == 'singleton';
               }
 
@@ -363,6 +367,89 @@ const skip = !FIRESTORE_EMULATOR_HOST;
 
       await assertSucceeds(setDoc(profileRef, { email: 'a@b.c', createdAt: original }));
       await assertFails(updateDoc(profileRef, { createdAt: Timestamp.fromMillis(9999) }));
+    });
+  });
+
+  describe('users/{uid}/preferences/{prefsId}', () => {
+    const prefsPath = (uid: string) => `users/${uid}/preferences/singleton`;
+
+    it('owner can create preferences with aiAssistantEnabled=true', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiAssistantEnabled: true,
+        }),
+      );
+    });
+
+    it('owner can create preferences with aiSearcherEnabled=false', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiSearcherEnabled: false,
+        }),
+      );
+    });
+
+    it('owner can create preferences with both booleans and customNasaImage', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertSucceeds(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiAssistantEnabled: true,
+          aiSearcherEnabled: true,
+          customNasaImage: { fileId: 'file123', updatedAt: 1234567890 },
+        }),
+      );
+    });
+
+    it('rejects preferences with aiAssistantEnabled as non-bool', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiAssistantEnabled: 'yes',
+        }),
+      );
+    });
+
+    it('rejects preferences with aiSearcherEnabled as non-bool', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiSearcherEnabled: 1,
+        }),
+      );
+    });
+
+    it('rejects preferences with unknown field', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          somethingElse: true,
+        }),
+      );
+    });
+
+    it('non-owner cannot create preferences', async () => {
+      const ctx = testEnv.authenticatedContext('u2');
+      await assertFails(
+        setDoc(doc(ctx.firestore(), prefsPath('u1')), {
+          id: 'singleton',
+          aiAssistantEnabled: true,
+        }),
+      );
+    });
+
+    it('owner can update preferences toggling aiSearcherEnabled', async () => {
+      const ctx = testEnv.authenticatedContext('u1');
+      const ref = doc(ctx.firestore(), prefsPath('u1'));
+      await assertSucceeds(setDoc(ref, { id: 'singleton', aiSearcherEnabled: true }));
+      await assertSucceeds(updateDoc(ref, { aiSearcherEnabled: false }));
     });
   });
 

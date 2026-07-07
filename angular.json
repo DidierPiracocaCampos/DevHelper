@@ -35,7 +35,7 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "externalDependencies": ["@xenova/transformers", "onnxruntime-web", "sharp"]
+            "externalDependencies": ["sharp", "onnxruntime-node"]
           },
           "configurations": {
             "production": {

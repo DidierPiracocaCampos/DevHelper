@@ -501,7 +501,11 @@ service cloud.firestore {
                     && (!('customNasaImage' in request.resource.data)
                         || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
                             && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
-                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
+                    && (!('aiAssistantEnabled' in request.resource.data)
+                        || isBool(request.resource.data.aiAssistantEnabled))
+                    && (!('aiSearcherEnabled' in request.resource.data)
+                        || isBool(request.resource.data.aiSearcherEnabled))
+                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage', 'aiAssistantEnabled', 'aiSearcherEnabled']);
 
       allow update: if isOwner(userId)
                     && prefsId == 'singleton'
@@ -510,7 +514,11 @@ service cloud.firestore {
                     && (!('customNasaImage' in request.resource.data)
                         || (isBoundedString(request.resource.data.customNasaImage.fileId, 128)
                             && isPositiveInt(request.resource.data.customNasaImage.updatedAt)))
-                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage']);
+                    && (!('aiAssistantEnabled' in request.resource.data)
+                        || isBool(request.resource.data.aiAssistantEnabled))
+                    && (!('aiSearcherEnabled' in request.resource.data)
+                        || isBool(request.resource.data.aiSearcherEnabled))
+                    && request.resource.data.keys().hasOnly(['id', 'customNasaImage', 'aiAssistantEnabled', 'aiSearcherEnabled']);
 
       allow delete: if isOwner(userId)
                     && prefsId == 'singleton';

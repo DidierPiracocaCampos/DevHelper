@@ -17,7 +17,7 @@ Convenciones:
 - **Nombre:** DevHelper
 - **Tipo:** SPA Angular
 - **Stack:** Angular 20 + DaisyUI 5 + Tailwind 4 + Firebase 11 (Auth + Firestore)
-- **Estado:** pre-MVP. Auth, vault, elementos globales (passwords/files), proyectos, tareas y vista detalle de issue funcionan; **eventos, busqueda tradicional y membresia no existen**. Asistente IA local opcional (opt-in, 100% client-side) — no existe.
+- **Estado:** pre-MVP. Auth, vault, elementos globales (passwords/files), proyectos, tareas y vista detalle de issue funcionan; **eventos, busqueda tradicional y membresia no existen**. Asistente IA local opcional (opt-in, 100% client-side) — implementado con auto-onboarding en registro/legacy y auto-enable en Home.
 - **Package manager:** pnpm (workspace)
 - **Tests:** Karma (default Angular) + Vitest (instalado, sin uso visible)
 - **Lint/format:** ESLint + Prettier configurados
@@ -152,7 +152,13 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 ### CU-12 Consultas al asistente local
 
-- **FALTA** no existe el componente `ai-assistant`, ni los servicios `AiService` / `EmbeddingService` / `QueryIntentService`, ni la integracion con los repositorios. Spec aprobado en `docs/superpowers/specs/2026-07-05-ai-assistant-local-design.md`.
+- **BUG (resuelto)** `externalDependencies` en `angular.json:38` marcaba `@xenova/transformers` y `onnxruntime-web` como externos sin proporcionar un `<script type="importmap">` en `index.html`. El browser no resuelve bare specifiers sin importmap, así que `import('@xenova/transformers')` en `embedding.service.ts:39` lanzaba `TypeError: Failed to resolve module specifier '@xenova/transformers'` tanto en Chrome como en Firefox. Fix: dejarlos bundled (chunk lazy de ~794 KB / 158 KB transfer), mantener solo `sharp` y `onnxruntime-node` externos (Node-only; el campo `browser` del paquete los excluye en build web).
+- **BUG (resuelto)** Firefox redescargaba el modelo en cada recarga porque `embedding.service.ts` no activaba explícitamente `env.useBrowserCache`. Fix: setear `useBrowserCache = true` (más `allowRemoteModels = true`) en `embedding.service.ts` para que el Cache Storage del browser persiste el modelo entre sesiones.
+- **FALTA → OK** no existia el componente `ai-assistant`, ni los servicios `AiService` / `EmbeddingService` / `QueryIntentService`, ni la integracion con los repositorios. Spec aprobado en `docs/superpowers/specs/2026-07-05-ai-assistant-local-design.md`. **Implementado (M3 + ai-assistant)**: `src/app/home/ai/*`, `src/app/home/components/ai-assistant/*`. Opt-in manual via "Activar asistente" persistido en `users/{uid}/preferences/singleton.aiAssistantEnabled`.
+- **OK (nuevo)** Flujo de consentimiento T&C en registro: `form-register` ahora incluye checkbox `acceptTerms` con `Validators.requiredTrue`. Tras registro exitoso, persiste `aiAssistantEnabled=true` automáticamente — el usuario ya no debe tocar "Activar asistente" manualmente.
+- **OK (nuevo)** Auto-reanudación en Home: `home.ts` tiene un `effect()` que, cuando el usuario está logueado y `aiAssistantEnabled===true` y `ai.status()==='disabled'`, dispara `ai.enable()` automáticamente. Resuelve el "tener que descargar cada vez" en Firefox tras F5.
+- **OK (nuevo)** Modal de bienvenida para usuarios legacy (`aiAssistantEnabled===undefined`): `welcome-ai-modal`组件 explica la descarga del modelo (~470 MB caché browser) y ofrece "Activar IA local" o "Ahora no".
+- **FALTA** documentación legal (Términos y Condiciones) como documento vinculante separado — checkbox actual usa texto introductorio. Diferido a fase legal posterior.
 
 ## 4. Cambios necesarios (orden sugerido)
 
