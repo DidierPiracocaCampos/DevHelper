@@ -6,6 +6,16 @@
   height: 100%;
 }
 
+::ng-deep .home-calendar-add-btn button {
+  min-width: 2.25rem !important;
+  min-height: 2.25rem !important;
+  padding: 0.5rem !important;
+}
+
+::ng-deep .home-calendar-add-btn .icon {
+  font-size: 0.875rem !important;
+}
+
 .home-calendar-header {
   display: flex;
   justify-content: space-between;
@@ -24,6 +34,14 @@
   display: flex;
   gap: 0.125rem;
   align-items: center;
+}
+
+.home-calendar-nav .btn {
+  color: var(--color-base-100);
+}
+
+.home-calendar-nav .btn:hover {
+  background-color: oklch(0 0 0 / 0.1);
 }
 
 .home-calendar-today {
@@ -46,12 +64,19 @@
   padding: 0.25rem 0.125rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: background-color 150ms;
+  transition:
+    background-color 150ms,
+    color 150ms;
   color: inherit;
 }
 
 .home-calendar-day:hover {
   background-color: oklch(0 0 0 / 0.1);
+}
+
+.home-calendar-day:hover .home-calendar-day__weekday,
+.home-calendar-day:hover .home-calendar-day__number {
+  color: oklch(55% 0 0);
 }
 
 .home-calendar-day--selected .home-calendar-day__number {
@@ -70,6 +95,7 @@
   font-size: 0.7rem;
   opacity: 0.5;
   margin-bottom: 0.125rem;
+  transition: color 150ms;
 }
 
 .home-calendar-day__number {
@@ -80,13 +106,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 150ms;
+}
+
+.home-calendar-day--today .home-calendar-day__number {
+  border: 1.5px solid var(--color-base-100);
+  border-radius: 9999px;
 }
 
 .home-calendar-day__dot {
   width: 0.25rem;
   height: 0.25rem;
   border-radius: 9999px;
-  background-color: var(--color-primary, oklch(50% 0.2 265));
+  background-color: var(--color-base-100);
   margin-top: 0.125rem;
 }
 
