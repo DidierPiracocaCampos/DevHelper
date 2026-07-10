@@ -1,0 +1,123 @@
+<section class="space-y-6">
+  <header class="space-y-1">
+    <h3 class="text-lg font-semibold">Configurar bóveda</h3>
+    <p class="text-sm text-base-content/70">
+      Protege tu bóveda eligiendo cómo quieres desbloquearla.
+    </p>
+  </header>
+
+  <div class="tabs tabs-lift">
+    <label class="tab gap-2 ml-1">
+      <input type="radio" name="vault-create" value="PASSKEY" [(ngModel)]="checked" />
+      <span class="icon">passkey</span>
+      Passkey
+      <span class="badge badge-success badge-sm">Recomendado</span>
+    </label>
+    <div class="tab-content border-base-300 bg-base-100 p-6">
+      @if (!isWebAuthnSupported()) {
+        <ui-alert
+          severity="error"
+          title="No soportado"
+          message="Tu dispositivo no soporta autenticación con passkey. Usa un navegador compatible."
+          icon="error"
+        />
+      } @else if (!passkeySuccess()) {
+        <div class="flex flex-col gap-4 items-center">
+          <p class="text-sm text-base-content/70 text-center">
+            Usa tu huella, rostro o dispositivo para crear una clave segura.
+          </p>
+          <p class="text-sm text-success">Más seguro y sin contraseñas</p>
+          @if (passkeyError()) {
+            <ui-alert
+              severity="error"
+              title="Error al crear Passkey"
+              [message]="passkeyError()"
+              icon="error"
+            />
+          }
+          <ui-button
+            class="w-2/5"
+            btnClass="w-full"
+            icon="passkey"
+            label="Crear Passkey"
+            severity="success"
+            type="button"
+            data-testid="btn-passkey"
+            [disabled]="creatingPasskey()"
+            [loading]="creatingPasskey()"
+            (press)="registerPasskey()"
+          />
+        </div>
+      } @else {
+        <div class="flex flex-col items-center gap-4 text-center">
+          <span class="icon text-4xl text-success">check_circle</span>
+          <p class="text-base font-semibold">Passkey creada correctamente</p>
+          <p class="text-sm text-base-content/70">
+            Tu dispositivo está vinculado como método de desbloqueo.
+          </p>
+        </div>
+      }
+    </div>
+
+    <label class="tab gap-2">
+      <input type="radio" name="vault-create" value="PIN" [(ngModel)]="checked" />
+      <span class="icon">password</span>
+      PIN
+    </label>
+    <div class="tab-content border-base-300 bg-base-100 p-6">
+      @if (!pinSuccess()) {
+        <form
+          [formGroup]="pinForm"
+          (ngSubmit)="submitPin()"
+          class="flex flex-col items-center gap-4"
+        >
+          <p class="text-sm text-base-content/70 text-center">
+            Usa un PIN de 5 dígitos para proteger tu bóveda y acceder desde cualquier dispositivo.
+          </p>
+          @if (pinError()) {
+            <ui-alert
+              severity="error"
+              title="Error al crear PIN"
+              [message]="pinError()"
+              icon="error"
+            />
+          }
+          <ui-pin-field
+            inputId="create-pin"
+            labelText="Ingresa tu PIN"
+            formControlName="pin"
+            [length]="5"
+          />
+          <ui-pin-field
+            inputId="create-pin-verify"
+            labelText="Confirma tu PIN"
+            formControlName="verifyPin"
+            [length]="5"
+          >
+            <ng-template errorMessage="notMatching">
+              <p class="validator-hint">El PIN no coincide</p>
+            </ng-template>
+          </ui-pin-field>
+          <ui-button
+            class="w-2/5 mt-2"
+            btnClass="w-full"
+            icon="password"
+            label="Crear PIN"
+            severity="primary"
+            type="submit"
+            [disabled]="creatingPin()"
+            [loading]="creatingPin()"
+          />
+        </form>
+      } @else {
+        <div class="flex flex-col items-center gap-4 text-center">
+          <span class="icon text-4xl text-success">check_circle</span>
+          <p class="text-base font-semibold">PIN creado correctamente</p>
+          <p class="text-sm text-base-content/70">
+            Ya puedes usar tu PIN para acceder a tu bóveda.
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
