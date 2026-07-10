@@ -13,9 +13,10 @@
 .issue-list-body {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   min-height: 0;
   padding: 0.5rem;
+  justify-content: center;
 }
 
 .issue-list-row-shell {
@@ -78,6 +79,7 @@
   padding: 2rem 1rem;
   text-align: center;
   height: 100%;
+  min-height: 0;
 }
 
 .status-circle {
