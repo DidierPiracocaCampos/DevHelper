@@ -15,6 +15,7 @@ import { UiField } from './ui-field';
       }
     }
   `,
+  styles: ':host { display: contents; }',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiFieldErrors {
