@@ -1,0 +1,16 @@
+@switch (status()) {
+  @case (VAULT_STATUS.NO_CREATE) {
+    <vault-create-panel />
+  }
+  @case (VAULT_STATUS.ENCRYPTED) {
+    <vault-unlock-panel />
+  }
+  @case (VAULT_STATUS.DESENCRYPTED) {
+    <vault-manage-panel />
+  }
+  @default {
+    <div class="flex items-center justify-center py-12">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  }
+}
