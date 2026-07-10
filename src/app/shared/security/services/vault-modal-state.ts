@@ -4,20 +4,10 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class VaultModalState {
-  private _isCreateOpen = signal(false);
   private _isUnlockOpen = signal(false);
   private _pendingAction = signal<(() => void) | null>(null);
 
-  readonly isCreateOpen = this._isCreateOpen.asReadonly();
   readonly isUnlockOpen = this._isUnlockOpen.asReadonly();
-
-  openCreate(): void {
-    this._isCreateOpen.set(true);
-  }
-
-  closeCreate(): void {
-    this._isCreateOpen.set(false);
-  }
 
   openUnlock(action?: () => void): void {
     this._pendingAction.set(action ?? null);

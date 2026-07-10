@@ -27,7 +27,6 @@ export class VaultSecurity {
   readonly isPinLockedOut = computed(() => this._pinLockout.isLocked());
   readonly pinAttemptsRemaining = computed(() => this._pinLockout.attemptsRemaining());
 
-  readonly isSecureModalOpen = this._modalState.isCreateOpen;
   readonly isUnlockModalOpen = this._modalState.isUnlockOpen;
 
   readonly repositoryStatus = this._repository.status;
@@ -69,12 +68,6 @@ export class VaultSecurity {
   getVaultKey(): CryptoKey | undefined {
     return this._vaultKey();
   }
-
-  private _statusChanges = effect(() => {
-    if (this._repository.status() === VAULT_STATUS.NO_CREATE) {
-      this.openSetupVaultModal();
-    }
-  });
 
   private _executePendingOnUnlock = effect(() => {
     if (this.vaultStatus() === VAULT_STATUS.DESENCRYPTED) {
@@ -173,19 +166,11 @@ export class VaultSecurity {
 
   showModal(action?: () => void) {
     const s = this.vaultStatus();
-    if (s === VAULT_STATUS.NO_CREATE) {
-      this._modalState.openCreate();
-      return;
-    }
     if (s === VAULT_STATUS.ENCRYPTED) {
       this._modalState.openUnlock(action);
     } else if (action) {
       action();
     }
-  }
-
-  openSetupVaultModal() {
-    this._modalState.openCreate();
   }
 
   openUnlockVaultModal() {
@@ -194,10 +179,6 @@ export class VaultSecurity {
 
   closeUnlockModal() {
     this._modalState.closeUnlock();
-  }
-
-  closeCreateModal() {
-    this._modalState.closeCreate();
   }
 
   async changePin(oldPin: string, newPin: string): Promise<boolean> {
