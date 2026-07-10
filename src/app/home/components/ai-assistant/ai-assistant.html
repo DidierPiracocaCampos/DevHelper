@@ -1,98 +1,13 @@
-@if (!enabled()) {
-  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
-    <span class="icon icon-lg">psychology</span>
-    <h3 class="text-lg font-medium">Asistente IA local</h3>
-    <p class="text-sm text-base-content/60 text-center max-w-xs">
-      100% en tu navegador. Cero red. ~470 MB de descarga única, queda en caché.
-    </p>
-    <ui-button label="Activar asistente" severity="primary" (press)="enable()" />
-  </div>
-} @else if (status() === 'downloading') {
-  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
-    <span class="icon icon-lg">cloud_download</span>
-    <h3 class="text-lg font-medium">Descargando modelo por primera vez...</h3>
-    @if (downloadProgress(); as p) {
-      <progress
-        class="progress progress-primary w-full max-w-xs"
-        [value]="p.loaded"
-        [max]="p.total"
-      ></progress>
-      <p class="text-xs text-base-content/60">
-        {{ formatBytes(p.loaded) }} / {{ formatBytes(p.total) }}
-      </p>
-    }
-    <ui-button label="Cancelar" variant="ghost" (press)="disable()" />
-  </div>
-} @else if (status() === 'loading') {
-  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
-    <span class="icon icon-lg">psychology</span>
-    <h3 class="text-lg font-medium">Cargando modelo desde caché...</h3>
-    <span class="loading loading-infinity loading-md"></span>
-    <p class="text-xs text-base-content/40">Esto tarda solo unos segundos</p>
-  </div>
-} @else if (status() === 'ready') {
-  <div class="card card-xl h-full p-3 flex flex-col gap-2">
-    @if (searcherEnabled()) {
-      @if (vaultUnlocked()) {
-        <ui-search-field
-          inputId="ai-assistant-query"
-          (search)="ask($event)"
-          placeholder="Pregunta sobre tu workspace..."
-        />
-      } @else {
-        <div class="flex flex-col items-center gap-2 py-2">
-          <p class="text-xs text-base-content/60 text-center">
-            Vault bloqueado. Desbloquéalo para usar el buscador.
-          </p>
-          <ui-button
-            label="Desbloquear vault"
-            severity="primary"
-            size="sm"
-            (press)="openVaultUnlock()"
-          />
-        </div>
-      }
-    } @else {
-      <div class="text-xs text-base-content/50 px-1 py-2">
-        Buscador desactivado. Actívalo en Configuración → Buscador de IA.
-      </div>
-    }
-    @if (isProcessing()) {
-      <div class="flex items-center gap-2 text-sm text-base-content/60">
-        <span class="loading loading-infinity loading-sm"></span>
-        <span>Procesando...</span>
-      </div>
-    }
-    @if (lastResult(); as result) {
-      <div class="card bg-base-200 p-3 text-sm">
-        <p>{{ result.answer }}</p>
-        @if (result.matched.length > 0) {
-          <details class="mt-2 text-xs text-base-content/60">
-            <summary>Coincidencias ({{ result.matched.length }})</summary>
-            <ul class="mt-1 space-y-1">
-              @for (m of result.matched; track m.id) {
-                <li>
-                  {{ m.title }}
-                  <span class="text-base-content/40">({{ m.score | number: '1.2-2' }})</span>
-                </li>
-              }
-            </ul>
-          </details>
-        }
-      </div>
-    }
-  </div>
-} @else {
-  <div class="card card-xl h-full p-4 flex flex-col items-center justify-center gap-3">
-    <span class="icon icon-lg">psychology</span>
-    <h3 class="text-lg font-medium">Asistente IA local</h3>
-    <p class="text-sm text-base-content/60 text-center max-w-xs">
-      {{
-        status() === 'error'
-          ? 'Error al cargar el modelo. Reintenta la activación.'
-          : 'El modelo está en caché pero no cargado en memoria. Actívalo para empezar a preguntar.'
-      }}
-    </p>
-    <ui-button label="Activar modelo" severity="primary" (press)="enable()" />
-  </div>
-}
+<div
+  class="search-trigger"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="ariaLabel()"
+  (click)="open()"
+  (keydown.enter)="open()"
+  (keydown.space)="$event.preventDefault(); open()"
+>
+  <span class="icon icon-lg text-base-content/60 shrink-0">search</span>
+  <span class="text-sm text-base-content/50 truncate flex-1">Pregunta sobre tu workspace...</span>
+  <kbd class="kbd kbd-sm shrink-0">{{ shortcutHint }}</kbd>
+</div>

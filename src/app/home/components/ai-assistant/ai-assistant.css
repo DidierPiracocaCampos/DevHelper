@@ -1,4 +1,24 @@
+@reference '../../../../styles.css';
+@reference '../../../../styles/tokens.css';
+@reference '../../../../styles/utilities.css';
+
 :host {
-  display: block;
+  display: flex;
+  align-items: center;
   height: 100%;
+}
+
+.search-trigger {
+  @apply w-full flex items-center gap-3 px-4 py-2 rounded-lg bg-base-200 border border-base-300 cursor-pointer transition-all duration-200;
+
+  &:hover {
+    @apply border-base-content/30;
+    box-shadow: 0 0 0 1px oklch(var(--color-base-content) / 0.2);
+  }
+
+  &:focus-visible {
+    @apply border-primary;
+    box-shadow: 0 0 0 1px oklch(var(--color-primary));
+    outline: none;
+  }
 }
