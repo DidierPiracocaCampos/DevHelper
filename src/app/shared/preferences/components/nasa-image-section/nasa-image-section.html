@@ -1,4 +1,4 @@
-<section class="space-y-4">
+<section class="space-y-4 justify-center">
   <header class="flex items-center justify-between">
     <div>
       <h4 class="text-lg font-semibold">Widget NASA</h4>
@@ -24,10 +24,11 @@
     }
   </div>
 
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-2 mt-3 justify-center">
     <ui-button
       icon="upload"
       label="Cambiar imagen"
+      class="max-w-xl"
       severity="primary"
       [loading]="isBusy()"
       [disabled]="isBusy()"
@@ -39,6 +40,7 @@
         label="Quitar imagen personalizada"
         severity="error"
         variant="ghost"
+        class="max-w-xl"
         [loading]="isBusy()"
         [disabled]="isBusy()"
         (press)="clearImage()"
