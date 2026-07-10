@@ -99,22 +99,25 @@ Catálogo de escenarios en los que el desarrollador usuario interactúa con DevH
 
 ![Prioridad](https://img.shields.io/badge/Prioridad-Crítico-000000?style=flat-square)
 
-- **Descripcion:** el usuario configura por primera vez el cifrado del workspace. Elige un metodo de desbloqueo y se genera la clave maestra.
+- **Descripcion:** el usuario configura por primera vez el cifrado del workspace. Elige uno o dos metodos de desbloqueo (PIN y/o Passkey) y se genera la clave maestra.
 - **Actores:** Desarrollador usuario.
 - **Precondiciones:** cuenta activa; el vault no esta configurado; sesion abierta.
 - **Flujo principal:**
   1. El usuario llega al asistente de configuracion inicial del vault.
-  2. El sistema presenta las dos opciones: **PIN** o **Passkey**.
-  3. El usuario elige una.
-     4a. Si elige **PIN**: ingresa el PIN dos veces, confirma. El sistema deriva la clave maestra.
-     4b. Si elige **Passkey**: el sistema lanza el flujo WebAuthn del navegador; el usuario registra la passkey. El sistema genera y asocia la clave maestra.
-  4. El sistema cifra el estado inicial del workspace y guarda de forma segura la clave maestra.
-  5. El sistema pide **crear el primer proyecto** (parte de CU-05).
+  2. El sistema presenta una pantalla con dos pestanas: **Passkey** (primera, recomendada) y **PIN** (segunda). El usuario puede moverse libremente entre ellas.
+  3. El usuario elige uno o ambos metodos.
+     4a. Si elige **PIN** (pestana PIN): ingresa el PIN dos veces, confirma. El sistema lo cifra con PBKDF2 y lo guarda.
+     4b. Si elige **Passkey** (pestana Passkey): el sistema lanza el flujo WebAuthn del navegador; el usuario registra la passkey. El sistema guarda el artefacto criptografico.
+  4. Al terminar cada metodo, su pestana muestra confirmacion y el usuario puede pasar a la otra pestana para agregar el segundo metodo.
+  5. El usuario pulsa **Listo** para salir del asistente.
+  6. El sistema cifra el estado inicial del workspace y guarda de forma segura la clave maestra.
+  7. El sistema pide **crear el primer proyecto** (parte de CU-05).
 - **Flujos alternativos:**
   - PIN y confirmacion no coinciden -> se rechaza y se pide reintentar.
-  - El navegador no soporta WebAuthn / passkeys -> se desactiva esa opcion y solo se ofrece PIN.
+  - El navegador no soporta WebAuthn / passkeys -> se desactiva esa pestana y solo se ofrece PIN.
+  - El usuario registra solo uno de los dos metodos y pulsa Listo -> vault operativo con un metodo; el otro se podra agregar luego via CU-09.
   - El usuario cierra el asistente a mitad -> el vault queda sin configurar; al volver a la app, se retoma CU-03.
-- **Postcondiciones:** vault configurado y cifrado; metodo de desbloqueo (PIN o Passkey) asociado a la cuenta; sesion de vault abierta.
+- **Postcondiciones:** vault configurado y cifrado; uno o dos metodos de desbloqueo (PIN, Passkey, o ambos) asociados a la cuenta; sesion de vault abierta.
 - **Excepciones:** perdida del navegador / dispositivo sin passkey sincronizada -> documentado en CU-08 (recuperacion).
 
 ### CU-04 — Desbloqueo del vault
@@ -135,6 +138,31 @@ Catálogo de escenarios en los que el desarrollador usuario interactúa con DevH
   - Olvido de PIN o passkey no disponible -> el sistema ofrece el flujo de recuperacion (ver CU-08 excepciones).
 - **Postcondiciones:** vault desbloqueado; el usuario puede acceder a proyectos, tareas, ficheros, passwords y eventos.
 - **Excepciones:** vault bloqueado por intentos -> se muestra tiempo de espera antes de reintentar; recuperacion solo posible desde flujo documentado en CU-08.
+
+### CU-09 — Gestión de métodos de desbloqueo (agregar, cambiar, eliminar)
+
+![Prioridad](https://img.shields.io/badge/Prioridad-Alto-FF8C00?style=flat-square)
+
+- **Descripcion:** una vez configurado el vault, el usuario puede gestionar sus metodos de desbloqueo: agregar un segundo metodo, cambiar el PIN actual, reemplazar la passkey, o eliminar cualquiera de los metodos.
+- **Actores:** Desarrollador usuario.
+- **Precondiciones:** cuenta activa; vault configurado; vault desbloqueado (clave maestra en memoria).
+- **Flujo principal:**
+  1. El usuario abre la seccion de configuracion del vault dentro del modal de preferencias.
+  2. El sistema muestra la lista de metodos configurados y, para cada uno, las acciones disponibles.
+  3. **Agregar un metodo faltante** (solo aparece si falta PIN o Passkey):
+     - "Agregar PIN" -> formulario inline (PIN + confirmacion). Al confirmar, se cifra con el master key actual y se guarda.
+     - "Agregar passkey" -> el sistema lanza el flujo WebAuthn; el usuario registra la nueva passkey.
+  4. **Cambiar PIN** (solo si hay PIN): formulario con PIN actual, nuevo PIN y confirmacion. El sistema valida el PIN actual descifrando el master key, deriva una nueva clave con el nuevo PIN y reemplaza el registro del metodo.
+  5. **Reemplazar passkey** (solo si hay passkey): el sistema lanza el flujo WebAuthn para registrar la nueva passkey; al terminar, elimina la anterior. El master key no cambia.
+  6. **Eliminar un metodo**: confirmacion del sistema.
+     - Si quedan otros metodos -> confirmacion normal ("Quitar PIN? El passkey seguira disponible.").
+     - Si es el ultimo metodo -> **confirmacion dura**: el usuario debe escribir literalmente la palabra `ELIMINAR` para habilitar el boton. El modal advierte que tras esto los datos encriptados seran irrecuperables.
+- **Flujos alternativos:**
+  - Cambio de PIN con PIN actual incorrecto -> contador de lockout incrementa (mismas reglas que CU-04); se rechaza el cambio.
+  - Reemplazo de passkey cancelado por el usuario -> no se hace nada; la passkey anterior sigue activa.
+  - Eliminacion del ultimo metodo confirmada -> el siguiente desbloqueo del vault falla (no hay metodos); la unica salida es documentada en CU-08 (recuperacion, actualmente **FALTA**).
+- **Postcondiciones:** metodos del vault actualizados; el master key permanece invariante salvo en "Cambiar PIN" donde se re-cifra con la misma clave.
+- **Excepciones:** sin red / Firebase caido -> se muestra error y se preserva el estado anterior.
 
 ### CU-05 — Gestión de proyectos
 
