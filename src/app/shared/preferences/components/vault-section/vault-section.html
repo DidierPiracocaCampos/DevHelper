@@ -1,13 +1,94 @@
 @switch (status()) {
   @case (VAULT_STATUS.NO_CREATE) {
-    <vault-create-panel />
+    <div class="space-y-4">
+      <p class="text-sm text-base-content/70">
+        Protege tu Vault eligiendo cómo desbloquearlo. Puedes registrar Passkey y PIN a la vez.
+      </p>
+      <vault-method-tabs
+        #methodTabs
+        mode="create"
+        [havePin]="havePin()"
+        [havePasskey]="havePasskey()"
+        [isWebAuthnSupported]="isWebAuthnSupported()"
+        [errorMessage]="createError()"
+        [isLoading]="isCreating()"
+        (registerPasskey)="onRegisterPasskey()"
+        (submitPin)="onCreatePin($event)"
+      />
+    </div>
   }
+
   @case (VAULT_STATUS.ENCRYPTED) {
-    <vault-unlock-panel />
+    <div class="space-y-4">
+      <div class="vault-section__card">
+        <div class="vault-section__header-row">
+          <div class="vault-section__header-content">
+            <p class="vault-section__header-title">Vault</p>
+            <span class="badge badge-error badge-sm">Bloqueado</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-sm text-base-content/70">
+        Desbloquea tu Vault para acceder a los datos encriptados.
+      </p>
+      <vault-method-tabs
+        #methodTabs
+        mode="unlock"
+        [havePin]="havePin()"
+        [havePasskey]="havePasskey()"
+        [errorMessage]="unlockError()"
+        [isLoading]="isUnlocking()"
+        [attemptsRemaining]="attemptsRemaining()"
+        [countdown]="countdown()"
+        [isLockedOut]="isLockedOut()"
+        (unlockWithPasskey)="onUnlockPasskey()"
+        (submitPin)="onUnlockPin($event)"
+        (switchToPin)="onSwitchToPin()"
+      />
+    </div>
   }
+
   @case (VAULT_STATUS.DESENCRYPTED) {
-    <vault-manage-panel />
+    <div class="vault-section__cards">
+      <div class="vault-section__card">
+        <div class="vault-section__header-row">
+          <div class="vault-section__header-content">
+            <p class="vault-section__header-title">Vault</p>
+            <span class="badge badge-success badge-sm">Desbloqueado</span>
+          </div>
+          <ui-button
+            class="max-w-48"
+            icon="lock"
+            label="Bloquear Vault"
+            severity="secondary"
+            variant="filled"
+            size="sm"
+            data-testid="btn-lock"
+            (press)="lockVault()"
+          />
+        </div>
+      </div>
+
+      <vault-method-tabs
+        #methodTabs
+        mode="manage"
+        [havePin]="havePin()"
+        [havePasskey]="havePasskey()"
+        [isWebAuthnSupported]="isWebAuthnSupported()"
+        [errorMessage]="managementError()"
+        [isLoading]="isAddingPasskey() || isReplacingPasskey()"
+        [isRemoving]="isRemoving()"
+        [isChangingPin]="isChangingPin()"
+        (addPin)="onAddPin($event)"
+        (changePin)="onChangePin($event)"
+        (removePin)="onRemovePin()"
+        (addPasskey)="onAddPasskey()"
+        (replacePasskey)="onReplacePasskey()"
+        (removePasskey)="onRemovePasskey()"
+      />
+    </div>
   }
+
   @default {
     <div class="flex items-center justify-center py-12">
       <span class="loading loading-spinner loading-lg"></span>
