@@ -10,7 +10,7 @@ import { Loader } from '../../../shared/service/loader';
   imports: [ReactiveFormsModule, UiEmailField, RouterLink],
   templateUrl: './form-reset-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full max-w-[25rem]' },
+  host: { class: 'block w-full' },
 })
 export default class FormResetPassword {
   private _formBuilder = inject(FormBuilder).nonNullable;

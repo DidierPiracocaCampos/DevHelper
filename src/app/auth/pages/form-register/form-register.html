@@ -1,6 +1,6 @@
 <form
   [formGroup]="form"
-  class="p-4 grid gap-4"
+  class="p-4 sm:p-6 grid gap-4 sm:gap-5"
   (focusout)="onFormFocusOut()"
   (ngSubmit)="onSubmit()"
 >
@@ -10,7 +10,14 @@
       <span>Revisa tu correo y verifica tu cuenta para continuar.</span>
     </div>
   } @else {
-    <ui-email-field inputId="email" formControlName="email" />
+    <ui-email-field inputId="email" formControlName="email">
+      <ng-template errorMessage="required">
+        <p class="validator-hint">Este campo es obligatorio</p>
+      </ng-template>
+      <ng-template errorMessage="email">
+        <p class="validator-hint">Correo electrónico inválido</p>
+      </ng-template>
+    </ui-email-field>
     <ui-password-field inputId="password" formControlName="password" autocomplete="new-password">
       <ng-template errorMessage="firebasePassword" [visible]="true">
         <ul class="list">
@@ -50,7 +57,9 @@
         class="checkbox checkbox-primary mt-0.5 shrink-0"
         formControlName="acceptTerms"
       />
-      <span class="text-xs text-base-content/80 leading-relaxed whitespace-normal flex-1 min-w-0 max-w-[20rem] break-words">
+      <span
+        class="text-xs sm:text-sm text-base-content/80 leading-relaxed whitespace-normal flex-1 min-w-0 w-full break-words"
+      >
         Acepto los Términos y Condiciones, incluida la descarga inicial del modelo de IA local (~470
         MB, queda en caché del navegador).
       </span>
@@ -60,7 +69,7 @@
     }
 
     <div></div>
-    <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
+    <button class="btn btn-primary btn-lg sm:btn-md mt-4" type="submit" [disabled]="loading">
       @if (loading) {
         <span class="loading loading-infinity"></span>
       } @else {
@@ -68,7 +77,7 @@
       }
     </button>
 
-    <button class="btn btn-lg btn-secondary" routerLink="/login" type="button">
+    <button class="btn btn-lg sm:btn-md btn-secondary" routerLink="/login" type="button">
       Volver a login
     </button>
   }

@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
+import { UiAuthShell } from '../../../auth/components/ui-auth-shell';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, UiAuthShell],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block w-full overflow-x-hidden' },

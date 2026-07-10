@@ -10,7 +10,7 @@ import { Loader } from '../../../shared/service/loader';
   imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, RouterLink],
   templateUrl: './form-login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full max-w-[25rem]' },
+  host: { class: 'block w-full' },
 })
 export default class FormLogin {
   private _authenticator = inject(Authenticator);

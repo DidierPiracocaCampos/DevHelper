@@ -1,5 +1,12 @@
-<form [formGroup]="form" class="p-4 grid gap-4" (ngSubmit)="onSubmit()">
-  <ui-email-field inputId="email" formControlName="email" />
+<form [formGroup]="form" class="p-4 sm:p-6 grid gap-4 sm:gap-5" (ngSubmit)="onSubmit()">
+  <ui-email-field inputId="email" formControlName="email">
+    <ng-template errorMessage="required">
+      <p class="validator-hint">Este campo es obligatorio</p>
+    </ng-template>
+    <ng-template errorMessage="email">
+      <p class="validator-hint">Correo electrónico inválido</p>
+    </ng-template>
+  </ui-email-field>
   <ui-password-field inputId="password" formControlName="password">
     <ng-template errorMessage="required">
       <p class="validator-hint">Este campo es obligatorio</p>
@@ -14,7 +21,7 @@
     </p>
   }
 
-  <button class="btn btn-primary btn-lg mt-4" type="submit" [disabled]="loading">
+  <button class="btn btn-primary btn-lg sm:btn-md mt-4" type="submit" [disabled]="loading">
     @if (loading) {
       <span class="loading loading-infinity"></span>
     } @else {
@@ -29,7 +36,7 @@
   </div>
 </form>
 
-<p class="text-center mb-4">
+<p class="text-center">
   <span class="opacity-30">¿No tienes cuenta?</span>
   <a class="opacity-70 hover:opacity-100 ms-1" routerLink="/login/register">Regístrate aquí</a>
 </p>
