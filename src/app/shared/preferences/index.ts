@@ -5,6 +5,4 @@ export { UiConfigModal } from './components/ui-config-modal/ui-config-modal';
 export { NasaImageSection } from './components/nasa-image-section/nasa-image-section';
 export { AiSearcherSection } from './components/ai-searcher-section/ai-searcher-section';
 export { VaultSection } from './components/vault-section/vault-section';
-export { VaultCreatePanel } from './components/vault-create-panel/vault-create-panel';
-export { VaultUnlockPanel } from './components/vault-unlock-panel/vault-unlock-panel';
-export { VaultManagePanel } from './components/vault-manage-panel/vault-manage-panel';
+export { VaultMethodTabs } from './components/vault-method-tabs/vault-method-tabs';
