@@ -24,7 +24,7 @@ export class UiConfigModal {
   protected readonly activeSection = signal<string>('vault');
 
   protected readonly sections: ConfigSection[] = [
-    { id: 'vault', label: 'Bóveda', icon: 'data_object' },
+    { id: 'vault', label: 'Vault', icon: 'shield' },
     { id: 'nasa', label: 'Widget NASA', icon: 'image' },
     { id: 'ai', label: 'Buscador de IA', icon: 'search' },
   ];

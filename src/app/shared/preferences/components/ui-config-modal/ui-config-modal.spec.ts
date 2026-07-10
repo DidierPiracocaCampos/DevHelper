@@ -100,12 +100,12 @@ describe('UiConfigModal', () => {
     expect(fixture.nativeElement.querySelector('ai-searcher-section')).toBeTruthy();
   });
 
-  it('marks the active nav button with menu-active class', () => {
+  it('marks the active nav button with is-active class', () => {
     (component as unknown as { select: (id: string) => void }).select('ai');
     fixture.detectChanges();
     const buttons = fixture.nativeElement.querySelectorAll('.config-nav button');
     const aiButton = buttons[2];
-    expect(aiButton.classList.contains('menu-active')).toBe(true);
+    expect(aiButton.classList.contains('is-active')).toBe(true);
   });
 
   it('sets activeSection from initialSection on open', () => {
