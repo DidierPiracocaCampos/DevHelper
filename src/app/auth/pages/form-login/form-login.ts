@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UiEmailField, UiPasswordField } from '../../../shared/forms/fields';
+import { UiEmailField, UiPasswordField, ErrorMessage } from '../../../shared/forms/fields';
 import { RouterLink } from '@angular/router';
 import { Authenticator, AuthErrorCode } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'app-form-login',
-  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, RouterLink],
+  imports: [ReactiveFormsModule, UiEmailField, UiPasswordField, ErrorMessage, RouterLink],
   templateUrl: './form-login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block w-full' },
