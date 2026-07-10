@@ -1,0 +1,104 @@
+<ui-modal
+  #modal
+  title="Buscar en tu workspace"
+  icon="search"
+  size="lg"
+  [showCloseButton]="false"
+  [closeOnEscape]="true"
+  [closeOnBackdrop]="true"
+  [(isOpen)]="localIsOpen"
+  (closed)="onModalClosed()"
+>
+  <div body>
+    <div class="input input-lg w-full mb-3">
+      <input
+        #queryInput
+        class="input-grow"
+        type="search"
+        [value]="query()"
+        placeholder="Pregunta sobre tu workspace..."
+        (input)="query.set($any($event.target).value)"
+        (keydown.arrowDown)="onArrowDown($any($event))"
+        (keydown.arrowUp)="onArrowUp($any($event))"
+        (keydown.enter)="onEnter($any($event))"
+      />
+    </div>
+
+    @if (error() === 'vault') {
+      <div class="flex flex-col items-center gap-2 py-6">
+        <p class="text-sm text-base-content/60 text-center">
+          Vault bloqueado. Desbloquéalo para usar el buscador.
+        </p>
+        <ui-button label="Desbloquear vault" severity="primary" size="sm" (press)="unlockVault()" />
+      </div>
+    } @else if (error() === 'model') {
+      <div class="flex flex-col items-center gap-2 py-6">
+        <p class="text-sm text-base-content/60 text-center">
+          El buscador de IA no está activo. Actívalo para empezar a buscar.
+        </p>
+        <ui-button label="Activar buscador" severity="primary" size="sm" (press)="enableModel()" />
+      </div>
+    } @else if (error() === 'unknown') {
+      <div class="py-6 text-center text-sm text-base-content/60">
+        Algo salió mal. Inténtalo de nuevo.
+      </div>
+    } @else if (isProcessing()) {
+      <div class="py-6 flex items-center justify-center gap-2 text-sm text-base-content/60">
+        <span class="loading loading-infinity loading-sm"></span>
+        <span>Buscando...</span>
+      </div>
+    } @else if (query().trim() === '') {
+      <div class="py-8 text-center text-sm text-base-content/40">
+        Escribe para buscar en tus proyectos, tareas y claves
+      </div>
+    } @else if (status() !== 'ready') {
+      <div class="py-6 flex items-center justify-center gap-2 text-sm text-base-content/60">
+        <span class="loading loading-infinity loading-sm"></span>
+        <span>Preparando buscador...</span>
+      </div>
+    } @else if (result().length === 0) {
+      <div class="py-6 text-center text-sm text-base-content/50">
+        Sin resultados. Prueba con otra consulta.
+      </div>
+    } @else {
+      <ul #resultList class="list space-y-1 w-full max-h-[40vh] overflow-y-auto custom-scroll">
+        @for (m of result(); track trackById($index, m)) {
+          <li
+            data-testid="search-result"
+            [attr.data-selected]="selectedIdx() === $index ? 'true' : null"
+            class="rounded-lg px-3 py-2 flex items-center gap-3 cursor-pointer transition-colors"
+            [class.bg-base-300]="selectedIdx() === $index"
+            [class.bg-base-200]="selectedIdx() !== $index"
+            (click)="onResultClick(m)"
+          >
+            <span class="icon text-base-content/60">{{ colIcon[m.collection] }}</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm truncate m-0">{{ m.title }}</p>
+              <p class="text-xs text-base-content/40 m-0 capitalize">{{ m.collection }}</p>
+            </div>
+            <span class="text-xs text-base-content/40">{{ m.score | number: '1.2-2' }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  <div footer class="flex items-center gap-4 pt-2 text-xs text-base-content/50">
+    <span class="flex items-center gap-1">
+      <kbd class="kbd kbd-sm">&#8593;</kbd>
+      <kbd class="kbd kbd-sm">&#8595;</kbd>
+      navegar
+    </span>
+    <span class="flex items-center gap-1">
+      <kbd class="kbd kbd-sm">&#8629;</kbd>
+      abrir
+    </span>
+    <span class="flex items-center gap-1">
+      <kbd class="kbd kbd-sm">esc</kbd>
+      cerrar
+    </span>
+    <span class="flex-1 text-right">
+      <kbd class="kbd kbd-sm">{{ shortcutHint }}</kbd>
+    </span>
+  </div>
+</ui-modal>
