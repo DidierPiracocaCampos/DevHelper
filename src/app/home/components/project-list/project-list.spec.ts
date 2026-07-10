@@ -234,6 +234,8 @@ describe('ProjectList', () => {
     expect(written.name).toBe('Solo nombre');
     expect(written.tag).toBeUndefined();
     expect(written.description).toBeUndefined();
+    expect('tag' in written).toBe(false);
+    expect('description' in written).toBe(false);
   });
 
   it('calls repository.updateProject when editing an existing project', async () => {

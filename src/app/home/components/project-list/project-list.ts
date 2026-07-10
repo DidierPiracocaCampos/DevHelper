@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { ProjectI } from '../../domain/project.interface';
+import { ProjectI, ProjectCreateInput } from '../../domain/project.interface';
 import { ProjectRepository } from '../../service/projects.repository';
 import { projectFilterSchema } from '../../service/project-filter.schema';
 import { UiCard } from '../../../shared/components/card-base/card-base';
@@ -116,11 +116,11 @@ export class ProjectList {
     }
     const editing = this.formStatus().editing;
     const raw = this._form.getRawValue();
-    const payload = {
-      name: raw.name.trim(),
-      tag: raw.tag.trim() ? raw.tag.trim() : undefined,
-      description: raw.description.trim() ? raw.description.trim() : undefined,
-    };
+    const tag = raw.tag.trim();
+    const description = raw.description.trim();
+    const payload: ProjectCreateInput = { name: raw.name.trim() };
+    if (tag) payload.tag = tag;
+    if (description) payload.description = description;
 
     this.formStatus.update((s) => ({ ...s, loading: true }));
 
