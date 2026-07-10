@@ -23,7 +23,7 @@ import { FileList } from '../../components/file-list/file-list';
 import { PasswordList } from '../../components/password-list/password-list';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { UiTooltipComponent } from '../../../shared/components/tooltip';
-import { ModalCreateVault, ModalUnlockVault } from '../../../shared/security';
+import { ModalUnlockVault } from '../../../shared/security';
 import {
   UiLabel,
   UiTextField,
@@ -47,7 +47,6 @@ import {
     UiTooltipComponent,
     FileList,
     PasswordList,
-    ModalCreateVault,
     ModalUnlockVault,
   ],
   templateUrl: './issue-detail.html',

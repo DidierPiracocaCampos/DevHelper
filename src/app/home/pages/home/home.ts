@@ -5,13 +5,9 @@ import { Authenticator } from '../../../shared/service/authenticator';
 import { PasswordList } from '../../components/password-list/password-list';
 import { FileList } from '../../components/file-list/file-list';
 import { Loader } from '../../../shared/service/loader';
-import { ModalCreateVault, ModalUnlockVault, VaultSecurity } from '../../../shared/security';
-import {
-  AiSearcherSection,
-  NasaImageSection,
-  PreferencesService,
-  UiConfigModal,
-} from '../../../shared/preferences';
+import { ModalUnlockVault, VaultSecurity } from '../../../shared/security';
+import { PreferencesService, UiConfigModal } from '../../../shared/preferences';
+import { VAULT_STATUS } from '../../../shared/security/models/vault.model';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import HomeCalendar from '../../components/calendar/home-calendar';
 import { ProjectList } from '../../components/project-list/project-list';
@@ -27,11 +23,8 @@ import { WelcomeAiModal } from '../../../shared/components/welcome-ai-modal/welc
     NasaPicture,
     PasswordList,
     FileList,
-    ModalCreateVault,
     ModalUnlockVault,
     UiConfigModal,
-    NasaImageSection,
-    AiSearcherSection,
     HomeCalendar,
     ProjectList,
     IssueList,
@@ -49,6 +42,7 @@ export default class Home {
   private _ai = inject(AiService);
 
   protected readonly isConfigOpen = signal(false);
+  protected readonly _initialSection = signal('vault');
   protected readonly isWelcomeAiOpen = signal(false);
   private _aiEnabledTriggered = false;
 
@@ -77,6 +71,13 @@ export default class Home {
         });
       }
     });
+
+    effect(() => {
+      if (this._vault.vaultStatus() === VAULT_STATUS.NO_CREATE && !this.isConfigOpen()) {
+        this._initialSection.set('vault');
+        this.isConfigOpen.set(true);
+      }
+    });
   }
 
   async ngOnInit() {
@@ -89,10 +90,13 @@ export default class Home {
   }
 
   openVault() {
-    this._vault.openUnlockVaultModal();
+    this.openConfig('vault');
   }
 
-  openConfig() {
+  openConfig(section?: string) {
+    if (section) {
+      this._initialSection.set(section);
+    }
     this.isConfigOpen.set(true);
   }
 

@@ -295,9 +295,8 @@ describe('IssueDetail', () => {
     expect(typeof patch.solution).not.toBe('string');
   });
 
-  it('renders the vault create and unlock modal hosts so Add can surface when locked', () => {
+  it('renders the vault unlock modal host so Add can surface when locked', () => {
     fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('secure-create-vault'))).not.toBeNull();
     expect(fixture.debugElement.query(By.css('secure-unlock-vault'))).not.toBeNull();
   });
 });
