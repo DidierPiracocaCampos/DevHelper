@@ -206,3 +206,13 @@
     color: var(--color-error-content);
   }
 }
+
+/* When the .input wrapper contains a <select>, the select already provides
+   its own padding (12px left, 28px right for the chevron). Removing the
+   wrapper's padding prevents the text from being offset ~12px to the right
+   compared to text inputs that use the same .input wrapper. Unlayered on
+   purpose so it wins over DaisyUI's .input sizing (which lives in the
+   components layer). */
+.input:has(> select) {
+  padding: 0;
+}

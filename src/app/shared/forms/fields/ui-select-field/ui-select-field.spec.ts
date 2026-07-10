@@ -37,10 +37,11 @@ describe('UiSelectField', () => {
     expect(optEls.map((o) => o.textContent?.trim())).toEqual(['Pendiente', 'Hecho']);
   });
 
-  it('applies bg-base-200 to match other inputs', () => {
+  it('is transparent so the wrapper provides the background (no own bg-base-200)', () => {
     fixture.detectChanges();
     const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
-    expect(select.classList.contains('bg-base-200')).toBe(true);
+    expect(select.classList.contains('bg-base-200')).toBe(false);
+    expect(select.classList.contains('select-ghost')).toBe(true);
   });
 
   it('does not add its own border (the wrapper provides it)', () => {

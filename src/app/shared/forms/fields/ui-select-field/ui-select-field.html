@@ -8,7 +8,7 @@
 <div class="input input-md w-full" [class.validator]="isInvalid()">
   <ng-content select="[prefix]" />
   <select
-    class="select select-ghost flex-1 min-w-0 bg-base-200 outline-none"
+    class="select select-ghost flex-1 min-w-0 outline-none"
     [id]="inputId()"
     [disabled]="disabled()"
     [attr.aria-invalid]="isInvalid() ? true : null"
