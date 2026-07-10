@@ -36,7 +36,7 @@ export class PinLockoutService {
     const lockUntil = this._lockUntil();
     if (lockUntil === null) return false;
     if (Date.now() > lockUntil) {
-      this._reset();
+      this.reset();
       return false;
     }
     return true;
@@ -49,7 +49,7 @@ export class PinLockoutService {
 
   record(success: boolean): void {
     if (success) {
-      this._reset();
+      this.reset();
       return;
     }
     const next = this._attempts() + 1;
@@ -60,7 +60,7 @@ export class PinLockoutService {
     }
   }
 
-  private _reset(): void {
+  reset(): void {
     this._attempts.set(0);
     this._lockUntil.set(null);
     this._remainingMs.set(0);
@@ -76,7 +76,7 @@ export class PinLockoutService {
     const remaining = Math.max(0, lockUntil - Date.now());
     this._remainingMs.set(remaining);
     if (remaining <= 0) {
-      this._reset();
+      this.reset();
       this._stopCountdown();
     }
   }

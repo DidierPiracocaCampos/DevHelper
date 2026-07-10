@@ -6,9 +6,13 @@ import { PinLockoutService } from './services/pin-lockout.service';
 import { UnlockKeyWithPin } from './services/unlock-key-with-pin';
 import { UnlockKeyWithPasskey } from './services/unlock-key-with-passkey';
 import { VaultModalState } from './services/vault-modal-state';
-import { UnlockKeyI } from './models/unlock-key.model';
 import { firstValueFrom } from 'rxjs';
 import { VAULT_ERRORS, VAULT_STATUS } from './models/vault.model';
+
+export interface CreateVaultOptions {
+  pin?: string;
+  withPasskey?: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -85,43 +89,57 @@ export class VaultSecurity {
     }
   });
 
-  async createVault(type: 'pin' | 'passkey', pin?: string) {
-    try {
-      const user = this._auth.currentUser;
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
+  async createVault(opts: CreateVaultOptions): Promise<boolean> {
+    if (!opts.pin && !opts.withPasskey) {
+      throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN);
+    }
+    const user = this._auth.currentUser;
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
-      const masterKey = await this._masterKey.generateMasterKey();
-      const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
-      let unlockKey: UnlockKeyI;
-      if (type === 'pin' && pin) {
-        unlockKey = await this._unlockWithPin.createUnlockKey(pin, masterKeyBuffer);
-      } else if (type === 'passkey') {
+    const masterKey = await this._masterKey.generateMasterKey();
+    const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
+    const created: { id?: string }[] = [];
+
+    try {
+      if (opts.pin) {
+        const doc = await this._unlockWithPin.createUnlockKey(opts.pin, masterKeyBuffer);
+        const added = await firstValueFrom(this._repository.addDoc(doc));
+        created.push({ id: added.id });
+      }
+      if (opts.withPasskey) {
         const attestation = await this._unlockWithPasskey.registerPasskeyAttestation(
           user.uid,
           user.email || undefined,
           user.displayName || undefined,
         );
-        unlockKey = await this._unlockWithPasskey.createUnlockKeyWithPasskey(
-          attestation,
+        const doc = await this._unlockWithPasskey.createUnlockKeyWithPasskey(
+          attestation.rawId,
+          attestation.credentialId,
           masterKeyBuffer,
         );
-      } else {
-        throw new Error(VAULT_ERRORS.CREATE_UNLOCK_WITH_PIN);
+        const added = await firstValueFrom(this._repository.addDoc(doc));
+        created.push({ id: added.id });
       }
-      await firstValueFrom(this._repository.addDoc(unlockKey));
       this._repository.unlockList.reload();
-
       this._vaultKey.set(masterKey);
       return true;
     } catch (_error) {
+      await this._rollbackCreated(created);
       return false;
     }
   }
 
-  async createVaultWithPasskey() {
-    return this.createVault('passkey');
+  private async _rollbackCreated(docs: { id?: string }[]): Promise<void> {
+    for (const d of docs) {
+      if (!d.id) continue;
+      try {
+        await firstValueFrom(this._repository.deleteDoc(d.id));
+      } catch {
+        // ignore rollback failures
+      }
+    }
   }
 
   async unlockWithPin(pin: string): Promise<boolean> {
@@ -151,11 +169,8 @@ export class VaultSecurity {
       throw new Error(VAULT_ERRORS.PASSKEY_UNLOCK_FAILED);
     }
 
-    const assertion = await this._unlockWithPasskey.requestAssertion();
-    const rawMasterKey = await this._unlockWithPasskey.unlockMasterKeyWithPasskey(
-      assertion,
-      unlockKey,
-    );
+    const rawId = await this._unlockWithPasskey.requestAssertion(unlockKey.credentialId);
+    const rawMasterKey = await this._unlockWithPasskey.unlockMasterKeyWithPasskey(rawId, unlockKey);
     this._vaultKey.set(await this._masterKey.importMasterKey(rawMasterKey));
     return true;
   }
@@ -206,6 +221,109 @@ export class VaultSecurity {
       return true;
     } catch (_error) {
       this._pinLockout.record(false);
+      return false;
+    }
+  }
+
+  async addPin(pin: string): Promise<boolean> {
+    const masterKey = this._vaultKey();
+    if (!masterKey) return false;
+    if (this._repository.unlockKeyWithPin() !== undefined) return false;
+    try {
+      const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
+      const doc = await this._unlockWithPin.createUnlockKey(pin, masterKeyBuffer);
+      await firstValueFrom(this._repository.addDoc(doc));
+      this._repository.unlockList.reload();
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  async addPasskey(): Promise<boolean> {
+    const masterKey = this._vaultKey();
+    if (!masterKey) return false;
+    if (this._repository.unlockKeyWithPasskey() !== undefined) return false;
+    const user = this._auth.currentUser;
+    if (!user) return false;
+    try {
+      const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
+      const attestation = await this._unlockWithPasskey.registerPasskeyAttestation(
+        user.uid,
+        user.email || undefined,
+        user.displayName || undefined,
+      );
+      const doc = await this._unlockWithPasskey.createUnlockKeyWithPasskey(
+        attestation.rawId,
+        attestation.credentialId,
+        masterKeyBuffer,
+      );
+      await firstValueFrom(this._repository.addDoc(doc));
+      this._repository.unlockList.reload();
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  async removePin(): Promise<boolean> {
+    const doc = this._repository.unlockKeyWithPin();
+    if (!doc?.id) return false;
+    try {
+      await firstValueFrom(this._repository.deleteDoc(doc.id));
+      this._repository.unlockList.reload();
+      this._pinLockout.reset();
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  async removePasskey(): Promise<boolean> {
+    const doc = this._repository.unlockKeyWithPasskey();
+    if (!doc?.id) return false;
+    try {
+      await firstValueFrom(this._repository.deleteDoc(doc.id));
+      this._repository.unlockList.reload();
+      return true;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  async replacePasskey(): Promise<boolean> {
+    const oldDoc = this._repository.unlockKeyWithPasskey();
+    if (!oldDoc?.id) return false;
+    const masterKey = this._vaultKey();
+    if (!masterKey) return false;
+    const user = this._auth.currentUser;
+    if (!user) return false;
+    let newId: string | undefined;
+    try {
+      const masterKeyBuffer = await this._masterKey.exportMasterKey(masterKey);
+      const attestation = await this._unlockWithPasskey.registerPasskeyAttestation(
+        user.uid,
+        user.email || undefined,
+        user.displayName || undefined,
+      );
+      const newDoc = await this._unlockWithPasskey.createUnlockKeyWithPasskey(
+        attestation.rawId,
+        attestation.credentialId,
+        masterKeyBuffer,
+      );
+      const added = await firstValueFrom(this._repository.addDoc(newDoc));
+      newId = added.id;
+      await firstValueFrom(this._repository.deleteDoc(oldDoc.id));
+      this._repository.unlockList.reload();
+      return true;
+    } catch (_error) {
+      if (newId) {
+        try {
+          await firstValueFrom(this._repository.deleteDoc(newId));
+        } catch {
+          // ignore
+        }
+      }
       return false;
     }
   }
