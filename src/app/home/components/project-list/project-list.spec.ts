@@ -9,6 +9,7 @@ import { ProjectI } from '../../domain/project.interface';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
 import { ScopeContext } from '../../../shared/scope/scope-context';
+import { SelectedProjectStore } from '../../../shared/scope';
 import { FilterService } from '../../../shared/filter';
 import { QueryOptions } from '../../../shared/api/api.interfaces';
 
@@ -125,6 +126,24 @@ class FakeScopeContext {
   });
 }
 
+function createFakeSelectedProjectStore(
+  scopeRef: FakeScopeContext,
+  storageRef: MockStorage,
+): SelectedProjectStore {
+  return {
+    set: vi.fn((id: string) => {
+      scopeRef.setProject(id);
+      storageRef.setItem(STORAGE_KEY, id);
+    }),
+    clear: vi.fn(() => {
+      scopeRef.setGlobal();
+      storageRef.removeItem(STORAGE_KEY);
+    }),
+    readSaved: vi.fn(() => storageRef.getItem(STORAGE_KEY)),
+    selectedId: scopeRef.selectedProjectId,
+  } as unknown as SelectedProjectStore;
+}
+
 describe('ProjectList', () => {
   let fixture: ComponentFixture<ProjectList>;
   let component: ProjectList;
@@ -134,6 +153,7 @@ describe('ProjectList', () => {
   let scope: FakeScopeContext;
   let filter: FilterService;
   let mockStorage: MockStorage;
+  let selectedStore: SelectedProjectStore;
 
   beforeEach(async () => {
     repo = new FakeProjectRepository();
@@ -141,6 +161,7 @@ describe('ProjectList', () => {
     toast = new FakeToast();
     scope = new FakeScopeContext();
     mockStorage = new MockStorage();
+    selectedStore = createFakeSelectedProjectStore(scope, mockStorage);
     vi.stubGlobal('localStorage', mockStorage);
 
     await TestBed.configureTestingModule({
@@ -150,6 +171,7 @@ describe('ProjectList', () => {
         { provide: ConfirmService, useValue: confirm },
         { provide: ToastService, useValue: toast },
         { provide: ScopeContext, useValue: scope },
+        { provide: SelectedProjectStore, useValue: selectedStore },
         FilterService,
       ],
     }).compileComponents();

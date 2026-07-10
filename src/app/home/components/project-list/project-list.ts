@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ProjectI } from '../../domain/project.interface';
@@ -20,14 +13,12 @@ import { UiTextField, UiTextareaField, ErrorMessage } from '../../../shared/form
 import { ActiveFilters, FilterBar, FilterService } from '../../../shared/filter';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
-import { ScopeContext } from '../../../shared/scope/scope-context';
+import { SelectedProjectStore } from '../../../shared/scope';
 
 interface FormStatus {
   editing?: ProjectI;
   loading: boolean;
 }
-
-const STORAGE_KEY = 'devhelper:selectedProjectId';
 
 @Component({
   selector: 'project-list',
@@ -52,7 +43,7 @@ export class ProjectList {
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _confirmService = inject(ConfirmService);
   private _toastService = inject(ToastService);
-  private _scope = inject(ScopeContext);
+  private _selected = inject(SelectedProjectStore);
   private _filter = inject(FilterService);
 
   readonly filterSchema = projectFilterSchema;
@@ -60,7 +51,7 @@ export class ProjectList {
 
   readonly isFormModalOpen = signal(false);
   readonly formStatus = signal<FormStatus>({ loading: false });
-  readonly selectedId = computed<string | null>(() => this._scope.selectedProjectId());
+  readonly selectedId = this._selected.selectedId;
 
   protected readonly _form = this._formBuilder.group({
     name: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),
@@ -77,7 +68,7 @@ export class ProjectList {
       if (current) return;
       if (!items || items.length === 0) return;
 
-      const saved = this._readSaved();
+      const saved = this._selected.readSaved();
       const match = saved ? items.find((p) => p.id === saved) : undefined;
       const target = match ?? items[0];
       this.select(target);
@@ -93,8 +84,7 @@ export class ProjectList {
   }
 
   select(p: ProjectI & { id: string }): void {
-    this._scope.setProject(p.id);
-    this._writeSaved(p.id);
+    this._selected.set(p.id);
   }
 
   openCreate(): void {
@@ -174,32 +164,11 @@ export class ProjectList {
       next: () => {
         this._toastService.success('Proyecto eliminado');
         if (this.selectedId() === p.id) {
-          this._scope.setGlobal();
-          this._writeSaved(null);
+          this._selected.clear();
         }
         this.collection.reload();
       },
       error: () => this._toastService.error('No se pudo eliminar el proyecto'),
     });
-  }
-
-  private _readSaved(): string | null {
-    try {
-      return globalThis.localStorage?.getItem(STORAGE_KEY) ?? null;
-    } catch {
-      return null;
-    }
-  }
-
-  private _writeSaved(id: string | null): void {
-    try {
-      if (id) {
-        globalThis.localStorage?.setItem(STORAGE_KEY, id);
-      } else {
-        globalThis.localStorage?.removeItem(STORAGE_KEY);
-      }
-    } catch {
-      // ignore quota / disabled storage
-    }
   }
 }
