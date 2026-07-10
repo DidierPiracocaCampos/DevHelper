@@ -13,7 +13,19 @@
 >
   <div body>
     @if (_confirmService.config(); as config) {
-      <p class="text-base-content/80">{{ config.message }}</p>
+      <p class="text-base-content/80 whitespace-pre-line">{{ config.message }}</p>
+      @if (config.confirmPhrase; as phrase) {
+        <label class="form-control mt-3">
+          <span class="label-text text-sm">Escribe <strong>{{ phrase }}</strong> para confirmar:</span>
+          <input
+            type="text"
+            class="input input-bordered w-full mt-1"
+            autocomplete="off"
+            [value]="_typedValue()"
+            (input)="onTypedInput($any($event.target).value)"
+          />
+        </label>
+      }
     }
   </div>
 
@@ -29,6 +41,7 @@
     <ui-button
       [severity]="_severityClass[_confirmService.config()?.severity ?? 'info']"
       [label]="_confirmService.config()?.confirmLabel ?? 'Confirmar'"
+      [disabled]="!_canConfirm()"
       (press)="onConfirm()"
     />
   </div>

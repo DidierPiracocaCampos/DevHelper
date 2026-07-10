@@ -10,6 +10,7 @@ export interface ConfirmConfig {
   confirmLabel?: string;
   cancelLabel?: string;
   showCancel?: boolean;
+  confirmPhrase?: string;
 }
 
 @Injectable({
@@ -56,6 +57,23 @@ export class ConfirmService {
       message,
       severity: 'warning',
       confirmLabel: 'Continuar',
+      showCancel: true,
+    });
+  }
+
+  hardConfirm(opts: {
+    title: string;
+    message: string;
+    confirmPhrase: string;
+    confirmLabel?: string;
+  }): Promise<boolean> {
+    return this.show({
+      title: opts.title,
+      message: opts.message,
+      severity: 'error',
+      icon: 'warning',
+      confirmLabel: opts.confirmLabel ?? opts.confirmPhrase,
+      confirmPhrase: opts.confirmPhrase,
       showCancel: true,
     });
   }
