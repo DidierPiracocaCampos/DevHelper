@@ -90,6 +90,10 @@ export class IssueList {
   }
 
   openCreate(): void {
+    if (!this.hasProject()) {
+      this._toast.warning('Selecciona un proyecto primero');
+      return;
+    }
     this.formStatus.set({ loading: false });
     this._form.reset({
       title: '',
