@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, input, model, signal } from
 import { UiModal } from '../../../components/ui-modal/ui-modal';
 import { NasaImageSection } from '../nasa-image-section/nasa-image-section';
 import { AiSearcherSection } from '../ai-searcher-section/ai-searcher-section';
+import { VaultSection } from '../vault-section/vault-section';
 
 export interface ConfigSection {
   id: string;
@@ -11,7 +12,7 @@ export interface ConfigSection {
 
 @Component({
   selector: 'ui-config-modal',
-  imports: [UiModal, NasaImageSection, AiSearcherSection],
+  imports: [UiModal, NasaImageSection, AiSearcherSection, VaultSection],
   templateUrl: './ui-config-modal.html',
   styleUrl: './ui-config-modal.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

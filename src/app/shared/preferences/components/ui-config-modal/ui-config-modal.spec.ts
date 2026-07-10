@@ -5,6 +5,8 @@ import { UiConfigModal } from './ui-config-modal';
 import { PreferencesService } from '../../services/preferences.service';
 import { ConfirmService } from '../../../service/confirm.service';
 import { NasaPictureResource } from '../../../../home/service/nasa-picture';
+import { VaultSecurity } from '../../../security/vault-security';
+import { VAULT_STATUS } from '../../../security/models/vault.model';
 
 if (!HTMLDialogElement.prototype.showModal) {
   HTMLDialogElement.prototype.showModal = function (this: HTMLDialogElement) {
@@ -33,6 +35,22 @@ class FakeConfirm {
   delete = vi.fn().mockResolvedValue(true);
 }
 
+const fakeVault = {
+  vaultStatus: () => VAULT_STATUS.ENCRYPTED,
+  haveUnlockKeyWithPin: () => true,
+  haveUnlockKeyWithPasskey: () => false,
+  isWebAuthnSupported: () => true,
+  isPinLockedOut: () => false,
+  pinLockoutRemainingMs: () => 0,
+  pinAttemptsRemaining: () => 3,
+  unlockWithPin: vi.fn().mockResolvedValue(true),
+  unlockWithPasskey: vi.fn().mockResolvedValue(true),
+  lockVault: vi.fn(),
+  createVault: vi.fn().mockResolvedValue(true),
+  createVaultWithPasskey: vi.fn().mockResolvedValue(true),
+  changePin: vi.fn().mockResolvedValue(true),
+};
+
 describe('UiConfigModal', () => {
   let fixture: ComponentFixture<UiConfigModal>;
   let component: UiConfigModal;
@@ -44,6 +62,7 @@ describe('UiConfigModal', () => {
         { provide: PreferencesService, useClass: FakePrefs },
         { provide: ConfirmService, useClass: FakeConfirm },
         { provide: NasaPictureResource, useClass: FakeNasa },
+        { provide: VaultSecurity, useValue: fakeVault },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(UiConfigModal);
@@ -65,10 +84,20 @@ describe('UiConfigModal', () => {
     expect(component['activeSection']()).toBe('vault');
   });
 
-  it('select() changes activeSection', () => {
+  it('renders vault-section panel by default', () => {
+    expect(fixture.nativeElement.querySelector('vault-section')).toBeTruthy();
+  });
+
+  it('renders nasa-image-section when activeSection is nasa', () => {
     (component as unknown as { select: (id: string) => void }).select('nasa');
     fixture.detectChanges();
-    expect(component['activeSection']()).toBe('nasa');
+    expect(fixture.nativeElement.querySelector('nasa-image-section')).toBeTruthy();
+  });
+
+  it('renders ai-searcher-section when activeSection is ai', () => {
+    (component as unknown as { select: (id: string) => void }).select('ai');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('ai-searcher-section')).toBeTruthy();
   });
 
   it('marks the active nav button with menu-active class', () => {
