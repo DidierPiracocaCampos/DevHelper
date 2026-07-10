@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UiEmailField } from '../../../shared/forms/fields';
+import { UiEmailField, ErrorMessage } from '../../../shared/forms/fields';
 import { RouterLink } from '@angular/router';
 import { Authenticator, AuthErrorCode } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
 
 @Component({
   selector: 'app-form-reset-password',
-  imports: [ReactiveFormsModule, UiEmailField, RouterLink],
+  imports: [ReactiveFormsModule, UiEmailField, ErrorMessage, RouterLink],
   templateUrl: './form-reset-password.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full max-w-[25rem]' },
+  host: { class: 'block w-full' },
 })
 export default class FormResetPassword {
   private _formBuilder = inject(FormBuilder).nonNullable;

@@ -6,4 +6,5 @@ export interface UnlockKeyI {
   salt?: Uint8Array;
   iv: Uint8Array;
   params: UnlockKeyParams;
+  credentialId?: string;
 }

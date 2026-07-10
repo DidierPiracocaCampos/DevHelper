@@ -22,7 +22,7 @@ import { PreferencesService } from '../../../shared/preferences/services/prefere
   templateUrl: './form-register.html',
   styleUrl: './form-register.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'block w-full max-w-[25rem]' },
+  host: { class: 'block w-full' },
 })
 export default class FormRegister {
   private _formBuilder = inject(FormBuilder).nonNullable;

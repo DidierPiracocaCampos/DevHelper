@@ -11,6 +11,7 @@ import { fromBase64, toBase64 } from './utils';
 import { ApiBase } from '../../api/api-base';
 import { withCollection } from '../../api/crud.mixins';
 import { withAddDoc } from '../../api/crud.mixins';
+import { withDocDelete } from '../../api/crud.mixins';
 import { withSetDoc } from '../../api/crud.mixins';
 
 function migrateParams(raw: unknown, salt: Uint8Array | undefined): UnlockKeyI['params'] {
@@ -33,7 +34,9 @@ function migrateParams(raw: unknown, salt: Uint8Array | undefined): UnlockKeyI['
   providedIn: 'root',
 })
 export class VaultRepository extends withSetDoc<UnlockKeyI>()(
-  withAddDoc<UnlockKeyI>()(withCollection<UnlockKeyI>()(ApiBase<UnlockKeyI>)),
+  withAddDoc<UnlockKeyI>()(
+    withDocDelete<UnlockKeyI>()(withCollection<UnlockKeyI>()(ApiBase<UnlockKeyI>)),
+  ),
 ) {
   protected path = signal(['vault'] as const);
   protected converter: FirestoreDataConverter<UnlockKeyI, DocumentData> = {
@@ -46,6 +49,9 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
       if (vault.salt) {
         data['salt'] = toBase64(vault.salt);
       }
+      if (vault.credentialId) {
+        data['credentialId'] = vault.credentialId;
+      }
       return data;
     },
 
@@ -53,6 +59,8 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
       const data = snapshot.data(options);
       const salt = data['salt'] ? fromBase64(data['salt']) : undefined;
       const params = migrateParams(data['params'], salt);
+      const credentialId =
+        typeof data['credentialId'] === 'string' ? data['credentialId'] : undefined;
 
       return {
         id: snapshot.id,
@@ -60,6 +68,7 @@ export class VaultRepository extends withSetDoc<UnlockKeyI>()(
         salt,
         iv: fromBase64(data['iv']),
         params,
+        credentialId,
       };
     },
   };

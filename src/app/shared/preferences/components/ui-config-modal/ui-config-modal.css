@@ -1,3 +1,42 @@
 :host {
   display: contents;
 }
+
+::ng-deep .modal-box.is-fullscreen > .config-layout {
+  margin-top: 1.5rem;
+}
+
+::ng-deep .ui-config-modal__nav {
+  padding: 0;
+}
+
+::ng-deep .ui-config-modal__body {
+  padding: 0.5rem 0.25rem;
+}
+
+::ng-deep .ui-config-modal__nav-item {
+  position: relative;
+  transition: color var(--transition-fast, 150ms ease),
+    background-color var(--transition-fast, 150ms ease);
+  background-color: transparent;
+}
+
+::ng-deep .ui-config-modal__nav-item:hover {
+  background-color: color-mix(in oklch, var(--color-base-200) 30%, transparent);
+  color: var(--color-base-content);
+}
+
+::ng-deep .ui-config-modal__nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  background-color: transparent;
+  transition: background-color var(--transition-fast, 150ms ease);
+}
+
+::ng-deep .ui-config-modal__nav-item.is-active::before {
+  background-color: var(--color-primary);
+}

@@ -14,6 +14,7 @@ export class ConfirmModal {
   protected readonly _confirmService = inject(ConfirmService);
   protected readonly _isOpen = signal(false);
   protected readonly _isHiding = signal(false);
+  protected readonly _typedValue = signal('');
 
   protected readonly _severityClass: Record<string, UiButtonSeverity> = {
     error: 'error',
@@ -33,9 +34,17 @@ export class ConfirmModal {
     info: 'info',
   };
 
+  protected readonly _hasConfirmPhrase = () => !!this._confirmService.config()?.confirmPhrase;
+  protected readonly _canConfirm = () =>
+    !this._hasConfirmPhrase() ||
+    this._typedValue() === this._confirmService.config()?.confirmPhrase;
+
   constructor() {
     effect(() => {
       this._isOpen.set(this._confirmService.isOpen());
+      if (this._confirmService.isOpen()) {
+        this._typedValue.set('');
+      }
     });
 
     effect(() => {
@@ -43,12 +52,14 @@ export class ConfirmModal {
         setTimeout(() => {
           this._confirmService.clearConfig();
           this._isHiding.set(false);
+          this._typedValue.set('');
         }, 300);
       }
     });
   }
 
   onConfirm(): void {
+    if (!this._canConfirm()) return;
     this._isHiding.set(true);
     this._confirmService.resolve(true);
   }
@@ -56,5 +67,9 @@ export class ConfirmModal {
   onCancel(): void {
     this._isHiding.set(true);
     this._confirmService.resolve(false);
+  }
+
+  onTypedInput(value: string): void {
+    this._typedValue.set(value);
   }
 }

@@ -17,12 +17,8 @@
   <password-list class="col-span-6 min-h-0" />
 </div>
 
-<secure-create-vault />
 <secure-unlock-vault />
-<ui-config-modal [(isOpen)]="isConfigOpen">
-  <nasa-image-section />
-  <ai-searcher-section />
-</ui-config-modal>
+<ui-config-modal [(isOpen)]="isConfigOpen" [initialSection]="_initialSection()" />
 
 <app-welcome-ai-modal
   [isOpen]="isWelcomeAiOpen()"

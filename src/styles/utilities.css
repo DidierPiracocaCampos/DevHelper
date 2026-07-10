@@ -145,6 +145,10 @@
     margin-top: var(--spacing-1);
   }
 
+  ui-field-errors .validator-hint {
+    visibility: visible;
+  }
+
   .text-error {
     color: var(--color-error);
   }

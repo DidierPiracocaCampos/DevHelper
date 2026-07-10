@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { VAULT_ERRORS } from '../models/vault.model';
 import { UnlockKeyI } from '../models/unlock-key.model';
+import { fromBase64, toBase64 } from './utils';
+
+export interface PasskeyAttestation {
+  rawId: ArrayBuffer;
+  credentialId: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +16,7 @@ export class UnlockKeyWithPasskey {
     userId: string,
     userEmail?: string,
     userDisplayName?: string,
-  ): Promise<ArrayBuffer> {
+  ): Promise<PasskeyAttestation> {
     if (!window.PublicKeyCredential) {
       throw new Error(VAULT_ERRORS.WEB_AUTHN_NOT_SUPPORTED);
     }
@@ -48,19 +54,22 @@ export class UnlockKeyWithPasskey {
         publicKey: createOptions,
       })) as PublicKeyCredential;
 
-      const response = credential.response as AuthenticatorAttestationResponse;
-      return response.clientDataJSON;
+      return {
+        rawId: credential.rawId,
+        credentialId: toBase64(new Uint8Array(credential.rawId)),
+      };
     } catch (_error) {
       throw new Error(VAULT_ERRORS.PASSKEY_REGISTRATION_FAILED);
     }
   }
 
   async createUnlockKeyWithPasskey(
-    attestation: ArrayBuffer,
+    rawId: ArrayBuffer,
+    credentialId: string,
     masterKey: ArrayBuffer,
   ): Promise<UnlockKeyI> {
     try {
-      const hashBuffer = await crypto.subtle.digest('SHA-256', attestation);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', rawId);
 
       const passkeyKey = await crypto.subtle.importKey(
         'raw',
@@ -82,6 +91,7 @@ export class UnlockKeyWithPasskey {
         encryptedMasterKey: new Uint8Array(encryptedMasterKey),
         iv,
         salt: undefined,
+        credentialId,
         params: {
           type: 'passkey',
         },
@@ -92,7 +102,7 @@ export class UnlockKeyWithPasskey {
   }
 
   async unlockMasterKeyWithPasskey(
-    assertion: ArrayBuffer,
+    rawId: ArrayBuffer,
     unlockKey: UnlockKeyI,
   ): Promise<ArrayBuffer> {
     if (!unlockKey.iv || !unlockKey.encryptedMasterKey) {
@@ -100,7 +110,7 @@ export class UnlockKeyWithPasskey {
     }
 
     try {
-      const hashBuffer = await crypto.subtle.digest('SHA-256', assertion);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', rawId);
       const passkeyKey = await crypto.subtle.importKey(
         'raw',
         hashBuffer,
@@ -124,25 +134,37 @@ export class UnlockKeyWithPasskey {
     }
   }
 
-  async requestAssertion(): Promise<ArrayBuffer> {
+  async requestAssertion(storedCredentialId?: string): Promise<ArrayBuffer> {
     if (!window.PublicKeyCredential) {
       throw new Error(VAULT_ERRORS.WEB_AUTHN_NOT_SUPPORTED);
     }
 
-    try {
-      const getOptions: PublicKeyCredentialRequestOptions = {
-        challenge: this.generateChallengeBuffer(),
-        timeout: 60000,
-        userVerification: 'required',
-        rpId: this.getRpId(),
-      };
+    const getOptions: PublicKeyCredentialRequestOptions = {
+      challenge: this.generateChallengeBuffer(),
+      timeout: 60000,
+      userVerification: 'required',
+      rpId: this.getRpId(),
+    };
 
+    if (storedCredentialId) {
+      const credentialIdBytes = fromBase64(storedCredentialId);
+      getOptions.allowCredentials = [
+        {
+          id: credentialIdBytes.buffer.slice(
+            credentialIdBytes.byteOffset,
+            credentialIdBytes.byteOffset + credentialIdBytes.byteLength,
+          ) as ArrayBuffer,
+          type: 'public-key',
+        },
+      ];
+    }
+
+    try {
       const credential = (await navigator.credentials.get({
         publicKey: getOptions,
       })) as PublicKeyCredential;
 
-      const response = credential.response as AuthenticatorAssertionResponse;
-      return response.clientDataJSON;
+      return credential.rawId;
     } catch (error: unknown) {
       if ((error as { name?: string }).name === 'NotAllowedError') {
         throw new Error(VAULT_ERRORS.PASSKEY_USER_VERIFICATION);

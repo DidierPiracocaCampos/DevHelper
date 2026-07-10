@@ -276,10 +276,13 @@ describe('Home', () => {
     expect(component).toBeTruthy();
   });
 
-  it('openVault delegates to vault.openUnlockVaultModal', () => {
+  it('openVault opens the settings panel on the vault section', () => {
     fixture.detectChanges();
     component.openVault();
-    expect(vault.openUnlockVaultModal).toHaveBeenCalled();
+    expect((component as unknown as { isConfigOpen: () => boolean }).isConfigOpen()).toBe(true);
+    expect((component as unknown as { _initialSection: () => string })._initialSection()).toBe(
+      'vault',
+    );
   });
 
   it('openConfig sets isConfigOpen to true', () => {

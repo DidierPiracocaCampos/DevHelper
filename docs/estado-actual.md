@@ -71,20 +71,32 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 
 ### CU-03 Configuracion inicial del vault
 
-- **OK** `VaultSecurity.createVault('pin'|'passkey', pin?)`.
+- **OK** `VaultSecurity.createVault({ pin?, withPasskey? })` — ahora acepta ambas combinaciones (PIN solo, Passkey solo, ambos) en una sola llamada y con rollback automatico si una mitad falla.
 - **OK** `UnlockKeyWithPin` (PBKDF2 + AES-GCM).
 - **OK** `UnlockKeyWithPasskey` (WebAuthn, SHA-256 de clientDataJSON).
 - **OK** `MasterKey` genera/importa/exporta clave AES-GCM.
-- **OK** UI en `modal-create-vault` (HTML+TS).
+- **OK** UI `vault-section` (NO_CREATE): pestanas Passkey y PIN movibles; el usuario puede crear uno o ambos metodos en una sesion y pulsar "Listo" para salir.
 - **PARCIAL** auto-disparo al detectar `VAULT_STATUS.NO_CREATE` via effect: OK, pero no se ha confirmado que el flujo post-create redirija a "crear primer proyecto" (ver CU-05).
 
 ### CU-04 Desbloqueo del vault
 
 - **OK** `unlockWithPin` / `unlockWithPasskey`.
 - **OK** `PinLockoutService`: 3 intentos, 5 min lockout (constantes: `MAX_PIN_ATTEMPTS`, `PIN_LOCKOUT_DURATION_MS`).
-- **OK** UI `modal-unlock-vault` muestra intentos restantes.
+- **OK** UI `modal-unlock-vault` muestra intentos restantes. Cuando hay dos metodos, renderiza pestanas Passkey (recomendada) y PIN; cuando hay uno, renderiza solo ese.
 - **OK** `showModal(action)` encola accion pendiente si vault bloqueado.
-- **FALTA** `changePin` existe en codigo (`VaultSecurity.changePin`) pero no hay UI para cambiar PIN tras setup.
+
+### CU-09 Gestion de metodos de desbloqueo (NUEVO)
+
+- **OK** API `VaultSecurity`: `addPin`, `addPasskey`, `removePin`, `removePasskey`, `replacePasskey` operan sobre el master key ya en memoria.
+- **OK** `VaultRepository` ahora mezcla `withDocDelete` para borrar `UnlockKeyI` docs; el path `users/{uid}/vault/{docId}` ya permitia delete en `firestore.rules`.
+- **OK** `PinLockoutService.reset()`: limpia `attempts`, `lockUntil` y `localStorage`; se invoca desde `removePin()`.
+- **OK** UI `vault-section` (DESENCRYPTED):
+  - Lista de metodos con botones inline: PIN → "Quitar"; Passkey → "Reemplazar" + "Quitar".
+  - Card "Cambiar PIN" (formulario con PIN actual + nuevo + confirmacion).
+  - Card "Agregar metodo" con botones para los metodos faltantes; "Agregar PIN" abre un formulario inline.
+  - Confirmacion de borrado: `ConfirmService.warning` cuando quedan otros metodos; `ConfirmService.hardConfirm` con frase "ELIMINAR" cuando es el ultimo metodo (los datos encriptados quedarian irrecuperables).
+- **OK** Confirmacion dura (`ConfirmService.hardConfirm` + `confirmPhrase`): el modal de confirmacion ahora puede requerir al usuario escribir una frase literal antes de habilitar el boton de confirmar; el input se resetea al abrir/cerrar.
+- **NOTA de seguridad**: la implementacion actual de `UnlockKeyWithPasskey.unlockMasterKeyWithPasskey` pasa `allowCredentials: []` a `navigator.credentials.get` — cualquier passkey descubrible del RP puede descifrar el master key. No hay `credentialId` persistido. Marcado para auditoria crypto aparte (no resuelto en este refactor).
 
 ### CU-05 Gestion de proyectos
 

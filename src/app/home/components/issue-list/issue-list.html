@@ -11,13 +11,7 @@
           @if (collection.hasValue()) {
             @for (issue of collection.value(); track issue.id) {
               <li class="issue-list-row-shell" data-testid="issue-row">
-                <div
-                  class="issue-list-row-body"
-                  role="button"
-                  tabindex="0"
-                  (click)="openInNewTab(issue)"
-                  (keydown.enter)="openInNewTab(issue)"
-                >
+                <div class="issue-list-row-body" role="button" tabindex="0">
                   <span class="issue-list-row-title">{{ issue.title }}</span>
                   @if (issue.description) {
                     <span class="issue-list-row-sub">{{ issue.description }}</span>
