@@ -13,7 +13,8 @@
           <button
             type="button"
             class="flex items-center gap-3 justify-start"
-            (click)="_captureFocus()"
+            [class.menu-active]="activeSection() === section.id"
+            (click)="select(section.id)"
           >
             <span class="icon">{{ section.icon }}</span>
             <span>{{ section.label }}</span>
@@ -23,7 +24,19 @@
     </ul>
   </nav>
 
-  <div sectionsBody class="space-y-6">
-    <ng-content />
+  <div sectionsBody>
+    @switch (activeSection()) {
+      @case ('vault') {
+        <div class="space-y-6">
+          <p class="text-sm text-base-content/60">Cargando bóveda…</p>
+        </div>
+      }
+      @case ('nasa') {
+        <nasa-image-section />
+      }
+      @case ('ai') {
+        <ai-searcher-section />
+      }
+    }
   </div>
 </ui-modal>

@@ -21,6 +21,8 @@ class FakePrefs {
   hasCustomImage = signal(false);
   setCustomNasaImage = vi.fn();
   clearCustomNasaImage = vi.fn();
+  aiSearcherEnabled = signal(false);
+  setAiSearcherEnabled = vi.fn();
 }
 
 class FakeNasa {
@@ -54,17 +56,34 @@ describe('UiConfigModal', () => {
     expect(box?.classList.contains('is-fullscreen')).toBe(true);
   });
 
-  it('renders a nav with the configured sections', () => {
-    const items = fixture.nativeElement.querySelectorAll('nav.sectionsNav li, .config-nav li');
-    expect(items.length).toBeGreaterThan(0);
+  it('renders a nav with three section buttons', () => {
+    const items = fixture.nativeElement.querySelectorAll('.config-nav li');
+    expect(items.length).toBe(3);
   });
 
-  it('projects content into the sections body slot', () => {
-    const sectionFixture = TestBed.createComponent(UiConfigModal);
-    sectionFixture.detectChanges();
-    // We can at least confirm the slot exists in DOM
-    const body = sectionFixture.nativeElement.querySelector('.config-body');
-    expect(body).toBeTruthy();
+  it('defaults activeSection to vault', () => {
+    expect(component['activeSection']()).toBe('vault');
+  });
+
+  it('select() changes activeSection', () => {
+    (component as unknown as { select: (id: string) => void }).select('nasa');
+    fixture.detectChanges();
+    expect(component['activeSection']()).toBe('nasa');
+  });
+
+  it('marks the active nav button with menu-active class', () => {
+    (component as unknown as { select: (id: string) => void }).select('ai');
+    fixture.detectChanges();
+    const buttons = fixture.nativeElement.querySelectorAll('.config-nav button');
+    const aiButton = buttons[2];
+    expect(aiButton.classList.contains('menu-active')).toBe(true);
+  });
+
+  it('sets activeSection from initialSection on open', () => {
+    fixture.componentRef.setInput('initialSection', 'nasa');
+    component.isOpen.set(true);
+    fixture.detectChanges();
+    expect(component['activeSection']()).toBe('nasa');
   });
 
   it('isOpen is two-way bindable', () => {
