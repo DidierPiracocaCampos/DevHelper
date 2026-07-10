@@ -33,7 +33,7 @@
             @case ('text') {
               <input
                 type="text"
-                class="input input-lg w-full min-w-0"
+                class="input input-md w-full min-w-0"
                 [placeholder]="field.placeholder ?? ''"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, $event)"
@@ -42,7 +42,7 @@
             @case ('number') {
               <input
                 type="number"
-                class="input input-lg w-full min-w-0"
+                class="input input-md w-full min-w-0"
                 [placeholder]="field.placeholder ?? ''"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, +$event)"
@@ -51,7 +51,7 @@
             @case ('date') {
               <input
                 type="date"
-                class="input input-lg w-full min-w-0"
+                class="input input-md w-full min-w-0"
                 [ngModel]="entryFor(field.key).value"
                 (ngModelChange)="onValueChange(field.key, $event)"
               />
