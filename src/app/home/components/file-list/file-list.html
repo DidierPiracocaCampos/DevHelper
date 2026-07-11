@@ -1,5 +1,16 @@
 <ui-card title="Archivos" class="w-full h-full">
   <div class="w-full h-full rounded-xl custom-scroll">
+    <div class="md:hidden flex items-center justify-between gap-2 pb-2">
+      <h2 class="card-title m-0">Archivos</h2>
+      <div class="flex items-center gap-1">
+        <filter-bar
+          [schema]="filterSchema"
+          (apply)="onFiltersApply($event)"
+          (clear)="onFiltersClear()"
+        />
+        <ui-card-button icon="add" shape="circle" severity="primary" (press)="openAdd()" />
+      </div>
+    </div>
     <ul class="list space-y-2 w-full h-full overflow-y-auto gap-1">
       @if (!collection.isLoading()) {
         @if (collection.hasValue()) {

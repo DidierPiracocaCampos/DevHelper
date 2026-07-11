@@ -21,6 +21,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .home-calendar-month {
@@ -28,6 +30,10 @@
   font-weight: 600;
   margin: 0;
   text-transform: capitalize;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .home-calendar-nav {

@@ -16,7 +16,8 @@
 
 ::ng-deep .ui-config-modal__nav-item {
   position: relative;
-  transition: color var(--transition-fast, 150ms ease),
+  transition:
+    color var(--transition-fast, 150ms ease),
     background-color var(--transition-fast, 150ms ease);
   background-color: transparent;
 }

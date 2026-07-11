@@ -1,5 +1,16 @@
-<ui-card title="Tareas" theme="light" class="issue-list-card rounded-xl w-full h-full">
+<ui-card title="Tareas" theme="light" padding="sm" class="issue-list-card rounded-xl w-full h-full">
   <div class="issue-list-body">
+    <div class="md:hidden flex items-center justify-between gap-2 pb-2">
+      <h2 class="card-title m-0">Tareas</h2>
+      <div class="flex items-center gap-1">
+        <filter-bar
+          [schema]="filterSchema"
+          (apply)="onFiltersApply($event)"
+          (clear)="onFiltersClear()"
+        />
+        <ui-card-button icon="add" shape="circle" (press)="openCreate()" />
+      </div>
+    </div>
     @if (!hasProject()) {
       <div data-testid="empty-no-project" class="issue-list-empty">
         <span class="icon icon-lg opacity-40">folder_off</span>

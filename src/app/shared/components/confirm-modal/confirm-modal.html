@@ -16,7 +16,11 @@
       <p class="text-base-content/80 whitespace-pre-line">{{ config.message }}</p>
       @if (config.confirmPhrase; as phrase) {
         <label class="form-control mt-3">
-          <span class="label-text text-sm">Escribe <strong>{{ phrase }}</strong> para confirmar:</span>
+          <span class="label-text text-sm">
+            Escribe
+            <strong>{{ phrase }}</strong>
+            para confirmar:
+          </span>
           <input
             type="text"
             class="input input-bordered w-full mt-1"
