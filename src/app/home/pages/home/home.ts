@@ -13,6 +13,7 @@ import HomeCalendar from '../../components/calendar/home-calendar';
 import { ProjectList } from '../../components/project-list/project-list';
 import { IssueList } from '../../components/issue-list/issue-list';
 import { AiAssistant } from '../../components/ai-assistant/ai-assistant';
+import { HomeCompactHeader } from '../../components/home-compact-header/home-compact-header';
 import { AiService } from '../../ai/ai.service';
 import { WelcomeAiModal } from '../../../shared/components/welcome-ai-modal/welcome-ai-modal';
 
@@ -29,9 +30,11 @@ import { WelcomeAiModal } from '../../../shared/components/welcome-ai-modal/welc
     ProjectList,
     IssueList,
     AiAssistant,
+    HomeCompactHeader,
     WelcomeAiModal,
   ],
   templateUrl: './home.html',
+  styleUrl: './home.css',
 })
 export default class Home {
   private _authenticator = inject(Authenticator);

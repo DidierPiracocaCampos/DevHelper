@@ -334,4 +334,46 @@ describe('Home', () => {
     );
     expect(prefs.setAiAssistantEnabled).not.toHaveBeenCalled();
   });
+
+  it('renders the mobile layout container (< 768px)', () => {
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const containers: HTMLElement[] = Array.from(root.querySelectorAll(':scope > div'));
+    const mobile = containers.find(
+      (el) =>
+        el.classList.contains('md:hidden') &&
+        el.classList.contains('flex') &&
+        el.classList.contains('flex-col') &&
+        el.classList.contains('h-[100dvh]'),
+    );
+    expect(mobile).toBeTruthy();
+  });
+
+  it('renders the tablet layout container (768-1023px)', () => {
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const containers: HTMLElement[] = Array.from(root.querySelectorAll(':scope > div'));
+    const tablet = containers.find(
+      (el) =>
+        el.classList.contains('hidden') &&
+        el.classList.contains('md:flex') &&
+        el.classList.contains('lg:hidden') &&
+        el.classList.contains('flex-col') &&
+        el.classList.contains('h-[100dvh]'),
+    );
+    expect(tablet).toBeTruthy();
+  });
+
+  it('renders the desktop layout container (>= 1024px)', () => {
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const containers: HTMLElement[] = Array.from(root.querySelectorAll(':scope > div'));
+    const desktop = containers.find(
+      (el) =>
+        el.classList.contains('hidden') &&
+        el.classList.contains('lg:grid') &&
+        el.classList.contains('grid-cols-12'),
+    );
+    expect(desktop).toBeTruthy();
+  });
 });
