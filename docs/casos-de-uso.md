@@ -47,7 +47,7 @@ Catálogo de escenarios en los que el desarrollador usuario interactúa con DevH
 | CU-09 | Gestión de eventos / recordatorios   |  Importante   |
 | CU-10 | Búsqueda y recuperación              |    Crítico    |
 | CU-11 | Gestión de la membresía              |  Importante   |
-| CU-12 | Consultas al asistente local     |  Importante   |
+| CU-12 | Consultas al asistente local         |  Importante   |
 
 ## 3. Detalle de casos de uso
 
@@ -374,18 +374,18 @@ Cubre el caso de uso "memoria tecnica persistente" - la razon de ser del product
 
 El producto **no** ofrece los siguientes casos de uso. Si un usuario los necesita, la respuesta es "no esta en el alcance" y, opcionalmente, una recomendacion externa.
 
-| Necesidad del usuario                                                 |                                               Estado                                               |
-| --------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------: |
-| Compartir un proyecto con otro desarrollador                          |             No soportado (ver [`proposito-y-alcance.md`](proposito-y-alcance.md) § 4)              |
-| Crear un equipo con roles (admin, editor, lector)                     |                                            No soportado                                            |
-| Comentar o co-editar en tiempo real con otra persona                  |                                            No soportado                                            |
-| Integrar el workspace con GitHub, Jira o Slack                        |                                       No soportado en el MVP                                       |
-| Importar notas desde Notion, Evernote u Obsidian                      |                                       No soportado en el MVP                                       |
-| Conectar con Google Calendar o Outlook                                |                                       No soportado en el MVP                                       |
-| Pedir a la IA un resumen libre en lenguaje natural (no extractivo) |                                No soportado en esta versión                                |
-| Crear más de 1 proyecto en el plan gratuito                           | No soportado (ver [CU-05](#cu-05--gestión-de-proyectos), [CU-11](#cu-11--gestión-de-la-membresía)) |
-| Sincronización con un cliente de escritorio nativo                    |                                       No soportado en el MVP                                       |
-| Exportar el workspace completo a JSON / PDF                           |                                       No soportado en el MVP                                       |
+| Necesidad del usuario                                              |                                               Estado                                               |
+| ------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------: |
+| Compartir un proyecto con otro desarrollador                       |             No soportado (ver [`proposito-y-alcance.md`](proposito-y-alcance.md) § 4)              |
+| Crear un equipo con roles (admin, editor, lector)                  |                                            No soportado                                            |
+| Comentar o co-editar en tiempo real con otra persona               |                                            No soportado                                            |
+| Integrar el workspace con GitHub, Jira o Slack                     |                                       No soportado en el MVP                                       |
+| Importar notas desde Notion, Evernote u Obsidian                   |                                       No soportado en el MVP                                       |
+| Conectar con Google Calendar o Outlook                             |                                       No soportado en el MVP                                       |
+| Pedir a la IA un resumen libre en lenguaje natural (no extractivo) |                                    No soportado en esta versión                                    |
+| Crear más de 1 proyecto en el plan gratuito                        | No soportado (ver [CU-05](#cu-05--gestión-de-proyectos), [CU-11](#cu-11--gestión-de-la-membresía)) |
+| Sincronización con un cliente de escritorio nativo                 |                                       No soportado en el MVP                                       |
+| Exportar el workspace completo a JSON / PDF                        |                                       No soportado en el MVP                                       |
 
 ## 6. Convenciones visuales por caso de uso
 
