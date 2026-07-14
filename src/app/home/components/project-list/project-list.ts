@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ProjectI, ProjectCreateInput } from '../../domain/project.interface';
@@ -8,7 +15,6 @@ import { UiCard } from '../../../shared/components/card-base/card-base';
 import { UiCardButton } from '../../../shared/components/card-button/card-button';
 import { UiButton } from '../../../shared/components/ui-button/button';
 import { UiModal } from '../../../shared/components/ui-modal/ui-modal';
-import { UiTooltipComponent } from '../../../shared/components/tooltip';
 import { UiTextField, UiTextareaField, ErrorMessage } from '../../../shared/forms/fields';
 import { ActiveFilters, FilterBar, FilterService } from '../../../shared/filter';
 import { ConfirmService } from '../../../shared/service/confirm.service';
@@ -28,7 +34,6 @@ interface FormStatus {
     UiCardButton,
     UiButton,
     UiModal,
-    UiTooltipComponent,
     UiTextField,
     UiTextareaField,
     ErrorMessage,
@@ -52,6 +57,69 @@ export class ProjectList {
   readonly isFormModalOpen = signal(false);
   readonly formStatus = signal<FormStatus>({ loading: false });
   readonly selectedId = this._selected.selectedId;
+  readonly openMenuProjectId = signal<string | null>(null);
+  readonly menuPosition = signal<{ top: string; left: string }>({ top: '0', left: '0' });
+
+  toggleMenu(id: string, event?: Event): void {
+    const current = this.openMenuProjectId();
+    if (current === id) {
+      this.openMenuProjectId.set(null);
+      return;
+    }
+    if (current) {
+      this.hideMenu(current);
+    }
+    if (event) {
+      const trigger = event.currentTarget as HTMLElement | null;
+      if (trigger) this.positionMenu(id, trigger);
+    }
+    this.openMenuProjectId.set(id);
+  }
+
+  closeMenu(id?: string): void {
+    const targetId = id ?? this.openMenuProjectId();
+    if (targetId) {
+      this.hideMenu(targetId);
+    }
+    this.openMenuProjectId.set(null);
+  }
+
+  runMenuAction(p: ProjectI & { id: string }, action: 'edit' | 'archive' | 'delete'): void {
+    if (action === 'edit') this.openEdit(p);
+    else if (action === 'archive') this.archive(p);
+    else this.deleteProject(p);
+    this.closeMenu(p.id);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const openId = this.openMenuProjectId();
+    if (!openId) return;
+    const target = event.target as Node | null;
+    if (!target) return;
+    const menu = this.getMenuEl(openId);
+    const trigger = document.getElementById(`project-menu-trigger-${openId}`);
+    if (menu?.contains(target) || trigger?.contains(target)) return;
+    this.closeMenu();
+  }
+
+  private positionMenu(id: string, trigger: HTMLElement): void {
+    const menu = this.getMenuEl(id);
+    if (!menu) return;
+    const rect = trigger.getBoundingClientRect();
+    const menuWidth = menu.offsetWidth || 176;
+    const left = Math.max(4, rect.right - menuWidth);
+    const top = rect.bottom + 4;
+    this.menuPosition.set({ top: `${top}px`, left: `${left}px` });
+  }
+
+  private hideMenu(id: string): void {
+    void id;
+  }
+
+  private getMenuEl(id: string): HTMLElement | null {
+    return document.getElementById(`project-menu-${id}`);
+  }
 
   protected readonly _form = this._formBuilder.group({
     name: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),

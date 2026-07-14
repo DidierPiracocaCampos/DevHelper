@@ -373,4 +373,113 @@ describe('ProjectList', () => {
     expect(mockStorage.getItem(STORAGE_KEY)).toBeNull();
     expect(scope.setGlobal).toHaveBeenCalled();
   });
+
+  it('renders a visible more_horiz trigger on every project pill', () => {
+    repo.setAllItems([makeProject({ id: 'a', name: 'a' }), makeProject({ id: 'b', name: 'b' })]);
+    fixture.detectChanges();
+    const triggers = fixture.nativeElement.querySelectorAll('[data-testid="project-menu-trigger"]');
+    expect(triggers.length).toBe(2);
+    triggers.forEach((t: Element) => {
+      expect(t.textContent).toContain('more_horiz');
+    });
+  });
+
+  it('clicking the edit menu item calls openEdit with the right project', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    const spy = vi.spyOn(component, 'openEdit');
+    const editItem: HTMLElement = fixture.nativeElement.querySelector(
+      '[data-testid="project-menu-edit"]',
+    );
+    expect(editItem).not.toBeNull();
+    editItem.click();
+    expect(spy).toHaveBeenCalledWith(p);
+  });
+
+  it('clicking the archive menu item calls archive with the right project', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra', archived: false });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    const spy = vi.spyOn(component, 'archive');
+    const item: HTMLElement = fixture.nativeElement.querySelector(
+      '[data-testid="project-menu-archive"]',
+    );
+    expect(item).not.toBeNull();
+    item.click();
+    expect(spy).toHaveBeenCalledWith(p);
+  });
+
+  it('clicking the delete menu item calls deleteProject with the right project', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    const spy = vi.spyOn(component, 'deleteProject');
+    const item: HTMLElement = fixture.nativeElement.querySelector(
+      '[data-testid="project-menu-delete"]',
+    );
+    expect(item).not.toBeNull();
+    item.click();
+    expect(spy).toHaveBeenCalledWith(p);
+  });
+
+  it('opens only one project menu at a time', () => {
+    repo.setAllItems([makeProject({ id: 'a', name: 'a' }), makeProject({ id: 'b', name: 'b' })]);
+    fixture.detectChanges();
+    component.toggleMenu('a');
+    fixture.detectChanges();
+    component.toggleMenu('b');
+    fixture.detectChanges();
+    expect(component.openMenuProjectId()).toBe('b');
+  });
+
+  it('closes the menu after selecting a menu item', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    fixture.detectChanges();
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    expect(component.openMenuProjectId()).toBe('p1');
+    component.closeMenu();
+    expect(component.openMenuProjectId()).toBeNull();
+  });
+
+  it('clicking inside the menu does not select the project', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    const selectSpy = vi.spyOn(component, 'select');
+    const item: HTMLElement = fixture.nativeElement.querySelector(
+      '[data-testid="project-menu-edit"]',
+    );
+    expect(item).not.toBeNull();
+    item.click();
+    expect(selectSpy).not.toHaveBeenCalled();
+  });
+
+  it('uses position: fixed on the open menu so it escapes ancestor overflow', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    const menu: HTMLElement = fixture.nativeElement.querySelector('[data-testid="project-menu"]');
+    expect(menu).not.toBeNull();
+    const style = (menu.getAttribute('style') ?? '').toLowerCase();
+    expect(style).toContain('position: fixed');
+    expect(style).not.toContain('position: absolute');
+  });
+
+  it('closes the menu when a click happens outside the menu and trigger', () => {
+    const p = makeProject({ id: 'p1', name: 'Yedra' });
+    repo.setAllItems([p]);
+    component.toggleMenu('p1');
+    fixture.detectChanges();
+    expect(component.openMenuProjectId()).toBe('p1');
+    document.body.click();
+    expect(component.openMenuProjectId()).toBeNull();
+  });
 });
