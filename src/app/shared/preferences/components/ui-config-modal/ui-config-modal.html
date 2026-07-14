@@ -6,7 +6,7 @@
   [(isOpen)]="isOpen"
   (isOpenChange)="_onOpenChange($event)"
 >
-  <nav sectionsNav class="ui-config-modal__nav" aria-label="Secciones de configuración">
+  <nav sectionsNav class="ui-config-modal__nav hidden lg:block" aria-label="Secciones de configuración">
     <ul class="menu menu-lg w-full p-0 gap-1">
       @for (section of sections; track section.id) {
         <li>
@@ -25,6 +25,21 @@
   </nav>
 
   <div sectionsBody class="ui-config-modal__body">
+    <div class="tabs tabs-boxed self-start mb-2 lg:hidden" role="tablist">
+      @for (section of sections; track section.id) {
+        <button
+          type="button"
+          role="tab"
+          class="tab gap-2"
+          [class.tab-active]="activeSection() === section.id"
+          (click)="select(section.id)"
+        >
+          <span class="icon icon-sm">{{ section.icon }}</span>
+          <span class="text-sm">{{ section.label }}</span>
+        </button>
+      }
+    </div>
+
     @switch (activeSection()) {
       @case ('vault') {
         <vault-section />

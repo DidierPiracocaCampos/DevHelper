@@ -108,6 +108,26 @@ describe('UiConfigModal', () => {
     expect(aiButton.classList.contains('is-active')).toBe(true);
   });
 
+  it('renders three tab buttons in the mobile nav', () => {
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    expect(tabs.length).toBe(3);
+  });
+
+  it('marks the active tab with tab-active class', () => {
+    (component as unknown as { select: (id: string) => void }).select('nasa');
+    fixture.detectChanges();
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    const nasaTab = tabs[1];
+    expect(nasaTab.classList.contains('tab-active')).toBe(true);
+  });
+
+  it('switches active section when a mobile tab is clicked', () => {
+    const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
+    (tabs[2] as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(component['activeSection']()).toBe('ai');
+  });
+
   it('sets activeSection from initialSection on open', () => {
     fixture.componentRef.setInput('initialSection', 'nasa');
     component.isOpen.set(true);

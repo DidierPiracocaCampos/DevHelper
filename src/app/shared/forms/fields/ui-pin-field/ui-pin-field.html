@@ -1,7 +1,7 @@
 <label class="label-field text-center" [attr.for]="inputId()">{{ labelText() }}:</label>
 
 <div
-  class="flex gap-2 justify-center"
+  class="flex gap-2 justify-center max-w-xs mx-auto w-full"
   role="group"
   [attr.aria-label]="'Introduce tu PIN de ' + length() + ' dígitos'"
   [class.validator]="isInvalid()"
@@ -13,7 +13,7 @@
       inputmode="numeric"
       maxlength="1"
       [class.validator]="isInvalid()"
-      class="input input-lg text-center text-2xl tracking-widest w-[4.5ch]! h-[4.5ch]! p-0 flex-none"
+      class="input input-lg text-center text-2xl flex-1 aspect-square min-w-0 p-0"
       [value]="digit"
       [disabled]="disabled()"
       (input)="onInputNumber($event, i)"
