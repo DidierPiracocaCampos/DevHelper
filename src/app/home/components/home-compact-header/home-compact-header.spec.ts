@@ -33,11 +33,9 @@ describe('HomeCompactHeader', () => {
     expect(aiAssistant).toBeTruthy();
   });
 
-  it('propagates vault, config and logout events from the actions menu', () => {
-    const vaultSpy = vi.fn();
+  it('propagates config and logout events from the actions menu', () => {
     const configSpy = vi.fn();
     const logoutSpy = vi.fn();
-    component.vault.subscribe(vaultSpy);
     component.config.subscribe(configSpy);
     component.logout.subscribe(logoutSpy);
 
@@ -51,9 +49,7 @@ describe('HomeCompactHeader', () => {
     ) as NodeListOf<HTMLElement>;
     items[0].click();
     items[1].click();
-    items[2].click();
 
-    expect(vaultSpy).toHaveBeenCalledOnce();
     expect(configSpy).toHaveBeenCalledOnce();
     expect(logoutSpy).toHaveBeenCalledOnce();
   });

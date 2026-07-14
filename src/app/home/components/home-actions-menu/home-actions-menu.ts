@@ -37,12 +37,6 @@ import {
           [style.left.px]="position().left"
           [style.zIndex]="60"
         >
-          <li (click)="close(); vault.emit()">
-            <button type="button" class="w-full text-left flex items-center gap-2">
-              <span class="icon">data_object</span>
-              Vault
-            </button>
-          </li>
           <li (click)="close(); config.emit()">
             <button type="button" class="w-full text-left flex items-center gap-2">
               <span class="icon">settings</span>
@@ -73,7 +67,6 @@ export class HomeActionsMenu implements AfterViewInit {
   readonly isOpen = signal(false);
   readonly position = signal({ top: 0, left: 0 });
 
-  readonly vault = output<void>();
   readonly config = output<void>();
   readonly logout = output<void>();
 

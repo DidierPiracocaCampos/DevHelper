@@ -1,6 +1,6 @@
 <!-- Mobile layout (< 768px) -->
 <div class="md:hidden flex flex-col h-[100dvh] overflow-x-hidden">
-  <home-compact-header (vault)="openVault()" (config)="openConfig()" (logout)="logout()" />
+  <home-compact-header (config)="openConfig()" (logout)="logout()" />
   <main class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-4 p-2">
     <project-list />
     <issue-list class="min-h-80 lg:min-h-0" />
@@ -15,7 +15,7 @@
 
 <!-- Tablet layout (768-1023px) -->
 <div class="hidden md:flex lg:hidden flex-col h-[100dvh]">
-  <home-compact-header (vault)="openVault()" (config)="openConfig()" (logout)="logout()" />
+  <home-compact-header (config)="openConfig()" (logout)="logout()" />
   <main class="flex-1 overflow-y-auto grid grid-cols-2 gap-4 p-2 content-start">
     <project-list class="col-span-2" />
     <issue-list class="col-span-2 min-h-96 lg:min-h-0" />

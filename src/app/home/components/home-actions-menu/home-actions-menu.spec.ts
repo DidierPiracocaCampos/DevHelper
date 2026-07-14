@@ -16,7 +16,7 @@ describe('HomeActionsMenu', () => {
     fixture.detectChanges();
   });
 
-  it('renders the hamburger trigger and three items', () => {
+  it('renders the hamburger trigger and two items (vault is desktop-only)', () => {
     const trigger = fixture.nativeElement.querySelector(
       '[aria-label="Menú de acciones"]',
     ) as HTMLElement;
@@ -27,20 +27,9 @@ describe('HomeActionsMenu', () => {
     fixture.detectChanges();
 
     const items = fixture.nativeElement.querySelectorAll('ul li button') as NodeListOf<HTMLElement>;
-    expect(items.length).toBe(3);
-    expect(items[0].textContent?.trim()).toContain('Vault');
-    expect(items[1].textContent?.trim()).toContain('Configuración');
-    expect(items[2].textContent?.trim()).toContain('Cerrar sesión');
-  });
-
-  it('emits vault on click', () => {
-    const spy = vi.fn();
-    component.vault.subscribe(spy);
-    component.isOpen.set(true);
-    fixture.detectChanges();
-    const items = fixture.nativeElement.querySelectorAll('ul li button') as NodeListOf<HTMLElement>;
-    items[0].click();
-    expect(spy).toHaveBeenCalledOnce();
+    expect(items.length).toBe(2);
+    expect(items[0].textContent?.trim()).toContain('Configuración');
+    expect(items[1].textContent?.trim()).toContain('Cerrar sesión');
   });
 
   it('emits config on click', () => {
@@ -49,7 +38,7 @@ describe('HomeActionsMenu', () => {
     component.isOpen.set(true);
     fixture.detectChanges();
     const items = fixture.nativeElement.querySelectorAll('ul li button') as NodeListOf<HTMLElement>;
-    items[1].click();
+    items[0].click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
@@ -59,7 +48,7 @@ describe('HomeActionsMenu', () => {
     component.isOpen.set(true);
     fixture.detectChanges();
     const items = fixture.nativeElement.querySelectorAll('ul li button') as NodeListOf<HTMLElement>;
-    items[2].click();
+    items[1].click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
