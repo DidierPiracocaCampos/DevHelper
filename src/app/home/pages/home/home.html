@@ -3,7 +3,7 @@
   <home-compact-header (vault)="openVault()" (config)="openConfig()" (logout)="logout()" />
   <main class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col gap-4 p-2">
     <project-list />
-    <issue-list />
+    <issue-list class="min-h-80 lg:min-h-0" />
     <file-list class="min-h-64 lg:min-h-0" />
     <password-list class="min-h-64 lg:min-h-0" />
     <home-calendar />
@@ -16,9 +16,9 @@
 <!-- Tablet layout (768-1023px) -->
 <div class="hidden md:flex lg:hidden flex-col h-[100dvh]">
   <home-compact-header (vault)="openVault()" (config)="openConfig()" (logout)="logout()" />
-  <main class="flex-1 overflow-y-auto grid grid-cols-2 gap-4 p-2">
+  <main class="flex-1 overflow-y-auto grid grid-cols-2 gap-4 p-2 content-start">
     <project-list class="col-span-2" />
-    <issue-list class="col-span-2 min-h-64 lg:min-h-0" />
+    <issue-list class="col-span-2 min-h-96 lg:min-h-0" />
     <file-list class="min-h-64 lg:min-h-0" />
     <password-list class="min-h-64 lg:min-h-0" />
     <home-calendar />
