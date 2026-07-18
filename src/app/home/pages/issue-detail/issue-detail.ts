@@ -10,12 +10,13 @@ import {
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { deleteField } from '@angular/fire/firestore';
-import { ActivatedRoute } from '@angular/router';
+import { deleteField, Timestamp } from '@angular/fire/firestore';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
 import { IssueI, IssueStatus, IssuePriority, IssueUpdateInput } from '../../domain/issue.interface';
 import { IssueRepository } from '../../service/issues.repository';
+import { ProjectRepository } from '../../service/projects.repository';
 import { ScopeContext } from '../../../shared/scope/scope-context';
 import { ConfirmService } from '../../../shared/service/confirm.service';
 import { ToastService } from '../../../shared/service/toast';
@@ -56,11 +57,13 @@ import {
 export class IssueDetail implements OnDestroy {
   private _route = inject(ActivatedRoute);
   private _repo = inject(IssueRepository);
+  private _projects = inject(ProjectRepository);
   private _scope = inject(ScopeContext);
   private _confirm = inject(ConfirmService);
   private _toast = inject(ToastService);
   private _formBuilder = inject(FormBuilder).nonNullable;
   private _title = inject(Title);
+  private _router = inject(Router);
 
   protected readonly _form = this._formBuilder.group({
     title: this._formBuilder.control<string>('', [Validators.required, Validators.maxLength(200)]),
@@ -76,9 +79,43 @@ export class IssueDetail implements OnDestroy {
 
   private readonly _defaultTitle = 'DevhelperWeb';
 
+  private static readonly _DATE_FORMATTER = new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  private static formatTimestamp(ts: Timestamp | null | undefined): string {
+    if (!ts) return '';
+    const ms = ts.toMillis();
+    if (!Number.isFinite(ms)) return '';
+    return IssueDetail._DATE_FORMATTER.format(new Date(ms));
+  }
+
   readonly projectId = signal<string>('');
   readonly issueId = signal<string>('');
   readonly issue = signal<(IssueI & { id: string }) | null>(null);
+  readonly projectName = computed<string>(() => {
+    const id = this.projectId();
+    if (!id) return '';
+    return this._projects.allDocs().find((p) => p.id === id)?.name ?? '';
+  });
+  readonly createdAtLabel = computed<string>(() => {
+    const it = this.issue();
+    if (!it) return '';
+    return IssueDetail.formatTimestamp(it.createdAt);
+  });
+  readonly updatedAtLabel = computed<string>(() => {
+    const it = this.issue();
+    if (!it) return '';
+    const updated = it.updatedAt;
+    if (!updated) return '';
+    if (it.createdAt && updated.toMillis() === it.createdAt.toMillis()) return '';
+    return IssueDetail.formatTimestamp(updated);
+  });
   readonly statusCircleClass = computed(() => {
     const it = this.issue();
     if (!it) return 'status-circle--normal';
@@ -185,5 +222,15 @@ export class IssueDetail implements OnDestroy {
 
   export(): void {
     this._toast.info('Exportar: próximamente');
+  }
+
+  goBack(): void {
+    const opener = window.opener;
+    if (opener && !opener.closed) {
+      opener.focus();
+      window.close();
+      return;
+    }
+    void this._router.navigateByUrl('/');
   }
 }
