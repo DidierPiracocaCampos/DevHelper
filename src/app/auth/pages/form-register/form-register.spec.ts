@@ -26,7 +26,10 @@ describe('FormRegister password requirements list', () => {
           provide: PreferencesService,
           useValue: { setAiAssistantEnabled: vi.fn().mockResolvedValue(undefined) },
         },
-        { provide: LegalAcceptanceService, useValue: { accept: vi.fn().mockResolvedValue(undefined) } },
+        {
+          provide: LegalAcceptanceService,
+          useValue: { accept: vi.fn().mockResolvedValue(undefined) },
+        },
       ],
     }).compileComponents();
 
