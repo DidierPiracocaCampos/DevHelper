@@ -8,19 +8,17 @@ import { LegalAcceptanceI } from '../models/legal-acceptance.interface';
 export class LegalAcceptanceService {
   private _firestore = inject(Firestore);
 
-  static docPath(uid: string): string[] {
-    return ['users', uid, 'legal', 'termsAccepted'];
+  static docPath(uid: string): string {
+    return `users/${uid}/legal/termsAccepted`;
   }
 
   current(uid: string): Observable<LegalAcceptanceI | null> {
-    const [a, b, c, d, e] = LegalAcceptanceService.docPath(uid);
-    const ref = doc(this._firestore, a, b, c, d, e);
+    const ref = doc(this._firestore, LegalAcceptanceService.docPath(uid));
     return docData(ref).pipe(map((data) => (data ? (data as LegalAcceptanceI) : null)));
   }
 
   async accept(uid: string, source: 'register' | 're-accept-modal' | 'manual'): Promise<void> {
-    const [a, b, c, d, e] = LegalAcceptanceService.docPath(uid);
-    const ref = doc(this._firestore, a, b, c, d, e);
+    const ref = doc(this._firestore, LegalAcceptanceService.docPath(uid));
     await setDoc(ref, {
       version: TERMS_VERSION,
       lang: TERMS_LANG,

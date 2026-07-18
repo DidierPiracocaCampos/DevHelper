@@ -42,21 +42,11 @@ describe('LegalAcceptanceService', () => {
   });
 
   it('docPath returns users/{uid}/legal/termsAccepted', () => {
-    expect(LegalAcceptanceService.docPath('user-1')).toEqual([
-      'users',
-      'user-1',
-      'legal',
-      'termsAccepted',
-    ]);
+    expect(LegalAcceptanceService.docPath('user-1')).toBe('users/user-1/legal/termsAccepted');
   });
 
   it('docPath handles different uids', () => {
-    expect(LegalAcceptanceService.docPath('abc-123')).toEqual([
-      'users',
-      'abc-123',
-      'legal',
-      'termsAccepted',
-    ]);
+    expect(LegalAcceptanceService.docPath('abc-123')).toBe('users/abc-123/legal/termsAccepted');
   });
 
   it('current invokes docPath to read users/{uid}/legal/termsAccepted', () => {
@@ -68,7 +58,7 @@ describe('LegalAcceptanceService', () => {
       error = e;
     }
     expect(pathSpy).toHaveBeenCalledWith('user-1');
-    expect(pathSpy).toHaveReturnedWith(['users', 'user-1', 'legal', 'termsAccepted']);
+    expect(pathSpy).toHaveReturnedWith('users/user-1/legal/termsAccepted');
     expect(error).toBeInstanceOf(Error);
     pathSpy.mockRestore();
   });
@@ -82,7 +72,7 @@ describe('LegalAcceptanceService', () => {
       error = e;
     }
     expect(pathSpy).toHaveBeenCalledWith('user-1');
-    expect(pathSpy).toHaveReturnedWith(['users', 'user-1', 'legal', 'termsAccepted']);
+    expect(pathSpy).toHaveReturnedWith('users/user-1/legal/termsAccepted');
     expect(error).toBeInstanceOf(Error);
     pathSpy.mockRestore();
   });
