@@ -1,0 +1,27 @@
+<div
+  class="sticky top-0 z-40 bg-base-100/80 backdrop-blur border-b border-base-300"
+>
+  <div class="max-w-3xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+    <a routerLink="/" class="btn btn-ghost btn-sm">Volver</a>
+    @if (showAccept()) {
+      <button type="button" class="btn btn-primary btn-sm" (click)="accept()">
+        Aceptar
+      </button>
+    }
+  </div>
+</div>
+
+<article class="max-w-3xl mx-auto px-4 py-12 prose prose-invert">
+  <div [innerHTML]="content() | markdown"></div>
+</article>
+
+<footer class="max-w-3xl mx-auto px-4 pb-12 text-sm opacity-70">
+  <a
+    href="/legal/terms-es.md"
+    target="_blank"
+    rel="noopener"
+    class="link link-hover"
+  >
+    Ver documento en Markdown sin formato
+  </a>
+</footer>
