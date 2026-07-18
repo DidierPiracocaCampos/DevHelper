@@ -15,8 +15,7 @@ function makeAuth(user: { uid: string } | null) {
 }
 
 function makeLegal(current: { version: string } | null) {
-  const needsReAcceptance = (c: { version: string } | null) =>
-    !c || c.version !== '2026-07-18';
+  const needsReAcceptance = (c: { version: string } | null) => !c || c.version !== '2026-07-18';
   return {
     current: vi.fn().mockReturnValue(of(current)),
     accept: vi.fn().mockResolvedValue(undefined),
@@ -43,9 +42,7 @@ describe('TermsModal', () => {
     TestBed.overrideProvider(LegalAcceptanceService, { useValue: legal });
     const fixture = TestBed.createComponent(TermsModal);
     fixture.detectChanges();
-    const link = (fixture.nativeElement as HTMLElement).querySelector(
-      'a[href="/legal/terms"]',
-    );
+    const link = (fixture.nativeElement as HTMLElement).querySelector('a[href="/legal/terms"]');
     expect(link).toBeTruthy();
   });
 
