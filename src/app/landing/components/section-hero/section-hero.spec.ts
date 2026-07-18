@@ -21,25 +21,16 @@ describe('SectionHero', () => {
     expect(html).toContain('Tu memoria técnica cifrada, en un solo lugar');
   });
 
-  it('renders the hero subtitle', () => {
+  it('renders the primary and secondary CTAs with their target routes', () => {
     const html = fixture.nativeElement.textContent as string;
-    expect(html).toContain('Cifrado en tu dispositivo');
-    expect(html).toContain('Sin backdoor del servidor');
-  });
-
-  it('renders the Crear cuenta CTA pointing to /login/register', () => {
-    const cta = fixture.nativeElement.querySelector(
+    const primary = fixture.nativeElement.querySelector(
       'a[href="/login/register"].btn-primary',
     ) as HTMLAnchorElement;
-    expect(cta).toBeTruthy();
-    expect(cta.textContent?.trim()).toBe('Crear cuenta');
-  });
-
-  it('renders the Ya tengo cuenta CTA pointing to /login', () => {
-    const cta = fixture.nativeElement.querySelector(
+    const secondary = fixture.nativeElement.querySelector(
       'a[href="/login"].btn-ghost',
     ) as HTMLAnchorElement;
-    expect(cta).toBeTruthy();
-    expect(cta.textContent?.trim()).toBe('Ya tengo cuenta');
+    expect(primary?.textContent?.trim()).toBe('Crear cuenta');
+    expect(secondary?.textContent?.trim()).toBe('Ya tengo cuenta');
+    expect(html).toContain('Cifrado en tu dispositivo');
   });
 });

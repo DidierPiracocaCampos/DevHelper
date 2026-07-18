@@ -11,7 +11,7 @@ const SECURITY_ITEMS: readonly SecurityItem[] = [
     text: 'Autenticación con PIN o Passkey (WebAuthn). Si pierdes ambos métodos y no tienes código de recuperación, los datos son irrecuperables.',
   },
   { text: 'Sin backdoor del servidor: ni siquiera DevHelper puede leer tus datos.' },
-  { text: 'Datos en Firebase (Firestore) en la región eur3. Una cuenta = una persona.' },
+  { text: 'Datos en Firebase (Firestore) en la región eur3.' },
 ];
 
 @Component({
