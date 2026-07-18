@@ -59,11 +59,31 @@ describe('LegalAcceptanceService', () => {
     ]);
   });
 
-  it('current is defined and returns an Observable', () => {
-    expect(typeof service.current).toBe('function');
+  it('current invokes docPath to read users/{uid}/legal/termsAccepted', () => {
+    const pathSpy = vi.spyOn(LegalAcceptanceService, 'docPath');
+    let error: unknown;
+    try {
+      service.current('user-1');
+    } catch (e) {
+      error = e;
+    }
+    expect(pathSpy).toHaveBeenCalledWith('user-1');
+    expect(pathSpy).toHaveReturnedWith(['users', 'user-1', 'legal', 'termsAccepted']);
+    expect(error).toBeInstanceOf(Error);
+    pathSpy.mockRestore();
   });
 
-  it('accept is defined and returns a Promise', async () => {
-    expect(typeof service.accept).toBe('function');
+  it('accept invokes docPath to write the terms-acceptance shape at users/{uid}/legal/termsAccepted', async () => {
+    const pathSpy = vi.spyOn(LegalAcceptanceService, 'docPath');
+    let error: unknown;
+    try {
+      await service.accept('user-1', 'register');
+    } catch (e) {
+      error = e;
+    }
+    expect(pathSpy).toHaveBeenCalledWith('user-1');
+    expect(pathSpy).toHaveReturnedWith(['users', 'user-1', 'legal', 'termsAccepted']);
+    expect(error).toBeInstanceOf(Error);
+    pathSpy.mockRestore();
   });
 });
