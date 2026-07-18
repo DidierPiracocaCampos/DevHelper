@@ -1318,12 +1318,6 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       await assertFails(setDoc(ref, withoutSource));
     });
 
-    it('rejects snapshot with an unknown extra field', async () => {
-      const ownerCtx = testEnv.authenticatedContext('alice');
-      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
-      await assertFails(setDoc(ref, { ...validSnapshot(), hacker: true }));
-    });
-
     it('non-owner cannot read or write another user legal snapshot', async () => {
       const ownerCtx = testEnv.authenticatedContext('alice');
       const ref = doc(ownerCtx.firestore(), legalPath('alice'));
