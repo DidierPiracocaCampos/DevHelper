@@ -1,0 +1,30 @@
+<ui-modal
+  title="Términos y Condiciones actualizados"
+  size="md"
+  [isOpen]="isOpen()"
+  (closed)="onClosed()"
+>
+  <div body class="space-y-3 text-sm text-base-content/80">
+    <p>
+      Hemos actualizado nuestros términos. Por favor revísalos y confírmalos para seguir usando
+      DevHelper con la versión más reciente.
+    </p>
+  </div>
+
+  <div footer class="modal-action flex flex-wrap justify-end gap-2 pt-2">
+    <a
+      routerLink="/legal/terms"
+      target="_blank"
+      rel="noopener"
+      class="btn btn-ghost"
+    >
+      Revisar
+    </a>
+    <button type="button" class="btn btn-ghost" (click)="dismiss()">
+      Más tarde
+    </button>
+    <button type="button" class="btn btn-primary" (click)="accept()">
+      Aceptar y continuar
+    </button>
+  </div>
+</ui-modal>

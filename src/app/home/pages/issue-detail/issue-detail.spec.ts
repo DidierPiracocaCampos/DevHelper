@@ -485,7 +485,7 @@ describe('IssueDetail', () => {
       (window as unknown as { opener: unknown }).opener = null;
       const closeSpy = vi.spyOn(window, 'close').mockImplementation(() => {});
       (component as unknown as { goBack: () => void }).goBack();
-      expect(router.navigateByUrl).toHaveBeenCalledWith('/');
+      expect(router.navigateByUrl).toHaveBeenCalledWith('/home');
       expect(closeSpy).not.toHaveBeenCalled();
       closeSpy.mockRestore();
     });
