@@ -15,6 +15,7 @@ import { matchOtherValidator } from '../../../shared/forms/validators/match.vali
 import { RouterLink } from '@angular/router';
 import { Loader } from '../../../shared/service/loader';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
+import { LegalAcceptanceService } from '../../../landing/services/legal-acceptance.service';
 
 @Component({
   selector: 'auth-form-register',
@@ -29,6 +30,7 @@ export default class FormRegister {
   private _authenticator = inject(Authenticator);
   private _loader = inject(Loader);
   private _prefs = inject(PreferencesService);
+  private _legalAcceptance = inject(LegalAcceptanceService);
 
   loading = false;
   showVerificationMessage = false;
@@ -100,6 +102,14 @@ export default class FormRegister {
     this._loader.hide();
 
     if (result.success) {
+      try {
+        const user = await this._authenticator.userPromise();
+        if (user) {
+          await this._legalAcceptance.accept(user.uid, 'register');
+        }
+      } catch (err) {
+        console.warn('[FormRegister] could not save legal acceptance snapshot', err);
+      }
       try {
         await this._prefs.setAiAssistantEnabled(true);
       } catch (err) {

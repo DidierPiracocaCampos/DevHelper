@@ -60,8 +60,11 @@
       <span
         class="text-xs sm:text-sm text-base-content/80 leading-relaxed whitespace-normal flex-1 min-w-0 w-full break-words"
       >
-        Acepto los Términos y Condiciones, incluida la descarga inicial del modelo de IA local (~470
-        MB, queda en caché del navegador).
+        Acepto los
+        <a routerLink="/legal/terms" target="_blank" rel="noopener" class="link link-primary">
+          Términos y Condiciones
+        </a>
+        (se abre en nueva pestaña).
       </span>
     </label>
     @if (form.controls.acceptTerms.touched && form.controls.acceptTerms.invalid) {
