@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="(vista previa) proyectos con tareas y ficheros">
+  <rect width="800" height="500" fill="#171717"/>
+  <rect x="40" y="40" width="720" height="80" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="90" font-family="Roboto" font-size="28" fill="#e8e8e8" font-weight="600">Proyectos</text>
+  <rect x="40" y="140" width="350" height="100" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="180" font-family="Roboto" font-size="20" fill="#e8e8e8">DevHelper</text>
+  <text x="60" y="210" font-family="Roboto" font-size="14" fill="#e8e8e8" opacity="0.7">12 tareas, 3 ficheros</text>
+  <rect x="410" y="140" width="350" height="100" fill="#20201e" stroke="#363633"/>
+  <text x="430" y="180" font-family="Roboto" font-size="20" fill="#e8e8e8">Side project</text>
+  <text x="430" y="210" font-family="Roboto" font-size="14" fill="#e8e8e8" opacity="0.7">5 tareas, 1 fichero</text>
+  <rect x="40" y="260" width="720" height="200" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="300" font-family="Roboto" font-size="16" fill="#e8e8e8" opacity="0.5">[vista previa]</text>
+</svg>
