@@ -23,4 +23,12 @@ describe('SectionFeatures', () => {
     const cards = fixture.nativeElement.querySelectorAll('.card');
     expect(cards.length).toBe(6);
   });
+
+  it('renders 6 features each with title, description and image', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const cards = root.querySelectorAll('.card');
+    expect(cards.length).toBe(6);
+    const images = root.querySelectorAll('img');
+    expect(images.length).toBe(6);
+  });
 });
