@@ -224,6 +224,7 @@ Reorganizar `home` para reflejar la jerarquia:
 - Pantalla de reautenticacion (usar `Authenticator.reauthenticate`).
 - Quitar boton "Continuar con GitHub" (extra) o documentarlo.
 - **Hecho (landing + T&C)** landing pública en `/` con 4 secciones (hero, features, security, cta) y footer. Página `/about` con principios del producto. Página `/legal/terms` que renderiza el markdown del T&C. `landing-site-header` (sticky + blur + border) con CTAs contextuales según sesión; `landing-site-footer` con 3 columnas y `TERMS_VERSION` visible. Dashboard movido de `/` a `/home` (`authCanMatch()`). `landing-terms-modal` montado globalmente en `app.html` para re-aceptación suave cuando hay nueva versión.
+- **Hecho (refactor visual landing)** expansion de la landing a 6 secciones (agregadas `section-how-it-works` y `section-stack`). Refactor de las 4 existentes: `section-hero` con screenshot y copy ampliado, `section-features` con 6 cards grandes y una imagen por card, `section-security` con screenshot lateral y copy tecnico ampliado (AES-GCM, PBKDF2, WebAuthn explicados). Captura real del home + 4 mockups SVG para features sin UI (`mockup-projects`, `mockup-tasks`, `mockup-events`, `mockup-ai`). 2 PNGs adicionales (`vault-modal.png`, `password-list.png`) pendientes de captura manual humana post-merge.
 
 ### 4.4 Mejoras de seguridad / UX
 
