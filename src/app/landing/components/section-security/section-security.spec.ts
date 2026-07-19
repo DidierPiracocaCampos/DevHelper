@@ -25,4 +25,10 @@ describe('SectionSecurity', () => {
     const items = fixture.nativeElement.querySelectorAll('ul li');
     expect(items.length).toBe(4);
   });
+
+  it('renders the vault screenshot on lg+', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const img = root.querySelector('img');
+    expect(img?.getAttribute('src')).toBe('/img/landing/vault-modal.png');
+  });
 });
