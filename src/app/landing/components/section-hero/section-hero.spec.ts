@@ -33,4 +33,13 @@ describe('SectionHero', () => {
     expect(secondary?.textContent?.trim()).toBe('Ya tengo cuenta');
     expect(html).toContain('Cifrado en tu dispositivo');
   });
+
+  it('renders the hero screenshot with src and alt', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const img = root.querySelector('img') as HTMLImageElement;
+    expect(img?.getAttribute('src')).toBe('/img/landing/hero-home.png');
+    expect(img?.getAttribute('alt')).toBe('DevHelper dashboard en uso real');
+    expect(img?.getAttribute('width')).toBe('1280');
+    expect(img?.getAttribute('height')).toBe('800');
+  });
 });

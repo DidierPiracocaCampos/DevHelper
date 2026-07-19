@@ -1,19 +1,32 @@
 <section class="frost-effect">
-  <div class="max-w-5xl mx-auto px-4 py-16 sm:py-24 text-center">
-    <h1 class="font-bold text-3xl sm:text-5xl tracking-tight">
-      Tu memoria técnica cifrada, en un solo lugar
-    </h1>
-    <p class="mt-4 text-base sm:text-lg opacity-80">
-      Vault personal para proyectos, tareas, contraseñas, ficheros y eventos.
-      Cifrado en tu dispositivo. Sin backdoor del servidor.
-    </p>
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-      <a routerLink="/login/register" class="btn btn-primary btn-lg">
-        Crear cuenta
-      </a>
-      <a routerLink="/login" class="btn btn-ghost btn-lg">
-        Ya tengo cuenta
-      </a>
+  <div class="max-w-7xl mx-auto px-4 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="text-center lg:text-left">
+      <h1 class="font-bold text-3xl sm:text-5xl tracking-tight">
+        Tu memoria técnica cifrada, en un solo lugar
+      </h1>
+      <p class="mt-4 text-base sm:text-lg opacity-80">
+        Vault personal para proyectos, tareas, contraseñas, ficheros y eventos.
+        Cifrado en tu dispositivo. Sin backdoor del servidor. Tu clave maestra
+        nunca sale del navegador.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+        <a routerLink="/login/register" class="btn btn-primary btn-lg">
+          Crear cuenta
+        </a>
+        <a routerLink="/login" class="btn btn-ghost btn-lg">
+          Ya tengo cuenta
+        </a>
+      </div>
+    </div>
+    <div class="hidden lg:block">
+      <img
+        src="/img/landing/hero-home.png"
+        alt="DevHelper dashboard en uso real"
+        width="1280"
+        height="800"
+        loading="eager"
+        class="rounded-xl border border-base-300 shadow-lg w-full h-auto"
+      />
     </div>
   </div>
 </section>
