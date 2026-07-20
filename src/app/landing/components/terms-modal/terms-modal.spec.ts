@@ -98,4 +98,16 @@ describe('TermsModal', () => {
     fixture.detectChanges();
     expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(true);
   });
+
+  it('does not render the "Más tarde" button', () => {
+    const auth = makeAuth({ uid: 'u1' });
+    const legal = makeLegal({ version: '2026-07-01' });
+    TestBed.overrideProvider(Authenticator, { useValue: auth });
+    TestBed.overrideProvider(LegalAcceptanceService, { useValue: legal });
+    const fixture = TestBed.createComponent(TermsModal);
+    fixture.detectChanges();
+    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll('button');
+    const masTarde = Array.from(buttons).find((b) => b.textContent?.trim() === 'Más tarde');
+    expect(masTarde).toBeUndefined();
+  });
 });

@@ -27,7 +27,6 @@ export class TermsModal {
   private readonly _legal = inject(LegalAcceptanceService);
 
   protected readonly isOpen = signal(false);
-  protected readonly dismissedThisSession = signal(false);
   private readonly _user = this._auth.user;
 
   private readonly _acceptance$ = toObservable(this._user).pipe(
@@ -45,21 +44,12 @@ export class TermsModal {
   protected readonly showModal = computed(() => {
     if (!this._emitted()) return false;
     if (!this._user()) return false;
-    if (this.dismissedThisSession()) return false;
     return this._legal.needsReAcceptance(this.currentAcceptance());
   });
 
   private readonly _syncIsOpen = effect(() => {
     this.isOpen.set(this.showModal());
   });
-
-  protected onClosed(): void {
-    this.dismissedThisSession.set(true);
-  }
-
-  protected dismiss(): void {
-    this.dismissedThisSession.set(true);
-  }
 
   protected async accept(): Promise<void> {
     const u = this._user();
