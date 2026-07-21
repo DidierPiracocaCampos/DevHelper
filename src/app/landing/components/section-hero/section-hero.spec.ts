@@ -18,7 +18,7 @@ describe('SectionHero', () => {
 
   it('renders the hero heading', () => {
     const html = fixture.nativeElement.textContent as string;
-    expect(html).toContain('Tu memoria técnica cifrada, en un solo lugar');
+    expect(html).toContain('Tu memoria técnica cifrada, en un solo lugar.');
   });
 
   it('renders the primary and secondary CTAs with their target routes', () => {
