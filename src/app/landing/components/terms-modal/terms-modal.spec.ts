@@ -110,4 +110,48 @@ describe('TermsModal', () => {
     const masTarde = Array.from(buttons).find((b) => b.textContent?.trim() === 'Más tarde');
     expect(masTarde).toBeUndefined();
   });
+
+  it('does not open the dialog while the firestore read is in flight', async () => {
+    const auth = makeAuth({ uid: 'u1' });
+    let resolveFirestore!: (v: { version: string } | null) => void;
+    const slowLegal = {
+      current: vi.fn().mockReturnValue(
+        new Observable<{ version: string } | null>((sub) => {
+          resolveFirestore = (v) => sub.next(v);
+        }),
+      ),
+      accept: vi.fn().mockResolvedValue(undefined),
+      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-07-18',
+    };
+    TestBed.overrideProvider(Authenticator, { useValue: auth });
+    TestBed.overrideProvider(LegalAcceptanceService, { useValue: slowLegal });
+    const fixture = TestBed.createComponent(TermsModal);
+    fixture.detectChanges();
+    expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(false);
+    resolveFirestore({ version: '2026-07-18' });
+    fixture.detectChanges();
+    expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(false);
+  });
+
+  it('opens the dialog after the firestore read resolves with outdated version', async () => {
+    const auth = makeAuth({ uid: 'u1' });
+    let resolveFirestore!: (v: { version: string } | null) => void;
+    const slowLegal = {
+      current: vi.fn().mockReturnValue(
+        new Observable<{ version: string } | null>((sub) => {
+          resolveFirestore = (v) => sub.next(v);
+        }),
+      ),
+      accept: vi.fn().mockResolvedValue(undefined),
+      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-07-18',
+    };
+    TestBed.overrideProvider(Authenticator, { useValue: auth });
+    TestBed.overrideProvider(LegalAcceptanceService, { useValue: slowLegal });
+    const fixture = TestBed.createComponent(TermsModal);
+    fixture.detectChanges();
+    expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(false);
+    resolveFirestore({ version: '2026-07-01' });
+    fixture.detectChanges();
+    expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(true);
+  });
 });
