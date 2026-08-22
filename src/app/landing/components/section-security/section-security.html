@@ -1,30 +1,75 @@
 <section [id]="id()" class="bg-base-200">
-  <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-    <div>
-      <h2 class="text-2xl sm:text-3xl font-semibold mb-6">Seguridad y privacidad</h2>
-      <ul class="space-y-4">
-        @for (item of items; track item.text) {
-          <li class="flex items-start gap-3">
-            <span class="icon text-primary shrink-0 mt-0.5" aria-hidden="true">shield</span>
-            <span>{{ item.text }}</span>
-          </li>
-        }
-      </ul>
-      <div class="mt-8">
-        <a routerLink="/legal/terms" target="_blank" rel="noopener" class="link link-hover">
-          Lee los detalles en Términos y Condiciones
-        </a>
-      </div>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="badge badge-soft gap-1 mb-4">
+        <span class="icon icon-sm" aria-hidden="true">lock</span>
+        Privacidad por diseño
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-semibold mb-3">Seguridad y privacidad</h2>
+      <p class="opacity-70">
+        Tu información se cifra antes de salir de tu dispositivo. Nadie más, ni siquiera nosotros,
+        puede leerla.
+      </p>
     </div>
-    <div class="block">
-      <img
-        ngSrc="/img/landing/vault-home.webp"
-        alt="Vista del workspace protegido de DevHelper"
-        width="2560"
-        height="1600"
-        loading="lazy"
-        class="rounded-xl border border-base-300 shadow-lg w-full h-auto section-security__visual"
-      />
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          @for (item of items; track item.title) {
+            <article class="card card-xl bg-base-100 border border-base-300 h-full">
+              <div class="card-body gap-3">
+                <div class="flex items-center justify-between">
+                  <span
+                    class="inline-flex items-center justify-center size-11 rounded-box bg-base-300 border"
+                    aria-hidden="true"
+                  >
+                    <span class="icon icon-lg text-primary" aria-hidden="true">{{ item.icon }}</span>
+                  </span>
+                  @if (item.badge; as badge) {
+                    <span class="badge badge-success badge-soft">{{ badge }}</span>
+                  }
+                </div>
+                <h3 class="card-title text-lg">{{ item.title }}</h3>
+                <p class="opacity-80 text-sm leading-relaxed">
+                  <span class="icon icon-sm text-success shrink-0 align-[-2px]" aria-hidden="true">
+                    check
+                  </span>
+                  {{ item.description }}
+                </p>
+              </div>
+            </article>
+          }
+        </div>
+
+        <div class="mt-6">
+          <div class="alert alert-soft alert-success" role="note">
+            <span class="icon" aria-hidden="true">verified_user</span>
+            <span>Cifrado de extremo a extremo: ni DevHelper puede acceder a tus datos.</span>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <a
+            routerLink="/legal/terms"
+            target="_blank"
+            rel="noopener"
+            class="link link-hover text-sm"
+          >
+            Lee los detalles en Términos y Condiciones
+          </a>
+        </div>
+      </div>
+
+      <div class="block">
+        <img
+          ngSrc="/img/landing/vault-home.webp"
+          alt="Vista del workspace protegido de DevHelper"
+          width="2560"
+          height="1600"
+          loading="lazy"
+          class="rounded-xl border border-base-300 shadow-lg w-full h-auto section-security__visual"
+        />
+      </div>
     </div>
   </div>
 </section>

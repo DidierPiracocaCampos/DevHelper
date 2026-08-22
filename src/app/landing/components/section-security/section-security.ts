@@ -3,21 +3,33 @@ import { RouterLink } from '@angular/router';
 import { NgOptimizedImage } from '@angular/common';
 
 interface SecurityItem {
-  readonly text: string;
+  readonly icon: string;
+  readonly title: string;
+  readonly description: string;
+  readonly badge?: string;
 }
 
 const SECURITY_ITEMS: readonly SecurityItem[] = [
   {
-    text: 'Cifrado AES-GCM 256 en dispositivo antes de sincronizar.',
+    icon: 'lock',
+    title: 'Cifrado AES-GCM 256',
+    description: 'En dispositivo antes de sincronizar.',
+    badge: 'AES-256',
   },
   {
-    text: 'PIN o Passkey con clave local.',
+    icon: 'key',
+    title: 'PIN o Passkey',
+    description: 'Con clave local para desbloquear el vault.',
   },
   {
-    text: 'Sin acceso administrativo ni cuenta maestra.',
+    icon: 'person_off',
+    title: 'Zero-knowledge',
+    description: 'Sin acceso administrativo ni cuenta maestra.',
   },
   {
-    text: 'Firebase eur3 y acceso owner-only.',
+    icon: 'cloud_done',
+    title: 'Firebase eur3',
+    description: 'Acceso owner-only en región europea.',
   },
 ];
 
