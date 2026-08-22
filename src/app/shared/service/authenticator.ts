@@ -67,7 +67,7 @@ export class Authenticator {
         const result = await createUserWithEmailAndPassword(this._auth, email, password);
         await sendEmailVerification(result.user);
         this._session.refresh();
-        await this._router.navigate(['/']);
+        await this._router.navigate(['/home']);
         return { success: true };
       } catch (error) {
         const code = (error as FirebaseError).code;
@@ -86,7 +86,7 @@ export class Authenticator {
         await signInWithEmailAndPassword(this._auth, email, password);
         this._bruteForce.clearFailedAttempts(email);
         this._session.refresh();
-        await this._router.navigate(['/']);
+        await this._router.navigate(['/home']);
         return { success: true };
       } catch (error) {
         this._bruteForce.recordFailedAttempt(email);
@@ -155,7 +155,7 @@ export class Authenticator {
       try {
         await signInWithPopup(this._auth, provider);
         this._session.refresh();
-        await this._router.navigate(['/']);
+        await this._router.navigate(['/home']);
         return { success: true };
       } catch (error) {
         const code = (error as FirebaseError).code;

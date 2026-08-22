@@ -231,6 +231,6 @@ export class IssueDetail implements OnDestroy {
       window.close();
       return;
     }
-    void this._router.navigateByUrl('/');
+    void this._router.navigateByUrl('/home');
   }
 }

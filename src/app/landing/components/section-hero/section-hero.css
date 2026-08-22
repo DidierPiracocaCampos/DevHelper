@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+.hero-reveal {
+  animation: section-hero-enter var(--animate-fade-slide-in) both;
+}
+
+.hero-reveal--1 {
+  animation-delay: 0ms;
+}
+
+.hero-reveal--2 {
+  animation-delay: 80ms;
+}
+
+.hero-reveal--3 {
+  animation-delay: 160ms;
+}
+
+.hero-reveal--4 {
+  animation-delay: 240ms;
+}
+
+.hero-reveal--5 {
+  animation-delay: 320ms;
+}
+
+@keyframes section-hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-hero__visual-float {
+  animation: section-hero-float 6s ease-in-out 400ms infinite;
+}
+
+.section-hero__visual {
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px color-mix(in oklch, var(--color-base-content) 8%, transparent),
+    0 24px 48px -12px color-mix(in oklch, var(--color-base-content) 18%, transparent);
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.section-hero__visual:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px color-mix(in oklch, var(--color-base-content) 10%, transparent),
+    0 32px 64px -16px color-mix(in oklch, var(--color-base-content) 22%, transparent);
+}
+
+@keyframes section-hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.5rem);
+  }
+}
+
+.section-hero__cta-primary {
+  position: relative;
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-base);
+  box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-primary) 0%, transparent);
+}
+
+.section-hero__cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px color-mix(in oklch, var(--color-primary) 35%, transparent);
+}
+
+.section-hero__cta-primary:active {
+  transform: translateY(0);
+}
+
+.section-hero__cta-secondary {
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.section-hero__cta-secondary:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .section-hero__visual-float {
+    animation: none;
+  }
+
+  .section-hero__visual,
+  .section-hero__cta-primary,
+  .section-hero__cta-secondary {
+    transition: none;
+  }
+
+  .section-hero__visual:hover,
+  .section-hero__cta-primary:hover,
+  .section-hero__cta-primary:active,
+  .section-hero__cta-secondary:hover {
+    transform: none;
+  }
+}

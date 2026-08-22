@@ -170,7 +170,7 @@ firestore.rules              ⚠ contiene paths de proyectos/issues que no tiene
 - **OK (nuevo)** Flujo de consentimiento T&C en registro: `form-register` ahora incluye checkbox `acceptTerms` con `Validators.requiredTrue`. Tras registro exitoso, persiste `aiAssistantEnabled=true` automáticamente — el usuario ya no debe tocar "Activar asistente" manualmente.
 - **OK (nuevo)** Auto-reanudación en Home: `home.ts` tiene un `effect()` que, cuando el usuario está logueado y `aiAssistantEnabled===true` y `ai.status()==='disabled'`, dispara `ai.enable()` automáticamente. Resuelve el "tener que descargar cada vez" en Firefox tras F5.
 - **OK (nuevo)** Modal de bienvenida para usuarios legacy (`aiAssistantEnabled===undefined`): `welcome-ai-modal`组件 explica la descarga del modelo (~470 MB caché browser) y ofrece "Activar IA local" o "Ahora no".
-- **FALTA** documentación legal (Términos y Condiciones) como documento vinculante separado — checkbox actual usa texto introductorio. Diferido a fase legal posterior.
+- **OK (nuevo)** documentación legal (Términos y Condiciones) como documento vinculante separado: `public/legal/terms-es.md` (12 secciones, marcado TBD donde aplica revisión legal), `src/app/landing/data/terms-version.ts` con `TERMS_VERSION` y `TERMS_LANG`. La página `/legal/terms` renderiza el markdown con un mini-parser seguro (Task 3).
 
 ## 4. Cambios necesarios (orden sugerido)
 
@@ -184,6 +184,7 @@ Agregar reglas para las colecciones que faltan. Mantener owner-only.
 - `users/{uid}/proyectos/{projectId}/issues/{issueId}/files/{fileId}` + chunks: ya existe, verificar.
 - `users/{uid}/events/{eventId}`: `{ title (string <=200), description? (string <=2000), at (timestamp), durationMinutes? (int >=0), notified (bool), createdAt (timestamp) }`. **Globales, no scoped a proyecto/issue.**
 - `users/{uid}/subscription/{subscriptionId='singleton'}`: `{ plan ('free'|'paid'), renewsAt? (timestamp), providerCustomerId? (string), providerSubscriptionId? (string) }`.
+- `users/{uid}/legal/{docId='termsAccepted'}` (singleton): `{ version (string), lang ('es'), acceptedAt (Timestamp), source ('register' | 're-accept-modal' | 'manual') }`. **Hecho (landing + T&C)**: escrito por `LegalAcceptanceService.accept()`, validado por el match block en `firestore.rules`.
 
 Ademas:
 
@@ -222,6 +223,9 @@ Reorganizar `home` para reflejar la jerarquia:
 - Modal de cambio de PIN (usar `VaultSecurity.changePin`).
 - Pantalla de reautenticacion (usar `Authenticator.reauthenticate`).
 - Quitar boton "Continuar con GitHub" (extra) o documentarlo.
+- **Hecho (landing + T&C)** landing pública en `/` con 4 secciones (hero, features, security, cta) y footer. Página `/about` con principios del producto. Página `/legal/terms` que renderiza el markdown del T&C. `landing-site-header` (sticky + blur + border) con CTAs contextuales según sesión; `landing-site-footer` con 3 columnas y `TERMS_VERSION` visible. Dashboard movido de `/` a `/home` (`authCanMatch()`). `landing-terms-modal` montado globalmente en `app.html` para re-aceptación suave cuando hay nueva versión.
+- **Hecho (refactor visual landing)** expansion de la landing a 6 secciones (agregadas `section-how-it-works` y `section-stack`). Refactor de las 4 existentes: `section-hero` con screenshot y copy ampliado, `section-features` con 6 cards grandes y una imagen por card, `section-security` con screenshot lateral y copy tecnico ampliado (AES-GCM, PBKDF2, WebAuthn explicados). Captura real del home + 4 mockups SVG para features sin UI (`mockup-projects`, `mockup-tasks`, `mockup-events`, `mockup-ai`). 2 PNGs adicionales (`vault-modal.png`, `password-list.png`) pendientes de captura manual humana post-merge.
+- **Hecho (landing SSG + performance)**: landing prerenderizada (`outputMode: 'static'`, rutas `''`, `about`, `legal/terms`); resto de la app sigue en CSR vía shell `index.csr.html`. Imágenes convertidas a WebP (~4,5 MB → ~186 KB total). SEO meta tags + Open Graph + `robots.txt` + `sitemap.xml` en `/`. Headers de caché en Firebase Hosting (immutable para JS/CSS hasheados, no-cache para HTML, 1 día para `/img` `/icons` `/legal`). Sin Cloud Functions, sin plan Blaze.
 
 ### 4.4 Mejoras de seguridad / UX
 
@@ -297,4 +301,4 @@ Resumen; el detalle completo esta en `docs/design-context.md` seccion 11.
 
 ## 7. Resumen ejecutivo (1 linea)
 
-Autenticacion, vault cifrado, passwords globales y ficheros globales funcionan. Falta construir el nucleo del producto: proyectos, tareas, eventos, busqueda y modelo de membresia. Antes de eso, reparar la incompatibilidad entre el modelo de `password` en codigo y las reglas de Firestore.
+Landing publica prerenderizada (SSG) con imagenes WebP y SEO meta tags; resto en CSR. Autenticacion, vault cifrado, passwords globales y ficheros globales funcionan. Falta construir el nucleo del producto: proyectos, tareas, eventos, busqueda y modelo de membresia. Antes de eso, reparar la incompatibilidad entre el modelo de `password` en codigo y las reglas de Firestore.

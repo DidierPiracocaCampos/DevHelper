@@ -1,0 +1,47 @@
+<header
+  class="sticky top-0 z-50 bg-base-100/80 backdrop-blur border-b border-base-300"
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+    <a
+      routerLink="/"
+      class="font-bold text-lg tracking-tight hover:opacity-80"
+      aria-label="DevHelper - Inicio"
+    >
+      DevHelper
+    </a>
+
+    <nav class="flex flex-wrap items-center justify-end gap-2">
+      <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">
+        Características
+      </a>
+      <a routerLink="/" fragment="how-it-works" class="link link-hover text-sm px-1">
+        Cómo funciona
+      </a>
+      <a routerLink="/" fragment="security" class="link link-hover text-sm px-1">
+        Seguridad
+      </a>
+      @if (!isLogged()) {
+        <a routerLink="/login" class="btn btn-ghost btn-sm sm:btn-md">
+          Iniciar sesión
+        </a>
+        <a
+          routerLink="/login/register"
+          class="btn btn-primary btn-sm sm:btn-md"
+        >
+          Crear cuenta
+        </a>
+      } @else {
+        <a routerLink="/home" class="btn btn-ghost btn-sm sm:btn-md">
+          Ir al dashboard
+        </a>
+        <button
+          type="button"
+          class="btn btn-error btn-outline btn-sm sm:btn-md"
+          (click)="logout()"
+        >
+          Cerrar sesión
+        </button>
+      }
+    </nav>
+  </div>
+</header>

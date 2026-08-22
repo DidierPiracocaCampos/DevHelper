@@ -25,9 +25,6 @@ import {
 type PaletteError = 'vault' | 'model' | 'unknown' | null;
 
 const DEBOUNCE_MS = 250;
-const isMac =
-  typeof navigator !== 'undefined' &&
-  /\b(Mac|iPhone|iPad|iPod)\b/.test(navigator.platform || navigator.userAgent);
 
 const COL_ICON: Record<AiMatchedDoc['collection'], string> = {
   proyectos: 'folder',
@@ -51,8 +48,15 @@ export class SearchPalette implements OnDestroy {
 
   readonly status = this._ai.status;
   readonly isProcessing = this._ai.isProcessing;
-  readonly shortcutHint = isMac ? '\u2318K' : 'Ctrl+K';
+  readonly shortcutHint = this.isMac ? '\u2318K' : 'Ctrl+K';
   readonly colIcon = COL_ICON;
+
+  protected get isMac(): boolean {
+    return (
+      typeof navigator !== 'undefined' &&
+      /\b(Mac|iPhone|iPad|iPod)\b/.test(navigator.platform || navigator.userAgent)
+    );
+  }
 
   readonly localIsOpen = signal(false);
   readonly query = signal('');

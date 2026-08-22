@@ -287,6 +287,14 @@ const skip = !FIRESTORE_EMULATOR_HOST;
                 allow delete: if isOwner(userId) && prefsId == 'singleton';
               }
 
+              match /users/{userId}/legal/{docId} {
+                allow read, write: if isOwner(userId) && docId == 'termsAccepted'
+                              && request.resource.data.keys().hasAll(['version','lang','acceptedAt','source'])
+                              && request.resource.data.version is string
+                              && request.resource.data.lang in ['es']
+                              && request.resource.data.source in ['register','re-accept-modal','manual'];
+              }
+
               match /{document=**} {
                 allow read, write: if false;
               }
@@ -1231,6 +1239,100 @@ const skip = !FIRESTORE_EMULATOR_HOST;
       const ref = doc(ctx.firestore(), pwdPath('u1'));
       await assertSucceeds(setDoc(ref, validPassword()));
       await assertSucceeds(deleteDoc(ref));
+    });
+  });
+
+  describe('users/{uid}/legal/{docId} (terms-acceptance snapshot)', () => {
+    const legalPath = (uid: string, docId = 'termsAccepted') => `users/${uid}/legal/${docId}`;
+
+    const validSnapshot = () => ({
+      version: '2026-07-18',
+      lang: 'es',
+      acceptedAt: Timestamp.now(),
+      source: 'register',
+    });
+
+    it('owner can read their own termsAccepted snapshot', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertSucceeds(setDoc(ref, validSnapshot()));
+      await assertSucceeds(getDoc(ref));
+    });
+
+    it('owner can write a valid snapshot and read it back', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertSucceeds(setDoc(ref, validSnapshot()));
+      await assertSucceeds(getDoc(ref));
+    });
+
+    it('owner can write a snapshot with source=re-accept-modal', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertSucceeds(setDoc(ref, { ...validSnapshot(), source: 're-accept-modal' }));
+    });
+
+    it('owner can write a snapshot with source=manual', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertSucceeds(setDoc(ref, { ...validSnapshot(), source: 'manual' }));
+    });
+
+    it('rejects snapshot with lang different from es', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertFails(setDoc(ref, { ...validSnapshot(), lang: 'en' }));
+    });
+
+    it('rejects snapshot with an invalid source', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertFails(setDoc(ref, { ...validSnapshot(), source: 'unknown' }));
+    });
+
+    it('rejects snapshot missing the version field', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      const { version: _version, ...withoutVersion } = validSnapshot();
+      await assertFails(setDoc(ref, withoutVersion));
+    });
+
+    it('rejects snapshot missing the lang field', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      const { lang: _lang, ...withoutLang } = validSnapshot();
+      await assertFails(setDoc(ref, withoutLang));
+    });
+
+    it('rejects snapshot missing the acceptedAt field', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      const { acceptedAt: _acceptedAt, ...withoutAcceptedAt } = validSnapshot();
+      await assertFails(setDoc(ref, withoutAcceptedAt));
+    });
+
+    it('rejects snapshot missing the source field', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      const { source: _source, ...withoutSource } = validSnapshot();
+      await assertFails(setDoc(ref, withoutSource));
+    });
+
+    it('non-owner cannot read or write another user legal snapshot', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice'));
+      await assertSucceeds(setDoc(ref, validSnapshot()));
+
+      const strangerCtx = testEnv.authenticatedContext('bob');
+      const strangerRef = doc(strangerCtx.firestore(), legalPath('alice'));
+      await assertFails(getDoc(strangerRef));
+      await assertFails(setDoc(strangerRef, validSnapshot()));
+    });
+
+    it('rejects writing to a different docId (singleton enforcement)', async () => {
+      const ownerCtx = testEnv.authenticatedContext('alice');
+      const ref = doc(ownerCtx.firestore(), legalPath('alice', 'termsAccepted2'));
+      await assertFails(setDoc(ref, validSnapshot()));
     });
   });
 });

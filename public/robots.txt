@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /$
+Allow: /about
+Allow: /legal/terms
+Disallow: /home
+Disallow: /proyect
+Disallow: /login
+Sitemap: https://devhelper-a61ef.web.app/sitemap.xml

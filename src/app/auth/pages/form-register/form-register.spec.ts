@@ -5,6 +5,7 @@ import FormRegister from './form-register';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { Loader } from '../../../shared/service/loader';
 import { PreferencesService } from '../../../shared/preferences/services/preferences.service';
+import { LegalAcceptanceService } from '../../../landing/services/legal-acceptance.service';
 import {
   PASSWORD_RULES,
   type PasswordRuleKey,
@@ -24,6 +25,10 @@ describe('FormRegister password requirements list', () => {
         {
           provide: PreferencesService,
           useValue: { setAiAssistantEnabled: vi.fn().mockResolvedValue(undefined) },
+        },
+        {
+          provide: LegalAcceptanceService,
+          useValue: { accept: vi.fn().mockResolvedValue(undefined) },
         },
       ],
     }).compileComponents();
@@ -206,8 +211,9 @@ describe('FormRegister password requirements list', () => {
 describe('FormRegister accept-terms', () => {
   let fixture: ComponentFixture<FormRegister>;
   let component: FormRegister;
-  let auth: { register: ReturnType<typeof vi.fn> };
+  let auth: { register: ReturnType<typeof vi.fn>; userPromise: ReturnType<typeof vi.fn> };
   let prefs: { setAiAssistantEnabled: ReturnType<typeof vi.fn> };
+  let legalAcceptance: { accept: ReturnType<typeof vi.fn> };
 
   function fillValid(): void {
     component.form.controls.email.setValue('user@example.com');
@@ -216,8 +222,12 @@ describe('FormRegister accept-terms', () => {
   }
 
   beforeEach(async () => {
-    auth = { register: vi.fn() };
+    auth = {
+      register: vi.fn(),
+      userPromise: vi.fn().mockResolvedValue({ uid: 'fake-uid' }),
+    };
     prefs = { setAiAssistantEnabled: vi.fn().mockResolvedValue(undefined) };
+    legalAcceptance = { accept: vi.fn().mockResolvedValue(undefined) };
     await TestBed.configureTestingModule({
       imports: [FormRegister],
       providers: [
@@ -225,6 +235,7 @@ describe('FormRegister accept-terms', () => {
         { provide: Authenticator, useValue: auth },
         { provide: Loader, useValue: { show: vi.fn(), hide: vi.fn() } },
         { provide: PreferencesService, useValue: prefs },
+        { provide: LegalAcceptanceService, useValue: legalAcceptance },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(FormRegister);
@@ -260,5 +271,24 @@ describe('FormRegister accept-terms', () => {
     await component.onSubmit();
     expect(prefs.setAiAssistantEnabled).not.toHaveBeenCalled();
     expect(component.showVerificationMessage).toBe(false);
+  });
+
+  it('onSubmit calls legalAcceptance.accept with the new uid and "register" when registration succeeds', async () => {
+    auth.register.mockResolvedValue({ success: true });
+    auth.userPromise.mockResolvedValue({ uid: 'new-uid-123' });
+    fillValid();
+    component.form.controls.acceptTerms.setValue(true);
+    await component.onSubmit();
+    await vi.waitFor(() =>
+      expect(legalAcceptance.accept).toHaveBeenCalledWith('new-uid-123', 'register'),
+    );
+  });
+
+  it('onSubmit does not call legalAcceptance.accept when registration fails', async () => {
+    auth.register.mockResolvedValue({ success: false, error: 'auth/email-already-in-use' });
+    fillValid();
+    component.form.controls.acceptTerms.setValue(true);
+    await component.onSubmit();
+    expect(legalAcceptance.accept).not.toHaveBeenCalled();
   });
 });

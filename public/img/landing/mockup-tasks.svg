@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="(vista previa) tareas con fecha de vencimiento y notas">
+  <rect width="800" height="500" fill="#171717"/>
+  <rect x="40" y="40" width="720" height="50" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="75" font-family="Roboto" font-size="20" fill="#e8e8e8" font-weight="600">Tareas</text>
+  <rect x="40" y="110" width="720" height="60" fill="#20201e" stroke="#363633"/>
+  <circle cx="70" cy="140" r="8" fill="none" stroke="#e8e8e8"/>
+  <text x="100" y="148" font-family="Roboto" font-size="18" fill="#e8e8e8">Refactor login flow</text>
+  <text x="640" y="148" font-family="Roboto" font-size="14" fill="#e8e8e8" opacity="0.7">2026-07-25</text>
+  <rect x="40" y="180" width="720" height="60" fill="#20201e" stroke="#363633"/>
+  <circle cx="70" cy="210" r="8" fill="none" stroke="#e8e8e8"/>
+  <text x="100" y="218" font-family="Roboto" font-size="18" fill="#e8e8e8">Actualizar dependencias</text>
+  <text x="640" y="218" font-family="Roboto" font-size="14" fill="#e8e8e8" opacity="0.7">2026-08-01</text>
+  <rect x="40" y="250" width="720" height="200" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="290" font-family="Roboto" font-size="16" fill="#e8e8e8" opacity="0.5">[vista previa]</text>
+</svg>

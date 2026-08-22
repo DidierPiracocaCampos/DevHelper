@@ -1,0 +1,27 @@
+<div
+  class="sticky top-0 z-40 bg-base-100/80 backdrop-blur border-b border-base-300"
+>
+  <div class="max-w-3xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+    <a routerLink="/" class="btn btn-ghost btn-sm">Volver</a>
+    @if (showAccept()) {
+      <button type="button" class="btn btn-primary btn-sm" (click)="accept()">
+        Aceptar
+      </button>
+    }
+  </div>
+</div>
+
+<article class="max-w-3xl mx-auto px-4 py-12 space-y-4 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mt-8 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mt-4 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_a]:link [&_a]:link-hover [&_blockquote]:border-l-4 [&_blockquote]:border-base-300 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:opacity-80 [&_code]:bg-base-200 [&_code]:px-1 [&_code]:rounded [&_strong]:font-bold">
+  <div [innerHTML]="content() | markdown"></div>
+</article>
+
+<footer class="max-w-3xl mx-auto px-4 pb-12 text-sm opacity-70">
+  <a
+    href="/legal/terms-es.md"
+    target="_blank"
+    rel="noopener"
+    class="link link-hover"
+  >
+    Ver documento en Markdown sin formato
+  </a>
+</footer>

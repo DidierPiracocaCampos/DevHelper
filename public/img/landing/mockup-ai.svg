@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="(vista previa) IA local 100 por ciento en tu dispositivo">
+  <rect width="800" height="500" fill="#171717"/>
+  <rect x="100" y="100" width="600" height="300" fill="#20201e" stroke="#363633"/>
+  <text x="400" y="200" text-anchor="middle" font-family="Roboto" font-size="32" fill="#e8e8e8" font-weight="600">IA local</text>
+  <text x="400" y="250" text-anchor="middle" font-family="Roboto" font-size="20" fill="#e8e8e8" opacity="0.8">100% en tu dispositivo</text>
+  <text x="400" y="290" text-anchor="middle" font-family="Roboto" font-size="14" fill="#e8e8e8" opacity="0.5">opt-in, cifrado, sin servidor</text>
+  <circle cx="400" cy="370" r="30" fill="none" stroke="#e8e8e8" stroke-width="2"/>
+  <text x="400" y="378" text-anchor="middle" font-family="Roboto" font-size="24" fill="#e8e8e8">0</text>
+</svg>
