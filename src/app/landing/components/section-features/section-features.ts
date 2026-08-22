@@ -62,13 +62,7 @@ const FEATURES: readonly Feature[] = [
       'Adjuntos globales o por tarea. Se parten en chunks y viven bajo el mismo vault. Hasta 5 MB por fichero.',
     size: 'compact',
     highlights: [],
-    image: {
-      src: '/img/landing/files.png',
-      alt: 'Archivos cifrados',
-      width: 800,
-      height: 500,
-      ratio: '800 / 500',
-    },
+    image: null,
   },
   {
     id: 'passwords',
@@ -77,13 +71,7 @@ const FEATURES: readonly Feature[] = [
     description: 'Secretos cifrados en cliente: globales o ligados a una tarea concreta.',
     size: 'compact',
     highlights: [],
-    image: {
-      src: '/img/landing/passwords.png',
-      alt: 'Contraseñas del vault',
-      width: 800,
-      height: 500,
-      ratio: '800 / 500',
-    },
+    image: null,
   },
   {
     id: 'events',
@@ -92,13 +80,7 @@ const FEATURES: readonly Feature[] = [
     description: 'Compromisos globales en una sola vista, junto al resto del workspace.',
     size: 'compact',
     highlights: [],
-    image: {
-      src: '/img/landing/events.png',
-      alt: 'Eventos y recordatorios',
-      width: 800,
-      height: 500,
-      ratio: '800 / 500',
-    },
+    image: null,
   },
   {
     id: 'ai',
@@ -108,13 +90,7 @@ const FEATURES: readonly Feature[] = [
       'Opt-in explícito. 100% en tu dispositivo. Consultas estructuradas sobre tu workspace.',
     size: 'compact',
     highlights: [],
-    image: {
-      src: '/img/landing/ai.png',
-      alt: 'IA local opcional',
-      width: 800,
-      height: 500,
-      ratio: '800 / 500',
-    },
+    image: null,
   },
 ];
 

@@ -22,6 +22,16 @@ describe('SectionFeatures', () => {
     );
   });
 
+  it('renders the Capacidades badge with success color', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const badge = Array.from(root.querySelectorAll('.badge')).find((el) =>
+      el.textContent?.includes('Capacidades'),
+    );
+
+    expect(badge).not.toBeUndefined();
+    expect((badge as HTMLElement).className).toContain('text-success');
+  });
+
   it('renders six feature tiles', () => {
     const tiles = fixture.nativeElement.querySelectorAll('[data-feature]');
     expect(tiles.length).toBe(6);
@@ -93,10 +103,12 @@ describe('SectionFeatures', () => {
     expect(html).not.toContain('Vista previa');
   });
 
-  it('renders six images, one per feature', () => {
+  it('renders one image per feature that has an asset', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const imgs = root.querySelectorAll('img');
-    expect(imgs.length).toBe(6);
+    const tilesWithImage = Array.from(root.querySelectorAll('[data-feature]')).filter(
+      (tile) => tile.querySelector(':scope > figure img') !== null,
+    );
+    expect(tilesWithImage.length).toBe(2);
   });
 
   it('renders the exact asset metadata for every feature image', () => {
@@ -120,16 +132,6 @@ describe('SectionFeatures', () => {
           ratio: '1200 / 490',
         },
       ],
-      ['files', { src: '/img/landing/files.png', width: '800', height: '500', ratio: '800 / 500' }],
-      [
-        'passwords',
-        { src: '/img/landing/passwords.png', width: '800', height: '500', ratio: '800 / 500' },
-      ],
-      [
-        'events',
-        { src: '/img/landing/events.png', width: '800', height: '500', ratio: '800 / 500' },
-      ],
-      ['ai', { src: '/img/landing/ai.png', width: '800', height: '500', ratio: '800 / 500' }],
     ]);
 
     for (const [featureId, asset] of assets) {
@@ -143,6 +145,17 @@ describe('SectionFeatures', () => {
       expect((figure as HTMLElement | null)?.style.getPropertyValue('--feature-ratio')).toBe(
         asset.ratio,
       );
+    }
+  });
+
+  it('omits the figure for compact tiles that have no image', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const tilesWithoutImage = ['files', 'passwords', 'events', 'ai'];
+
+    for (const featureId of tilesWithoutImage) {
+      const tile = root.querySelector(`[data-feature="${featureId}"]`);
+      expect(tile?.querySelector(':scope > figure')).toBeNull();
+      expect(tile?.querySelector(':scope > img')).toBeNull();
     }
   });
 
@@ -165,19 +178,23 @@ describe('SectionFeatures', () => {
     const compact = root.querySelectorAll('[data-feature-size="compact"]');
     expect(compact.length).toBe(4);
     for (const tile of compact) {
-      expect((tile as HTMLElement).className).toContain('lg:card-side');
+      expect((tile as HTMLElement).className).not.toContain('lg:card-side');
     }
   });
 
-  it('renders a card body and figure with the expected classes for every feature', () => {
+  it('renders a card body for every feature and a figure only for those with an image', () => {
     const root = fixture.nativeElement as HTMLElement;
     const tiles = root.querySelectorAll('[data-feature]');
 
     for (const tile of tiles) {
       expect(tile.querySelector(':scope > .card-body')).not.toBeNull();
-      expect(
-        tile.querySelector(':scope > figure.section-features__visual.section-features__figure'),
-      ).not.toBeNull();
     }
+
+    const tilesWithFigure = Array.from(tiles).filter(
+      (tile) =>
+        tile.querySelector(':scope > figure.section-features__visual.section-features__figure') !==
+        null,
+    );
+    expect(tilesWithFigure.length).toBe(2);
   });
 });
