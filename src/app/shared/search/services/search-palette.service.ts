@@ -1,13 +1,16 @@
-import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { DestroyRef, Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { Authenticator } from '../../service/authenticator';
 
 @Injectable({ providedIn: 'root' })
 export class SearchPaletteService {
   private readonly _auth = inject(Authenticator);
+  private readonly _platformId = inject(PLATFORM_ID);
   private readonly _isOpen = signal(false);
   readonly isOpen = this._isOpen.asReadonly();
 
   constructor() {
+    if (!isPlatformBrowser(this._platformId)) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
         if (!this._auth.user()) return;
