@@ -105,7 +105,7 @@ describe('SectionFeatures', () => {
       [
         'vault',
         {
-          src: '/img/landing/vault.png',
+          src: '/img/landing/vault.webp',
           width: '1280',
           height: '490',
           ratio: '1280 / 490',
@@ -114,7 +114,7 @@ describe('SectionFeatures', () => {
       [
         'projects-tasks',
         {
-          src: '/img/landing/projects-tasks.png',
+          src: '/img/landing/projects-tasks.webp',
           width: '1200',
           height: '490',
           ratio: '1200 / 490',

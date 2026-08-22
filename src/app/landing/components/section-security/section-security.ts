@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
 
 interface SecurityItem {
   readonly text: string;
@@ -23,7 +24,7 @@ const SECURITY_ITEMS: readonly SecurityItem[] = [
 @Component({
   selector: 'landing-section-security',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './section-security.html',
   styleUrl: './section-security.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

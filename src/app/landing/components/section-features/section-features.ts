@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { NgOptimizedImage } from '@angular/common';
 
 type FeatureSize = 'large' | 'compact';
 
@@ -30,7 +31,7 @@ const FEATURES: readonly Feature[] = [
     size: 'large',
     highlights: ['Cifrado en dispositivo', 'PIN o Passkey', 'Sin clave en servidor'],
     image: {
-      src: '/img/landing/vault.png',
+      src: '/img/landing/vault.webp',
       alt: 'Vault cifrado en cliente',
       width: 1280,
       height: 490,
@@ -46,7 +47,7 @@ const FEATURES: readonly Feature[] = [
     size: 'large',
     highlights: ['Proyecto → tareas', 'Tareas o notas', 'Contexto técnico junto'],
     image: {
-      src: '/img/landing/projects-tasks.png',
+      src: '/img/landing/projects-tasks.webp',
       alt: 'Proyectos con tareas y ficheros',
       width: 1200,
       height: 490,
@@ -120,6 +121,7 @@ const FEATURES: readonly Feature[] = [
 @Component({
   selector: 'landing-section-features',
   standalone: true,
+  imports: [NgOptimizedImage],
   templateUrl: './section-features.html',
   styleUrl: './section-features.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

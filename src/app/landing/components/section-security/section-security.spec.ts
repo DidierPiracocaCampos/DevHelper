@@ -38,7 +38,7 @@ describe('SectionSecurity', () => {
   it('renders the vault screenshot in the DOM', () => {
     const root = fixture.nativeElement as HTMLElement;
     const img = root.querySelector('img');
-    expect(img?.getAttribute('src')).toBe('/img/landing/vault-home.png');
+    expect(img?.getAttribute('src')).toBe('/img/landing/vault-home.webp');
     expect(img?.getAttribute('alt')).toBe('Vista del workspace protegido de DevHelper');
     expect(img?.getAttribute('width')).toBe('2560');
     expect(img?.getAttribute('height')).toBe('1600');

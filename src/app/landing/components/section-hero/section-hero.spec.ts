@@ -69,7 +69,7 @@ describe('SectionHero', () => {
   it('renders the hero screenshot with src and alt', () => {
     const root = fixture.nativeElement as HTMLElement;
     const img = root.querySelector('img') as HTMLImageElement;
-    expect(img?.getAttribute('src')).toBe('/img/landing/hero-home.png');
+    expect(img?.getAttribute('src')).toBe('/img/landing/hero-home.webp');
     expect(img?.getAttribute('alt')).toBe('DevHelper dashboard en uso real');
     expect(img?.getAttribute('width')).toBe('1280');
     expect(img?.getAttribute('height')).toBe('800');
@@ -80,7 +80,7 @@ describe('SectionHero', () => {
     const mockup = root.querySelector('.mockup-browser');
     const img = mockup?.querySelector('img') as HTMLImageElement;
     expect(mockup).toBeTruthy();
-    expect(img?.getAttribute('src')).toBe('/img/landing/hero-home.png');
+    expect(img?.getAttribute('src')).toBe('/img/landing/hero-home.webp');
   });
 
   it('renders the hero mockup in the DOM', () => {
