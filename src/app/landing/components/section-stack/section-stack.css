@@ -1,3 +1,125 @@
 :host {
   display: block;
 }
+
+.section-stack__wall {
+  display: flex;
+  overflow: hidden;
+  padding-block: 0 var(--spacing-12);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.section-stack__row {
+  display: flex;
+  width: max-content;
+  gap: var(--spacing-3);
+  animation: section-stack-marquee 50s linear infinite;
+}
+
+.section-stack__row:hover {
+  animation-play-state: paused;
+}
+
+.section-stack__track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding-inline: calc(var(--spacing-3) / 2);
+}
+
+.section-stack__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 12%, transparent);
+  border-radius: var(--radius-box);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+  padding-inline: var(--spacing-6);
+  padding-block: var(--spacing-4);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.section-stack__logo {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.section-stack__chip:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklch, var(--color-base-content) 24%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.stack-reveal {
+  animation: section-stack-enter var(--animate-fade-slide-in) both;
+}
+
+.stack-reveal--1 {
+  animation-delay: 0ms;
+}
+
+.stack-reveal--2 {
+  animation-delay: 100ms;
+}
+
+@keyframes section-stack-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes section-stack-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack-reveal {
+    animation: none;
+  }
+
+  .section-stack__wall {
+    mask-image: none;
+    -webkit-mask-image: none;
+    padding-inline: var(--spacing-4);
+  }
+
+  .section-stack__row {
+    animation: none;
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .section-stack__track--clone {
+    display: none;
+  }
+
+  .section-stack__chip:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}

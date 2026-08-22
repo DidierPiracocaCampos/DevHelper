@@ -1,15 +1,47 @@
-<section [id]="id()" class="bg-base-200">
-  <div class="max-w-7xl mx-auto px-4 py-16 text-center">
-    <h2 class="text-2xl sm:text-3xl font-semibold mb-3">
-      Stack técnico transparente
-    </h2>
-    <p class="opacity-80 mb-8 max-w-2xl mx-auto">
-      Todo el stack es open source y auditable. Sin vendor lock-in, sin SDKs
-      propietarios, sin servicios opacos.
-    </p>
-    <div class="flex flex-wrap items-center justify-center gap-2 max-w-3xl mx-auto">
-      @for (item of items; track item) {
-        <span class="badge badge-lg badge-outline">{{ item }}</span>
+<section [id]="id()" class="section-stack bg-base-200 border-t border-base-300">
+  <div class="max-w-7xl mx-auto px-4 pt-16 pb-2">
+    <div class="text-center max-w-2xl mx-auto stack-reveal stack-reveal--1">
+      <span class="badge badge-soft gap-1 mb-4 text-success">
+        <span class="icon icon-sm" aria-hidden="true">stack</span>
+        Tech abierto
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-semibold mb-3">Stack técnico transparente</h2>
+      <p class="opacity-70">
+        Todo el stack es open source y auditable. Sin vendor lock-in, sin SDKs propietarios, sin
+        servicios opacos.
+      </p>
+    </div>
+  </div>
+
+  <ul class="sr-only">
+    @for (entry of entries; track entry.name) {
+      <li>{{ entry.name }} ({{ entry.groupTitle }})</li>
+    }
+  </ul>
+
+  <div class="section-stack__wall stack-reveal stack-reveal--2" aria-hidden="true">
+    <div class="section-stack__row" data-stack-row="0">
+      @for (_track of [0, 1]; track $index) {
+        <div
+          class="section-stack__track"
+          [class.section-stack__track--clone]="$index === 1"
+          [attr.data-stack-track]="$index"
+        >
+          @for (chip of chips; track chip.name + '-' + $index) {
+            <span class="section-stack__chip" [attr.data-stack-chip]="chip.name">
+              <img
+                class="section-stack__logo"
+                [src]="chip.logo"
+                [alt]=""
+                width="28"
+                height="28"
+                loading="lazy"
+                decoding="async"
+              />
+              {{ chip.name }}
+            </span>
+          }
+        </div>
       }
     </div>
   </div>
