@@ -91,4 +91,47 @@ describe('SiteHeader', () => {
     expect(logo.getAttribute('href')).toBe('/');
     expect(logo.textContent?.trim()).toBe('DevHelper');
   });
+
+  it('renders a mobile dropdown trigger', () => {
+    fixture.detectChanges();
+    const trigger = fixture.nativeElement.querySelector(
+      '[role="button"][aria-label="Abrir menú"]',
+    ) as HTMLElement;
+    expect(trigger).toBeTruthy();
+  });
+
+  it('renders the mobile dropdown content with anchor links and public CTAs', () => {
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const panel = root.querySelector('ul.dropdown-content');
+    expect(panel).toBeTruthy();
+
+    const hrefs = Array.from(panel!.querySelectorAll('a')).map((link) =>
+      (link as HTMLAnchorElement).getAttribute('href'),
+    );
+    expect(hrefs).toEqual(
+      expect.arrayContaining([
+        '/#features',
+        '/#how-it-works',
+        '/#security',
+        '/login',
+        '/login/register',
+      ]),
+    );
+  });
+
+  it('renders the mobile dropdown CTAs for logged-in users', () => {
+    fixture.componentRef.setInput('isLogged', true);
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('ul.dropdown-content') as HTMLElement;
+    expect(panel).toBeTruthy();
+    const hrefs = Array.from(panel.querySelectorAll('a')).map((link) => link.getAttribute('href'));
+    expect(hrefs).toContain('/home');
+
+    const logoutButton = panel.querySelector('button.text-error') as HTMLButtonElement;
+    expect(logoutButton).toBeTruthy();
+    logoutButton.click();
+    expect(auth.logout).toHaveBeenCalledOnce();
+  });
 });
