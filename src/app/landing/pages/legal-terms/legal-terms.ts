@@ -6,6 +6,7 @@ import { Authenticator } from '../../../shared/service/authenticator';
 import { MarkdownPipe } from '../../pipes/markdown.pipe';
 import { LegalAcceptanceI } from '../../models/legal-acceptance.interface';
 import { LegalAcceptanceService } from '../../services/legal-acceptance.service';
+import { SeoService } from '../../services/seo.service';
 import { TermsService } from '../../services/terms.service';
 
 type LegalState<T> = { status: 'loading' } | { status: 'loaded'; data: T };
@@ -22,6 +23,7 @@ export class LegalTerms implements OnInit {
   private readonly _terms = inject(TermsService);
   private readonly _legal = inject(LegalAcceptanceService);
   private readonly _auth = inject(Authenticator);
+  private readonly _seo = inject(SeoService);
 
   private readonly _user = this._auth.user;
   private readonly _userUid = computed(() => this._user()?.uid ?? null);
@@ -53,6 +55,14 @@ export class LegalTerms implements OnInit {
     if (!u) return false;
     return this._legal.needsReAcceptance(this.currentAcceptance());
   });
+
+  constructor() {
+    this._seo.set({
+      title: 'Términos y Condiciones — DevHelper',
+      description: 'Términos y Condiciones del workspace cifrado DevHelper.',
+      path: '/legal/terms',
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     await this._terms.load();

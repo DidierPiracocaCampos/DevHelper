@@ -8,6 +8,7 @@ import { SectionStack } from '../../components/section-stack/section-stack';
 import { SectionCta } from '../../components/section-cta/section-cta';
 import { SiteHeader } from '../../components/site-header/site-header';
 import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'landing-page',
@@ -28,5 +29,15 @@ import { SiteFooter } from '../../components/site-footer/site-footer';
 })
 export class Landing {
   private readonly _auth = inject(Authenticator);
+  private readonly _seo = inject(SeoService);
   protected readonly isLogged = this._auth.isLoggedIn;
+
+  constructor() {
+    this._seo.set({
+      title: 'DevHelper — Tu memoria técnica, organizada y protegida',
+      description:
+        'Workspace cifrado en cliente para desarrolladores: proyectos, tareas, credenciales, archivos y eventos, con IA local opcional.',
+      path: '/',
+    });
+  }
 }
