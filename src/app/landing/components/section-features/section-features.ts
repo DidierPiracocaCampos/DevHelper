@@ -1,69 +1,118 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
+type FeatureSize = 'large' | 'compact';
+
 interface FeatureImage {
   readonly src: string;
   readonly alt: string;
+  readonly width: number;
+  readonly height: number;
+  readonly ratio: string;
 }
 
 interface Feature {
+  readonly id: string;
   readonly icon: string;
   readonly title: string;
   readonly description: string;
+  readonly size: FeatureSize;
+  readonly highlights: readonly string[];
   readonly image: FeatureImage | null;
 }
 
 const FEATURES: readonly Feature[] = [
   {
+    id: 'vault',
     icon: 'lock',
-    title: 'Vault cifrado',
+    title: 'Un vault que solo tú puedes abrir',
     description:
-      'AES-GCM 256 en cliente. PIN o Passkey (WebAuthn). Tu clave maestra nunca sale del navegador.',
+      'AES-GCM 256 con PIN o Passkey (WebAuthn). Tu clave maestra nunca sale del navegador.',
+    size: 'large',
+    highlights: ['Cifrado en dispositivo', 'PIN o Passkey', 'Sin clave en servidor'],
     image: {
-      src: '/img/landing/vault-modal.png',
-      alt: 'Modal de configuración del vault con opciones PIN y Passkey',
+      src: '/img/landing/vault.png',
+      alt: 'Vault cifrado en cliente',
+      width: 1280,
+      height: 490,
+      ratio: '1280 / 490',
     },
   },
   {
+    id: 'projects-tasks',
     icon: 'folder_open',
-    title: 'Proyectos',
-    description: 'Unidades principales con tareas, ficheros y contraseñas. (vista previa)',
-    image: {
-      src: '/img/landing/mockup-projects.svg',
-      alt: '(vista previa) proyectos con tareas y ficheros',
-    },
-  },
-  {
-    icon: 'task_alt',
-    title: 'Tareas y notas',
-    description: 'Tareas con fecha de vencimiento o notas libres por proyecto. (vista previa)',
-    image: {
-      src: '/img/landing/mockup-tasks.svg',
-      alt: '(vista previa) tareas con fecha de vencimiento y notas',
-    },
-  },
-  {
-    icon: 'key',
-    title: 'Contraseñas',
-    description: 'Cifradas en cliente. Asociadas a una tarea o globales al vault.',
-    image: { src: '/img/landing/password-list.png', alt: 'Lista de contraseñas cifradas' },
-  },
-  {
-    icon: 'event',
-    title: 'Eventos',
-    description: 'Recordatorios globales desde una sola vista. (vista previa)',
-    image: {
-      src: '/img/landing/mockup-events.svg',
-      alt: '(vista previa) eventos recordatorios en una vista de calendario',
-    },
-  },
-  {
-    icon: 'memory',
-    title: 'IA local opcional',
+    title: 'Proyectos con todo su contexto',
     description:
-      '100% en tu dispositivo. Opt-in explícito. Ningún dato sale del navegador. (vista previa)',
+      'Organiza por proyecto: tareas con vencimiento o notas libres, con espacio para adjuntos y secretos.',
+    size: 'large',
+    highlights: ['Proyecto → tareas', 'Tareas o notas', 'Contexto técnico junto'],
     image: {
-      src: '/img/landing/mockup-ai.svg',
-      alt: '(vista previa) IA local 100 por ciento en tu dispositivo',
+      src: '/img/landing/projects-tasks.png',
+      alt: 'Proyectos con tareas y ficheros',
+      width: 1200,
+      height: 490,
+      ratio: '1200 / 490',
+    },
+  },
+  {
+    id: 'files',
+    icon: 'attach_file',
+    title: 'Archivos listos cuando vuelvan a hacer falta',
+    description:
+      'Adjuntos globales o por tarea. Se parten en chunks y viven bajo el mismo vault. Hasta 5 MB por fichero.',
+    size: 'compact',
+    highlights: [],
+    image: {
+      src: '/img/landing/files.png',
+      alt: 'Archivos cifrados',
+      width: 800,
+      height: 500,
+      ratio: '800 / 500',
+    },
+  },
+  {
+    id: 'passwords',
+    icon: 'key',
+    title: 'Credenciales junto al trabajo que las necesita',
+    description: 'Secretos cifrados en cliente: globales o ligados a una tarea concreta.',
+    size: 'compact',
+    highlights: [],
+    image: {
+      src: '/img/landing/passwords.png',
+      alt: 'Contraseñas del vault',
+      width: 800,
+      height: 500,
+      ratio: '800 / 500',
+    },
+  },
+  {
+    id: 'events',
+    icon: 'event',
+    title: 'Eventos y recordatorios sin salir del workspace',
+    description: 'Compromisos globales en una sola vista, junto al resto del workspace.',
+    size: 'compact',
+    highlights: [],
+    image: {
+      src: '/img/landing/events.png',
+      alt: 'Eventos y recordatorios',
+      width: 800,
+      height: 500,
+      ratio: '800 / 500',
+    },
+  },
+  {
+    id: 'ai',
+    icon: 'memory',
+    title: 'Una IA local para consultar tu memoria técnica',
+    description:
+      'Opt-in explícito. 100% en tu dispositivo. Consultas estructuradas sobre tu workspace.',
+    size: 'compact',
+    highlights: [],
+    image: {
+      src: '/img/landing/ai.png',
+      alt: 'IA local opcional',
+      width: 800,
+      height: 500,
+      ratio: '800 / 500',
     },
   },
 ];

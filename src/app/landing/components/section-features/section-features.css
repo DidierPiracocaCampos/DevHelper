@@ -1,3 +1,91 @@
 :host {
   display: block;
 }
+
+.section-features__card {
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.section-features__card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px color-mix(in oklch, var(--color-base-content) 8%, transparent);
+}
+
+.section-features__card > .card-body {
+  min-width: 0;
+}
+
+.section-features__icon-chip {
+  border-color: color-mix(in oklch, var(--color-base-content) 12%, transparent);
+}
+
+.section-features__visual {
+  overflow: hidden;
+  background: transparent;
+  aspect-ratio: var(--feature-ratio);
+}
+
+.section-features__visual img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover;
+  object-position: top;
+  transition: transform var(--transition-fast);
+}
+
+.section-features__card:hover .section-features__visual img {
+  transform: scale(1.01);
+}
+
+/* Large: figure fills the card width; height is auto and driven by its asset ratio. */
+.section-features__card--large .section-features__visual {
+  width: 100%;
+  height: auto;
+  border-bottom-left-radius: var(--radius-box);
+  border-bottom-right-radius: var(--radius-box);
+}
+
+.section-features__card--large .section-features__visual img {
+  border-bottom-left-radius: var(--radius-box);
+  border-bottom-right-radius: var(--radius-box);
+}
+
+/* Compact: figure full width on mobile/md, side column on lg+ via card-side. */
+.section-features__card:not(.section-features__card--large) .section-features__visual {
+  max-height: 8rem;
+}
+
+@media (min-width: 1024px) {
+  .section-features__card:not(.section-features__card--large) .section-features__visual {
+    max-height: none;
+    width: 45%;
+    flex: 0 0 45%;
+    max-width: 45%;
+    align-self: flex-start;
+  }
+}
+
+/* Suppress DaisyUI card-side internal divider that frames the figure. */
+.section-features__figure {
+  border-left: 0;
+  border-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-features__card,
+  .section-features__visual img {
+    transition: none;
+  }
+
+  .section-features__card:hover,
+  .section-features__card:hover .section-features__visual img {
+    transform: none;
+  }
+}

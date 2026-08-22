@@ -1,3 +1,23 @@
 :host {
   display: block;
 }
+
+.section-security__visual {
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.section-security__visual:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-security__visual {
+    transition: none;
+  }
+
+  .section-security__visual:hover {
+    transform: none;
+  }
+}

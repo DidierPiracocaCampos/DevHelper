@@ -7,16 +7,16 @@ interface SecurityItem {
 
 const SECURITY_ITEMS: readonly SecurityItem[] = [
   {
-    text: 'Cifrado AES-GCM 256-bit en cliente. La clave maestra se genera en tu navegador y nunca abandona el dispositivo. Sin HTTPS downgrade: el payload que llega a Firebase ya está cifrado.',
+    text: 'Cifrado AES-GCM 256 en dispositivo antes de sincronizar.',
   },
   {
-    text: 'Autenticación con PIN o Passkey (WebAuthn). El PIN se hashea con PBKDF2 y se valida localmente. La Passkey nunca sale del autenticador. Si pierdes ambos métodos y no tienes código de recuperación, los datos son irrecuperables por diseño.',
+    text: 'PIN o Passkey con clave local.',
   },
   {
-    text: 'Sin backdoor del servidor. Ni siquiera DevHelper puede leer tus datos. No hay cuenta maestra, no hay API de recuperación, no hay "modo soporte".',
+    text: 'Sin acceso administrativo ni cuenta maestra.',
   },
   {
-    text: 'Datos en Firebase (Firestore) en la región eur3 (europe-west). Storage cifrado en reposo. Acceso solo del owner del vault via reglas de Firestore.',
+    text: 'Firebase eur3 y acceso owner-only.',
   },
 ];
 

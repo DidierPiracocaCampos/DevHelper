@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Archivos cifrados en el vault">
+  <rect width="800" height="500" fill="#171717"/>
+  <rect x="40" y="40" width="720" height="60" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="80" font-family="Roboto" font-size="22" fill="#e8e8e8" font-weight="600">Archivos</text>
+  <rect x="40" y="120" width="720" height="64" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="158" font-family="Roboto" font-size="18" fill="#e8e8e8">arquitectura-diagram.png</text>
+  <text x="60" y="174" font-family="Roboto" font-size="12" fill="#e8e8e8" opacity="0.6">1.4 MB · cifrado · vault</text>
+  <rect x="40" y="194" width="720" height="64" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="232" font-family="Roboto" font-size="18" fill="#e8e8e8">deploy-runbook.md</text>
+  <text x="60" y="248" font-family="Roboto" font-size="12" fill="#e8e8e8" opacity="0.6">12 KB · cifrado · vault</text>
+  <rect x="40" y="268" width="720" height="64" fill="#20201e" stroke="#363633"/>
+  <text x="60" y="306" font-family="Roboto" font-size="18" fill="#e8e8e8">error-screenshot.png</text>
+  <text x="60" y="322" font-family="Roboto" font-size="12" fill="#e8e8e8" opacity="0.6">780 KB · cifrado · vault</text>
+  <text x="40" y="480" font-family="Roboto" font-size="12" fill="#e8e8e8" opacity="0.4">[cifrado AES-GCM 256 · chunks]</text>
+</svg>

@@ -32,6 +32,19 @@ describe('SiteHeader', () => {
     expect(html).not.toContain('Cerrar sesión');
   });
 
+  it('renders the public anchor navigation', () => {
+    fixture.detectChanges();
+
+    const links = fixture.nativeElement.querySelectorAll('nav a');
+    const hrefs = Array.from(links).map((link) => (link as HTMLAnchorElement).getAttribute('href'));
+    expect(hrefs).toContain('/#features');
+    expect(hrefs).toContain('/#how-it-works');
+    expect(hrefs).toContain('/#security');
+    expect(fixture.nativeElement.textContent).toContain('Características');
+    expect(fixture.nativeElement.textContent).toContain('Cómo funciona');
+    expect(fixture.nativeElement.textContent).toContain('Seguridad');
+  });
+
   it('renders the dashboard CTAs when isLogged is true', () => {
     fixture.componentRef.setInput('isLogged', true);
     fixture.detectChanges();
@@ -41,6 +54,22 @@ describe('SiteHeader', () => {
     expect(html).toContain('Cerrar sesión');
     expect(html).not.toContain('Iniciar sesión');
     expect(html).not.toContain('Crear cuenta');
+  });
+
+  it('keeps anchor navigation and shows authenticated CTAs when isLogged is true', () => {
+    fixture.componentRef.setInput('isLogged', true);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const hrefs = Array.from(root.querySelectorAll('nav a')).map((link) =>
+      link.getAttribute('href'),
+    );
+
+    expect(hrefs).toEqual(
+      expect.arrayContaining(['/#features', '/#how-it-works', '/#security', '/home']),
+    );
+    expect(root.textContent).toContain('Ir al dashboard');
+    expect(root.textContent).toContain('Cerrar sesión');
   });
 
   it('calls Authenticator.logout when the logout button is clicked', () => {

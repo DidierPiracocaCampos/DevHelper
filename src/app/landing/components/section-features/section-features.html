@@ -1,32 +1,67 @@
-<section [id]="id()">
-  <div class="max-w-7xl mx-auto px-4 py-12">
-    <h2 class="text-2xl sm:text-3xl font-semibold mb-3 text-center">
-      Todo lo que necesitas en un solo lugar
-    </h2>
-    <p class="text-center opacity-70 mb-10 max-w-2xl mx-auto">
-      DevHelper centraliza tu memoria técnica: proyectos con tareas, contraseñas
-      cifradas, ficheros adjuntos y eventos recordatorios, todo bajo una misma
-      clave maestra.
-    </p>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (feature of features; track feature.title) {
-        <div class="card card-xl bg-base-200">
-          <div class="card-body">
-            <span class="icon icon-lg text-primary">{{ feature.icon }}</span>
+<section [id]="id()" class="section-features">
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="badge badge-soft gap-1 mb-4">
+        <span class="icon icon-sm" aria-hidden="true">widgets</span>
+        Capacidades
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-semibold mb-3">
+        Todo el contexto de tu trabajo, conectado.
+      </h2>
+      <p class="opacity-70">
+        Guarda cada decisión, tarea, archivo y secreto donde volverás a encontrarlo.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      @for (feature of features; track feature.id) {
+        <article
+          class="card card-xl bg-base-200 section-features__card h-full"
+          [class.section-features__card--large]="feature.size === 'large'"
+          [class.md:col-span-2]="feature.size === 'large'"
+          [class.lg:card-side]="feature.size === 'compact' && !!feature.image"
+          [attr.data-feature]="feature.id"
+          [attr.data-feature-size]="feature.size"
+        >
+          <div class="card-body gap-3">
+            <span
+              class="inline-flex items-center justify-center size-11 rounded-box bg-base-300 border section-features__icon-chip"
+              aria-hidden="true"
+            >
+              <span class="icon icon-lg text-primary" aria-hidden="true">{{ feature.icon }}</span>
+            </span>
+
             <h3 class="card-title text-lg">{{ feature.title }}</h3>
-            <p class="opacity-80">{{ feature.description }}</p>
-            @if (feature.image) {
-              <img
-                [src]="feature.image.src"
-                [alt]="feature.image.alt"
-                width="800"
-                height="500"
-                loading="lazy"
-                class="rounded-lg border border-base-300 mt-4 w-full h-auto"
-              />
+            <p class="opacity-80 text-sm leading-relaxed">{{ feature.description }}</p>
+
+            @if (feature.highlights.length) {
+              <ul class="mt-1 space-y-1.5">
+                @for (item of feature.highlights; track item) {
+                  <li class="flex items-center gap-2 text-sm opacity-80">
+                    <span class="icon icon-sm text-primary" aria-hidden="true">check</span>
+                    <span>{{ item }}</span>
+                  </li>
+                }
+              </ul>
             }
           </div>
-        </div>
+
+          @if (feature.image; as image) {
+            <figure
+              class="section-features__visual section-features__figure"
+              [style.--feature-ratio]="image.ratio"
+            >
+              <img
+                [src]="image.src"
+                [alt]="image.alt"
+                [width]="image.width"
+                [height]="image.height"
+                loading="lazy"
+                class="w-full h-full"
+              />
+            </figure>
+          }
+        </article>
       }
     </div>
   </div>

@@ -70,7 +70,7 @@ body {
 @layer base {
   body {
     font-family: var(--font-base);
-    @apply bg-base-100 h-screen w-screen overflow-y-auto;
+    @apply bg-base-100 min-h-screen w-full;
     position: relative;
   }
 

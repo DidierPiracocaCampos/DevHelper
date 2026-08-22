@@ -54,4 +54,18 @@ describe('Landing', () => {
     expect(stack!.previousElementSibling).toBe(security);
     expect(cta!.previousElementSibling).toBe(stack);
   });
+
+  it('exposes the anchor destinations used by the landing navigation', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    const anchors = [
+      ['features', '/#features'],
+      ['how-it-works', '/#how-it-works'],
+      ['security', '/#security'],
+    ] as const;
+
+    for (const [id, href] of anchors) {
+      expect(root.querySelector(`#${id}`)).toBeTruthy();
+      expect(root.querySelector(`a[href="${href}"]`)).toBeTruthy();
+    }
+  });
 });

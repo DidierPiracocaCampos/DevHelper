@@ -8,32 +8,34 @@ interface Step {
   readonly description: string;
   readonly link: string;
   readonly linkLabel: string;
+  readonly fragment?: string;
 }
 
 const STEPS: readonly Step[] = [
   {
     number: 1,
     icon: 'person_add',
-    title: 'Crea cuenta',
-    description: 'Email y password en Firebase Auth. Sin verificación obligatoria para empezar.',
+    title: 'Crea tu cuenta',
+    description: 'Regístrate con email y password en Firebase Auth y empieza sin onboarding largo.',
     link: '/login/register',
     linkLabel: 'Crear cuenta',
   },
   {
     number: 2,
     icon: 'lock',
-    title: 'Configura tu vault',
+    title: 'Cierra tu vault',
     description:
-      'Elige PIN o Passkey (WebAuthn). La clave maestra se genera en tu navegador y nunca sale.',
-    link: '/legal/terms',
+      'Elige PIN o Passkey. La clave maestra se genera localmente y no sale de tu dispositivo.',
+    link: '/',
     linkLabel: 'Cómo funciona el cifrado',
+    fragment: 'security',
   },
   {
     number: 3,
     icon: 'add_circle',
-    title: 'Empieza a guardar',
+    title: 'Guarda y recupera',
     description:
-      'Proyectos, tareas, contraseñas, ficheros. Todo cifrado en cliente con AES-GCM 256 antes de salir del dispositivo.',
+      'Conserva proyectos, tareas, credenciales, archivos y eventos cifrados con AES-GCM 256.',
     link: '/login',
     linkLabel: 'Iniciar sesión',
   },
