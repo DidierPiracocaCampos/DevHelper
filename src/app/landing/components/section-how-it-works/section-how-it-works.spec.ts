@@ -11,7 +11,7 @@ describe('SectionHowItWorks', () => {
     const root = fixture.nativeElement as HTMLElement;
     const headings = root.querySelectorAll('h3');
     expect(headings.length).toBe(3);
-    expect(root.querySelector('h2')?.textContent).toContain(
+    expect(root.querySelector('h2')?.textContent?.replace(/\s+/g, ' ').trim()).toContain(
       'Empieza en minutos. Conserva el contexto durante años.',
     );
     expect(headings[0].textContent).toContain('Crea tu cuenta');
@@ -33,5 +33,25 @@ describe('SectionHowItWorks', () => {
     for (const icon of icons) {
       expect(icon.getAttribute('aria-hidden')).toBe('true');
     }
+  });
+
+  it('tags each step with a distinct --N modifier', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(SectionHowItWorks);
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const steps = root.querySelectorAll('.how-it-works__step');
+    expect(steps.length).toBe(3);
+    expect(steps[0].classList.contains('how-it-works__step--1')).toBe(true);
+    expect(steps[1].classList.contains('how-it-works__step--2')).toBe(true);
+    expect(steps[2].classList.contains('how-it-works__step--3')).toBe(true);
+  });
+
+  it('renders an orbit ring around each step icon', () => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    const fixture = TestBed.createComponent(SectionHowItWorks);
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelectorAll('.how-it-works__step-orbit').length).toBe(3);
   });
 });
