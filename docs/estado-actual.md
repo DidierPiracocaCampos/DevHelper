@@ -225,6 +225,7 @@ Reorganizar `home` para reflejar la jerarquia:
 - Quitar boton "Continuar con GitHub" (extra) o documentarlo.
 - **Hecho (landing + T&C)** landing pública en `/` con 4 secciones (hero, features, security, cta) y footer. Página `/about` con principios del producto. Página `/legal/terms` que renderiza el markdown del T&C. `landing-site-header` (sticky + blur + border) con CTAs contextuales según sesión; `landing-site-footer` con 3 columnas y `TERMS_VERSION` visible. Dashboard movido de `/` a `/home` (`authCanMatch()`). `landing-terms-modal` montado globalmente en `app.html` para re-aceptación suave cuando hay nueva versión.
 - **Hecho (refactor visual landing)** expansion de la landing a 6 secciones (agregadas `section-how-it-works` y `section-stack`). Refactor de las 4 existentes: `section-hero` con screenshot y copy ampliado, `section-features` con 6 cards grandes y una imagen por card, `section-security` con screenshot lateral y copy tecnico ampliado (AES-GCM, PBKDF2, WebAuthn explicados). Captura real del home + 4 mockups SVG para features sin UI (`mockup-projects`, `mockup-tasks`, `mockup-events`, `mockup-ai`). 2 PNGs adicionales (`vault-modal.png`, `password-list.png`) pendientes de captura manual humana post-merge.
+- **Hecho (landing SSG + performance)**: landing prerenderizada (`outputMode: 'static'`, rutas `''`, `about`, `legal/terms`); resto de la app sigue en CSR vía shell `index.csr.html`. Imágenes convertidas a WebP (~4,5 MB → ~186 KB total). SEO meta tags + Open Graph + `robots.txt` + `sitemap.xml` en `/`. Headers de caché en Firebase Hosting (immutable para JS/CSS hasheados, no-cache para HTML, 1 día para `/img` `/icons` `/legal`). Sin Cloud Functions, sin plan Blaze.
 
 ### 4.4 Mejoras de seguridad / UX
 
@@ -300,4 +301,4 @@ Resumen; el detalle completo esta en `docs/design-context.md` seccion 11.
 
 ## 7. Resumen ejecutivo (1 linea)
 
-Autenticacion, vault cifrado, passwords globales y ficheros globales funcionan. Falta construir el nucleo del producto: proyectos, tareas, eventos, busqueda y modelo de membresia. Antes de eso, reparar la incompatibilidad entre el modelo de `password` en codigo y las reglas de Firestore.
+Landing publica prerenderizada (SSG) con imagenes WebP y SEO meta tags; resto en CSR. Autenticacion, vault cifrado, passwords globales y ficheros globales funcionan. Falta construir el nucleo del producto: proyectos, tareas, eventos, busqueda y modelo de membresia. Antes de eso, reparar la incompatibilidad entre el modelo de `password` en codigo y las reglas de Firestore.
