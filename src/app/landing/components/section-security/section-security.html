@@ -1,7 +1,7 @@
 <section [id]="id()" class="bg-base-200">
   <div class="max-w-7xl mx-auto px-4 py-16">
     <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="badge badge-soft gap-1 mb-4">
+      <span class="badge badge-soft gap-1 mb-4 text-success">
         <span class="icon icon-sm" aria-hidden="true">lock</span>
         Privacidad por diseño
       </span>
@@ -14,32 +14,30 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <ul class="section-security__list" role="list">
           @for (item of items; track item.title) {
-            <article class="card card-xl bg-base-100 border border-base-300 h-full">
-              <div class="card-body gap-3">
-                <div class="flex items-center justify-between">
-                  <span
-                    class="inline-flex items-center justify-center size-11 rounded-box bg-base-300 border"
-                    aria-hidden="true"
-                  >
-                    <span class="icon icon-lg text-primary" aria-hidden="true">{{ item.icon }}</span>
-                  </span>
+            <li class="section-security__row">
+              <span
+                class="section-security__marker"
+                aria-hidden="true"
+              ></span>
+              <div class="section-security__row-body">
+                <div class="flex items-center justify-between gap-3">
+                  <h3 class="font-semibold text-base">{{ item.title }}</h3>
                   @if (item.badge; as badge) {
                     <span class="badge badge-success badge-soft">{{ badge }}</span>
                   }
                 </div>
-                <h3 class="card-title text-lg">{{ item.title }}</h3>
-                <p class="opacity-80 text-sm leading-relaxed">
+                <p class="opacity-75 text-sm leading-relaxed mt-1">
                   <span class="icon icon-sm text-success shrink-0 align-[-2px]" aria-hidden="true">
                     check
                   </span>
                   {{ item.description }}
                 </p>
               </div>
-            </article>
+            </li>
           }
-        </div>
+        </ul>
 
         <div class="mt-6">
           <div class="alert alert-soft alert-success" role="note">

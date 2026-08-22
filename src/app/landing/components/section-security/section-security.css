@@ -2,6 +2,38 @@
   display: block;
 }
 
+.section-security__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.section-security__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding-block: var(--spacing-4);
+  border-top: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
+}
+
+.section-security__row:last-child {
+  border-bottom: 1px solid color-mix(in oklch, var(--color-base-content) 10%, transparent);
+}
+
+.section-security__marker {
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: color-mix(in oklch, var(--color-success) 80%, transparent);
+}
+
+.section-security__row-body {
+  flex: 1;
+  min-width: 0;
+}
+
 .section-security__visual {
   transition:
     transform var(--transition-base),
