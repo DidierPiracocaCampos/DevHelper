@@ -54,9 +54,14 @@ jobs:
         run: npm install -g firebase-tools
 
       - name: Deploy to Firebase Hosting
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVHELPER_A61EF }}
         run: |
-          echo "$FIREBASE_SERVICE_ACCOUNT" > $HOME/firebase-sa.json
-          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-sa.json
-          firebase deploy --only hosting --project devhelper-a61ef --non-interactive
+          # Soporta ambos: SERVICE_ACCOUNT_JSON (preferido) y FIREBASE_TOKEN (firebase login:ci)
+          if printf '%s' '${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVHELPER_A61EF }}' | grep -q "service_account"; then
+            printf '%s' '${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEVHELPER_A61EF }}' > $HOME/firebase-sa.json
+            export GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-sa.json
+            echo "Deploying with Service Account..."
+            firebase deploy --only hosting --project devhelper-a61ef --non-interactive
+          else
+            echo "Deploying with FIREBASE_TOKEN..."
+            firebase deploy --only hosting --project devhelper-a61ef --non-interactive --token "${{ secrets.FIREBASE_TOKEN }}"
+          fi
