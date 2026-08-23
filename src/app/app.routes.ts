@@ -8,6 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'home',
+    title: 'Dashboard | DevHelper',
     loadComponent: () => import('./home/pages/home/home').then((c) => c),
     canMatch: [authCanMatch()],
   },
