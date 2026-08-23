@@ -12,9 +12,10 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10
+          run_install: false
 
       - name: Setup Node 20
         uses: actions/setup-node@v5
@@ -65,3 +66,4 @@ jobs:
             echo "Deploying with FIREBASE_TOKEN..."
             firebase deploy --only hosting --project devhelper-a61ef --non-interactive --token "${{ secrets.FIREBASE_TOKEN }}"
           fi
+
