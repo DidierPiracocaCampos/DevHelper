@@ -7,14 +7,25 @@ import { ConfirmService } from '../../../service/confirm.service';
 import { NasaPictureResource } from '../../../../home/service/nasa-picture';
 
 class FakePrefs {
-  resolvedUrl = { value: () => null as string | null, hasValue: () => false };
+  // mimic Resource<string|null> with .value()
+  private _url = signal<string | null>(null);
+  resolvedUrl = Object.assign(this._url, {
+    value: () => this._url(),
+  }) as unknown as ReturnType<typeof signal<string | null>> & { value: () => string | null };
   hasCustomImage = signal(false);
   setCustomNasaImage = vi.fn();
   clearCustomNasaImage = vi.fn();
+  setResolvedUrl(v: string | null) {
+    this._url.set(v);
+  }
 }
 
 class FakeNasa {
-  getPicture = () => ({ value: () => null, isLoading: () => false });
+  private _value = signal<unknown>(null);
+  getPicture = () => ({ value: this._value, isLoading: () => false });
+  setPicture(v: unknown) {
+    this._value.set(v);
+  }
 }
 
 class FakeConfirm {
@@ -31,16 +42,18 @@ describe('NasaImageSection', () => {
   let component: NasaImageSection;
   let prefs: FakePrefs;
   let confirm: FakeConfirm;
+  let nasa: FakeNasa;
 
   beforeEach(async () => {
     prefs = new FakePrefs();
     confirm = new FakeConfirm();
+    nasa = new FakeNasa();
     await TestBed.configureTestingModule({
       imports: [NasaImageSection],
       providers: [
         { provide: PreferencesService, useValue: prefs },
         { provide: ConfirmService, useValue: confirm },
-        { provide: NasaPictureResource, useClass: FakeNasa },
+        { provide: NasaPictureResource, useValue: nasa },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(NasaImageSection);
@@ -50,6 +63,7 @@ describe('NasaImageSection', () => {
 
   it('does not render an img when there is no preview', () => {
     prefs.hasCustomImage.set(false);
+    nasa.setPicture(null);
     fixture.detectChanges();
     const img: HTMLImageElement | null = fixture.nativeElement.querySelector('img');
     expect(img).toBeNull();
@@ -118,5 +132,93 @@ describe('NasaImageSection', () => {
     await (component as unknown as { handleFile: (f: File) => Promise<void> }).handleFile(doc);
     const err = (component as unknown as { errorMessage: () => string | null }).errorMessage();
     expect(err).toContain('no es una imagen');
+  });
+
+  it('uses thumbnail_url for video fallback and shows VIDEO badge', () => {
+    prefs.hasCustomImage.set(false);
+    prefs.setResolvedUrl(null);
+    nasa.setPicture({
+      url: 'https://player.vimeo.com/video/11386048',
+      thumbnail_url: 'https://i.vimeocdn.com/video/thumb.jpg',
+      media_type: 'video',
+      title: 'Cassini',
+    });
+    fixture.detectChanges();
+    const comp = component as unknown as {
+      fallbackNasaUrl: () => string | null;
+      previewUrl: () => string | null;
+      isFallbackVideo: () => boolean;
+      fallbackVideoUrl: () => string | null;
+    };
+    expect(comp.fallbackNasaUrl()).toBe('https://i.vimeocdn.com/video/thumb.jpg');
+    expect(comp.previewUrl()).toBe('https://i.vimeocdn.com/video/thumb.jpg');
+    expect(comp.isFallbackVideo()).toBe(true);
+    expect(comp.fallbackVideoUrl()).toBe('https://player.vimeo.com/video/11386048');
+    const img: HTMLImageElement | null = fixture.nativeElement.querySelector('img');
+    expect(img?.src).toContain('i.vimeocdn.com');
+    const badge = fixture.nativeElement.textContent as string;
+    expect(badge).toContain('VIDEO');
+  });
+
+  it('returns null fallback when video has no thumbnail', () => {
+    prefs.hasCustomImage.set(false);
+    prefs.setResolvedUrl(null);
+    nasa.setPicture({
+      url: 'https://player.vimeo.com/video/999',
+      media_type: 'video',
+      title: 'No thumb',
+    });
+    fixture.detectChanges();
+    const comp = component as unknown as {
+      fallbackNasaUrl: () => string | null;
+      previewUrl: () => string | null;
+      isFallbackVideo: () => boolean;
+    };
+    expect(comp.fallbackNasaUrl()).toBeNull();
+    expect(comp.previewUrl()).toBeNull();
+    expect(comp.isFallbackVideo()).toBe(true);
+    const img: HTMLImageElement | null = fixture.nativeElement.querySelector('img');
+    expect(img).toBeNull();
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Sin miniatura');
+  });
+
+  it('uses url for image media_type fallback', () => {
+    prefs.hasCustomImage.set(false);
+    prefs.setResolvedUrl(null);
+    nasa.setPicture({
+      url: 'https://apod.nasa.gov/apod/image/test.jpg',
+      media_type: 'image',
+      title: 'Test',
+    });
+    fixture.detectChanges();
+    const comp = component as unknown as {
+      fallbackNasaUrl: () => string | null;
+      previewUrl: () => string | null;
+      isFallbackVideo: () => boolean;
+    };
+    expect(comp.fallbackNasaUrl()).toBe('https://apod.nasa.gov/apod/image/test.jpg');
+    expect(comp.previewUrl()).toBe('https://apod.nasa.gov/apod/image/test.jpg');
+    expect(comp.isFallbackVideo()).toBe(false);
+  });
+
+  it('prefers custom image over NASA video thumbnail', () => {
+    prefs.hasCustomImage.set(true);
+    prefs.setResolvedUrl('blob:custom');
+    nasa.setPicture({
+      url: 'https://player.vimeo.com/video/11386048',
+      thumbnail_url: 'https://i.vimeocdn.com/video/thumb.jpg',
+      media_type: 'video',
+      title: 'Video',
+    });
+    fixture.detectChanges();
+    const comp = component as unknown as {
+      previewUrl: () => string | null;
+      isFallbackVideo: () => boolean;
+    };
+    expect(comp.previewUrl()).toBe('blob:custom');
+    expect(comp.isFallbackVideo()).toBe(false);
+    const img: HTMLImageElement | null = fixture.nativeElement.querySelector('img');
+    expect(img?.src).toContain('blob:custom');
   });
 });

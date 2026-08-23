@@ -1,13 +1,49 @@
 <div class="hover-3d w-full h-full min-h-35 relative">
-  <div>
-    @if (imageUrl(); as url) {
-      <img
-        [ngSrc]="url"
-        [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
-        fill
-        class="object-cover rounded-2xl"
-        priority
-      />
+  <div class="absolute inset-0">
+    @if (displayUrl(); as url) {
+      @if (isVideo()) {
+        <a
+          [href]="videoUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+          [attr.aria-label]="'Ver video: ' + (info.value()?.title ?? 'APOD')"
+          class="block w-full h-full relative rounded-2xl overflow-hidden group"
+        >
+          <img
+            [src]="url"
+            [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
+            class="object-cover w-full h-full rounded-2xl"
+            loading="lazy"
+          />
+          <span
+            class="absolute inset-0 grid place-items-center bg-black/20 rounded-2xl transition-colors group-hover:bg-black/30"
+            aria-hidden="true"
+          >
+            <span class="material-symbols-outlined text-white text-5xl drop-shadow-lg">play_circle</span>
+          </span>
+        </a>
+      } @else {
+        <img
+          [src]="url"
+          [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
+          class="object-cover w-full h-full rounded-2xl"
+          loading="lazy"
+        />
+      }
+    } @else if (isLoading()) {
+      <div class="skeleton w-full h-full rounded-2xl"></div>
+    } @else if (isVideo()) {
+      <div class="w-full h-full rounded-2xl bg-base-200 grid place-items-center p-4 text-center">
+        <div class="flex flex-col gap-2 items-center text-base-content/70 text-sm">
+          <span class="material-symbols-outlined text-3xl" aria-hidden="true">videocam_off</span>
+          <span>Sin miniatura para este video</span>
+          @if (videoUrl(); as vUrl) {
+            <a [href]="vUrl" target="_blank" rel="noopener noreferrer" class="link link-primary text-xs">
+              Ver en NASA
+            </a>
+          }
+        </div>
+      </div>
     }
   </div>
   <div></div>

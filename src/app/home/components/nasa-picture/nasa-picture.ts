@@ -1,11 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { NasaPictureResource } from '../../service/nasa-picture';
-import { NgOptimizedImage } from '@angular/common';
 import { PreferencesService } from '../../../shared/preferences';
 
 @Component({
   selector: 'nasa-picture',
-  imports: [NgOptimizedImage],
+  imports: [],
   templateUrl: './nasa-picture.html',
 })
 export class NasaPicture {
@@ -15,7 +14,21 @@ export class NasaPicture {
   info = this._service.getPicture();
   customUrl = this._prefs.resolvedUrl;
 
-  imageUrl = computed(
-    () => this.customUrl.value() ?? (this.info.hasValue() ? this.info.value()?.url : null) ?? null,
-  );
+  displayUrl = computed(() => {
+    const custom = this.customUrl.value();
+    if (custom) return custom;
+    const v = this.info.value();
+    if (!v) return null;
+    if (v.media_type === 'video') return v.thumbnail_url ?? null;
+    return v.url;
+  });
+
+  isVideo = computed(() => !this.customUrl.value() && this.info.value()?.media_type === 'video');
+
+  videoUrl = computed(() => this.info.value()?.url ?? null);
+
+  isLoading = computed(() => this.info.isLoading() && !this.customUrl.value());
+
+  /** @deprecated use displayUrl */
+  imageUrl = this.displayUrl;
 }

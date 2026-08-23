@@ -42,8 +42,18 @@ export class NasaImageSection {
 
   protected readonly fallbackNasaUrl = computed<string | null>(() => {
     const v = this._nasaPicture.value();
-    return v?.url ?? null;
+    if (!v) return null;
+    if (v.media_type === 'video') return v.thumbnail_url ?? null;
+    return v.url;
   });
+
+  protected readonly isFallbackVideo = computed(
+    () => !this.hasCustomImage() && this._nasaPicture.value()?.media_type === 'video',
+  );
+
+  protected readonly fallbackVideoUrl = computed<string | null>(
+    () => this._nasaPicture.value()?.url ?? null,
+  );
 
   protected readonly previewUrl = computed<string | null>(() => {
     const custom = this.resolvedUrl.value();

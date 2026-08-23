@@ -6,4 +6,6 @@ export interface NasaPictureI {
   service_version: string;
   title: string;
   url: string;
+  thumbnail_url?: string;
+  copyright?: string;
 }
