@@ -36,5 +36,6 @@ skills-lock.json
 docs/superpowers/
 .vscode/
 
-#enviroment
-src/environment/environment.ts
+# environment — template is committed; use local file for real secrets
+src/environment/environment.local.ts
+src/environment/environment.development.ts
