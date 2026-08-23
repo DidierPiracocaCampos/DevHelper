@@ -89,7 +89,8 @@ describe('SiteHeader', () => {
     ) as HTMLAnchorElement;
     expect(logo).toBeTruthy();
     expect(logo.getAttribute('href')).toBe('/');
-    expect(logo.textContent?.trim()).toBe('DevHelper');
+    expect(logo.textContent).toContain('DevHelper');
+    expect(logo.querySelector('.icon')?.textContent?.trim()).toBe('code');
   });
 
   it('renders a mobile dropdown trigger', () => {

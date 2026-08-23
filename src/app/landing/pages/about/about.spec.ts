@@ -27,7 +27,9 @@ describe('About', () => {
   it('renders the H1 and the main text', () => {
     const html = fixture.nativeElement as HTMLElement;
     const h1 = html.querySelector('h1');
-    expect(h1?.textContent?.trim()).toBe('Acerca de DevHelper');
+    expect(h1?.textContent).toContain('Acerca de');
+    expect(h1?.textContent).toContain('DevHelper');
+    expect(h1?.querySelector('.icon')?.textContent?.trim()).toBe('code');
     const text = html.textContent ?? '';
     expect(text).toContain('workspace personal cifrado para developers');
     expect(text).toContain('Principios');

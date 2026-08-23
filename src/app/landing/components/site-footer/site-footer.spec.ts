@@ -22,6 +22,7 @@ describe('SiteFooter', () => {
     expect(html).toContain('Producto');
     expect(html).toContain('Legal');
     expect(html).toContain('DevHelper');
+    expect(fixture.nativeElement.querySelector('.icon')?.textContent?.trim()).toBe('code');
   });
 
   it('renders the Producto column links', () => {
