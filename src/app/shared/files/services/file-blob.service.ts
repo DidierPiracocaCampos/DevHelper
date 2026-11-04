@@ -2,6 +2,7 @@ import { Injectable, Injector, inject, runInInjectionContext } from '@angular/co
 import {
   Bytes,
   collection,
+  deleteDoc,
   doc,
   Firestore,
   getDoc,
@@ -105,48 +106,78 @@ export class FileBlobService {
 
     options.onProgress?.({ loaded: 0, total: file.size, pct: 0 });
 
-    for (const chunk of FileBlobService.splitIntoChunks(file, this.CHUNK_SIZE)) {
-      const slice = await file.slice(chunk.start, chunk.end).arrayBuffer();
-      const plain = new Uint8Array(slice);
-      const dataBytes =
-        options.encryptWith && iv
-          ? new Uint8Array(
-              await crypto.subtle.encrypt(
-                { name: 'AES-GCM', iv: iv as BufferSource },
-                options.encryptWith,
-                plain,
-              ),
-            )
-          : plain;
+    const written: number[] = [];
+    try {
+      for (const chunk of FileBlobService.splitIntoChunks(file, this.CHUNK_SIZE)) {
+        const slice = await file.slice(chunk.start, chunk.end).arrayBuffer();
+        const plain = new Uint8Array(slice);
+        const dataBytes =
+          options.encryptWith && iv
+            ? new Uint8Array(
+                await crypto.subtle.encrypt(
+                  { name: 'AES-GCM', iv: iv as BufferSource },
+                  options.encryptWith,
+                  plain,
+                ),
+              )
+            : plain;
 
-      const bytes = Bytes.fromUint8Array(dataBytes);
+        await this._writeChunk(user.uid, segments, id, chunk.index, dataBytes);
+        written.push(chunk.index);
 
-      await runInInjectionContext(this._injector, async () => {
-        const chunkRef = doc(
-          this._firestore,
-          'users',
-          user.uid,
-          ...segments,
-          id,
-          'chunks',
-          String(chunk.index),
-        );
-        await setDoc(chunkRef, { index: chunk.index, data: bytes });
-      });
+        options.onProgress?.({
+          loaded: chunk.end,
+          total: file.size,
+          pct: Math.round((chunk.end / file.size) * 100),
+        });
+      }
 
-      options.onProgress?.({
-        loaded: chunk.end,
-        total: file.size,
-        pct: Math.round((chunk.end / file.size) * 100),
-      });
+      await this._writeMetadata(user.uid, segments, id, this._toFirestore(metadata));
+    } catch (err) {
+      // Chunks are written before the metadata doc; without cleanup a rejected upload
+      // leaves orphan chunk docs that nothing references. Best effort, original error wins.
+      await Promise.allSettled(
+        written.map((index) => this._deleteChunk(user.uid, segments, id, index)),
+      );
+      throw err;
     }
 
-    await runInInjectionContext(this._injector, async () => {
-      const metaRef = doc(this._firestore, 'users', user.uid, ...segments, id);
-      await setDoc(metaRef, this._toFirestore(metadata));
-    });
-
     return { id, ...metadata };
+  }
+
+  private async _writeChunk(
+    uid: string,
+    segments: readonly string[],
+    id: string,
+    index: number,
+    data: Uint8Array,
+  ): Promise<void> {
+    await runInInjectionContext(this._injector, async () => {
+      const chunkRef = doc(this._firestore, 'users', uid, ...segments, id, 'chunks', String(index));
+      await setDoc(chunkRef, { index, data: Bytes.fromUint8Array(data) });
+    });
+  }
+
+  private async _writeMetadata(
+    uid: string,
+    segments: readonly string[],
+    id: string,
+    data: Record<string, unknown>,
+  ): Promise<void> {
+    await runInInjectionContext(this._injector, async () => {
+      await setDoc(doc(this._firestore, 'users', uid, ...segments, id), data);
+    });
+  }
+
+  private async _deleteChunk(
+    uid: string,
+    segments: readonly string[],
+    id: string,
+    index: number,
+  ): Promise<void> {
+    await runInInjectionContext(this._injector, async () => {
+      await deleteDoc(doc(this._firestore, 'users', uid, ...segments, id, 'chunks', String(index)));
+    });
   }
 
   async deleteFile(namespace: BlobNamespace, id: string): Promise<void> {

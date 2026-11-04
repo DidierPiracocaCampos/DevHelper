@@ -48,10 +48,22 @@ const skip = !FIRESTORE_EMULATOR_HOST;
               function isPositiveInt(value) { return value is int && value >= 0; }
               function isUnchanged(field) { return request.resource.data[field] == resource.data[field]; }
               function isBool(value) { return value is bool; }
+              function isValidTag(tag) {
+                return tag is string && tag.size() > 0 && tag.size() <= 32;
+              }
               function isValidTags(t) {
                 return t is list
                     && t.size() <= 10
-                    && t.allMatches(tag, tag is string && tag.size() > 0 && tag.size() <= 32);
+                    && (t.size() <= 0 || isValidTag(t[0]))
+                    && (t.size() <= 1 || isValidTag(t[1]))
+                    && (t.size() <= 2 || isValidTag(t[2]))
+                    && (t.size() <= 3 || isValidTag(t[3]))
+                    && (t.size() <= 4 || isValidTag(t[4]))
+                    && (t.size() <= 5 || isValidTag(t[5]))
+                    && (t.size() <= 6 || isValidTag(t[6]))
+                    && (t.size() <= 7 || isValidTag(t[7]))
+                    && (t.size() <= 8 || isValidTag(t[8]))
+                    && (t.size() <= 9 || isValidTag(t[9]));
               }
               function hasValidFileMetadata(m, isCreate) {
                 return isBoundedString(m.name, 255)
