@@ -1,6 +1,5 @@
-// Copia este archivo a environment.ts para desarrollo local
-// o a environment.local.ts y ajusta angular.json si prefieres fileReplacements.
-// Este archivo NO se commitea (ver .gitignore).
+// Copia este archivo a environment.local.ts (gitignored). 'pnpm start' lo usa via fileReplacements (angular.json, config 'local').
+// environment.local.ts NO se commitea (ver .gitignore); este ejemplo si, sin claves reales.
 export const environment = {
   firebaseConfig: {
     projectId: 'devhelper-a61ef',
