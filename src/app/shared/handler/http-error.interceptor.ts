@@ -1,4 +1,4 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpContextToken, HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ToastService } from '../service/toast';
@@ -16,8 +16,16 @@ const HTTP_ERROR_MESSAGES: Record<number, string> = {
   503: 'Servicio no disponible',
 };
 
+/**
+ * Set to true on requests whose failure the caller handles in its own UI (e.g. optional widgets),
+ * so the global interceptor does not show an error toast. The error is still rethrown.
+ */
+export const SKIP_ERROR_TOAST = new HttpContextToken<boolean>(() => false);
+
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const toastService = inject(ToastService);
+
+  if (req.context.get(SKIP_ERROR_TOAST)) return next(req);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {

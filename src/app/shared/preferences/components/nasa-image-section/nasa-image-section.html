@@ -36,6 +36,15 @@
       }
     } @else if (isNasaLoading()) {
       <span class="loading loading-spinner loading-md text-base-content/50"></span>
+    } @else if (isNasaUnavailable()) {
+      <div
+        class="flex flex-col gap-2 items-center text-base-content/60 text-sm p-4 text-center"
+        role="status"
+      >
+        <span class="material-symbols-outlined text-3xl" aria-hidden="true">cloud_off</span>
+        <span>La imagen de NASA no está disponible ahora</span>
+        <span class="text-xs">Sube tu propia imagen para que el widget no quede vacío.</span>
+      </div>
     } @else if (isFallbackVideo()) {
       <div class="flex flex-col gap-2 items-center text-base-content/60 text-sm p-4 text-center">
         <span class="material-symbols-outlined text-3xl" aria-hidden="true">videocam_off</span>

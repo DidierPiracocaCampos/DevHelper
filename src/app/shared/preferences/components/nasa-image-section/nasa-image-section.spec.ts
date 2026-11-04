@@ -22,9 +22,22 @@ class FakePrefs {
 
 class FakeNasa {
   private _value = signal<unknown>(null);
-  getPicture = () => ({ value: this._value, isLoading: () => false });
+  private _error = signal<unknown>(undefined);
+  // Mirrors Angular's Resource: value() throws while in error state.
+  getPicture = () => ({
+    value: () => {
+      if (this._error()) throw new Error('Resource is currently in an error state');
+      return this._value();
+    },
+    hasValue: () => !this._error() && this._value() != null,
+    isLoading: () => false,
+    error: this._error,
+  });
   setPicture(v: unknown) {
     this._value.set(v);
+  }
+  setError(e: unknown) {
+    this._error.set(e);
   }
 }
 
@@ -220,5 +233,25 @@ describe('NasaImageSection', () => {
     expect(comp.isFallbackVideo()).toBe(false);
     const img: HTMLImageElement | null = fixture.nativeElement.querySelector('img');
     expect(img?.src).toContain('blob:custom');
+  });
+
+  it('shows an unavailable message with upload hint when APOD fails', () => {
+    prefs.hasCustomImage.set(false);
+    prefs.setResolvedUrl(null);
+    nasa.setPicture(null);
+    nasa.setError(new Error('500'));
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('img')).toBeNull();
+    expect(el.textContent).toContain('no está disponible');
+    expect(el.textContent).toContain('Sube tu propia imagen');
+  });
+
+  it('does not show the unavailable message when a custom image is set', () => {
+    prefs.hasCustomImage.set(true);
+    prefs.setResolvedUrl('blob:custom');
+    nasa.setError(new Error('500'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('no está disponible');
   });
 });

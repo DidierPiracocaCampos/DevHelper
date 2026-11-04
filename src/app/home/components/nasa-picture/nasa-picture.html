@@ -6,12 +6,12 @@
           [href]="videoUrl()"
           target="_blank"
           rel="noopener noreferrer"
-          [attr.aria-label]="'Ver video: ' + (info.value()?.title ?? 'APOD')"
+          [attr.aria-label]="'Ver video: ' + (picture()?.title ?? 'APOD')"
           class="block w-full h-full relative rounded-2xl overflow-hidden group"
         >
           <img
             [src]="url"
-            [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
+            [alt]="picture()?.title ?? 'Imagen del widget NASA'"
             class="object-cover w-full h-full rounded-2xl"
             loading="lazy"
           />
@@ -25,13 +25,34 @@
       } @else {
         <img
           [src]="url"
-          [alt]="info.value()?.title ?? 'Imagen del widget NASA'"
+          [alt]="picture()?.title ?? 'Imagen del widget NASA'"
           class="object-cover w-full h-full rounded-2xl"
           loading="lazy"
         />
       }
     } @else if (isLoading()) {
       <div class="skeleton w-full h-full rounded-2xl"></div>
+    } @else if (hasError()) {
+      <div
+        class="w-full h-full rounded-2xl bg-base-200 grid place-items-center p-4 text-center"
+        role="status"
+      >
+        <div class="flex flex-col gap-2 items-center text-base-content/70 text-sm">
+          <span class="material-symbols-outlined text-3xl" aria-hidden="true">cloud_off</span>
+          <span>La imagen de NASA no está disponible ahora</span>
+          <span class="text-xs text-base-content/50">
+            Puedes poner tu propia imagen en Configuración → Widget NASA
+          </span>
+          <a
+            [href]="apodPageUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link link-primary text-xs"
+          >
+            Ver en NASA
+          </a>
+        </div>
+      </div>
     } @else if (isVideo()) {
       <div class="w-full h-full rounded-2xl bg-base-200 grid place-items-center p-4 text-center">
         <div class="flex flex-col gap-2 items-center text-base-content/70 text-sm">

@@ -28,7 +28,12 @@ class FakePrefs {
 }
 
 class FakeNasa {
-  getPicture = () => ({ value: () => null, isLoading: () => false });
+  getPicture = () => ({
+    value: () => null,
+    hasValue: () => false,
+    isLoading: () => false,
+    error: () => undefined,
+  });
 }
 
 class FakeConfirm {
