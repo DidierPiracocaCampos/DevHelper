@@ -1,22 +1,26 @@
-<section>
-  <div class="max-w-5xl mx-auto px-4 py-16">
-    <div
-      class="section-cta__surface bg-base-200 border border-base-300 rounded-box p-6 sm:p-8 text-center"
-    >
-      <h2 class="text-2xl sm:text-3xl font-semibold mb-6">
-        Deja de reconstruir el mismo contexto.
-      </h2>
-      <p class="opacity-70 mb-8 max-w-2xl mx-auto">
-        Centraliza tu memoria técnica en un workspace privado y vuelve a encontrarla cuando la
-        necesites.
+<section class="cta">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <div class="cta__intro">
+      <h2 class="cta__title">Lo próximo que resuelvas, guárdalo.</h2>
+      <div class="flex flex-wrap items-center gap-3">
+        <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
+        <a routerLink="/login" class="btn btn-ghost btn-lg">Iniciar sesión</a>
+      </div>
+    </div>
+    <div class="blank" aria-hidden="true">
+      <p class="blank__head">
+        <span class="icon">radio_button_unchecked</span>
+        Tu primera tarea
       </p>
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <a routerLink="/login/register" class="btn btn-primary btn-lg section-cta__button-primary">
-          Crear cuenta
-        </a>
-        <a routerLink="/login" class="btn btn-ghost btn-lg section-cta__button-secondary">
-          Iniciar sesión
-        </a>
+      <div class="blank__fields">
+        <p class="blank__field">
+          <span class="blank__label">Problema</span>
+          ¿Qué ha fallado hoy?
+        </p>
+        <p class="blank__field">
+          <span class="blank__label">Solución</span>
+          Lo que escribas aquí, lo encontrarás dentro de dos años.
+        </p>
       </div>
     </div>
   </div>

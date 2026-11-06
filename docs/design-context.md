@@ -120,7 +120,7 @@ utilities.css   ->  clases compositivas:
 
 - **Fuente:** Roboto (cargada via Google Fonts en `src/styles.css:1`, post-build inlineada como `@font-face` con URLs directas a `fonts.gstatic.com`). Solo se cargan los pesos 400, 500, 600, 700 e italic 400 (los usados por los tokens `--font-weight-*`). Los pesos 100-300 y 800-900 no se descargan. No usar otras fuentes. Sin fallbacks custom en CSS.
 - **Mono:** el token `--font-mono` es un alias a Roboto (`'Roboto', monospace`). Mantiene la regla "una sola familia" sin introducir Courier/Menlo del sistema. No confundir con la clase Tailwind `font-mono`, que sigue cayendo al mono del sistema — la regla de diseno es no usar `font-mono` en templates.
-- **Tamafos** via tokens `--font-size-{xs..4xl}`.
+- **Tamafos** via tokens `--font-size-{xs..4xl}`. Titulares de la landing: `--font-size-section` y `--font-size-display`.
 - **Iconos:** Material Symbols Outlined (cargados externamente). Aplicar via clase `icon` (definida en `utilities.css:2-10`) con modificadores `icon-sm` / `icon-lg`. Variacion fija: FILL 0, wght 400, GRAD 0, opsz 24.
 - **Sin emojis** en UI. Excepcion: si el diseno lo requiere explicitamente.
 
@@ -179,6 +179,7 @@ Patrones de uso:
 - **No** cargar mas de una fuente.
 - **No** crear nuevos componentes propios sin antes verificar que daisyUI no los tenga.
 - **No** anadir un segundo tema sin migrar primero `tokens.css` para no duplicar colores.
+- **No** usar nombres de componentes daisyUI como clases propias (`.hero`, `.stack`, `.card`, `.menu`...): heredan su layout. `.hero` apila sus hijos en la misma celda y oculta contenido.
 - **No** usar emojis como iconos.
 - **No** usar gradientes decorativos (el unico gradiente legitimo es `frost-effect` en styles.css:82-84, para hero/banneres de marketing si se anaden).
 

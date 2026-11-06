@@ -1,42 +1,17 @@
-<section [id]="id()">
-  <div class="max-w-7xl mx-auto px-4 py-16">
-    <h2 class="text-2xl sm:text-3xl font-semibold mb-3 text-center how-it-works__title">
-      <span class="how-it-works__title-line how-it-works__title-line--start">
-        Empieza en <span class="how-it-works__accent">minutos</span>.
-      </span>
-      <span class="how-it-works__title-line how-it-works__title-line--end">
-        Conserva el <span class="how-it-works__accent">contexto</span> durante años.
-      </span>
-    </h2>
-    <p class="text-center opacity-70 mb-12 max-w-2xl mx-auto">
-      Configura tu vault, guarda contexto y vuelve a encontrarlo sin cambiar de herramienta.
-    </p>
-    <div class="grid lg:grid-cols-3 gap-8 relative">
-      <div class="how-it-works__timeline hidden lg:block" aria-hidden="true"></div>
-      @for (step of steps; track step.number; let i = $index) {
-        <div
-          class="text-center how-it-works__step"
-          [class]="'how-it-works__step how-it-works__step--' + (i + 1)"
-        >
-          <div class="how-it-works__step-orbit">
-            <div
-              class="how-it-works__step-icon inline-flex items-center justify-center w-24 h-24 rounded-full bg-base-200 border border-base-300 relative"
-            >
-              <span class="icon icon-lg text-primary" aria-hidden="true">{{ step.icon }}</span>
-              <span class="absolute -top-2 -right-2 badge badge-primary">{{ step.number }}</span>
-            </div>
-          </div>
-          <h3 class="text-lg font-semibold mb-2 how-it-works__step-title">{{ step.title }}</h3>
-          <p class="opacity-80 mb-3">{{ step.description }}</p>
-          <a
-            [routerLink]="step.link"
-            [fragment]="step.fragment"
-            class="link link-hover text-sm"
-          >
+<section [id]="id()" class="how">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h2 class="how__title">Tres pasos para no volver a buscarlo.</h2>
+    <ol class="checklist">
+      @for (step of steps; track step.number) {
+        <li class="checklist__row">
+          <span class="icon" aria-hidden="true">radio_button_unchecked</span>
+          <h3 class="checklist__title">{{ step.title }}</h3>
+          <p class="checklist__text">{{ step.description }}</p>
+          <a [routerLink]="step.link" [fragment]="step.fragment" class="checklist__link link">
             {{ step.linkLabel }}
           </a>
-        </div>
+        </li>
       }
-    </div>
+    </ol>
   </div>
 </section>

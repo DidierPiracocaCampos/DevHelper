@@ -1,7 +1,7 @@
-<header
-  class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-base-100/90 via-base-100/80 to-base-100/60 backdrop-blur-md border-b border-info/20 shadow-[0_1px_0_0_oklch(70%_0.2_265/0.08),0_8px_24px_-12px_rgb(0_0_0/0.5)]"
->
-  <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+<header class="fixed top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300">
+  <div
+    class="max-w-[90rem] mx-auto flex items-center justify-between gap-4 px-4 sm:px-8 lg:px-16 py-3"
+  >
     <a
       routerLink="/"
       class="inline-flex items-center gap-1.5 font-bold text-lg tracking-tight hover:opacity-80"
@@ -11,33 +11,22 @@
       DevHelper
     </a>
 
-    <nav class="hidden md:flex items-center gap-2">
-      <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">
-        Características
-      </a>
+    <nav class="hidden md:flex items-center gap-4" aria-label="Principal">
+      <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">Características</a>
       <a routerLink="/" fragment="how-it-works" class="link link-hover text-sm px-1">
         Cómo funciona
       </a>
-      <a routerLink="/" fragment="security" class="link link-hover text-sm px-1">
-        Seguridad
-      </a>
+      <a routerLink="/" fragment="security" class="link link-hover text-sm px-1">Seguridad</a>
       @if (!isLogged()) {
-        <a routerLink="/login" class="btn btn-ghost btn-sm sm:btn-md">
-          Iniciar sesión
-        </a>
-        <a
-          routerLink="/login/register"
-          class="btn btn-primary btn-sm sm:btn-md"
-        >
+        <a routerLink="/login" class="btn btn-ghost btn-sm sm:btn-md text-sm">Iniciar sesión</a>
+        <a routerLink="/login/register" class="btn btn-primary btn-sm sm:btn-md text-sm">
           Crear cuenta
         </a>
       } @else {
-        <a routerLink="/home" class="btn btn-ghost btn-sm sm:btn-md">
-          Ir al dashboard
-        </a>
+        <a routerLink="/home" class="btn btn-ghost btn-sm sm:btn-md text-sm">Ir al dashboard</a>
         <button
           type="button"
-          class="btn btn-error btn-outline btn-sm sm:btn-md"
+          class="btn btn-error btn-outline btn-sm sm:btn-md text-sm"
           (click)="logout()"
         >
           Cerrar sesión
@@ -46,12 +35,7 @@
     </nav>
 
     <div class="dropdown dropdown-end md:hidden">
-      <div
-        tabindex="0"
-        role="button"
-        aria-label="Abrir menú"
-        class="btn btn-ghost btn-square"
-      >
+      <div tabindex="0" role="button" aria-label="Abrir menú" class="btn btn-ghost btn-square">
         <span class="icon" aria-hidden="true">menu</span>
       </div>
       <ul
@@ -80,9 +64,7 @@
             <a routerLink="/home">Ir al dashboard</a>
           </li>
           <li>
-            <button type="button" class="text-error" (click)="logout()">
-              Cerrar sesión
-            </button>
+            <button type="button" class="text-error" (click)="logout()">Cerrar sesión</button>
           </li>
         }
       </ul>

@@ -11,6 +11,8 @@
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 1.875rem;
     --font-size-4xl: 2.25rem;
+    --font-size-section: clamp(2rem, 3.6vw, 3.25rem);
+    --font-size-display: clamp(2.75rem, max(6.2vw, min(16vw, 4rem)), 5.5rem);
 
     --font-weight-normal: 400;
     --font-weight-medium: 500;

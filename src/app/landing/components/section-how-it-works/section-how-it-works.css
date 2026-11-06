@@ -2,150 +2,78 @@
   display: block;
 }
 
-.how-it-works__title {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-1);
-  align-items: center;
+.how {
+  padding-block: 5rem;
+  background: var(--color-base-200);
 }
 
-.how-it-works__title-line {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(0.5rem);
-  animation: how-it-works-fade-up 700ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+.how__title {
+  max-width: 20ch;
+  margin-bottom: var(--spacing-10);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
-.how-it-works__title-line--start {
-  animation-delay: 80ms;
+.checklist {
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-sm);
+  background: var(--color-base-100);
 }
 
-.how-it-works__title-line--end {
-  animation-delay: 320ms;
+.checklist__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-5);
 }
 
-.how-it-works__accent {
-  position: relative;
-  background-image: linear-gradient(
-    100deg,
-    var(--color-success),
-    var(--color-primary),
-    var(--color-success)
-  );
-  background-size: 200% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+.checklist__row + .checklist__row {
+  border-top: 1px solid var(--color-base-300);
+}
+
+.checklist__title {
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  animation: how-it-works-shimmer 6s ease-in-out infinite;
 }
 
-.how-it-works__accent::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-success), transparent);
-  border-radius: var(--radius-full);
-  opacity: 0;
-  transform-origin: left;
-  animation:
-    how-it-works-underline 700ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards,
-    how-it-works-underline-pulse 3.6s ease-in-out infinite;
-  animation-delay: 900ms, 1.6s;
+.checklist__text,
+.checklist__link {
+  grid-column: 2;
 }
 
-@media (min-width: 640px) {
-  .how-it-works__title-line {
-    display: inline;
-  }
+.checklist__text {
+  max-width: 56ch;
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 80%, transparent);
 }
 
-.how-it-works__timeline {
-  position: absolute;
-  top: 3rem;
-  left: 0;
-  right: 0;
-  height: 2px;
-  pointer-events: none;
-  border-radius: var(--radius-full);
-  background: var(--color-success);
-  opacity: 0.35;
+.checklist__link {
+  justify-self: start;
+  text-underline-offset: 0.25em;
 }
 
-.how-it-works__step-orbit {
-  position: relative;
-  display: inline-flex;
-  margin-bottom: var(--spacing-4);
-  padding: 6px;
-  border-radius: var(--radius-full);
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    var(--color-success) 90deg,
-    transparent 180deg,
-    transparent 360deg
-  );
-}
-
-.how-it-works__step-title {
-  color: var(--step-title-color);
-}
-
-@keyframes how-it-works-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes how-it-works-shimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes how-it-works-underline {
-  from {
-    opacity: 0;
-    transform: scaleX(0);
-  }
-  to {
-    opacity: 0.85;
-    transform: scaleX(1);
-  }
-}
-
-@keyframes how-it-works-underline-pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .how-it-works__title-line,
-  .how-it-works__accent,
-  .how-it-works__accent::after {
-    animation: none;
-    opacity: 1;
-    transform: none;
+@media (min-width: 64rem) {
+  .checklist__row .icon {
+    position: relative;
+    top: 0.2em;
   }
 
-  .how-it-works__accent::after {
-    opacity: 0.5;
+  .checklist__row {
+    grid-template-columns: auto minmax(0, 3fr) minmax(0, 5fr) minmax(0, 2fr);
+    align-items: baseline;
+    gap: var(--spacing-6);
+    padding: var(--spacing-6) var(--spacing-8);
+  }
+
+  .checklist__text,
+  .checklist__link {
+    grid-column: auto;
+  }
+
+  .checklist__link {
+    justify-self: end;
   }
 }

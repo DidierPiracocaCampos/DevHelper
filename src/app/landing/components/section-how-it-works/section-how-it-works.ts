@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 
 interface Step {
   readonly number: number;
-  readonly icon: string;
   readonly title: string;
   readonly description: string;
   readonly link: string;
@@ -14,28 +13,25 @@ interface Step {
 const STEPS: readonly Step[] = [
   {
     number: 1,
-    icon: 'person_add',
     title: 'Crea tu cuenta',
-    description: 'Regístrate con email y password en Firebase Auth y empieza sin onboarding largo.',
+    description: 'Regístrate con email y contraseña o con Google. Sin onboarding largo.',
     link: '/login/register',
     linkLabel: 'Crear cuenta',
   },
   {
     number: 2,
-    icon: 'lock',
     title: 'Cierra tu vault',
     description:
-      'Elige PIN o Passkey. La clave maestra se genera localmente y no sale de tu dispositivo.',
+      'Elige PIN o Passkey. La clave maestra se genera en tu navegador y solo se guarda protegida por ese método.',
     link: '/',
-    linkLabel: 'Cómo funciona el cifrado',
+    linkLabel: 'Qué se cifra y qué no',
     fragment: 'security',
   },
   {
     number: 3,
-    icon: 'add_circle',
     title: 'Guarda y recupera',
     description:
-      'Conserva proyectos, tareas, credenciales, archivos y eventos cifrados con AES-GCM 256.',
+      'Anota el problema y la solución mientras trabajas. Cuando vuelva a aparecer, búscalo.',
     link: '/login',
     linkLabel: 'Iniciar sesión',
   },

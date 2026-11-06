@@ -1,54 +1,94 @@
-<section class="frost-effect section-hero">
-  <div
-    class="max-w-7xl mx-auto px-4 py-16 sm:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-  >
-    <div class="text-center lg:text-left">
-      <span class="badge badge-outline gap-1 text-success hero-reveal hero-reveal--1">
-        <span class="icon icon-sm" aria-hidden="true">lock</span>
-        WORKSPACE TÉCNICO · CIFRADO EN CLIENTE
-      </span>
-
-      <h1 class="font-bold text-3xl sm:text-5xl tracking-tight mt-4 hero-reveal hero-reveal--2">
-        Tu memoria técnica, organizada y protegida.
-      </h1>
-
-      <p class="mt-4 text-base sm:text-lg opacity-80 hero-reveal hero-reveal--3">
-        Centraliza proyectos, tareas, credenciales, archivos y eventos; consulta tu memoria técnica
-        con IA local, con los datos cifrados antes de sincronizar.
+<section class="landing-hero">
+  <div class="hero__intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h1 class="hero__title">Este error ya lo resolviste.</h1>
+    <div class="hero__pitch">
+      <p class="hero__lede">
+        DevHelper es tu memoria técnica: guarda cada problema con su solución, sus archivos y sus
+        credenciales. Cuando vuelva, ya está escrito.
       </p>
-
-      <div
-        class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3 hero-reveal hero-reveal--4"
-      >
-        <a routerLink="/login/register" class="btn btn-primary btn-lg section-hero__cta-primary">
-          Crear mi workspace
-        </a>
+      <div class="mt-4 md:mt-6 flex flex-wrap items-center gap-3">
+        <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
         <a
           routerLink="/"
           fragment="how-it-works"
-          class="btn btn-ghost btn-lg section-hero__cta-secondary"
+          class="btn btn-ghost btn-lg hidden md:inline-flex"
         >
           Ver cómo funciona
         </a>
       </div>
     </div>
+  </div>
 
-    <div class="block hero-reveal hero-reveal--5">
-      <div class="section-hero__visual-float">
-        <div class="mockup-browser border border-base-300 bg-base-200 section-hero__visual">
-          <div class="mockup-browser-toolbar">
-            <div class="input">devhelper.app</div>
-          </div>
-          <img
-            ngSrc="/img/landing/hero-home.webp"
-            alt="DevHelper dashboard en uso real"
-            width="1280"
-            height="800"
-            priority
-            class="w-full h-auto"
-          />
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <div class="record" role="group" aria-label="Demostración con tareas de ejemplo">
+      <form class="record__search" role="search" (submit)="$event.preventDefault()">
+        <span class="icon" aria-hidden="true">search</span>
+        <label class="sr-only" for="hero-search">Buscar en las tareas de ejemplo</label>
+        <input
+          id="hero-search"
+          class="record__input"
+          type="search"
+          autocomplete="off"
+          placeholder="Busca en este ejemplo"
+          [value]="query()"
+          (input)="onSearch($event)"
+        />
+        <div class="record__terms">
+          @for (item of tasks; track item.id) {
+            <button
+              type="button"
+              class="record__term"
+              [class.record__term--active]="task()?.id === item.id"
+              [attr.aria-pressed]="task()?.id === item.id"
+              (click)="query.set(item.term)"
+            >
+              {{ item.term }}
+            </button>
+          }
         </div>
-      </div>
+      </form>
+      <p class="sr-only" role="status">{{ status() }}</p>
+
+      @for (item of visibleTasks(); track item.id) {
+        <article class="task" [attr.data-task]="item.id">
+          <header class="task__head">
+            <h2 class="task__title">
+              <span class="icon text-success" aria-hidden="true">check_circle</span>
+              {{ item.title }}
+            </h2>
+            <p class="task__meta">
+              {{ item.project }} · Hecha el {{ item.doneAt }} · Tarea de ejemplo
+            </p>
+          </header>
+          <div class="task__field">
+            <h3 class="task__label">Problema</h3>
+            <p class="task__problem">{{ item.problem }}</p>
+          </div>
+          <div class="task__field task__field--solution">
+            <h3 class="task__label">Solución</h3>
+            <p class="task__solution">{{ item.solution }}</p>
+          </div>
+          <ul class="task__attachments" aria-label="Adjuntos de la tarea">
+            @for (attachment of item.attachments; track attachment.label) {
+              <li class="task__attachment">
+                <span class="icon icon-sm" aria-hidden="true">{{ attachment.icon }}</span>
+                <span>
+                  {{ attachment.label }}
+                  <small>{{ attachment.meta }}</small>
+                </span>
+              </li>
+            }
+          </ul>
+        </article>
+      } @empty {
+        <div class="record__empty">
+          <p>
+            Nada con «{{ query() }}» en este ejemplo. En tu workspace, aquí aparecería lo que hayas
+            guardado.
+          </p>
+          <button type="button" class="btn btn-ghost" (click)="clear()">Volver al ejemplo</button>
+        </div>
+      }
     </div>
   </div>
 </section>
