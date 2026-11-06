@@ -34,22 +34,25 @@ describe('Landing', () => {
     expect(html.querySelector('landing-site-footer')).toBeTruthy();
   });
 
-  it('renders all 6 sections in order', () => {
+  it('renders all 7 sections in order', () => {
     const root = fixture.nativeElement as HTMLElement;
     const hero = root.querySelector('landing-section-hero');
     const features = root.querySelector('landing-section-features');
+    const search = root.querySelector('landing-section-search');
     const howItWorks = root.querySelector('landing-section-how-it-works');
     const security = root.querySelector('landing-section-security');
     const stack = root.querySelector('landing-section-stack');
     const cta = root.querySelector('landing-section-cta');
     expect(hero).toBeTruthy();
     expect(features).toBeTruthy();
+    expect(search).toBeTruthy();
     expect(howItWorks).toBeTruthy();
     expect(security).toBeTruthy();
     expect(stack).toBeTruthy();
     expect(cta).toBeTruthy();
     expect(features!.previousElementSibling).toBe(hero);
-    expect(howItWorks!.previousElementSibling).toBe(features);
+    expect(search!.previousElementSibling).toBe(features);
+    expect(howItWorks!.previousElementSibling).toBe(search);
     expect(security!.previousElementSibling).toBe(howItWorks);
     expect(stack!.previousElementSibling).toBe(security);
     expect(cta!.previousElementSibling).toBe(stack);

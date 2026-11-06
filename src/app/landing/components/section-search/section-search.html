@@ -1,0 +1,87 @@
+<section [id]="id()" class="search">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <div class="search__intro">
+      <h2 class="search__title">Encuentra lo que ya resolviste.</h2>
+      <div class="search__pitch">
+        <p>
+          Abre la búsqueda desde cualquier pantalla y salta directamente a la tarea que recuerdas a
+          medias.
+          <kbd class="kbd kbd-sm">Ctrl</kbd>
+          <kbd class="kbd kbd-sm">K</kbd>
+        </p>
+        <p class="search__hint">Pruébalo con estas tareas de ejemplo.</p>
+      </div>
+    </div>
+
+    <div class="record" landingReveal role="group" aria-label="Demostración con tareas de ejemplo">
+      <form class="record__search" role="search" (submit)="$event.preventDefault()">
+        <span class="icon" aria-hidden="true">search</span>
+        <label class="sr-only" for="search-demo">Buscar en las tareas de ejemplo</label>
+        <input
+          id="search-demo"
+          class="record__input"
+          type="search"
+          autocomplete="off"
+          placeholder="Busca en este ejemplo"
+          [value]="query()"
+          (input)="onSearch($event)"
+        />
+        <div class="record__terms">
+          @for (item of tasks; track item.id) {
+            <button
+              type="button"
+              class="record__term"
+              [class.record__term--active]="task()?.id === item.id"
+              [attr.aria-pressed]="task()?.id === item.id"
+              (click)="query.set(item.term)"
+            >
+              {{ item.term }}
+            </button>
+          }
+        </div>
+      </form>
+      <p class="sr-only" role="status">{{ status() }}</p>
+
+      @for (item of visibleTasks(); track item.id) {
+        <article class="task" [attr.data-task]="item.id">
+          <header class="task__head">
+            <h3 class="task__title">
+              <span class="icon text-success" aria-hidden="true">check_circle</span>
+              {{ item.title }}
+            </h3>
+            <p class="task__meta">
+              {{ item.project }} · Hecha el {{ item.doneAt }} · Tarea de ejemplo
+            </p>
+          </header>
+          <div class="task__field">
+            <h4 class="task__label">Problema</h4>
+            <p class="task__problem">{{ item.problem }}</p>
+          </div>
+          <div class="task__field task__field--solution">
+            <h4 class="task__label">Solución</h4>
+            <p class="task__solution">{{ item.solution }}</p>
+          </div>
+          <ul class="task__attachments" aria-label="Adjuntos de la tarea">
+            @for (attachment of item.attachments; track attachment.label) {
+              <li class="task__attachment">
+                <span class="icon icon-sm" aria-hidden="true">{{ attachment.icon }}</span>
+                <span>
+                  {{ attachment.label }}
+                  <small>{{ attachment.meta }}</small>
+                </span>
+              </li>
+            }
+          </ul>
+        </article>
+      } @empty {
+        <div class="record__empty">
+          <p>
+            Nada con «{{ query() }}» en este ejemplo. En tu workspace, aquí aparecería lo que hayas
+            guardado.
+          </p>
+          <button type="button" class="btn btn-ghost" (click)="clear()">Volver al ejemplo</button>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -18,13 +18,6 @@ describe('SectionHero', () => {
     root = fixture.nativeElement as HTMLElement;
   });
 
-  const search = (value: string) => {
-    const input = root.querySelector('#hero-search') as HTMLInputElement;
-    input.value = value;
-    input.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
-  };
-
   it('states the promise and names the product', () => {
     expect(root.querySelector('h1')?.textContent).toContain('Este error ya lo resolviste.');
     expect(root.textContent).toContain('DevHelper es una app para registrar tus avances');
@@ -40,50 +33,5 @@ describe('SectionHero', () => {
 
   it('avoids daisyUI component class names on its root', () => {
     expect(root.querySelector('section')?.classList).not.toContain('hero');
-  });
-
-  it('shows the CORS example by default and labels it as an example', () => {
-    expect(root.querySelector('[data-task="cors"]')).toBeTruthy();
-    expect(root.querySelector('.task__meta')?.textContent).toContain('Tarea de ejemplo');
-  });
-
-  it('marks the attachments of the example as encrypted', () => {
-    const items = root.querySelectorAll('.task__attachment');
-    expect(items.length).toBe(3);
-    for (const item of items) {
-      expect(item.textContent).toContain('cifrad');
-    }
-  });
-
-  it('finds an example by typing, ignoring accents and case', () => {
-    search('MIGRACION');
-    expect(root.querySelector('[data-task="migracion"]')).toBeTruthy();
-    expect(root.querySelector('[data-task="cors"]')).toBeNull();
-  });
-
-  it('finds an example through the suggested terms and reflects the pressed state', () => {
-    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('.record__term'));
-    const term = buttons.find((button) => button.textContent?.trim() === 'certificado');
-    term?.click();
-    fixture.detectChanges();
-    expect(root.querySelector('[data-task="certificado"]')).toBeTruthy();
-    expect(term?.getAttribute('aria-pressed')).toBe('true');
-  });
-
-  it('announces the result to assistive technology', () => {
-    search('certificado');
-    expect(root.querySelector('[role="status"]')?.textContent).toContain(
-      'La renovación del certificado devuelve 404',
-    );
-  });
-
-  it('shows an empty state with a way back when nothing matches', () => {
-    search('kubernetes');
-    expect(root.querySelector('.task')).toBeNull();
-    expect(root.querySelector('.record__empty')?.textContent).toContain('kubernetes');
-    (root.querySelector('.record__empty button') as HTMLButtonElement).click();
-    fixture.detectChanges();
-    expect(root.querySelector('[data-task="cors"]')).toBeTruthy();
-    expect((root.querySelector('#hero-search') as HTMLInputElement).value).toBe('');
   });
 });

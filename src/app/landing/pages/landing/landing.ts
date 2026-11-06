@@ -3,6 +3,7 @@ import { Authenticator } from '../../../shared/service/authenticator';
 import { SectionHero } from '../../components/section-hero/section-hero';
 import { SectionFeatures } from '../../components/section-features/section-features';
 import { SectionHowItWorks } from '../../components/section-how-it-works/section-how-it-works';
+import { SectionSearch } from '../../components/section-search/section-search';
 import { SectionSecurity } from '../../components/section-security/section-security';
 import { SectionStack } from '../../components/section-stack/section-stack';
 import { SectionCta } from '../../components/section-cta/section-cta';
@@ -17,6 +18,7 @@ import { SeoService } from '../../services/seo.service';
     SiteHeader,
     SectionHero,
     SectionFeatures,
+    SectionSearch,
     SectionHowItWorks,
     SectionSecurity,
     SectionStack,
