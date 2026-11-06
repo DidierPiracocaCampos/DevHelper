@@ -16,58 +16,166 @@
   text-wrap: balance;
 }
 
-.row {
+/* Large blocks: copy first, image second (flipped on desktop). */
+.block {
   display: grid;
-  gap: var(--spacing-3);
-  padding-block: var(--spacing-6);
-  border-top: 1px solid var(--color-base-300);
+  gap: var(--spacing-6);
+  align-items: center;
+  padding-block: var(--spacing-8);
 }
 
-.row:last-child {
-  border-bottom: 1px solid var(--color-base-300);
+.block__title {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
-.row__title {
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.015em;
-}
-
-.row__text {
-  max-width: 48ch;
+.block__text {
+  max-width: 44ch;
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-lg);
   line-height: 1.55;
   color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
 }
 
 .shot {
-  align-self: start;
-  margin-top: var(--spacing-2);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
 }
 
 .shot img {
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid var(--color-base-300);
-  border-radius: var(--radius-sm);
 }
 
-.demo {
-  align-self: start;
-  margin-top: var(--spacing-2);
+/* Overlay scenes sit over the capture. The default (no .is-revealed) is the end state. */
+.scene {
+  display: none;
+  position: absolute;
+  left: var(--spacing-4);
+  bottom: var(--spacing-4);
+  max-width: calc(100% - 2 * var(--spacing-4));
   border: 1px solid var(--color-base-300);
   border-radius: var(--radius-sm);
   background: var(--color-base-200);
   font-size: var(--font-size-sm);
 }
 
-.demo__head {
-  padding: var(--spacing-2) var(--spacing-4);
-  border-bottom: 1px solid var(--color-base-300);
-  font-weight: var(--font-weight-semibold);
+.scene--task {
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) var(--spacing-4);
 }
 
-.demo__line {
+.scene__icons {
+  display: grid;
+}
+
+.scene__icons > .icon {
+  grid-area: 1 / 1;
+}
+
+.scene__open {
+  opacity: 0;
+}
+
+.scene__done {
+  opacity: 1;
+}
+
+.scene__label {
+  font-weight: var(--font-weight-medium);
+}
+
+.scene--solution {
+  gap: var(--spacing-1);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100));
+}
+
+.scene__field-label {
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.scene__field-text {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Bento tiles */
+.tiles {
+  display: grid;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
+  background: var(--color-base-200);
+  padding: var(--spacing-6) var(--spacing-6) 0;
+  transition:
+    border-color 200ms var(--ease-out-expo),
+    opacity var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms),
+    transform var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms);
+}
+
+.tile:hover {
+  border-color: color-mix(in oklch, var(--color-base-content) 30%, transparent);
+}
+
+.tile__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+}
+
+.tile__text {
+  max-width: 46ch;
+  margin-top: var(--spacing-2);
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
+}
+
+.tile__visual {
+  margin-top: auto;
+  padding-top: var(--spacing-6);
+}
+
+.tile__visual img {
+  display: block;
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
+  object-position: top left;
+  border: 1px solid var(--color-base-300);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tile__visual--scene {
+  padding-bottom: var(--spacing-6);
+}
+
+.events,
+.chat {
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-sm);
+  background: var(--color-base-100);
+  font-size: var(--font-size-sm);
+}
+
+.events__row,
+.chat__line {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
@@ -75,37 +183,53 @@
   padding: var(--spacing-2) var(--spacing-4);
 }
 
-.demo__line + .demo__line {
+.events__row + .events__row,
+.chat__line + .chat__line {
   border-top: 1px solid var(--color-base-300);
 }
 
-.demo__line--hit {
-  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200));
-  font-weight: var(--font-weight-medium);
-}
-
-.demo__main {
-  flex: 1;
-  min-width: 0;
-}
-
-.demo__side {
+.events__date {
   flex-shrink: 0;
-  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
-  font-variant-numeric: tabular-nums;
-}
-
-.demo__date {
-  flex-shrink: 0;
-  width: 3rem;
+  width: 3.25rem;
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
+.events__name {
+  flex: 1;
+  min-width: 0;
+}
+
+.events__side {
+  flex-shrink: 0;
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.chat__line--answer {
+  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100));
+  font-weight: var(--font-weight-medium);
+}
+
+.chat__reply {
+  min-width: 0;
+}
+
 .features__note {
-  margin-top: var(--spacing-4);
+  margin-top: var(--spacing-6);
   font-size: var(--font-size-sm);
   color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+}
+
+@media (min-width: 80rem) {
+  .scene--task,
+  .scene--solution {
+    display: flex;
+  }
+
+  .scene--solution {
+    flex-direction: column;
+  }
 }
 
 @media (min-width: 64rem) {
@@ -113,14 +237,113 @@
     max-width: 24ch;
   }
 
-  .row {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
-    gap: var(--spacing-8);
-    padding-block: var(--spacing-8);
+  .block {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--spacing-12);
+    padding-block: var(--spacing-12);
   }
 
-  .demo,
-  .shot {
-    margin-top: 0;
+  .block--flip {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .block--flip .shot {
+    order: -1;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .tile--5 {
+    grid-column: span 5;
+  }
+
+  .tile--7 {
+    grid-column: span 7;
+  }
+}
+
+/* Scenes: starting states live only in the keyframes. */
+@media (prefers-reduced-motion: no-preference) {
+  .is-revealed .scene__open {
+    animation: scene-icon-out 400ms var(--ease-out-expo) 500ms both;
+  }
+
+  .is-revealed .scene__done {
+    animation: scene-icon-in 400ms var(--ease-out-expo) 500ms both;
+  }
+
+  .is-revealed .scene__label {
+    animation: scene-label-in 400ms var(--ease-out-expo) 500ms both;
+  }
+
+  .is-revealed .scene--solution {
+    animation: scene-lit 900ms var(--ease-out-expo) 300ms both;
+  }
+
+  .is-revealed .events__row {
+    animation: scene-row-in 600ms var(--ease-out-expo) both;
+  }
+
+  .is-revealed .events__row:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  .is-revealed .chat__line--ask {
+    animation: scene-row-in 500ms var(--ease-out-expo) 200ms both;
+  }
+
+  .is-revealed .chat__reply {
+    animation: scene-wipe 600ms var(--ease-out-expo) 700ms both;
+  }
+}
+
+@keyframes scene-icon-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scene-icon-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scene-label-in {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scene-lit {
+  from {
+    background: var(--color-base-200);
+  }
+}
+
+@keyframes scene-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes scene-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }

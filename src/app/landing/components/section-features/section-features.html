@@ -1,74 +1,66 @@
 <section [id]="id()" class="features">
   <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <h2 class="features__title">Todo lo que necesitaste, en la tarea donde lo necesitaste.</h2>
+    <h2 class="features__title">Todo tu trabajo técnico, en un solo lugar.</h2>
 
-    <div class="features__rows">
-      <article class="row" data-feature="tasks">
-        <h3 class="row__title">Proyectos y tareas</h3>
-        <p class="row__text">
+    <article id="feature-tasks" class="block" data-feature="tasks" landingReveal>
+      <div class="block__copy">
+        <h3 class="block__title">Proyectos y tareas</h3>
+        <p class="block__text">
           Cada proyecto reúne sus tareas: con estado y vencimiento cuando hay algo que hacer, o como
           notas libres cuando solo quieres recordarlo.
         </p>
-        <figure class="shot">
-          <img
-            src="/img/about/tareas.webp"
-            width="1600"
-            height="806"
-            loading="lazy"
-            decoding="async"
-            alt="Lista de tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
-          />
-        </figure>
-      </article>
+      </div>
+      <figure class="shot">
+        <img
+          src="/img/about/tareas.webp"
+          width="1600"
+          height="806"
+          loading="lazy"
+          decoding="async"
+          alt="Lista de tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
+        />
+        <div class="scene scene--task" aria-hidden="true">
+          <span class="scene__icons">
+            <span class="icon scene__open">radio_button_unchecked</span>
+            <span class="icon scene__done text-success">check_circle</span>
+          </span>
+          <span class="scene__label">Rotar las claves de staging</span>
+        </div>
+      </figure>
+    </article>
 
-      <article class="row" data-feature="solution">
-        <h3 class="row__title">Tus avances</h3>
-        <p class="row__text">
+    <article id="feature-progress" class="block block--flip" data-feature="progress" landingReveal>
+      <div class="block__copy">
+        <h3 class="block__title">Tus avances</h3>
+        <p class="block__text">
           En cada tarea apuntas qué pasó y cómo lo resolviste, con sus adjuntos. La fecha de
           creación y la de la última edición se guardan solas.
         </p>
-        <figure class="shot">
-          <img
-            src="/img/about/tarea-detalle.webp"
-            width="1600"
-            height="1200"
-            loading="lazy"
-            decoding="async"
-            alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
-          />
-        </figure>
-      </article>
-
-      <article class="row" data-feature="search">
-        <h3 class="row__title">Buscador</h3>
-        <p class="row__text">
-          Abre la búsqueda desde cualquier pantalla y salta directamente a la tarea que recuerdas a
-          medias.
-        </p>
-        <div class="demo">
-          <p class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">search</span>
-            <span class="demo__main">preflight</span>
-            <span class="demo__side">
-              <kbd class="kbd kbd-sm">Ctrl</kbd>
-              <kbd class="kbd kbd-sm">K</kbd>
-            </span>
-          </p>
-          <p class="demo__line demo__line--hit">
-            <span class="icon icon-sm" aria-hidden="true">subdirectory_arrow_right</span>
-            <span class="demo__main">CORS bloqueado tras cambiar de dominio</span>
-            <span class="demo__side">api-pagos</span>
-          </p>
+      </div>
+      <figure class="shot">
+        <img
+          src="/img/about/tarea-detalle.webp"
+          width="1600"
+          height="1200"
+          loading="lazy"
+          decoding="async"
+          alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
+        />
+        <div class="scene scene--solution" aria-hidden="true">
+          <span class="scene__field-label">Solución</span>
+          <span class="scene__field-text">El origin llevaba una barra final.</span>
         </div>
-      </article>
+      </figure>
+    </article>
 
-      <article class="row" data-feature="files">
-        <h3 class="row__title">Archivos</h3>
-        <p class="row__text">
+    <div class="tiles">
+      <article id="feature-files" class="tile tile--5" data-feature="files" landingReveal>
+        <h3 class="tile__title">Archivos</h3>
+        <p class="tile__text">
           Configuraciones, capturas y volcados, globales o adjuntos a una tarea. Hasta 5 MB por
-          archivo, cifrados antes de subir.
+          archivo, con la opción de cifrarlos antes de subir.
         </p>
-        <figure class="shot">
+        <div class="tile__visual">
           <img
             src="/img/about/archivos.webp"
             width="988"
@@ -77,16 +69,22 @@
             decoding="async"
             alt="Dos archivos adjuntos a una tarea, con su tamaño, tipo y fecha."
           />
-        </figure>
+        </div>
       </article>
 
-      <article class="row" data-feature="passwords">
-        <h3 class="row__title">Contraseñas</h3>
-        <p class="row__text">
+      <article
+        id="feature-passwords"
+        class="tile tile--7"
+        data-feature="passwords"
+        landingReveal
+        [revealDelay]="80"
+      >
+        <h3 class="tile__title">Contraseñas</h3>
+        <p class="tile__text">
           Junto al trabajo que las necesita o globales. El valor se cifra en tu navegador y se
           muestra solo con el vault abierto.
         </p>
-        <figure class="shot">
+        <div class="tile__visual">
           <img
             src="/img/about/contrasenas.webp"
             width="993"
@@ -95,47 +93,58 @@
             decoding="async"
             alt="Una contraseña guardada en una tarea, con botones para verla, copiarla, editarla y borrarla."
           />
-        </figure>
+        </div>
       </article>
 
-      <article class="row" data-feature="events">
-        <h3 class="row__title">Eventos</h3>
-        <p class="row__text">
+      <article id="feature-events" class="tile tile--7" data-feature="events" landingReveal>
+        <h3 class="tile__title">Eventos</h3>
+        <p class="tile__text">
           Fechas y recordatorios en un calendario global, en la misma pantalla que el resto de tu
           trabajo.
         </p>
-        <ul class="demo" aria-label="Ejemplo de eventos">
-          <li class="demo__line">
-            <span class="demo__date">2 dic</span>
-            <span class="demo__main">Renovar certificado</span>
-            <span class="demo__side">10:00</span>
-          </li>
-          <li class="demo__line">
-            <span class="demo__date">15 dic</span>
-            <span class="demo__main">Revisar cuotas del proveedor</span>
-            <span class="demo__side">Todo el día</span>
-          </li>
-        </ul>
+        <div class="tile__visual tile__visual--scene">
+          <ul class="events" aria-label="Ejemplo de eventos">
+            <li class="events__row">
+              <span class="events__date">2 dic</span>
+              <span class="events__name">Renovar certificado</span>
+              <span class="events__side">10:00</span>
+            </li>
+            <li class="events__row">
+              <span class="events__date">15 dic</span>
+              <span class="events__name">Revisar cuotas del proveedor</span>
+              <span class="events__side">Todo el día</span>
+            </li>
+          </ul>
+        </div>
       </article>
 
-      <article class="row" data-feature="ai">
-        <h3 class="row__title">IA local</h3>
-        <p class="row__text">
+      <article
+        id="feature-ai"
+        class="tile tile--5"
+        data-feature="ai"
+        landingReveal
+        [revealDelay]="80"
+      >
+        <h3 class="tile__title">IA local</h3>
+        <p class="tile__text">
           Opcional. Se ejecuta en tu dispositivo y responde consultas concretas sobre tu workspace.
           Si no la activas, no existe.
         </p>
-        <div class="demo">
-          <p class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">help</span>
-            <span class="demo__main">¿Qué tengo esta semana?</span>
-          </p>
-          <p class="demo__line demo__line--hit">
-            <span class="icon icon-sm" aria-hidden="true">memory</span>
-            <span class="demo__main">Tienes 1 tarea esta semana: Migrar a Postgres 16.</span>
-          </p>
+        <div class="tile__visual tile__visual--scene">
+          <div class="chat">
+            <p class="chat__line chat__line--ask">
+              <span class="icon icon-sm" aria-hidden="true">help</span>
+              <span>¿Qué tengo esta semana?</span>
+            </p>
+            <p class="chat__line chat__line--answer">
+              <span class="icon icon-sm" aria-hidden="true">memory</span>
+              <span class="chat__reply">Tienes 1 tarea esta semana: Migrar a Postgres 16.</span>
+            </p>
+          </div>
         </div>
       </article>
     </div>
+
     <p class="features__note">Los datos que ves en esta página son de ejemplo.</p>
   </div>
 </section>
