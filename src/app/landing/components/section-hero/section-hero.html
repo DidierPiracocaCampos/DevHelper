@@ -1,33 +1,36 @@
-<section class="landing-hero">
-  <div class="hero__intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <h1 class="hero__title">Este error ya lo resolviste.</h1>
-    <div class="hero__pitch">
-      <p class="hero__lede">
-        DevHelper es una app para registrar tus avances: cada tarea guarda el problema, cómo lo
-        resolviste, sus archivos y sus contraseñas. Cuando vuelva, ya está escrito.
-      </p>
-      <div class="mt-4 md:mt-6 flex flex-wrap items-center gap-3">
-        <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
-        <a
-          routerLink="/"
-          fragment="how-it-works"
-          class="btn btn-ghost btn-lg hidden md:inline-flex"
-        >
-          Ver cómo funciona
-        </a>
-      </div>
+<section class="landing-intro">
+  <div class="intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h1 class="intro__title">Registra lo que resuelves. Encuéntralo cuando vuelva.</h1>
+    <p class="intro__lede">
+      DevHelper es una app para registrar tus avances: proyectos y tareas con su solución, sus
+      archivos, sus contraseñas y tus fechas, en un solo lugar.
+    </p>
+    <div class="intro__actions">
+      <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear cuenta</a>
+      <a routerLink="/" fragment="features" class="btn btn-ghost btn-lg">Ver funciones</a>
     </div>
   </div>
 
-  <figure class="hero__shot mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <img
-      src="/img/landing/hero-home.webp"
-      width="1280"
-      height="800"
-      loading="lazy"
-      decoding="async"
-      alt="Pantalla principal de DevHelper en ordenador y móvil, con proyectos, tareas, calendario, archivos y contraseñas."
-    />
-    <figcaption>Todo tu trabajo en una pantalla, en el ordenador y en el móvil.</figcaption>
-  </figure>
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <figure class="product-window">
+      <div class="product-window__bar">
+        <span class="icon" aria-hidden="true">code</span>
+        <span>DevHelper</span>
+      </div>
+      <picture>
+        <source media="(max-width: 47.99rem)" srcset="/img/landing/producto-movil.webp" />
+        <img
+          src="/img/landing/producto-escritorio.webp"
+          width="2880"
+          height="1800"
+          fetchpriority="high"
+          decoding="async"
+          alt="Pantalla principal de DevHelper con proyectos, tareas, calendario, archivos y contraseñas, con datos de ejemplo."
+        />
+      </picture>
+      <figcaption class="product-window__caption">
+        Pantalla real de DevHelper con datos de ejemplo.
+      </figcaption>
+    </figure>
+  </div>
 </section>

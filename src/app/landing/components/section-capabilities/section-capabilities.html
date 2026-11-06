@@ -1,0 +1,14 @@
+<nav class="capabilities" aria-label="Funciones">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <ul class="capabilities__list">
+      @for (item of items; track item.fragment; let i = $index) {
+        <li landingReveal [revealDelay]="delay(i)">
+          <a routerLink="/" [fragment]="item.fragment" class="capabilities__link">
+            <span class="icon" aria-hidden="true">{{ item.icon }}</span>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+</nav>

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { SectionHero } from '../../components/section-hero/section-hero';
 import { SectionFeatures } from '../../components/section-features/section-features';
-import { SectionHowItWorks } from '../../components/section-how-it-works/section-how-it-works';
+import { SectionCapabilities } from '../../components/section-capabilities/section-capabilities';
 import { SectionSearch } from '../../components/section-search/section-search';
 import { SectionSecurity } from '../../components/section-security/section-security';
 import { SectionStack } from '../../components/section-stack/section-stack';
@@ -17,9 +17,9 @@ import { SeoService } from '../../services/seo.service';
   imports: [
     SiteHeader,
     SectionHero,
+    SectionCapabilities,
     SectionFeatures,
     SectionSearch,
-    SectionHowItWorks,
     SectionSecurity,
     SectionStack,
     SectionCta,
@@ -36,9 +36,9 @@ export class Landing {
 
   constructor() {
     this._seo.set({
-      title: 'DevHelper — Tu memoria técnica, siempre a mano',
+      title: 'DevHelper: registra tus avances y encuéntralos cuando vuelvan',
       description:
-        'Workspace para desarrolladores: proyectos, tareas y eventos en un solo lugar, con contraseñas y archivos cifrados en cliente e IA local opcional.',
+        'App para registrar tus avances como desarrollador: proyectos y tareas con su solución, contraseñas y archivos cifrados en cliente, eventos e IA local opcional.',
       path: '/',
     });
   }

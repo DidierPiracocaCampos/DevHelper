@@ -1,4 +1,4 @@
-<header class="fixed top-0 left-0 right-0 z-50 bg-base-100 border-b border-base-300">
+<header class="site-header fixed top-0 left-0 right-0 z-50 bg-base-100">
   <div
     class="max-w-[90rem] mx-auto flex items-center justify-between gap-4 px-4 sm:px-8 lg:px-16 py-3"
   >
@@ -12,10 +12,7 @@
     </a>
 
     <nav class="hidden md:flex items-center gap-4" aria-label="Principal">
-      <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">Características</a>
-      <a routerLink="/" fragment="how-it-works" class="link link-hover text-sm px-1">
-        Cómo funciona
-      </a>
+      <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">Funciones</a>
       <a routerLink="/" fragment="security" class="link link-hover text-sm px-1">Seguridad</a>
       @if (!isLogged()) {
         <a routerLink="/login" class="btn btn-ghost btn-sm sm:btn-md text-sm">Iniciar sesión</a>
@@ -43,10 +40,7 @@
         class="menu dropdown-content z-1 bg-base-200 border border-base-300 rounded-box shadow-lg w-60 p-2 mt-3 gap-1"
       >
         <li>
-          <a routerLink="/" fragment="features">Características</a>
-        </li>
-        <li>
-          <a routerLink="/" fragment="how-it-works">Cómo funciona</a>
+          <a routerLink="/" fragment="features">Funciones</a>
         </li>
         <li>
           <a routerLink="/" fragment="security">Seguridad</a>

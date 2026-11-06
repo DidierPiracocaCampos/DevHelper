@@ -19,16 +19,31 @@ describe('SectionHero', () => {
   });
 
   it('states the promise and names the product', () => {
-    expect(root.querySelector('h1')?.textContent).toContain('Este error ya lo resolviste.');
+    expect(root.querySelector('h1')?.textContent).toContain(
+      'Registra lo que resuelves. Encuéntralo cuando vuelva.',
+    );
     expect(root.textContent).toContain('DevHelper es una app para registrar tus avances');
-    expect(root.querySelector('.hero__shot img')?.getAttribute('alt')).toContain('DevHelper');
   });
 
   it('renders the primary and secondary CTAs with their target routes', () => {
     const primary = root.querySelector('a[href="/login/register"].btn-primary');
-    const secondary = root.querySelector('a[href="/#how-it-works"].btn-ghost');
-    expect(primary?.textContent?.trim()).toBe('Crear mi workspace');
-    expect(secondary?.textContent?.trim()).toBe('Ver cómo funciona');
+    const secondary = root.querySelector('a[href="/#features"].btn-ghost');
+    expect(primary?.textContent?.trim()).toBe('Crear cuenta');
+    expect(secondary?.textContent?.trim()).toBe('Ver funciones');
+    expect(secondary?.classList).not.toContain('hidden');
+  });
+
+  it('renders the product window with real dimensions and a descriptive alt', () => {
+    const img = root.querySelector('figure.product-window img') as HTMLImageElement;
+    expect(img.getAttribute('src')).toBe('/img/landing/producto-escritorio.webp');
+    expect(img.getAttribute('width')).toBe('2880');
+    expect(img.getAttribute('height')).toBe('1800');
+    expect(img.getAttribute('fetchpriority')).toBe('high');
+    expect(img.getAttribute('alt')).toContain('datos de ejemplo');
+    expect(root.querySelector('picture source')?.getAttribute('srcset')).toBe(
+      '/img/landing/producto-movil.webp',
+    );
+    expect(root.querySelector('figcaption')?.textContent).toContain('datos de ejemplo');
   });
 
   it('avoids daisyUI component class names on its root', () => {
