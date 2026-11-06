@@ -113,5 +113,9 @@
 
     --animate-fade-slide-in: 300ms ease-out;
     --animate-fade-slide-out: 300ms ease-out;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-reveal: 700ms;
+    --motion-focal: 1100ms;
   }
 }

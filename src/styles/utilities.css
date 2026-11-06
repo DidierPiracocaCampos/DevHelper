@@ -216,3 +216,38 @@
 .input:has(> select) {
   padding: 0;
 }
+
+/* Landing: scroll reveal. The hidden state only exists when JS adds
+   .reveal-pending, so without JS everything stays visible. */
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+.is-revealed {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms),
+    transform var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms);
+}
+
+::selection {
+  background: var(--color-base-content);
+  color: var(--color-base-100);
+}
+
+main section[id],
+main article[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+  }
+  .is-revealed {
+    transition: none;
+  }
+}
