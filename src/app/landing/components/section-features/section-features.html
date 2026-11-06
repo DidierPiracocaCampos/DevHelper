@@ -19,7 +19,7 @@
           decoding="async"
           alt="Lista de tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
         />
-        <div class="scene scene--task" aria-hidden="true">
+        <div class="scene scene--task" aria-hidden="true" landingReveal>
           <span class="scene__icons">
             <span class="icon scene__open">radio_button_unchecked</span>
             <span class="icon scene__done text-success">check_circle</span>
@@ -46,7 +46,7 @@
           decoding="async"
           alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
         />
-        <div class="scene scene--solution" aria-hidden="true">
+        <div class="scene scene--solution" aria-hidden="true" landingReveal>
           <span class="scene__field-label">Solución</span>
           <span class="scene__field-text">El origin llevaba una barra final.</span>
         </div>
@@ -54,7 +54,7 @@
     </article>
 
     <div class="tiles">
-      <article id="feature-files" class="tile tile--5" data-feature="files" landingReveal>
+      <article id="feature-files" class="tile tile--7" data-feature="files" landingReveal>
         <h3 class="tile__title">Archivos</h3>
         <p class="tile__text">
           Configuraciones, capturas y volcados, globales o adjuntos a una tarea. Hasta 5 MB por
@@ -74,7 +74,7 @@
 
       <article
         id="feature-passwords"
-        class="tile tile--7"
+        class="tile tile--5"
         data-feature="passwords"
         landingReveal
         [revealDelay]="80"
@@ -96,14 +96,14 @@
         </div>
       </article>
 
-      <article id="feature-events" class="tile tile--7" data-feature="events" landingReveal>
+      <article id="feature-events" class="tile tile--5" data-feature="events" landingReveal>
         <h3 class="tile__title">Eventos</h3>
         <p class="tile__text">
           Fechas y recordatorios en un calendario global, en la misma pantalla que el resto de tu
           trabajo.
         </p>
         <div class="tile__visual tile__visual--scene">
-          <ul class="events" aria-label="Ejemplo de eventos">
+          <ul class="events" aria-label="Ejemplo de eventos" landingReveal>
             <li class="events__row">
               <span class="events__date">2 dic</span>
               <span class="events__name">Renovar certificado</span>
@@ -120,7 +120,7 @@
 
       <article
         id="feature-ai"
-        class="tile tile--5"
+        class="tile tile--7"
         data-feature="ai"
         landingReveal
         [revealDelay]="80"
@@ -131,7 +131,7 @@
           Si no la activas, no existe.
         </p>
         <div class="tile__visual tile__visual--scene">
-          <div class="chat">
+          <div class="chat" landingReveal>
             <p class="chat__line chat__line--ask">
               <span class="icon icon-sm" aria-hidden="true">help</span>
               <span>¿Qué tengo esta semana?</span>
