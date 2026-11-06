@@ -22,9 +22,9 @@ describe('SeoService', () => {
     expect(title.getTitle()).toBe('DevHelper');
     expect(meta.getTag('name="description"')?.content).toBe('desc');
     expect(meta.getTag('property="og:title"')?.content).toBe('DevHelper');
-    expect(meta.getTag('property="og:url"')?.content).toBe('https://devhelper-a61ef.web.app/');
+    expect(meta.getTag('property="og:url"')?.content).toBe('https://devhelper.didierpiracoca.com/');
     expect(doc.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://devhelper-a61ef.web.app/',
+      'https://devhelper.didierpiracoca.com/',
     );
   });
 
@@ -35,10 +35,10 @@ describe('SeoService', () => {
     expect(meta.getTag('property="og:type"')?.content).toBe('website');
     expect(meta.getTag('property="og:description"')?.content).toBe('desc');
     expect(meta.getTag('property="og:image"')?.content).toBe(
-      'https://devhelper-a61ef.web.app/og-image.jpg',
+      'https://devhelper.didierpiracoca.com/og-image.jpg',
     );
     expect(meta.getTag('property="og:image:secure_url"')?.content).toBe(
-      'https://devhelper-a61ef.web.app/og-image.jpg',
+      'https://devhelper.didierpiracoca.com/og-image.jpg',
     );
     expect(meta.getTag('property="og:image:type"')?.content).toBe('image/jpeg');
     expect(meta.getTag('property="og:image:width"')?.content).toBe('1200');
@@ -50,7 +50,7 @@ describe('SeoService', () => {
     expect(meta.getTag('name="twitter:title"')?.content).toBe('DevHelper');
     expect(meta.getTag('name="twitter:description"')?.content).toBe('desc');
     expect(meta.getTag('name="twitter:image"')?.content).toBe(
-      'https://devhelper-a61ef.web.app/og-image.jpg',
+      'https://devhelper.didierpiracoca.com/og-image.jpg',
     );
     expect(meta.getTag('name="twitter:image:alt"')?.content).toBe(
       'DevHelper — app para registrar tus avances como desarrollador',
@@ -62,15 +62,15 @@ describe('SeoService', () => {
       title: 'Custom',
       description: 'custom desc',
       path: '/about',
-      image: 'https://devhelper-a61ef.web.app/img/custom.jpg',
+      image: 'https://devhelper.didierpiracoca.com/img/custom.jpg',
       imageAlt: 'Custom alt',
     });
     expect(meta.getTag('property="og:image"')?.content).toBe(
-      'https://devhelper-a61ef.web.app/img/custom.jpg',
+      'https://devhelper.didierpiracoca.com/img/custom.jpg',
     );
     expect(meta.getTag('property="og:image:alt"')?.content).toBe('Custom alt');
     expect(meta.getTag('name="twitter:image"')?.content).toBe(
-      'https://devhelper-a61ef.web.app/img/custom.jpg',
+      'https://devhelper.didierpiracoca.com/img/custom.jpg',
     );
     expect(meta.getTag('name="twitter:image:alt"')?.content).toBe('Custom alt');
   });

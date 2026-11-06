@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 
-const SITE_URL = 'https://devhelper-a61ef.web.app';
+const SITE_URL = 'https://devhelper.didierpiracoca.com';
 
 export interface SeoPage {
   title: string;
