@@ -543,7 +543,9 @@ service cloud.firestore {
     // Legal acceptance (T&C snapshot)
     // -------------------------------------------------------------------
     match /users/{userId}/legal/{docId} {
-      allow read, write: if isOwner(userId) && docId == 'termsAccepted'
+      // request.resource is null on reads, so reads need their own rule.
+      allow read: if isOwner(userId) && docId == 'termsAccepted';
+      allow write: if isOwner(userId) && docId == 'termsAccepted'
         && request.resource.data.keys().hasAll(['version','lang','acceptedAt','source'])
         && request.resource.data.version is string
         && request.resource.data.lang in ['es']
