@@ -232,11 +232,6 @@
     transform var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms);
 }
 
-::selection {
-  background: var(--color-base-content);
-  color: var(--color-base-100);
-}
-
 main section[id],
 main article[id] {
   scroll-margin-top: 5.5rem;
@@ -249,5 +244,12 @@ main article[id] {
   }
   .is-revealed {
     transition: none;
+  }
+}
+
+@media print {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
   }
 }

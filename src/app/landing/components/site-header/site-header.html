@@ -40,22 +40,22 @@
         class="menu dropdown-content z-1 bg-base-200 border border-base-300 rounded-box shadow-lg w-60 p-2 mt-3 gap-1"
       >
         <li>
-          <a routerLink="/" fragment="features">Funciones</a>
+          <a routerLink="/" fragment="features" (click)="closeMenu()">Funciones</a>
         </li>
         <li>
-          <a routerLink="/" fragment="security">Seguridad</a>
+          <a routerLink="/" fragment="security" (click)="closeMenu()">Seguridad</a>
         </li>
         <li class="border-t border-base-300 mt-1 pt-1"></li>
         @if (!isLogged()) {
           <li>
-            <a routerLink="/login">Iniciar sesión</a>
+            <a routerLink="/login" (click)="closeMenu()">Iniciar sesión</a>
           </li>
           <li>
-            <a routerLink="/login/register">Crear cuenta</a>
+            <a routerLink="/login/register" (click)="closeMenu()">Crear cuenta</a>
           </li>
         } @else {
           <li>
-            <a routerLink="/home">Ir al dashboard</a>
+            <a routerLink="/home" (click)="closeMenu()">Ir al dashboard</a>
           </li>
           <li>
             <button type="button" class="text-error" (click)="logout()">Cerrar sesión</button>

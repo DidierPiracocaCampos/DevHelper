@@ -25,10 +25,17 @@
 
 .search__pitch {
   display: grid;
-  gap: var(--spacing-2);
+  gap: var(--spacing-3);
   max-width: 44ch;
   line-height: 1.55;
   color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
+}
+
+.search__try {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2) var(--spacing-3);
 }
 
 .search__hint {
@@ -174,7 +181,7 @@
 
 .task__field--solution {
   background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100));
-  animation: task-solution-lit 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: task-solution-lit 900ms var(--ease-out-expo) both;
 }
 
 .task__solution {

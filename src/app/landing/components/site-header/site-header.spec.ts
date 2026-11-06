@@ -112,6 +112,17 @@ describe('SiteHeader', () => {
     );
   });
 
+  it('releases focus when a mobile menu link is clicked, closing the dropdown', () => {
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector(
+      'ul.dropdown-content a[href="/#features"]',
+    ) as HTMLAnchorElement;
+    link.focus();
+    expect(document.activeElement).toBe(link);
+    link.click();
+    expect(document.activeElement).not.toBe(link);
+  });
+
   it('renders the mobile dropdown CTAs for logged-in users', () => {
     fixture.componentRef.setInput('isLogged', true);
     fixture.detectChanges();

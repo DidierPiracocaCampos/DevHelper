@@ -35,7 +35,7 @@ describe('SiteFooter', () => {
   it('renders the Producto column links', () => {
     const features = fixture.nativeElement.querySelector('a[href="/#features"]');
     const security = fixture.nativeElement.querySelector('a[href="/#security"]');
-    expect(features).toBeTruthy();
+    expect(features?.textContent?.trim()).toBe('Funciones');
     expect(security).toBeTruthy();
   });
 

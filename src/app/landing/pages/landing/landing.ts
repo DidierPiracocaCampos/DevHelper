@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { SectionHero } from '../../components/section-hero/section-hero';
@@ -35,6 +36,8 @@ export class Landing {
   protected readonly isLogged = this._auth.isLoggedIn;
 
   constructor() {
+    // Keeps anchor targets clear of the fixed header; scroll-margin covers the no-JS case.
+    inject(ViewportScroller).setOffset([0, 88]);
     this._seo.set({
       title: 'DevHelper: registra tus avances y encuéntralos cuando vuelvan',
       description:

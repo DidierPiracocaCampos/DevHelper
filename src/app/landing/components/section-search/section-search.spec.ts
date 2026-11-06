@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { beforeEach, describe, it, expect } from 'vitest';
+import { Reveal } from '../../directives/reveal.directive';
 import { SectionSearch } from './section-search';
 
 describe('SectionSearch', () => {
@@ -26,12 +28,17 @@ describe('SectionSearch', () => {
   });
 
   it('explains the shortcut and labels the demo as an example', () => {
-    expect(root.querySelectorAll('kbd.kbd').length).toBe(2);
+    const keys = root.querySelector('.whitespace-nowrap');
+    expect(keys?.querySelectorAll('kbd.kbd-md').length).toBe(2);
+    expect(keys?.closest('p')).toBeNull();
     expect(root.textContent).toContain('Pruébalo con estas tareas de ejemplo.');
   });
 
   it('marks the record for reveal', () => {
-    expect(root.querySelector('.record')).toBeTruthy();
+    const revealed = fixture.debugElement
+      .queryAll(By.directive(Reveal))
+      .map((d) => d.nativeElement as HTMLElement);
+    expect(revealed).toContain(root.querySelector('.record') as HTMLElement);
   });
 
   it('shows the CORS example by default and labels it as an example', () => {
