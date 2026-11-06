@@ -11,20 +11,25 @@
         </p>
       </div>
       <figure class="shot">
-        <img
-          src="/img/about/tareas.webp"
-          width="1600"
-          height="806"
-          loading="lazy"
-          decoding="async"
-          alt="Lista de tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
-        />
+        <picture>
+          <source
+            media="(max-width: 47.99rem)"
+            srcset="/img/landing/tareas-movil.webp"
+            width="692"
+            height="468"
+          />
+          <img
+            src="/img/landing/tareas.webp"
+            width="1308"
+            height="960"
+            loading="lazy"
+            decoding="async"
+            alt="Lista de tareas de ejemplo de un proyecto, unas hechas y otras pendientes."
+          />
+        </picture>
         <div class="scene scene--task" aria-hidden="true" landingReveal>
-          <span class="scene__icons">
-            <span class="icon scene__open">radio_button_unchecked</span>
-            <span class="icon scene__done text-success">check_circle</span>
-          </span>
-          <span class="scene__label">Rotar las claves de staging</span>
+          <span class="scene__row"></span>
+          <span class="scene__circle"></span>
         </div>
       </figure>
     </article>
@@ -38,18 +43,23 @@
         </p>
       </div>
       <figure class="shot">
-        <img
-          src="/img/about/tarea-detalle.webp"
-          width="1600"
-          height="1200"
-          loading="lazy"
-          decoding="async"
-          alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
-        />
-        <div class="scene scene--solution" aria-hidden="true" landingReveal>
-          <span class="scene__field-label">Solución</span>
-          <span class="scene__field-text">El origin llevaba una barra final.</span>
-        </div>
+        <picture>
+          <source
+            media="(max-width: 47.99rem)"
+            srcset="/img/landing/tarea-detalle-movil.webp"
+            width="756"
+            height="1260"
+          />
+          <img
+            src="/img/landing/tarea-detalle.webp"
+            width="1536"
+            height="1170"
+            loading="lazy"
+            decoding="async"
+            alt="Una tarea de ejemplo hecha, con su proyecto, sus fechas de creación y edición, su descripción y su solución."
+          />
+        </picture>
+        <div class="scene scene--solution" aria-hidden="true" landingReveal></div>
       </figure>
     </article>
 
@@ -58,17 +68,25 @@
         <h3 class="tile__title">Archivos</h3>
         <p class="tile__text">
           Configuraciones, capturas y volcados, globales o adjuntos a una tarea. Hasta 5 MB por
-          archivo, con la opción de cifrarlos antes de subir.
+          archivo, cifrados antes de subir.
         </p>
         <div class="tile__visual">
-          <img
-            src="/img/about/archivos.webp"
-            width="988"
-            height="337"
-            loading="lazy"
-            decoding="async"
-            alt="Dos archivos adjuntos a una tarea, con su tamaño, tipo y fecha."
-          />
+          <picture>
+            <source
+              media="(max-width: 47.99rem)"
+              srcset="/img/landing/archivos-movil.webp"
+              width="700"
+              height="248"
+            />
+            <img
+              src="/img/landing/archivos.webp"
+              width="1080"
+              height="248"
+              loading="lazy"
+              decoding="async"
+              alt="Dos archivos de ejemplo en la lista, con su tamaño, tipo y fecha."
+            />
+          </picture>
         </div>
       </article>
 
@@ -86,12 +104,12 @@
         </p>
         <div class="tile__visual">
           <img
-            src="/img/about/contrasenas.webp"
-            width="993"
-            height="456"
+            src="/img/landing/contrasenas.webp"
+            width="924"
+            height="248"
             loading="lazy"
             decoding="async"
-            alt="Una contraseña guardada en una tarea, con botones para verla, copiarla, editarla y borrarla."
+            alt="Dos contraseñas de ejemplo guardadas, con botones para verlas, copiarlas, editarlas y borrarlas."
           />
         </div>
       </article>
@@ -99,7 +117,7 @@
       <article id="feature-events" class="tile tile--5" data-feature="events" landingReveal>
         <h3 class="tile__title">Eventos</h3>
         <p class="tile__text">
-          Fechas y recordatorios en un calendario global, en la misma pantalla que el resto de tu
+          Fechas y compromisos en un calendario global, en la misma pantalla que el resto de tu
           trabajo.
         </p>
         <div class="tile__visual tile__visual--scene">
@@ -131,14 +149,16 @@
           Si no la activas, no existe.
         </p>
         <div class="tile__visual tile__visual--scene">
-          <div class="chat" landingReveal>
-            <p class="chat__line chat__line--ask">
+          <div class="ai-exchange" landingReveal>
+            <p class="ai-exchange__line ai-exchange__line--ask">
               <span class="icon icon-sm" aria-hidden="true">help</span>
               <span>¿Qué tengo esta semana?</span>
             </p>
-            <p class="chat__line chat__line--answer">
+            <p class="ai-exchange__line ai-exchange__line--answer">
               <span class="icon icon-sm" aria-hidden="true">memory</span>
-              <span class="chat__reply">Tienes 1 tarea esta semana: Migrar a Postgres 16.</span>
+              <span class="ai-exchange__reply">
+                Tienes 1 tarea esta semana: Migrar a Postgres 16.
+              </span>
             </p>
           </div>
         </div>

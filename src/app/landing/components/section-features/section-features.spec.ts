@@ -43,9 +43,35 @@ describe('SectionFeatures', () => {
     ]);
   });
 
-  it('presents file encryption as optional', () => {
-    const text = root.querySelector('#feature-files')?.textContent ?? '';
-    expect(text).toContain('con la opción de cifrarlos antes de subir');
+  it('states that files are encrypted before upload', () => {
+    const text = (root.querySelector('#feature-files')?.textContent ?? '').replace(/\s+/g, ' ');
+    expect(text).toContain('Hasta 5 MB por archivo, cifrados antes de subir.');
+  });
+
+  it('promises dates in a calendar, not reminders', () => {
+    const text = (root.querySelector('#feature-events')?.textContent ?? '').replace(/\s+/g, ' ');
+    expect(text).toContain('Fechas y compromisos en un calendario global');
+    expect(text).not.toContain('recordatorios');
+  });
+
+  it('uses the landing crops, with sized mobile variants', () => {
+    const images = Array.from(root.querySelectorAll('img')).map((i) => i.getAttribute('src'));
+    expect(images).toEqual([
+      '/img/landing/tareas.webp',
+      '/img/landing/tarea-detalle.webp',
+      '/img/landing/archivos.webp',
+      '/img/landing/contrasenas.webp',
+    ]);
+    const sources = Array.from(root.querySelectorAll('picture source'));
+    expect(sources.map((s) => s.getAttribute('srcset'))).toEqual([
+      '/img/landing/tareas-movil.webp',
+      '/img/landing/tarea-detalle-movil.webp',
+      '/img/landing/archivos-movil.webp',
+    ]);
+    for (const source of sources) {
+      expect(source.getAttribute('width')).toBeTruthy();
+      expect(source.getAttribute('height')).toBeTruthy();
+    }
   });
 
   it('shows the real app in four images with real size and descriptive alt', () => {

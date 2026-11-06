@@ -53,59 +53,82 @@
   height: auto;
 }
 
-/* Overlay scenes sit over the capture. The default (no .is-revealed) is the end state. */
+/* Overlay scenes are aligned to the capture with percentages measured on each crop, so they
+   track the real row and the real field at any width. The default is the end state. */
 .scene {
-  display: none;
   position: absolute;
-  left: var(--spacing-4);
-  bottom: var(--spacing-4);
-  max-width: calc(100% - 2 * var(--spacing-4));
-  border: 1px solid var(--color-base-300);
-  border-radius: var(--radius-sm);
-  background: var(--color-base-200);
-  font-size: var(--font-size-sm);
+}
+
+.scene.reveal-pending {
+  transform: none;
 }
 
 .scene--task {
-  align-items: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4);
+  inset: 0;
+  --row-left: 1.83%;
+  --row-top: 34.94%;
+  --row-width: 96.33%;
+  --row-height: 13.75%;
+  --circle-left: 93.12%;
+  --circle-top: 39.73%;
+  --circle-width: 3.06%;
+  --circle-height: 4.17%;
 }
 
-.scene__icons {
-  display: grid;
-}
-
-.scene__icons > .icon {
-  grid-area: 1 / 1;
-}
-
-.scene__open {
+.scene__row,
+.scene__circle {
+  position: absolute;
   opacity: 0;
 }
 
-.scene__done {
-  opacity: 1;
+.scene__row {
+  left: var(--row-left);
+  top: var(--row-top);
+  width: var(--row-width);
+  height: var(--row-height);
+  border: 1px solid var(--color-base-content);
+  border-radius: var(--radius-sm);
 }
 
-.scene__label {
-  font-weight: var(--font-weight-medium);
+.scene__circle {
+  left: var(--circle-left);
+  top: var(--circle-top);
+  width: var(--circle-width);
+  height: var(--circle-height);
+  border: 2px solid color-mix(in oklch, var(--color-base-content) 22%, var(--color-base-100));
+  border-radius: 50%;
+  background: var(--color-base-100);
 }
 
 .scene--solution {
-  gap: var(--spacing-1);
-  padding: var(--spacing-3) var(--spacing-4);
-  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100));
+  left: 3.13%;
+  top: 73.68%;
+  width: 93.75%;
+  height: 21.54%;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--color-base-content) 7%, transparent);
+  pointer-events: none;
 }
 
-.scene__field-label {
-  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
-}
+@media (max-width: 47.99rem) {
+  .scene--task {
+    --row-left: 1.73%;
+    --row-top: 69.23%;
+    --row-width: 96.53%;
+    --row-height: 28.21%;
+    --circle-left: 88.73%;
+    --circle-top: 79.06%;
+    --circle-width: 5.78%;
+    --circle-height: 8.55%;
+  }
 
-.scene__field-text {
-  font-weight: var(--font-weight-medium);
+  .scene--solution {
+    left: 6.35%;
+    top: 75.56%;
+    width: 87.3%;
+    height: 20%;
+  }
 }
 
 /* Bento tiles */
@@ -123,6 +146,10 @@
   border-radius: var(--radius-box);
   background: var(--color-base-200);
   padding: var(--spacing-6) var(--spacing-6) 0;
+  transition: border-color 200ms var(--ease-out-expo);
+}
+
+.tile.is-revealed {
   transition:
     border-color 200ms var(--ease-out-expo),
     opacity var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms),
@@ -151,6 +178,10 @@
   padding-top: var(--spacing-6);
 }
 
+.tile__visual picture {
+  display: block;
+}
+
 .tile__visual img {
   display: block;
   width: 100%;
@@ -160,29 +191,31 @@
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
+.tile--5 .tile__visual img {
+  max-width: 32rem;
+}
+
 .tile__visual--scene {
   padding-bottom: var(--spacing-6);
 }
 
 .events,
-.chat {
-  border: 1px solid var(--color-base-300);
-  border-radius: var(--radius-sm);
-  background: var(--color-base-100);
+.ai-exchange {
+  border-top: 1px solid var(--color-base-300);
   font-size: var(--font-size-sm);
 }
 
 .events__row,
-.chat__line {
+.ai-exchange__line {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
   min-height: 2.75rem;
-  padding: var(--spacing-2) var(--spacing-4);
+  padding-block: var(--spacing-2);
 }
 
 .events__row + .events__row,
-.chat__line + .chat__line {
+.ai-exchange__line + .ai-exchange__line {
   border-top: 1px solid var(--color-base-300);
 }
 
@@ -204,12 +237,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.chat__line--answer {
-  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100));
+.ai-exchange__line--answer {
   font-weight: var(--font-weight-medium);
 }
 
-.chat__reply {
+.ai-exchange__reply {
   min-width: 0;
 }
 
@@ -219,22 +251,8 @@
   color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
 }
 
+/* Two columns only where the capture keeps its text legible beside the copy. */
 @media (min-width: 80rem) {
-  .scene--task,
-  .scene--solution {
-    display: flex;
-  }
-
-  .scene--solution {
-    flex-direction: column;
-  }
-}
-
-@media (min-width: 64rem) {
-  .features__title {
-    max-width: 24ch;
-  }
-
   .block {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: var(--spacing-12);
@@ -247,6 +265,12 @@
 
   .block--flip .shot {
     order: -1;
+  }
+}
+
+@media (min-width: 64rem) {
+  .features__title {
+    max-width: 24ch;
   }
 
   .tiles {
@@ -262,42 +286,45 @@
   }
 }
 
-/* Scenes: starting states live only in the keyframes. */
-@media (prefers-reduced-motion: no-preference) {
-  .scene.is-revealed .scene__open {
-    animation: scene-icon-out 400ms var(--ease-out-expo) 500ms both;
-  }
-
-  .scene.is-revealed .scene__done {
-    animation: scene-icon-in 400ms var(--ease-out-expo) 500ms both;
-  }
-
-  .scene.is-revealed .scene__label {
-    animation: scene-label-in 400ms var(--ease-out-expo) 500ms both;
-  }
-
-  .scene--solution.is-revealed {
-    animation: scene-lit 900ms var(--ease-out-expo) 300ms both;
-  }
-
-  .events.is-revealed .events__row {
-    animation: scene-row-in 600ms var(--ease-out-expo) both;
-  }
-
-  .events.is-revealed .events__row:nth-child(2) {
-    animation-delay: 120ms;
-  }
-
-  .chat.is-revealed .chat__line--ask {
-    animation: scene-row-in 500ms var(--ease-out-expo) 200ms both;
-  }
-
-  .chat.is-revealed .chat__reply {
-    animation: scene-wipe 600ms var(--ease-out-expo) 700ms both;
+/* Scenes: while pending the row still shows its open circle and the field is unlit.
+   The classes only exist when motion is allowed. Animations stay outside @media because Angular
+   does not rename keyframes used inside one once the CSS is minified. */
+@media screen {
+  .scene--task.reveal-pending,
+  .scene--task.reveal-pending .scene__circle {
+    opacity: 1;
   }
 }
 
-@keyframes scene-icon-out {
+.scene--task.is-revealed .scene__circle {
+  animation: scene-circle-done 500ms var(--ease-out-expo) 500ms both;
+}
+
+.scene--task.is-revealed .scene__row {
+  animation: scene-row-flash 1400ms var(--ease-out-expo) 300ms both;
+}
+
+.scene--solution.is-revealed {
+  animation: scene-lit 1100ms var(--ease-out-expo) 300ms both;
+}
+
+.events.is-revealed .events__row {
+  animation: scene-row-in 600ms var(--ease-out-expo) both;
+}
+
+.events.is-revealed .events__row:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.ai-exchange.is-revealed .ai-exchange__line--ask {
+  animation: scene-row-in 500ms var(--ease-out-expo) 200ms both;
+}
+
+.ai-exchange.is-revealed .ai-exchange__reply {
+  animation: scene-wipe 600ms var(--ease-out-expo) 700ms both;
+}
+
+@keyframes scene-circle-done {
   from {
     opacity: 1;
   }
@@ -306,27 +333,25 @@
   }
 }
 
-@keyframes scene-icon-in {
+@keyframes scene-row-flash {
   from {
     opacity: 0;
   }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes scene-label-in {
-  from {
-    opacity: 0.7;
+  35% {
+    opacity: 0.8;
   }
   to {
-    opacity: 1;
+    opacity: 0;
   }
 }
 
 @keyframes scene-lit {
   from {
-    background: var(--color-base-200);
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+    background: color-mix(in oklch, var(--color-base-content) 18%, transparent);
   }
 }
 

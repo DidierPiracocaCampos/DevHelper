@@ -64,14 +64,14 @@
   clip-path: inset(0 0 0 100%);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .seal.is-revealed .seal__plain {
-    animation: seal-wipe 900ms var(--ease-out-expo) 300ms both;
-  }
+/* .is-revealed only exists when motion is allowed. Outside @media on purpose: Angular does not
+   rename keyframes used inside one once minified. */
+.seal.is-revealed .seal__plain {
+  animation: seal-wipe 900ms var(--ease-out-expo) 300ms both;
+}
 
-  .seal.is-revealed .seal__lock {
-    animation: seal-lock-in 400ms var(--ease-out-expo) 1100ms both;
-  }
+.seal.is-revealed .seal__lock {
+  animation: seal-lock-in 400ms var(--ease-out-expo) 1100ms both;
 }
 
 @keyframes seal-wipe {

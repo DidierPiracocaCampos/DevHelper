@@ -26,7 +26,7 @@ describe('SectionSecurity', () => {
     const encrypted = root.querySelector('[data-boundary="encrypted"]')?.textContent;
     const plain = root.querySelector('[data-boundary="plain"]')?.textContent;
     expect(encrypted).toContain('El valor de tus contraseñas');
-    expect(encrypted).toContain('El contenido de los archivos que cifres');
+    expect(encrypted).toContain('El contenido de tus archivos');
     expect(plain).toContain('Proyectos, tareas y notas');
     expect(plain).toContain('Eventos');
     expect(plain).toContain('Nombres de contraseñas y archivos');
