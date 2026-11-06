@@ -16,23 +16,30 @@
   </div>
 
   <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <figure class="product-window">
-      <div class="product-window__bar">
-        <span class="icon" aria-hidden="true">code</span>
-        <span>DevHelper</span>
+    <figure class="product-shot">
+      <div class="product-window">
+        <div class="product-window__bar">
+          <span class="icon" aria-hidden="true">code</span>
+          <span>DevHelper</span>
+        </div>
+        <picture>
+          <source
+            media="(max-width: 47.99rem)"
+            srcset="/img/landing/producto-movil.webp"
+            width="780"
+            height="1688"
+          />
+          <img
+            src="/img/landing/producto-escritorio.webp"
+            width="2880"
+            height="1840"
+            fetchpriority="high"
+            decoding="async"
+            alt="Pantalla principal de DevHelper con proyectos, tareas, calendario, archivos y contraseñas, con datos de ejemplo."
+          />
+        </picture>
       </div>
-      <picture>
-        <source media="(max-width: 47.99rem)" srcset="/img/landing/producto-movil.webp" />
-        <img
-          src="/img/landing/producto-escritorio.webp"
-          width="2880"
-          height="1800"
-          fetchpriority="high"
-          decoding="async"
-          alt="Pantalla principal de DevHelper con proyectos, tareas, calendario, archivos y contraseñas, con datos de ejemplo."
-        />
-      </picture>
-      <figcaption class="product-window__caption">
+      <figcaption class="product-shot__caption">
         Pantalla real de DevHelper con datos de ejemplo.
       </figcaption>
     </figure>

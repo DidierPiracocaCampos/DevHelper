@@ -15,21 +15,20 @@
 }
 
 .intro__title {
-  max-width: 17ch;
-  font-size: var(--font-size-display);
+  font-size: clamp(2.5rem, 11.5vw, 3.5rem);
   font-weight: var(--font-weight-bold);
   line-height: 1;
   letter-spacing: -0.035em;
+}
+
+.intro__line {
+  display: block;
   text-wrap: balance;
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 48rem) {
   .intro__title {
-    max-width: none;
-  }
-
-  .intro__line {
-    display: block;
+    font-size: var(--font-size-display);
   }
 }
 
@@ -49,8 +48,11 @@
   margin-top: var(--spacing-8);
 }
 
-.product-window {
+.product-shot {
   margin: 0;
+}
+
+.product-window {
   overflow: hidden;
   border: 1px solid var(--color-base-300);
   border-radius: var(--radius-box);
@@ -80,14 +82,10 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: 75vh;
-  object-fit: cover;
-  object-position: top;
 }
 
-.product-window__caption {
-  padding: var(--spacing-2) var(--spacing-4);
-  border-top: 1px solid var(--color-base-300);
+.product-shot__caption {
+  margin-top: var(--spacing-3);
   font-size: var(--font-size-sm);
   color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
 }
@@ -95,7 +93,6 @@
 @media (max-width: 47.99rem) {
   .product-window img {
     max-width: 24rem;
-    max-height: none;
     margin-inline: auto;
   }
 }
@@ -124,22 +121,30 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
+/* Outside @media on purpose: Angular does not rename keyframes used inside one once minified. */
+.intro__title,
+.intro__lede,
+.intro__actions {
+  animation: intro-in 700ms var(--ease-out-expo) both;
+}
+
+.intro__lede {
+  animation-delay: 80ms;
+}
+
+.intro__actions {
+  animation-delay: 160ms;
+}
+
+.product-window {
+  animation: window-in var(--motion-focal) var(--ease-out-expo) 240ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
   .intro__title,
   .intro__lede,
-  .intro__actions {
-    animation: intro-in 700ms var(--ease-out-expo) both;
-  }
-
-  .intro__lede {
-    animation-delay: 80ms;
-  }
-
-  .intro__actions {
-    animation-delay: 160ms;
-  }
-
+  .intro__actions,
   .product-window {
-    animation: window-in var(--motion-focal) var(--ease-out-expo) 240ms both;
+    animation: none;
   }
 }

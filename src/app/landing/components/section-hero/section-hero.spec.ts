@@ -33,16 +33,21 @@ describe('SectionHero', () => {
   });
 
   it('renders the product window with real dimensions and a descriptive alt', () => {
-    const img = root.querySelector('figure.product-window img') as HTMLImageElement;
+    const img = root.querySelector('figure .product-window img') as HTMLImageElement;
     expect(img.getAttribute('src')).toBe('/img/landing/producto-escritorio.webp');
     expect(img.getAttribute('width')).toBe('2880');
-    expect(img.getAttribute('height')).toBe('1800');
+    expect(img.getAttribute('height')).toBe('1840');
     expect(img.getAttribute('fetchpriority')).toBe('high');
     expect(img.getAttribute('alt')).toContain('datos de ejemplo');
-    expect(root.querySelector('picture source')?.getAttribute('srcset')).toBe(
-      '/img/landing/producto-movil.webp',
-    );
-    expect(root.querySelector('figcaption')?.textContent).toContain('datos de ejemplo');
+    const source = root.querySelector('picture source');
+    expect(source?.getAttribute('srcset')).toBe('/img/landing/producto-movil.webp');
+    expect(source?.getAttribute('width')).toBe('780');
+    expect(source?.getAttribute('height')).toBe('1688');
+  });
+
+  it('captions the figure outside the window', () => {
+    expect(root.querySelector('figure figcaption')?.textContent).toContain('datos de ejemplo');
+    expect(root.querySelector('.product-window figcaption')).toBeNull();
   });
 
   it('avoids daisyUI component class names on its root', () => {
