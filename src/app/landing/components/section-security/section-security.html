@@ -13,7 +13,7 @@
         <span class="seal__name">Panel del proxy</span>
         <span class="seal__tag">Ejemplo</span>
       </div>
-      <div class="seal__value" aria-hidden="true" landingReveal [revealDelay]="120">
+      <div class="seal__value" aria-hidden="true">
         <span class="seal__text">
           <span class="seal__cipher">x9Fq2Lr7mQa0ZtK4vPe8</span>
           <span class="seal__plain">ejemplo-de-valor-2025</span>
@@ -23,7 +23,12 @@
     </div>
 
     <div class="boundary">
-      <div class="boundary__side boundary__side--sealed" data-boundary="encrypted">
+      <div
+        class="boundary__side boundary__side--sealed"
+        data-boundary="encrypted"
+        landingReveal
+        [revealDelay]="0"
+      >
         <h3 class="boundary__heading">Se cifra en tu navegador</h3>
         <ul class="boundary__list">
           <li>
@@ -41,7 +46,7 @@
         </p>
       </div>
 
-      <div class="boundary__side" data-boundary="plain">
+      <div class="boundary__side" data-boundary="plain" landingReveal [revealDelay]="120">
         <h3 class="boundary__heading">No se cifra en cliente</h3>
         <ul class="boundary__list">
           <li>

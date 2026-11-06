@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { Reveal } from '../../directives/reveal.directive';
 import { beforeEach, describe, it, expect } from 'vitest';
 import { SectionSecurity } from './section-security';
 
@@ -45,6 +47,16 @@ describe('SectionSecurity', () => {
     expect(scene?.textContent).toContain('Ejemplo');
     expect(scene?.querySelector('.seal__what')?.getAttribute('aria-hidden')).toBe('true');
     expect(scene?.querySelector('.seal__value')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('puts the reveal trigger on the boundary sides and the scene, not the value', () => {
+    const revealed = fixture.debugElement
+      .queryAll(By.directive(Reveal))
+      .map((d) => d.nativeElement as HTMLElement);
+    expect(revealed).toContain(root.querySelector('.seal') as HTMLElement);
+    expect(revealed).toContain(root.querySelector('[data-boundary="encrypted"]') as HTMLElement);
+    expect(revealed).toContain(root.querySelector('[data-boundary="plain"]') as HTMLElement);
+    expect(revealed).not.toContain(root.querySelector('.seal__value') as HTMLElement);
   });
 
   it('warns that encrypted data cannot be recovered', () => {
