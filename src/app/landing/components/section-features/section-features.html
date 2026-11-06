@@ -9,24 +9,34 @@
           Cada proyecto reúne sus tareas: con estado y vencimiento cuando hay algo que hacer, o como
           notas libres cuando solo quieres recordarlo.
         </p>
-        <ul class="demo" aria-label="Ejemplo de proyecto">
-          <li class="demo__head">api-pagos</li>
-          <li class="demo__line">
-            <span class="icon icon-sm text-success" aria-hidden="true">check_circle</span>
-            <span class="demo__main">CORS bloqueado tras cambiar de dominio</span>
-            <span class="demo__side">Hecha</span>
-          </li>
-          <li class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">radio_button_unchecked</span>
-            <span class="demo__main">Migrar a Postgres 16</span>
-            <span class="demo__side">Vence el 20 nov</span>
-          </li>
-          <li class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">sticky_note_2</span>
-            <span class="demo__main">Variables de staging</span>
-            <span class="demo__side">Nota</span>
-          </li>
-        </ul>
+        <figure class="shot">
+          <img
+            src="/img/about/tareas.webp"
+            width="1600"
+            height="806"
+            loading="lazy"
+            decoding="async"
+            alt="Lista de tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
+          />
+        </figure>
+      </article>
+
+      <article class="row" data-feature="solution">
+        <h3 class="row__title">Tus avances</h3>
+        <p class="row__text">
+          En cada tarea apuntas qué pasó y cómo lo resolviste, con sus adjuntos. La fecha de
+          creación y la de la última edición se guardan solas.
+        </p>
+        <figure class="shot">
+          <img
+            src="/img/about/tarea-detalle.webp"
+            width="1600"
+            height="1200"
+            loading="lazy"
+            decoding="async"
+            alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
+          />
+        </figure>
       </article>
 
       <article class="row" data-feature="search">
@@ -58,18 +68,16 @@
           Configuraciones, capturas y volcados, globales o adjuntos a una tarea. Hasta 5 MB por
           archivo, cifrados antes de subir.
         </p>
-        <ul class="demo" aria-label="Ejemplo de archivos">
-          <li class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">attach_file</span>
-            <span class="demo__main">nginx-prod.conf</span>
-            <span class="demo__side">4 KB</span>
-          </li>
-          <li class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">attach_file</span>
-            <span class="demo__main">esquema-pagos.sql</span>
-            <span class="demo__side">1,2 MB</span>
-          </li>
-        </ul>
+        <figure class="shot">
+          <img
+            src="/img/about/archivos.webp"
+            width="988"
+            height="337"
+            loading="lazy"
+            decoding="async"
+            alt="Dos archivos adjuntos a una tarea, con su tamaño, tipo y fecha."
+          />
+        </figure>
       </article>
 
       <article class="row" data-feature="passwords">
@@ -78,13 +86,16 @@
           Junto al trabajo que las necesita o globales. El valor se cifra en tu navegador y se
           muestra solo con el vault abierto.
         </p>
-        <div class="demo">
-          <p class="demo__line">
-            <span class="icon icon-sm" aria-hidden="true">key</span>
-            <span class="demo__main">Panel del proxy</span>
-            <span class="demo__side" aria-label="Valor oculto">••••••••••</span>
-          </p>
-        </div>
+        <figure class="shot">
+          <img
+            src="/img/about/contrasenas.webp"
+            width="993"
+            height="456"
+            loading="lazy"
+            decoding="async"
+            alt="Una contraseña guardada en una tarea, con botones para verla, copiarla, editarla y borrarla."
+          />
+        </figure>
       </article>
 
       <article class="row" data-feature="events">

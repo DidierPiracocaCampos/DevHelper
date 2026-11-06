@@ -26,6 +26,7 @@ describe('SectionFeatures', () => {
     const rows = Array.from(root.querySelectorAll('[data-feature]'));
     expect(rows.map((row) => row.querySelector('h3')?.textContent?.trim())).toEqual([
       'Proyectos y tareas',
+      'Tus avances',
       'Buscador',
       'Archivos',
       'Contraseñas',
@@ -36,7 +37,15 @@ describe('SectionFeatures', () => {
 
   it('gives every row an example', () => {
     for (const row of root.querySelectorAll('[data-feature]')) {
-      expect(row.querySelector('.demo')).toBeTruthy();
+      expect(row.querySelector('.demo, .shot img')).toBeTruthy();
+    }
+  });
+
+  it('shows the real app in images with descriptive alt text', () => {
+    const images = Array.from(root.querySelectorAll('.shot img'));
+    expect(images.length).toBe(4);
+    for (const image of images) {
+      expect(image.getAttribute('alt')?.length).toBeGreaterThan(20);
     }
   });
 

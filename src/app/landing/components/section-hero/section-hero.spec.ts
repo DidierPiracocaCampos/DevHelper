@@ -27,7 +27,8 @@ describe('SectionHero', () => {
 
   it('states the promise and names the product', () => {
     expect(root.querySelector('h1')?.textContent).toContain('Este error ya lo resolviste.');
-    expect(root.textContent).toContain('DevHelper es tu memoria técnica');
+    expect(root.textContent).toContain('DevHelper es una app para registrar tus avances');
+    expect(root.querySelector('.hero__shot img')?.getAttribute('alt')).toContain('DevHelper');
   });
 
   it('renders the primary and secondary CTAs with their target routes', () => {
