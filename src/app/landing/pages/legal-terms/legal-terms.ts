@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  PLATFORM_ID,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { Observable, map, of, shareReplay, startWith, switchMap } from 'rxjs';
 import { Authenticator } from '../../../shared/service/authenticator';
+import { SiteFooter } from '../../components/site-footer/site-footer';
+import { SiteHeader } from '../../components/site-header/site-header';
 import { MarkdownPipe } from '../../pipes/markdown.pipe';
 import { LegalAcceptanceI } from '../../models/legal-acceptance.interface';
 import { LegalAcceptanceService } from '../../services/legal-acceptance.service';
@@ -14,7 +24,7 @@ type LegalState<T> = { status: 'loading' } | { status: 'loaded'; data: T };
 @Component({
   selector: 'landing-legal-terms',
   standalone: true,
-  imports: [RouterLink, MarkdownPipe],
+  imports: [SiteHeader, SiteFooter, MarkdownPipe],
   templateUrl: './legal-terms.html',
   styleUrl: './legal-terms.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,10 +34,13 @@ export class LegalTerms implements OnInit {
   private readonly _legal = inject(LegalAcceptanceService);
   private readonly _auth = inject(Authenticator);
   private readonly _seo = inject(SeoService);
+  private readonly _platformId = inject(PLATFORM_ID);
 
   private readonly _user = this._auth.user;
   private readonly _userUid = computed(() => this._user()?.uid ?? null);
   protected readonly content = this._terms.content;
+  protected readonly isLogged = this._auth.isLoggedIn;
+  protected readonly loadFailed = signal(false);
 
   private readonly _legalState$ = toObservable(this._userUid).pipe(
     switchMap((uid): Observable<LegalState<LegalAcceptanceI | null>> => {
@@ -59,13 +72,15 @@ export class LegalTerms implements OnInit {
   constructor() {
     this._seo.set({
       title: 'Términos y Condiciones — DevHelper',
-      description: 'Términos y Condiciones del workspace cifrado DevHelper.',
+      description: 'Términos y Condiciones de DevHelper, la app para registrar tus avances.',
       path: '/legal/terms',
     });
   }
 
   async ngOnInit(): Promise<void> {
+    // The document is fetched in the browser; a failed prerender fetch is not a real failure.
     await this._terms.load();
+    this.loadFailed.set(isPlatformBrowser(this._platformId) && this.content() === null);
   }
 
   async accept(): Promise<void> {

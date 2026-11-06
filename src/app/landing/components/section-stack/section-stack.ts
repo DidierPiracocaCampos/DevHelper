@@ -1,32 +1,18 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { SOCIAL_LINKS } from '../../data/social-links';
 
 interface StackItem {
-  name: string;
-  logo: string;
-  groupTitle: string;
-}
-
-interface StackChip {
-  name: string;
-  logo: string;
+  readonly name: string;
+  readonly logo: string;
+  readonly role: string;
 }
 
 const STACK: readonly StackItem[] = [
-  { name: 'Angular 20', logo: '/icons/stack/angular.svg', groupTitle: 'Interfaz' },
-  { name: 'DaisyUI 5', logo: '/icons/stack/daisyui.svg', groupTitle: 'Interfaz' },
-  { name: 'Tailwind 4', logo: '/icons/stack/tailwind.svg', groupTitle: 'Interfaz' },
-  { name: 'Firebase', logo: '/icons/stack/firebase.svg', groupTitle: 'Datos y auth' },
+  { name: 'Angular 20', logo: '/icons/stack/angular.svg', role: 'Interfaz' },
+  { name: 'DaisyUI 5', logo: '/icons/stack/daisyui.svg', role: 'Componentes' },
+  { name: 'Tailwind 4', logo: '/icons/stack/tailwind.svg', role: 'Estilos' },
+  { name: 'Firebase', logo: '/icons/stack/firebase.svg', role: 'Datos y autenticación' },
 ];
-
-/** Repeat items so the track is wide enough for a smooth infinite scroll. */
-function densify(items: readonly StackChip[], times = 2): readonly StackChip[] {
-  return Array.from({ length: times }, () => items).flat();
-}
-
-const CHIPS: readonly StackChip[] = densify(
-  STACK.map(({ name, logo }) => ({ name, logo })),
-  3,
-);
 
 @Component({
   selector: 'landing-section-stack',
@@ -38,5 +24,5 @@ const CHIPS: readonly StackChip[] = densify(
 export class SectionStack {
   readonly id = input<string>('stack');
   readonly entries = STACK;
-  readonly chips = CHIPS;
+  protected readonly github = SOCIAL_LINKS.github;
 }

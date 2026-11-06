@@ -1,68 +1,130 @@
-<section [id]="id()" class="section-features">
-  <div class="max-w-7xl mx-auto px-4 py-16">
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="badge badge-soft gap-1 mb-4 text-success">
-        <span class="icon icon-sm" aria-hidden="true">widgets</span>
-        Capacidades
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-semibold mb-3">
-        Todo el contexto de tu trabajo, conectado.
-      </h2>
-      <p class="opacity-70">
-        Guarda cada decisión, tarea, archivo y secreto donde volverás a encontrarlo.
-      </p>
-    </div>
+<section [id]="id()" class="features">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h2 class="features__title">Todo lo que necesitaste, en la tarea donde lo necesitaste.</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      @for (feature of features; track feature.id) {
-        <article
-          class="card card-xl bg-base-200 section-features__card h-full"
-          [class.section-features__card--large]="feature.size === 'large'"
-          [class.md:col-span-2]="feature.size === 'large'"
-          [class.lg:card-side]="feature.size === 'compact' && !!feature.image"
-          [attr.data-feature]="feature.id"
-          [attr.data-feature-size]="feature.size"
-        >
-          <div class="card-body gap-3">
-            <span
-              class="inline-flex items-center justify-center size-11 rounded-box bg-base-300 border section-features__icon-chip"
-              aria-hidden="true"
-            >
-              <span class="icon icon-lg text-primary" aria-hidden="true">{{ feature.icon }}</span>
+    <div class="features__rows">
+      <article class="row" data-feature="tasks">
+        <h3 class="row__title">Proyectos y tareas</h3>
+        <p class="row__text">
+          Cada proyecto reúne sus tareas: con estado y vencimiento cuando hay algo que hacer, o como
+          notas libres cuando solo quieres recordarlo.
+        </p>
+        <ul class="demo" aria-label="Ejemplo de proyecto">
+          <li class="demo__head">api-pagos</li>
+          <li class="demo__line">
+            <span class="icon icon-sm text-success" aria-hidden="true">check_circle</span>
+            <span class="demo__main">CORS bloqueado tras cambiar de dominio</span>
+            <span class="demo__side">Hecha</span>
+          </li>
+          <li class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">radio_button_unchecked</span>
+            <span class="demo__main">Migrar a Postgres 16</span>
+            <span class="demo__side">Vence el 20 nov</span>
+          </li>
+          <li class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">sticky_note_2</span>
+            <span class="demo__main">Variables de staging</span>
+            <span class="demo__side">Nota</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="row" data-feature="search">
+        <h3 class="row__title">Buscador</h3>
+        <p class="row__text">
+          Abre la búsqueda desde cualquier pantalla y salta directamente a la tarea que recuerdas a
+          medias.
+        </p>
+        <div class="demo">
+          <p class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">search</span>
+            <span class="demo__main">preflight</span>
+            <span class="demo__side">
+              <kbd class="kbd kbd-sm">Ctrl</kbd>
+              <kbd class="kbd kbd-sm">K</kbd>
             </span>
+          </p>
+          <p class="demo__line demo__line--hit">
+            <span class="icon icon-sm" aria-hidden="true">subdirectory_arrow_right</span>
+            <span class="demo__main">CORS bloqueado tras cambiar de dominio</span>
+            <span class="demo__side">api-pagos</span>
+          </p>
+        </div>
+      </article>
 
-            <h3 class="card-title text-lg">{{ feature.title }}</h3>
-            <p class="opacity-80 text-sm leading-relaxed">{{ feature.description }}</p>
+      <article class="row" data-feature="files">
+        <h3 class="row__title">Archivos</h3>
+        <p class="row__text">
+          Configuraciones, capturas y volcados, globales o adjuntos a una tarea. Hasta 5 MB por
+          archivo, cifrados antes de subir.
+        </p>
+        <ul class="demo" aria-label="Ejemplo de archivos">
+          <li class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">attach_file</span>
+            <span class="demo__main">nginx-prod.conf</span>
+            <span class="demo__side">4 KB</span>
+          </li>
+          <li class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">attach_file</span>
+            <span class="demo__main">esquema-pagos.sql</span>
+            <span class="demo__side">1,2 MB</span>
+          </li>
+        </ul>
+      </article>
 
-            @if (feature.highlights.length) {
-              <ul class="mt-1 space-y-1.5">
-                @for (item of feature.highlights; track item) {
-                  <li class="flex items-center gap-2 text-sm opacity-80">
-                    <span class="icon icon-sm text-primary" aria-hidden="true">check</span>
-                    <span>{{ item }}</span>
-                  </li>
-                }
-              </ul>
-            }
-          </div>
+      <article class="row" data-feature="passwords">
+        <h3 class="row__title">Contraseñas</h3>
+        <p class="row__text">
+          Junto al trabajo que las necesita o globales. El valor se cifra en tu navegador y se
+          muestra solo con el vault abierto.
+        </p>
+        <div class="demo">
+          <p class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">key</span>
+            <span class="demo__main">Panel del proxy</span>
+            <span class="demo__side" aria-label="Valor oculto">••••••••••</span>
+          </p>
+        </div>
+      </article>
 
-          @if (feature.image; as image) {
-            <figure
-              class="section-features__visual section-features__figure"
-              [style.--feature-ratio]="image.ratio"
-            >
-              <img
-                [ngSrc]="image.src"
-                [alt]="image.alt"
-                [width]="image.width"
-                [height]="image.height"
-                loading="lazy"
-                class="w-full h-full"
-              />
-            </figure>
-          }
-        </article>
-      }
+      <article class="row" data-feature="events">
+        <h3 class="row__title">Eventos</h3>
+        <p class="row__text">
+          Fechas y recordatorios en un calendario global, en la misma pantalla que el resto de tu
+          trabajo.
+        </p>
+        <ul class="demo" aria-label="Ejemplo de eventos">
+          <li class="demo__line">
+            <span class="demo__date">2 dic</span>
+            <span class="demo__main">Renovar certificado</span>
+            <span class="demo__side">10:00</span>
+          </li>
+          <li class="demo__line">
+            <span class="demo__date">15 dic</span>
+            <span class="demo__main">Revisar cuotas del proveedor</span>
+            <span class="demo__side">Todo el día</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="row" data-feature="ai">
+        <h3 class="row__title">IA local</h3>
+        <p class="row__text">
+          Opcional. Se ejecuta en tu dispositivo y responde consultas concretas sobre tu workspace.
+          Si no la activas, no existe.
+        </p>
+        <div class="demo">
+          <p class="demo__line">
+            <span class="icon icon-sm" aria-hidden="true">help</span>
+            <span class="demo__main">¿Qué tengo esta semana?</span>
+          </p>
+          <p class="demo__line demo__line--hit">
+            <span class="icon icon-sm" aria-hidden="true">memory</span>
+            <span class="demo__main">Tienes 1 tarea esta semana: Migrar a Postgres 16.</span>
+          </p>
+        </div>
+      </article>
     </div>
+    <p class="features__note">Los datos que ves en esta página son de ejemplo.</p>
   </div>
 </section>

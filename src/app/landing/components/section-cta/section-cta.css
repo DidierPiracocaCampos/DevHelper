@@ -2,24 +2,82 @@
   display: block;
 }
 
-.section-cta__button-primary,
-.section-cta__button-secondary {
-  transition: transform var(--transition-fast);
+.cta {
+  padding-top: 5rem;
+  border-top: 1px solid var(--color-base-300);
 }
 
-.section-cta__button-primary:hover,
-.section-cta__button-secondary:hover {
-  transform: translateY(-1px);
+.cta__intro {
+  display: grid;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-10);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .section-cta__button-primary,
-  .section-cta__button-secondary {
-    transition: none;
+.cta__title {
+  max-width: 14ch;
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.blank {
+  border: 1px solid var(--color-base-300);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--color-base-200);
+}
+
+.blank__head {
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-base-300);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.blank__head .icon {
+  vertical-align: -0.2em;
+  margin-right: var(--spacing-1);
+}
+
+.blank__fields {
+  display: grid;
+}
+
+.blank__field {
+  min-height: 9rem;
+  padding: var(--spacing-5);
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 72%, transparent);
+}
+
+.blank__field + .blank__field {
+  border-top: 1px solid var(--color-base-300);
+}
+
+.blank__label {
+  display: block;
+  margin-bottom: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (min-width: 64rem) {
+  .cta__intro {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--spacing-12);
+  }
+}
+
+@media (min-width: 48rem) {
+  .blank__fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
   }
 
-  .section-cta__button-primary:hover,
-  .section-cta__button-secondary:hover {
-    transform: none;
+  .blank__field + .blank__field {
+    border-top: 0;
+    border-left: 1px solid var(--color-base-300);
   }
 }

@@ -85,6 +85,11 @@ body {
   }
 }
 
+::selection {
+  background: var(--color-base-content);
+  color: var(--color-base-100);
+}
+
 .frost-effect {
   background: linear-gradient(180deg, #20201e 0%, #171717 50%, #0d0d0d 100%);
 }

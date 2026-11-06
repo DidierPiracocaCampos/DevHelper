@@ -1,37 +1,141 @@
 <landing-site-header [isLogged]="isLogged()" />
-<main class="max-w-3xl mx-auto px-4 py-12 space-y-6">
-  <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">
-    Acerca de
-    <span class="inline-flex items-center gap-1.5 align-middle">
-      <span class="icon text-[1em]" aria-hidden="true">code</span>DevHelper
-    </span>
-  </h1>
+<main>
+  <section class="about__intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h1 class="about__title">DevHelper es una app para registrar tus avances.</h1>
+    <div class="about__lead">
+      <p>
+        Creas un proyecto, lo divides en tareas y en cada una apuntas qué pasó y cómo lo resolviste.
+        Así ves lo que llevas hecho y lo que falta, y lo encuentras cuando vuelves a necesitarlo.
+      </p>
+      <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
+    </div>
+    <figure class="about__overview">
+      <img
+        src="/img/landing/hero-home.webp"
+        width="1280"
+        height="800"
+        fetchpriority="high"
+        alt="Pantalla principal de DevHelper en ordenador y móvil, con proyectos, tareas, calendario, archivos y contraseñas."
+      />
+      <figcaption>Todo tu trabajo en una pantalla, en el ordenador y en el móvil.</figcaption>
+    </figure>
+  </section>
 
-  <p>
-    DevHelper es un workspace personal cifrado para developers. Un único lugar donde
-    conviven proyectos, tareas, contraseñas, ficheros y eventos, con cifrado en cliente
-    y clave maestra que nunca sale de tu dispositivo.
-  </p>
+  <section class="about__how">
+    <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <h2 class="about__heading">Cómo registras un avance</h2>
 
-  <p>
-    Está pensado para un solo developer, en uso privado. Una cuenta equivale a una
-    persona. No hay equipos, no hay invitaciones, no hay compartición. La idea es
-    centralizar tu memoria técnica sin delegar la custodia de tus datos a terceros.
-  </p>
+      <article class="about__step">
+        <div class="about__copy">
+          <h3>Divide el proyecto en tareas</h3>
+          <p>
+            Cada tarea es algo que tienes que hacer o un problema que te encontraste. Al terminarla,
+            la marcas como hecha y de un vistazo sabes cómo va el proyecto.
+          </p>
+          <ul class="about__legend">
+            <li>
+              <span class="about__dot about__dot--done" aria-hidden="true"></span>
+              Hecha
+            </li>
+            <li>
+              <span class="about__dot" aria-hidden="true"></span>
+              Pendiente
+            </li>
+            <li>
+              <span class="about__dot about__dot--high" aria-hidden="true"></span>
+              Pendiente con prioridad alta
+            </li>
+          </ul>
+        </div>
+        <figure>
+          <img
+            src="/img/about/tareas.webp"
+            width="1600"
+            height="806"
+            loading="lazy"
+            decoding="async"
+            alt="Lista de cinco tareas de un proyecto: tres hechas, una pendiente y una pendiente con prioridad alta."
+          />
+          <figcaption>Captura de la app con datos de ejemplo.</figcaption>
+        </figure>
+      </article>
 
-  <p>
-    DevHelper no es Notion + 1Password + Calendar + Drive juntos. Es un único vault
-    cifrado donde los proyectos estructuran el resto: tareas con vencimiento, notas
-    libres, contraseñas asociadas a una tarea o globales, ficheros adjuntos y eventos
-    recordatorios. Todo bajo la misma clave maestra.
-  </p>
+      <article class="about__step">
+        <div class="about__copy">
+          <h3>Apunta qué pasó y cómo lo resolviste</h3>
+          <p>
+            Dentro de la tarea escribes la descripción y la solución, y adjuntas los archivos y las
+            contraseñas que usaste. La fecha de creación y la de la última edición se guardan solas.
+          </p>
+        </div>
+        <figure>
+          <img
+            src="/img/about/tarea-detalle.webp"
+            width="1600"
+            height="1200"
+            loading="lazy"
+            decoding="async"
+            alt="Una tarea hecha, con su descripción, su solución, dos archivos adjuntos y una contraseña."
+          />
+          <figcaption>Captura de la app con datos de ejemplo.</figcaption>
+        </figure>
+      </article>
 
-  <h2 class="text-xl font-semibold pt-4">Principios</h2>
-  <ul class="list-disc pl-6 space-y-2">
-    <li>Cifrado en cliente. La clave maestra nunca sale del dispositivo.</li>
-    <li>Una cuenta = una persona. Sin compartición, sin equipos.</li>
-    <li>Sin backdoor. Ni siquiera DevHelper puede leer tus datos.</li>
-    <li>IA local como opt-in explícito. Si no la activas, no existe.</li>
-  </ul>
+      <article class="about__step about__step--text">
+        <div class="about__copy">
+          <h3>Encuéntralo cuando vuelva a hacer falta</h3>
+          <p>
+            Meses después, busca el error o el tema y vuelve a abrir la tarea, con la solución y
+            todo lo que adjuntaste.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="about__more mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h2 class="about__heading">Qué más incluye</h2>
+    <dl class="about__list">
+      <div>
+        <dt>Notas</dt>
+        <dd>Para lo que no es una tarea: apuntes sueltos dentro de un proyecto.</dd>
+      </div>
+      <div>
+        <dt>Calendario y eventos</dt>
+        <dd>Reuniones, entregas y recordatorios junto a tus tareas.</dd>
+      </div>
+      <div>
+        <dt>Archivos y contraseñas</dt>
+        <dd>En una tarea o en general. Cada archivo puede pesar hasta 5 MB.</dd>
+      </div>
+      <div>
+        <dt>Asistente de IA local</dt>
+        <dd>Opcional. Responde qué tienes pendiente o vencido, y funciona en tu dispositivo.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="about__more about__more--split mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <div>
+      <h2 class="about__heading">Para quién es</h2>
+      <p>
+        Para un desarrollador que quiere llevar su propio registro. Una cuenta es una persona: no
+        hay equipos, invitaciones ni tareas compartidas.
+      </p>
+    </div>
+    <div>
+      <h2 class="about__heading">Qué se cifra</h2>
+      <p>
+        Las contraseñas y el contenido de los archivos se cifran en tu navegador. Los proyectos,
+        tareas, notas y eventos no: se guardan en Firebase, accesibles solo desde tu cuenta.
+      </p>
+      <a routerLink="/" fragment="security" class="link about__link">Ver el detalle del cifrado</a>
+    </div>
+  </section>
+
+  <section class="about__close mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h2 class="about__heading">Empieza por tu proyecto actual.</h2>
+    <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
+  </section>
 </main>
 <landing-site-footer />

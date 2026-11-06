@@ -1,73 +1,78 @@
-<section [id]="id()" class="bg-base-200">
-  <div class="max-w-7xl mx-auto px-4 py-16">
-    <div class="text-center max-w-2xl mx-auto mb-12">
-      <span class="badge badge-soft gap-1 mb-4 text-success">
-        <span class="icon icon-sm" aria-hidden="true">lock</span>
-        Privacidad por diseño
-      </span>
-      <h2 class="text-2xl sm:text-3xl font-semibold mb-3">Seguridad y privacidad</h2>
-      <p class="opacity-70">
-        Tu información se cifra antes de salir de tu dispositivo. Nadie más, ni siquiera nosotros,
-        puede leerla.
-      </p>
-    </div>
+<section [id]="id()" class="security">
+  <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h2 class="security__title">Esto se cifra. Esto no.</h2>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-      <div>
-        <ul class="section-security__list" role="list">
-          @for (item of items; track item.title) {
-            <li class="section-security__row">
-              <span
-                class="section-security__marker"
-                aria-hidden="true"
-              ></span>
-              <div class="section-security__row-body">
-                <div class="flex items-center justify-between gap-3">
-                  <h3 class="font-semibold text-base">{{ item.title }}</h3>
-                  @if (item.badge; as badge) {
-                    <span class="badge badge-success badge-soft">{{ badge }}</span>
-                  }
-                </div>
-                <p class="opacity-75 text-sm leading-relaxed mt-1">
-                  <span class="icon icon-sm text-success shrink-0 align-[-2px]" aria-hidden="true">
-                    check
-                  </span>
-                  {{ item.description }}
-                </p>
-              </div>
-            </li>
-          }
+    <div class="boundary">
+      <div class="boundary__side boundary__side--sealed" data-boundary="encrypted">
+        <h3 class="boundary__heading">Se cifra en tu navegador</h3>
+        <ul class="boundary__list">
+          <li>
+            <span class="icon text-success" aria-hidden="true">lock</span>
+            El valor de tus contraseñas
+          </li>
+          <li>
+            <span class="icon text-success" aria-hidden="true">lock</span>
+            El contenido de tus archivos
+          </li>
         </ul>
-
-        <div class="mt-6">
-          <div class="alert alert-soft alert-success" role="note">
-            <span class="icon" aria-hidden="true">verified_user</span>
-            <span>Cifrado de extremo a extremo: ni DevHelper puede acceder a tus datos.</span>
-          </div>
-        </div>
-
-        <div class="mt-6">
-          <a
-            routerLink="/legal/terms"
-            target="_blank"
-            rel="noopener"
-            class="link link-hover text-sm"
-          >
-            Lee los detalles en Términos y Condiciones
-          </a>
-        </div>
+        <p class="boundary__text">
+          Se cifran con AES-GCM 256 antes de salir de tu dispositivo. La clave maestra se genera en
+          tu navegador y solo se guarda protegida por tu PIN o Passkey.
+        </p>
       </div>
 
-      <div class="block">
-        <img
-          ngSrc="/img/landing/vault-home.webp"
-          alt="Vista del workspace protegido de DevHelper"
-          width="2560"
-          height="1600"
-          loading="lazy"
-          class="rounded-xl border border-base-300 shadow-lg w-full h-auto section-security__visual"
-        />
+      <div class="boundary__side" data-boundary="plain">
+        <h3 class="boundary__heading">No se cifra en cliente</h3>
+        <ul class="boundary__list">
+          <li>
+            <span class="icon" aria-hidden="true">cloud</span>
+            Proyectos, tareas y notas
+          </li>
+          <li>
+            <span class="icon" aria-hidden="true">cloud</span>
+            Eventos
+          </li>
+          <li>
+            <span class="icon" aria-hidden="true">cloud</span>
+            Nombres de contraseñas y archivos
+          </li>
+        </ul>
+        <p class="boundary__text">
+          Se guardan en Firestore, con reglas que limitan el acceso a tu cuenta. Por eso las
+          credenciales van en su propio campo y no en una nota.
+        </p>
       </div>
     </div>
+
+    <p class="security__warning">
+      <span class="icon" aria-hidden="true">warning</span>
+
+      Si pierdes el PIN y las passkeys, lo cifrado no se puede recuperar.
+    </p>
+
+    <dl class="facts">
+      <div>
+        <dt>PIN o Passkey</dt>
+        <dd>Desbloquean el vault en tu dispositivo.</dd>
+      </div>
+      <div>
+        <dt>Región europea</dt>
+        <dd>Los datos se alojan en Firebase, en la región eur3.</dd>
+      </div>
+      <div>
+        <dt>Código público</dt>
+        <dd>
+          <a
+            [href]="github"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link underline-offset-4"
+          >
+            Comprueba en GitHub
+          </a>
+          cómo se cifra cada cosa.
+        </dd>
+      </div>
+    </dl>
   </div>
 </section>

@@ -1,53 +1,46 @@
-import { TestBed } from '@angular/core/testing';
-import { describe, it, expect } from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, it, expect } from 'vitest';
 import { SectionStack } from './section-stack';
 
 describe('SectionStack', () => {
-  it('renders a single marquee row', () => {
-    TestBed.configureTestingModule({});
-    const fixture = TestBed.createComponent(SectionStack);
+  let fixture: ComponentFixture<SectionStack>;
+  let root: HTMLElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SectionStack],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SectionStack);
     fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
-    expect(root.querySelectorAll('.section-stack__row').length).toBe(1);
-    expect(root.querySelectorAll('.section-stack__row--reverse').length).toBe(0);
+    root = fixture.nativeElement as HTMLElement;
   });
 
-  it('lists 4 unique tech names for screen readers', () => {
-    TestBed.configureTestingModule({});
-    const fixture = TestBed.createComponent(SectionStack);
-    fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
-    const names = [...root.querySelectorAll('.sr-only li')].map((el) => el.textContent?.trim());
-    expect(names).toHaveLength(4);
-    expect(names?.some((n) => n?.includes('Angular 20'))).toBe(true);
-    expect(names?.some((n) => n?.includes('DaisyUI 5'))).toBe(true);
-    expect(names?.some((n) => n?.includes('Tailwind 4'))).toBe(true);
-    expect(names?.some((n) => n?.includes('Firebase'))).toBe(true);
+  it('lists the four technologies with their logo and role', () => {
+    const items = root.querySelectorAll('.stack__item');
+    expect(items.length).toBe(4);
+    for (const item of items) {
+      const logo = item.querySelector('.stack__logo') as HTMLElement;
+      expect(logo.getAttribute('aria-hidden')).toBe('true');
+      expect(logo.style.getPropertyValue('mask-image')).toContain('/icons/stack/');
+      expect(item.querySelector('.stack__role')?.textContent?.trim()).toBeTruthy();
+    }
   });
 
-  it('renders chips with stack SVG logos and no daisyUI badges', () => {
-    TestBed.configureTestingModule({});
-    const fixture = TestBed.createComponent(SectionStack);
-    fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
-    const primaryChips = root.querySelectorAll(
-      '.section-stack__track[data-stack-track="0"] .section-stack__chip',
+  it('avoids the daisyUI stack class on its root', () => {
+    expect(root.querySelector('section')?.classList).not.toContain('stack');
+  });
+
+  it('is honest about Firebase being a proprietary service', () => {
+    const text = root.textContent ?? '';
+    expect(text).toContain('Firebase, un servicio de Google');
+    expect(text).not.toContain('vendor lock-in');
+    expect(text).not.toContain('Todo el stack es open source');
+  });
+
+  it('links to the public repository', () => {
+    expect(root.querySelector('a[href*="github.com"]')?.getAttribute('rel')).toBe(
+      'noopener noreferrer',
     );
-    // 4 unique chips × densify 3 = 12 chips per primary track
-    expect(primaryChips.length).toBe(12);
-    const logos = root.querySelectorAll(
-      '.section-stack__track[data-stack-track="0"] .section-stack__logo',
-    );
-    expect(logos.length).toBe(12);
-    expect((logos[0] as HTMLImageElement).getAttribute('src')).toContain('/icons/stack/');
-    expect(root.querySelectorAll('.badge').length).toBe(0);
-  });
-
-  it('renders the section header copy', () => {
-    TestBed.configureTestingModule({});
-    const fixture = TestBed.createComponent(SectionStack);
-    fixture.detectChanges();
-    const root = fixture.nativeElement as HTMLElement;
-    expect(root.querySelector('h2')?.textContent).toContain('Stack técnico transparente');
   });
 });

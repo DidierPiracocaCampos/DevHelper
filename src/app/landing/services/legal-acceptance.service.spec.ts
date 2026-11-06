@@ -22,7 +22,7 @@ describe('LegalAcceptanceService', () => {
   it('needsReAcceptance returns false when version matches', () => {
     expect(
       service.needsReAcceptance({
-        version: '2026-07-18',
+        version: '2026-11-06',
         lang: 'es',
         acceptedAt: {} as never,
         source: 'register',

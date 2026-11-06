@@ -34,9 +34,9 @@ export class Landing {
 
   constructor() {
     this._seo.set({
-      title: 'DevHelper — Tu memoria técnica, organizada y protegida',
+      title: 'DevHelper — Tu memoria técnica, siempre a mano',
       description:
-        'Workspace cifrado en cliente para desarrolladores: proyectos, tareas, credenciales, archivos y eventos, con IA local opcional.',
+        'Workspace para desarrolladores: proyectos, tareas y eventos en un solo lugar, con contraseñas y archivos cifrados en cliente e IA local opcional.',
       path: '/',
     });
   }

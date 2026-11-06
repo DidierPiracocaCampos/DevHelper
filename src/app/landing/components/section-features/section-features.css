@@ -2,90 +2,111 @@
   display: block;
 }
 
-.section-features__card {
-  transition:
-    transform var(--transition-base),
-    box-shadow var(--transition-base),
-    border-color var(--transition-base);
+.features {
+  padding-block: var(--spacing-12) 5rem;
 }
 
-.section-features__card:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 1px color-mix(in oklch, var(--color-base-content) 8%, transparent);
+.features__title {
+  max-width: 20ch;
+  margin-bottom: var(--spacing-10);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
-.section-features__card > .card-body {
+.row {
+  display: grid;
+  gap: var(--spacing-3);
+  padding-block: var(--spacing-6);
+  border-top: 1px solid var(--color-base-300);
+}
+
+.row:last-child {
+  border-bottom: 1px solid var(--color-base-300);
+}
+
+.row__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+}
+
+.row__text {
+  max-width: 48ch;
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
+}
+
+.demo {
+  align-self: start;
+  margin-top: var(--spacing-2);
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-sm);
+  background: var(--color-base-200);
+  font-size: var(--font-size-sm);
+}
+
+.demo__head {
+  padding: var(--spacing-2) var(--spacing-4);
+  border-bottom: 1px solid var(--color-base-300);
+  font-weight: var(--font-weight-semibold);
+}
+
+.demo__line {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-height: 2.75rem;
+  padding: var(--spacing-2) var(--spacing-4);
+}
+
+.demo__line + .demo__line {
+  border-top: 1px solid var(--color-base-300);
+}
+
+.demo__line--hit {
+  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200));
+  font-weight: var(--font-weight-medium);
+}
+
+.demo__main {
+  flex: 1;
   min-width: 0;
 }
 
-.section-features__icon-chip {
-  border-color: color-mix(in oklch, var(--color-base-content) 12%, transparent);
+.demo__side {
+  flex-shrink: 0;
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  font-variant-numeric: tabular-nums;
 }
 
-.section-features__visual {
-  overflow: hidden;
-  background: transparent;
-  aspect-ratio: var(--feature-ratio);
+.demo__date {
+  flex-shrink: 0;
+  width: 3rem;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
 }
 
-.section-features__visual img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-  object-fit: cover;
-  object-position: top;
-  transition: transform var(--transition-fast);
+.features__note {
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
 }
 
-.section-features__card:hover .section-features__visual img {
-  transform: scale(1.01);
-}
-
-/* Large: figure fills the card width; height is auto and driven by its asset ratio. */
-.section-features__card--large .section-features__visual {
-  width: 100%;
-  height: auto;
-  border-bottom-left-radius: var(--radius-box);
-  border-bottom-right-radius: var(--radius-box);
-}
-
-.section-features__card--large .section-features__visual img {
-  border-bottom-left-radius: var(--radius-box);
-  border-bottom-right-radius: var(--radius-box);
-}
-
-/* Compact: figure full width on mobile/md, side column on lg+ via card-side. */
-.section-features__card:not(.section-features__card--large) .section-features__visual {
-  max-height: 8rem;
-}
-
-@media (min-width: 1024px) {
-  .section-features__card:not(.section-features__card--large) .section-features__visual {
-    max-height: none;
-    width: 45%;
-    flex: 0 0 45%;
-    max-width: 45%;
-    align-self: flex-start;
-  }
-}
-
-/* Suppress DaisyUI card-side internal divider that frames the figure. */
-.section-features__figure {
-  border-left: 0;
-  border-top: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section-features__card,
-  .section-features__visual img {
-    transition: none;
+@media (min-width: 64rem) {
+  .features__title {
+    max-width: 24ch;
   }
 
-  .section-features__card:hover,
-  .section-features__card:hover .section-features__visual img {
-    transform: none;
+  .row {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+    gap: var(--spacing-8);
+    padding-block: var(--spacing-8);
+  }
+
+  .demo {
+    margin-top: 0;
   }
 }

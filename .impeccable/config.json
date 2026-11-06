@@ -1,0 +1,38 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "roboto",
+        "createdAt": "2026-11-06T09:46:03.052Z",
+        "reason": "user confirmed: chose 'Recomponer', which keeps Roboto; docs/design-context.md makes it the only approved family"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/preguntas.html"
+        ],
+        "createdAt": "2026-11-06T09:46:03.223Z",
+        "reason": "false positive: decision sketch rows use fixed 112px height with 64px side padding, text is vertically centred"
+      },
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/app/landing/components/section-stack/section-stack.html"
+        ],
+        "createdAt": "2026-11-06T10:24:14.983Z",
+        "reason": "false positive: img uses Angular [src] binding to /icons/stack/*.svg, rendered in captures"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "material symbols outlined",
+        "createdAt": "2026-11-06T10:48:21.074Z",
+        "reason": "sanctioned exception: Material Symbols Outlined is the only approved icon font per docs/design-context.md section 4, not a text face"
+      }
+    ]
+  }
+}

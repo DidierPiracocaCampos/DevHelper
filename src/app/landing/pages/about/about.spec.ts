@@ -24,15 +24,43 @@ describe('About', () => {
     fixture.detectChanges();
   });
 
-  it('renders the H1 and the main text', () => {
-    const html = fixture.nativeElement as HTMLElement;
-    const h1 = html.querySelector('h1');
-    expect(h1?.textContent).toContain('Acerca de');
-    expect(h1?.textContent).toContain('DevHelper');
-    expect(h1?.querySelector('.icon')?.textContent?.trim()).toBe('code');
-    const text = html.textContent ?? '';
-    expect(text).toContain('workspace personal cifrado para developers');
-    expect(text).toContain('Principios');
-    expect(text).toContain('Cifrado en cliente');
+  const root = () => fixture.nativeElement as HTMLElement;
+
+  it('says what the app is in the H1', () => {
+    expect(root().querySelector('h1')?.textContent).toContain(
+      'DevHelper es una app para registrar tus avances.',
+    );
+  });
+
+  it('shows the app in images with descriptive alt text', () => {
+    const images = Array.from(root().querySelectorAll('main img'));
+    expect(images.length).toBe(3);
+    for (const image of images) {
+      expect(image.getAttribute('alt')?.length).toBeGreaterThan(20);
+      expect(image.getAttribute('width')).toBeTruthy();
+      expect(image.getAttribute('height')).toBeTruthy();
+    }
+  });
+
+  it('explains how a task records progress', () => {
+    const steps = Array.from(root().querySelectorAll('.about__step h3'));
+    expect(steps.map((step) => step.textContent?.trim())).toEqual([
+      'Divide el proyecto en tareas',
+      'Apunta qué pasó y cómo lo resolviste',
+      'Encuéntralo cuando vuelva a hacer falta',
+    ]);
+  });
+
+  it('labels example data and links to sign up', () => {
+    expect(root().textContent).toContain('datos de ejemplo');
+    expect(root().querySelector('a[href="/login/register"]')).toBeTruthy();
+  });
+
+  it('makes no privacy claim the product does not meet', () => {
+    const text = root().textContent ?? '';
+    expect(text).not.toContain('Ni siquiera');
+    expect(text).not.toContain('backdoor');
+    expect(text).not.toContain('workspace personal cifrado');
+    expect(text).toContain('Los proyectos, tareas, notas y eventos no');
   });
 });
