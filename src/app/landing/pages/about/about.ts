@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Authenticator } from '../../../shared/service/authenticator';
 import { SiteHeader } from '../../components/site-header/site-header';
 import { SiteFooter } from '../../components/site-footer/site-footer';
@@ -7,7 +8,7 @@ import { SeoService } from '../../services/seo.service';
 @Component({
   selector: 'landing-about',
   standalone: true,
-  imports: [SiteHeader, SiteFooter],
+  imports: [RouterLink, SiteHeader, SiteFooter],
   templateUrl: './about.html',
   styleUrl: './about.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,9 +20,9 @@ export class About {
 
   constructor() {
     this._seo.set({
-      title: 'Sobre DevHelper',
+      title: 'Qué es DevHelper',
       description:
-        'Workspace cifrado en cliente para developers. Una cuenta = una persona. Sin backdoor.',
+        'DevHelper es una app para registrar tus avances como desarrollador: proyectos, tareas, soluciones, archivos y contraseñas en un solo lugar.',
       path: '/about',
     });
   }

@@ -21,7 +21,8 @@ export class SeoService {
   set(page: SeoPage): void {
     const url = `${SITE_URL}${page.path}`;
     const image = page.image ?? `${SITE_URL}/og-image.jpg`;
-    const imageAlt = page.imageAlt ?? 'DevHelper — workspace personal cifrado para developers';
+    const imageAlt =
+      page.imageAlt ?? 'DevHelper — app para registrar tus avances como desarrollador';
     this._title.setTitle(page.title);
     this._meta.updateTag({ name: 'description', content: page.description });
     this._meta.updateTag({ property: 'og:site_name', content: 'DevHelper' });

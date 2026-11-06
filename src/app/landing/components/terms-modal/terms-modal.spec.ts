@@ -21,7 +21,7 @@ function makeAuth(user: { uid: string } | null) {
 }
 
 function makeLegal(current: { version: string } | null) {
-  const needsReAcceptance = (c: { version: string } | null) => !c || c.version !== '2026-07-18';
+  const needsReAcceptance = (c: { version: string } | null) => !c || c.version !== '2026-11-06';
   return {
     current: vi.fn().mockReturnValue(of(current)),
     accept: vi.fn().mockResolvedValue(undefined),
@@ -54,7 +54,7 @@ describe('TermsModal', () => {
 
   it('dialog is closed when user is logged in and version matches', () => {
     const auth = makeAuth({ uid: 'u1' });
-    const legal = makeLegal({ version: '2026-07-18' });
+    const legal = makeLegal({ version: '2026-11-06' });
     TestBed.overrideProvider(Authenticator, { useValue: auth });
     TestBed.overrideProvider(LegalAcceptanceService, { useValue: legal });
     const fixture = TestBed.createComponent(TermsModal);
@@ -80,7 +80,7 @@ describe('TermsModal', () => {
     const legal = {
       current: vi.fn().mockReturnValue(neverEmit$),
       accept: vi.fn().mockResolvedValue(undefined),
-      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-07-18',
+      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-11-06',
     };
     TestBed.overrideProvider(Authenticator, { useValue: auth });
     TestBed.overrideProvider(LegalAcceptanceService, { useValue: legal });
@@ -121,14 +121,14 @@ describe('TermsModal', () => {
         }),
       ),
       accept: vi.fn().mockResolvedValue(undefined),
-      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-07-18',
+      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-11-06',
     };
     TestBed.overrideProvider(Authenticator, { useValue: auth });
     TestBed.overrideProvider(LegalAcceptanceService, { useValue: slowLegal });
     const fixture = TestBed.createComponent(TermsModal);
     fixture.detectChanges();
     expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(false);
-    resolveFirestore({ version: '2026-07-18' });
+    resolveFirestore({ version: '2026-11-06' });
     fixture.detectChanges();
     expect(isDialogOpen(fixture.nativeElement as HTMLElement)).toBe(false);
   });
@@ -143,7 +143,7 @@ describe('TermsModal', () => {
         }),
       ),
       accept: vi.fn().mockResolvedValue(undefined),
-      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-07-18',
+      needsReAcceptance: (c: { version: string } | null) => !c || c.version !== '2026-11-06',
     };
     TestBed.overrideProvider(Authenticator, { useValue: auth });
     TestBed.overrideProvider(LegalAcceptanceService, { useValue: slowLegal });

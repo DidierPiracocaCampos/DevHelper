@@ -44,7 +44,7 @@ describe('SeoService', () => {
     expect(meta.getTag('property="og:image:width"')?.content).toBe('1200');
     expect(meta.getTag('property="og:image:height"')?.content).toBe('630');
     expect(meta.getTag('property="og:image:alt"')?.content).toBe(
-      'DevHelper — workspace personal cifrado para developers',
+      'DevHelper — app para registrar tus avances como desarrollador',
     );
     expect(meta.getTag('name="twitter:card"')?.content).toBe('summary_large_image');
     expect(meta.getTag('name="twitter:title"')?.content).toBe('DevHelper');
@@ -53,7 +53,7 @@ describe('SeoService', () => {
       'https://devhelper-a61ef.web.app/og-image.jpg',
     );
     expect(meta.getTag('name="twitter:image:alt"')?.content).toBe(
-      'DevHelper — workspace personal cifrado para developers',
+      'DevHelper — app para registrar tus avances como desarrollador',
     );
   });
 

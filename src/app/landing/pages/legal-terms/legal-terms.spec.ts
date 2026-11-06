@@ -65,11 +65,18 @@ describe('LegalTerms', () => {
     expect(article?.innerHTML).toContain('<h1>Terminos y Condiciones</h1>');
   });
 
-  it('renders the sticky header with the Volver link', async () => {
+  it('tells the reader when the document cannot be loaded', async () => {
+    terms.load.mockImplementation(async () => '(error)');
     const fixture = await createFixture();
-    const back = (fixture.nativeElement as HTMLElement).querySelector('a[href="/"]');
-    expect(back).toBeTruthy();
-    expect(back?.textContent?.trim()).toBe('Volver');
+    const alert = (fixture.nativeElement as HTMLElement).querySelector('[role="alert"]');
+    expect(alert?.textContent).toContain('No se pudo cargar el documento');
+  });
+
+  it('uses the site header and footer', async () => {
+    const fixture = await createFixture();
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('landing-site-header')).toBeTruthy();
+    expect(root.querySelector('landing-site-footer')).toBeTruthy();
   });
 
   it('hides the Aceptar button when no user is logged in', async () => {
