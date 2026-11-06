@@ -19,9 +19,8 @@ describe('SectionHero', () => {
   });
 
   it('states the promise and names the product', () => {
-    expect(root.querySelector('h1')?.textContent).toContain(
-      'Registra lo que resuelves. Encuéntralo cuando vuelva.',
-    );
+    const h1 = root.querySelector('h1')?.textContent?.replace(/\s+/g, ' ').trim();
+    expect(h1).toBe('Registra lo que resuelves. Encuéntralo cuando vuelva.');
     expect(root.textContent).toContain('DevHelper es una app para registrar tus avances');
   });
 
