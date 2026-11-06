@@ -1,94 +1,47 @@
-<section class="landing-hero">
-  <div class="hero__intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <h1 class="hero__title">Este error ya lo resolviste.</h1>
-    <div class="hero__pitch">
-      <p class="hero__lede">
-        DevHelper es tu memoria técnica: guarda cada problema con su solución, sus archivos y sus
-        credenciales. Cuando vuelva, ya está escrito.
-      </p>
-      <div class="mt-4 md:mt-6 flex flex-wrap items-center gap-3">
-        <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear mi workspace</a>
-        <a
-          routerLink="/"
-          fragment="how-it-works"
-          class="btn btn-ghost btn-lg hidden md:inline-flex"
-        >
-          Ver cómo funciona
-        </a>
-      </div>
+<section class="landing-intro">
+  <div class="intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+    <h1 class="intro__title">
+      <span class="intro__line">Registra lo que resuelves.</span>
+      &ngsp;
+      <span class="intro__line">Encuéntralo cuando vuelva.</span>
+    </h1>
+    <p class="intro__lede">
+      DevHelper es una app para registrar tus avances: proyectos y tareas con su solución, sus
+      archivos, sus contraseñas y tus fechas, en un solo lugar.
+    </p>
+    <div class="intro__actions">
+      <a routerLink="/login/register" class="btn btn-primary btn-lg">Crear cuenta</a>
+      <a routerLink="/" fragment="features" class="btn btn-ghost btn-lg">Ver funciones</a>
     </div>
   </div>
 
   <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
-    <div class="record" role="group" aria-label="Demostración con tareas de ejemplo">
-      <form class="record__search" role="search" (submit)="$event.preventDefault()">
-        <span class="icon" aria-hidden="true">search</span>
-        <label class="sr-only" for="hero-search">Buscar en las tareas de ejemplo</label>
-        <input
-          id="hero-search"
-          class="record__input"
-          type="search"
-          autocomplete="off"
-          placeholder="Busca en este ejemplo"
-          [value]="query()"
-          (input)="onSearch($event)"
-        />
-        <div class="record__terms">
-          @for (item of tasks; track item.id) {
-            <button
-              type="button"
-              class="record__term"
-              [class.record__term--active]="task()?.id === item.id"
-              [attr.aria-pressed]="task()?.id === item.id"
-              (click)="query.set(item.term)"
-            >
-              {{ item.term }}
-            </button>
-          }
+    <figure class="product-shot">
+      <div class="product-window">
+        <div class="product-window__bar">
+          <span class="icon" aria-hidden="true">code</span>
+          <span>DevHelper</span>
         </div>
-      </form>
-      <p class="sr-only" role="status">{{ status() }}</p>
-
-      @for (item of visibleTasks(); track item.id) {
-        <article class="task" [attr.data-task]="item.id">
-          <header class="task__head">
-            <h2 class="task__title">
-              <span class="icon text-success" aria-hidden="true">check_circle</span>
-              {{ item.title }}
-            </h2>
-            <p class="task__meta">
-              {{ item.project }} · Hecha el {{ item.doneAt }} · Tarea de ejemplo
-            </p>
-          </header>
-          <div class="task__field">
-            <h3 class="task__label">Problema</h3>
-            <p class="task__problem">{{ item.problem }}</p>
-          </div>
-          <div class="task__field task__field--solution">
-            <h3 class="task__label">Solución</h3>
-            <p class="task__solution">{{ item.solution }}</p>
-          </div>
-          <ul class="task__attachments" aria-label="Adjuntos de la tarea">
-            @for (attachment of item.attachments; track attachment.label) {
-              <li class="task__attachment">
-                <span class="icon icon-sm" aria-hidden="true">{{ attachment.icon }}</span>
-                <span>
-                  {{ attachment.label }}
-                  <small>{{ attachment.meta }}</small>
-                </span>
-              </li>
-            }
-          </ul>
-        </article>
-      } @empty {
-        <div class="record__empty">
-          <p>
-            Nada con «{{ query() }}» en este ejemplo. En tu workspace, aquí aparecería lo que hayas
-            guardado.
-          </p>
-          <button type="button" class="btn btn-ghost" (click)="clear()">Volver al ejemplo</button>
-        </div>
-      }
-    </div>
+        <picture>
+          <source
+            media="(max-width: 47.99rem)"
+            srcset="/img/landing/producto-movil.webp"
+            width="780"
+            height="1688"
+          />
+          <img
+            src="/img/landing/producto-escritorio.webp"
+            width="2880"
+            height="1840"
+            fetchpriority="high"
+            decoding="async"
+            alt="Pantalla principal de DevHelper con proyectos, tareas, calendario, archivos y contraseñas, con datos de ejemplo."
+          />
+        </picture>
+      </div>
+      <figcaption class="product-shot__caption">
+        Pantalla real de DevHelper con datos de ejemplo.
+      </figcaption>
+    </figure>
   </div>
 </section>

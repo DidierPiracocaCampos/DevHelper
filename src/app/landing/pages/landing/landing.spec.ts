@@ -24,48 +24,28 @@ describe('Landing', () => {
     fixture.detectChanges();
   });
 
-  it('renders the site header, the four sections and the site footer', () => {
+  it('renders the site header and the site footer', () => {
     const html = fixture.nativeElement as HTMLElement;
     expect(html.querySelector('landing-site-header')).toBeTruthy();
-    expect(html.querySelector('landing-section-hero')).toBeTruthy();
-    expect(html.querySelector('landing-section-features')).toBeTruthy();
-    expect(html.querySelector('landing-section-security')).toBeTruthy();
-    expect(html.querySelector('landing-section-cta')).toBeTruthy();
     expect(html.querySelector('landing-site-footer')).toBeTruthy();
   });
 
-  it('renders all 6 sections in order', () => {
+  it('renders all sections in order', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const hero = root.querySelector('landing-section-hero');
-    const features = root.querySelector('landing-section-features');
-    const howItWorks = root.querySelector('landing-section-how-it-works');
-    const security = root.querySelector('landing-section-security');
-    const stack = root.querySelector('landing-section-stack');
-    const cta = root.querySelector('landing-section-cta');
-    expect(hero).toBeTruthy();
-    expect(features).toBeTruthy();
-    expect(howItWorks).toBeTruthy();
-    expect(security).toBeTruthy();
-    expect(stack).toBeTruthy();
-    expect(cta).toBeTruthy();
-    expect(features!.previousElementSibling).toBe(hero);
-    expect(howItWorks!.previousElementSibling).toBe(features);
-    expect(security!.previousElementSibling).toBe(howItWorks);
-    expect(stack!.previousElementSibling).toBe(security);
-    expect(cta!.previousElementSibling).toBe(stack);
+    const order = ['hero', 'capabilities', 'features', 'search', 'security', 'stack', 'cta'].map(
+      (name) => root.querySelector('landing-section-' + name),
+    );
+    order.forEach((el) => expect(el).toBeTruthy());
+    for (let i = 1; i < order.length; i++) {
+      expect(order[i]!.previousElementSibling).toBe(order[i - 1]);
+    }
   });
 
-  it('exposes the anchor destinations used by the landing navigation', () => {
+  it('keeps the header navigation pointing at the landing anchors', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const anchors = [
-      ['features', '/#features'],
-      ['how-it-works', '/#how-it-works'],
-      ['security', '/#security'],
-    ] as const;
-
-    for (const [id, href] of anchors) {
-      expect(root.querySelector(`#${id}`)).toBeTruthy();
-      expect(root.querySelector(`a[href="${href}"]`)).toBeTruthy();
+    for (const href of ['/#features', '/#security']) {
+      expect(root.querySelector('landing-site-header a[href="' + href + '"]')).toBeTruthy();
     }
+    expect(root.querySelector('#search')).toBeTruthy();
   });
 });

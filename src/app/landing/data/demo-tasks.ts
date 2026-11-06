@@ -23,7 +23,7 @@ export const DEMO_TASKS: readonly DemoTask[] = [
     term: 'cors',
     title: 'CORS bloqueado tras cambiar de dominio',
     project: 'api-pagos',
-    doneAt: '14 mar 2025',
+    doneAt: '6 nov 2026',
     problem:
       'El front recibe un 403 en el preflight desde el dominio nuevo. En staging funciona. Solo falla en las peticiones con credenciales.',
     solution:

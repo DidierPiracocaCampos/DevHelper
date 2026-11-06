@@ -16,83 +16,256 @@
   text-wrap: balance;
 }
 
-.row {
+/* Large blocks: copy first, image second (flipped on desktop). */
+.block {
   display: grid;
-  gap: var(--spacing-3);
-  padding-block: var(--spacing-6);
-  border-top: 1px solid var(--color-base-300);
+  gap: var(--spacing-6);
+  align-items: center;
+  padding-block: var(--spacing-8);
 }
 
-.row:last-child {
-  border-bottom: 1px solid var(--color-base-300);
+.block__title {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
-.row__title {
+.block__text {
+  max-width: 44ch;
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-lg);
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
+}
+
+.shot {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Overlay scenes are aligned to the capture with percentages measured on each crop, so they
+   track the real row and the real field at any width. The default is the end state. */
+.scene {
+  position: absolute;
+}
+
+.scene.reveal-pending {
+  transform: none;
+}
+
+.scene--task {
+  inset: 0;
+  --row-left: 1.83%;
+  --row-top: 34.94%;
+  --row-width: 96.33%;
+  --row-height: 13.75%;
+  --circle-left: 93.12%;
+  --circle-top: 39.73%;
+  --circle-width: 3.06%;
+  --circle-height: 4.17%;
+}
+
+.scene__row,
+.scene__circle {
+  position: absolute;
+  opacity: 0;
+}
+
+.scene__row {
+  left: var(--row-left);
+  top: var(--row-top);
+  width: var(--row-width);
+  height: var(--row-height);
+  border: 1px solid var(--color-base-content);
+  border-radius: var(--radius-sm);
+}
+
+.scene__circle {
+  left: var(--circle-left);
+  top: var(--circle-top);
+  width: var(--circle-width);
+  height: var(--circle-height);
+  border: 2px solid color-mix(in oklch, var(--color-base-content) 22%, var(--color-base-100));
+  border-radius: 50%;
+  background: var(--color-base-100);
+}
+
+.scene--solution {
+  left: 3.13%;
+  top: 73.68%;
+  width: 93.75%;
+  height: 21.54%;
+  border: 1px solid color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--color-base-content) 7%, transparent);
+  pointer-events: none;
+}
+
+@media (max-width: 47.99rem) {
+  .scene--task {
+    --row-left: 1.73%;
+    --row-top: 69.23%;
+    --row-width: 96.53%;
+    --row-height: 28.21%;
+    --circle-left: 88.73%;
+    --circle-top: 79.06%;
+    --circle-width: 5.78%;
+    --circle-height: 8.55%;
+  }
+
+  .scene--solution {
+    left: 6.35%;
+    top: 75.56%;
+    width: 87.3%;
+    height: 20%;
+  }
+}
+
+/* Bento tiles */
+.tiles {
+  display: grid;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
+  background: var(--color-base-200);
+  padding: var(--spacing-6) var(--spacing-6) 0;
+  transition: border-color 200ms var(--ease-out-expo);
+}
+
+.tile.is-revealed {
+  transition:
+    border-color 200ms var(--ease-out-expo),
+    opacity var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms),
+    transform var(--motion-reveal) var(--ease-out-expo) var(--reveal-delay, 0ms);
+}
+
+.tile:hover {
+  border-color: color-mix(in oklch, var(--color-base-content) 30%, transparent);
+}
+
+.tile__title {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.015em;
 }
 
-.row__text {
-  max-width: 48ch;
+.tile__text {
+  max-width: 46ch;
+  margin-top: var(--spacing-2);
   line-height: 1.55;
   color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
 }
 
-.demo {
-  align-self: start;
-  margin-top: var(--spacing-2);
+.tile__visual {
+  margin-top: auto;
+  padding-top: var(--spacing-6);
+}
+
+.tile__visual picture {
+  display: block;
+}
+
+.tile__visual img {
+  display: block;
+  width: 100%;
+  height: auto;
   border: 1px solid var(--color-base-300);
-  border-radius: var(--radius-sm);
-  background: var(--color-base-200);
+  border-bottom: 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tile--5 .tile__visual img {
+  max-width: 32rem;
+}
+
+.tile__visual--scene {
+  padding-bottom: var(--spacing-6);
+}
+
+.events,
+.ai-exchange {
+  border-top: 1px solid var(--color-base-300);
   font-size: var(--font-size-sm);
 }
 
-.demo__head {
-  padding: var(--spacing-2) var(--spacing-4);
-  border-bottom: 1px solid var(--color-base-300);
-  font-weight: var(--font-weight-semibold);
-}
-
-.demo__line {
+.events__row,
+.ai-exchange__line {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
   min-height: 2.75rem;
-  padding: var(--spacing-2) var(--spacing-4);
+  padding-block: var(--spacing-2);
 }
 
-.demo__line + .demo__line {
+.events__row + .events__row,
+.ai-exchange__line + .ai-exchange__line {
   border-top: 1px solid var(--color-base-300);
 }
 
-.demo__line--hit {
-  background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200));
-  font-weight: var(--font-weight-medium);
-}
-
-.demo__main {
-  flex: 1;
-  min-width: 0;
-}
-
-.demo__side {
+.events__date {
   flex-shrink: 0;
-  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
-  font-variant-numeric: tabular-nums;
-}
-
-.demo__date {
-  flex-shrink: 0;
-  width: 3rem;
+  width: 3.25rem;
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
 
+.events__name {
+  flex: 1;
+  min-width: 0;
+}
+
+.events__side {
+  flex-shrink: 0;
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-exchange__line--answer {
+  font-weight: var(--font-weight-medium);
+}
+
+.ai-exchange__reply {
+  min-width: 0;
+}
+
 .features__note {
-  margin-top: var(--spacing-4);
+  margin-top: var(--spacing-6);
   font-size: var(--font-size-sm);
   color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+}
+
+/* Two columns only where the capture keeps its text legible beside the copy. */
+@media (min-width: 80rem) {
+  .block {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--spacing-12);
+    padding-block: var(--spacing-12);
+  }
+
+  .block--flip {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .block--flip .shot {
+    order: -1;
+  }
 }
 
 @media (min-width: 64rem) {
@@ -100,13 +273,100 @@
     max-width: 24ch;
   }
 
-  .row {
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
-    gap: var(--spacing-8);
-    padding-block: var(--spacing-8);
+  .tiles {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 
-  .demo {
-    margin-top: 0;
+  .tile--5 {
+    grid-column: span 5;
+  }
+
+  .tile--7 {
+    grid-column: span 7;
+  }
+}
+
+/* Scenes: while pending the row still shows its open circle and the field is unlit.
+   The classes only exist when motion is allowed. Animations stay outside @media because Angular
+   does not rename keyframes used inside one once the CSS is minified. */
+@media screen {
+  .scene--task.reveal-pending,
+  .scene--task.reveal-pending .scene__circle {
+    opacity: 1;
+  }
+}
+
+.scene--task.is-revealed .scene__circle {
+  animation: scene-circle-done 500ms var(--ease-out-expo) 500ms both;
+}
+
+.scene--task.is-revealed .scene__row {
+  animation: scene-row-flash 1400ms var(--ease-out-expo) 300ms both;
+}
+
+.scene--solution.is-revealed {
+  animation: scene-lit 1100ms var(--ease-out-expo) 300ms both;
+}
+
+.events.is-revealed .events__row {
+  animation: scene-row-in 600ms var(--ease-out-expo) both;
+}
+
+.events.is-revealed .events__row:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.ai-exchange.is-revealed .ai-exchange__line--ask {
+  animation: scene-row-in 500ms var(--ease-out-expo) 200ms both;
+}
+
+.ai-exchange.is-revealed .ai-exchange__reply {
+  animation: scene-wipe 600ms var(--ease-out-expo) 700ms both;
+}
+
+@keyframes scene-circle-done {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scene-row-flash {
+  from {
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scene-lit {
+  from {
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+    background: color-mix(in oklch, var(--color-base-content) 18%, transparent);
+  }
+}
+
+@keyframes scene-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+@keyframes scene-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }

@@ -21,6 +21,7 @@ describe('SectionCta', () => {
   it('closes with the call to action', () => {
     expect(root.querySelector('h2')?.textContent).toContain('Lo próximo que resuelvas, guárdalo.');
     expect(root.querySelector('a[href="/login/register"].btn-primary')).toBeTruthy();
+    expect(root.querySelector('a[href="/login/register"]')?.textContent).toContain('Crear cuenta');
     expect(root.querySelector('a[href="/login"]')).toBeTruthy();
   });
 

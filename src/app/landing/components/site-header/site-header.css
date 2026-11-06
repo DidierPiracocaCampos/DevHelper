@@ -1,3 +1,24 @@
 :host {
   display: block;
 }
+
+.site-header {
+  border-bottom: 1px solid var(--color-base-300);
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .site-header {
+      border-bottom-color: transparent;
+      animation: header-rule linear both;
+      animation-timeline: scroll();
+      animation-range: 0 3rem;
+    }
+  }
+}
+
+@keyframes header-rule {
+  to {
+    border-bottom-color: var(--color-base-300);
+  }
+}

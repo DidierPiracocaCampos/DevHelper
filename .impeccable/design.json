@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-06T10:47:23.888Z",
+  "generatedAt": "2026-11-06T15:50:05.030Z",
   "title": "Design System: DevHelper",
   "extensions": {
     "colorMeta": {
@@ -157,7 +157,7 @@
       "surface-lit": {
         "role": "neutral",
         "displayName": "Campo Encendido",
-        "canonical": "color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200))",
+        "canonical": "color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100))",
         "tonalRamp": [
           "#0b0b0b",
           "#242423",
@@ -233,11 +233,15 @@
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "H1 y afirmaciones de máximo peso; token --font-size-display."
+        "purpose": "H1 y afirmaciones de máximo peso, como el cierre y el título de Seguridad; token --font-size-display."
       },
       "headline": {
         "displayName": "Headline",
         "purpose": "Títulos de sección; token --font-size-section."
+      },
+      "block-title": {
+        "displayName": "Block Title",
+        "purpose": "Título de un bloque de característica."
       },
       "field-lit": {
         "displayName": "Field Lit",
@@ -245,27 +249,27 @@
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Filas y columnas dentro de una sección."
+        "purpose": "Títulos de tile, de lado de frontera y de la lista de tecnología."
       },
       "title-sm": {
         "displayName": "Title Small",
-        "purpose": "Título de un registro."
+        "purpose": "Título de un registro y de la tarea en blanco."
       },
       "body-lg": {
         "displayName": "Body Large",
-        "purpose": "Ledes y contenido de campo en escritorio."
+        "purpose": "Ledes, texto de bloque y contenido de campo en escritorio."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Explicación, de 46 a 56ch."
+        "purpose": "Explicación, como el texto de una tile; de 44 a 52ch."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Nombre de un campo."
+        "purpose": "Nombre de un campo y enlaces de la franja de funciones."
       },
       "meta": {
         "displayName": "Meta",
-        "purpose": "Metadatos y líneas de demo."
+        "purpose": "Metadatos, barra de la ventana, pies de captura y filas de escena."
       }
     },
     "shadows": [
@@ -302,9 +306,54 @@
         "purpose": "View transitions entre rutas."
       },
       {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Curva de todo el movimiento de contenido de la landing; token --ease-out-expo."
+      },
+      {
+        "name": "motion-reveal",
+        "value": "700ms",
+        "purpose": "Apariciones de contenido con Reveal; token --motion-reveal."
+      },
+      {
+        "name": "motion-focal",
+        "value": "1100ms",
+        "purpose": "Momento focal, la ventana del producto; token --motion-focal."
+      },
+      {
+        "name": "hero-intro",
+        "value": "700ms cubic-bezier(0.16, 1, 0.3, 1), escalonado 0, 80 y 160ms",
+        "purpose": "Titular, lede y botones suben 1rem y aparecen; CSS puro."
+      },
+      {
+        "name": "window-in",
+        "value": "1100ms cubic-bezier(0.16, 1, 0.3, 1) 240ms",
+        "purpose": "La ventana del producto se abre desde un recorte, sube 2.5rem y se aclara de brillo 0.6 a 1."
+      },
+      {
+        "name": "reveal",
+        "value": "opacity y translateY(1.5rem), umbral 0.15, margen inferior 8%, retraso hasta 240ms",
+        "purpose": "Directiva landingReveal; se observa una sola vez y no añade clases con movimiento reducido."
+      },
+      {
+        "name": "scene",
+        "value": "de 400ms a 1400ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Escenas colgadas de .is-revealed; se reproducen una vez al entrar y su estado sin clases es el final."
+      },
+      {
         "name": "solution-lit",
         "value": "900ms cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Encendido del campo Solución al aparecer; desactivado con prefers-reduced-motion."
+        "purpose": "Encendido del campo Solución cada vez que aparece una tarea; desactivado con prefers-reduced-motion."
+      },
+      {
+        "name": "tile-hover",
+        "value": "200ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "El contorno de una tile se aclara en hover."
+      },
+      {
+        "name": "header-rule",
+        "value": "scroll(), rango 0 a 3rem",
+        "purpose": "El filete de la cabecera aparece con el scroll, si el navegador lo admite y no se pide movimiento reducido."
       }
     ],
     "breakpoints": [
@@ -327,6 +376,10 @@
       {
         "name": "record",
         "value": "72rem"
+      },
+      {
+        "name": "block",
+        "value": "80rem"
       }
     ]
   },
@@ -336,7 +389,7 @@
       "kind": "button",
       "refersTo": "button-primary",
       "description": "Acción principal; relleno casi blanco, una por grupo.",
-      "html": "<a class=\"ds-btn-primary\" href=\"#\">Crear mi workspace</a>",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Crear cuenta</a>",
       "css": ".ds-btn-primary { display: inline-flex; align-items: center; height: 3rem; padding: 0 1.25rem; background: var(--color-primary); color: var(--color-primary-content); border-radius: var(--radius-field); font-family: var(--font-base); font-size: 1.125rem; font-weight: 600; text-decoration: none; } .ds-btn-primary:hover { background: color-mix(in oklab, var(--color-primary), #000 7%); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }"
     },
     {
@@ -344,7 +397,7 @@
       "kind": "button",
       "refersTo": "button-ghost",
       "description": "Salida secundaria junto al primario; sin fondo en reposo.",
-      "html": "<a class=\"ds-btn-ghost\" href=\"#\">Ver cómo funciona</a>",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">Ver funciones</a>",
       "css": ".ds-btn-ghost { display: inline-flex; align-items: center; height: 3rem; padding: 0 1.25rem; background: transparent; color: var(--color-base-content); border-radius: var(--radius-field); font-family: var(--font-base); font-size: 1.125rem; font-weight: 600; text-decoration: none; } .ds-btn-ghost:hover { background: color-mix(in oklab, var(--color-base-200), #000 7%); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-base-content); outline-offset: 2px; }"
     },
     {
@@ -353,7 +406,7 @@
       "refersTo": "record",
       "description": "Barra de búsqueda de un registro; el foco marca toda la barra.",
       "html": "<form class=\"ds-search\" role=\"search\"><svg class=\"ds-icon\" viewBox=\"0 -960 960 960\" width=\"20\" height=\"20\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z\"/></svg><input class=\"ds-search-input\" type=\"search\" placeholder=\"Busca en este ejemplo\" aria-label=\"Buscar en las tareas de ejemplo\" /></form>",
-      "css": ".ds-search { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-3) var(--spacing-5); background: var(--color-base-200); color: var(--color-base-content); border-bottom: 1px solid var(--color-base-300); } .ds-search:focus-within { box-shadow: inset 0 -2px 0 var(--color-base-content); } .ds-search-input { flex: 1; min-width: 0; min-height: 2.5rem; background: transparent; border: 0; outline: none; color: inherit; font-family: var(--font-base); font-size: 1rem; } .ds-search-input::placeholder { color: color-mix(in oklch, var(--color-base-content) 68%, transparent); opacity: 1; }"
+      "css": ".ds-search { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-2) var(--spacing-5); background: var(--color-base-100); color: var(--color-base-content); border-bottom: 1px solid var(--color-base-300); } .ds-search:focus-within { box-shadow: inset 0 -2px 0 var(--color-base-content); } .ds-search-input { flex: 1; min-width: 0; min-height: 2.5rem; background: transparent; border: 0; outline: none; color: inherit; font-family: var(--font-base); font-size: 1rem; } .ds-search-input::placeholder { color: color-mix(in oklch, var(--color-base-content) 68%, transparent); opacity: 1; }"
     },
     {
       "name": "Record Term",
@@ -367,8 +420,40 @@
       "name": "Site Header",
       "kind": "nav",
       "description": "Cabecera plana con filete inferior, marca, enlaces y acción compacta.",
-      "html": "<header class=\"ds-header\"><a class=\"ds-brand\" href=\"#\">DevHelper</a><nav class=\"ds-nav\" aria-label=\"Principal\"><a href=\"#\">Características</a><a href=\"#\">Seguridad</a><a class=\"ds-nav-cta\" href=\"#\">Crear cuenta</a></nav></header>",
-      "css": ".ds-header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); padding: var(--spacing-3) var(--spacing-4); background: var(--color-base-100); color: var(--color-base-content); border-bottom: 1px solid var(--color-base-300); font-family: var(--font-base); } .ds-brand { color: inherit; font-size: 1.125rem; font-weight: 700; letter-spacing: -0.025em; text-decoration: none; } .ds-brand:hover { opacity: 0.8; } .ds-nav { display: flex; align-items: center; gap: var(--spacing-4); } .ds-nav a { color: inherit; font-size: 0.875rem; text-decoration: none; } .ds-nav a:hover { text-decoration: underline; } .ds-nav a:focus-visible { outline: 2px solid var(--color-base-content); outline-offset: 2px; } .ds-nav .ds-nav-cta { display: inline-flex; align-items: center; height: 2rem; padding: 0 0.75rem; background: var(--color-primary); color: var(--color-primary-content); border-radius: var(--radius-field); font-weight: 600; } .ds-nav .ds-nav-cta:hover { background: color-mix(in oklab, var(--color-primary), #000 7%); text-decoration: none; }"
+      "html": "<header class=\"ds-header\"><a class=\"ds-brand\" href=\"#\">DevHelper</a><nav class=\"ds-nav\" aria-label=\"Principal\"><a href=\"#\">Funciones</a><a href=\"#\">Seguridad</a><a class=\"ds-nav-cta\" href=\"#\">Crear cuenta</a></nav></header>",
+      "css": ".ds-header { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); padding: var(--spacing-3) var(--spacing-4); background: var(--color-base-100); color: var(--color-base-content); border-bottom: 1px solid var(--color-base-300); font-family: var(--font-base); } .ds-brand { color: inherit; font-size: 1.125rem; font-weight: 700; letter-spacing: -0.025em; text-decoration: none; } .ds-brand:hover { opacity: 0.8; } .ds-nav { display: flex; align-items: center; gap: var(--spacing-4); } .ds-nav a { color: inherit; font-size: 0.875rem; text-decoration: none; } .ds-nav a:hover { text-decoration: underline; } .ds-nav a:focus-visible { outline: 2px solid var(--color-base-content); outline-offset: 2px; } .ds-nav .ds-nav-cta { display: inline-flex; align-items: center; height: 2.5rem; padding: 0 1rem; background: var(--color-primary); color: var(--color-primary-content); border-radius: var(--radius-field); font-weight: 600; } .ds-nav .ds-nav-cta:hover { background: color-mix(in oklab, var(--color-primary), #000 7%); text-decoration: none; }"
+    },
+    {
+      "name": "Product Window",
+      "kind": "custom",
+      "refersTo": "product-window",
+      "description": "Captura real a todo el ancho en una ventana plana con barra y pie; aquí, las filas sustituyen a la captura.",
+      "html": "<figure class=\"ds-shot\"><div class=\"ds-window\"><div class=\"ds-window-bar\">DevHelper</div><div class=\"ds-capture\" role=\"img\" aria-label=\"Lugar de la captura real\"><div class=\"ds-capture-row\"></div><div class=\"ds-capture-row\"></div><div class=\"ds-capture-row\"></div></div></div><figcaption class=\"ds-shot-caption\">Pantalla real de DevHelper con datos de ejemplo.</figcaption></figure>",
+      "css": ".ds-shot { margin: 0; color: var(--color-base-content); font-family: var(--font-base); } .ds-window { overflow: hidden; border: 1px solid var(--color-base-300); border-radius: var(--radius-box); background: var(--color-base-200); animation: ds-window-in var(--motion-focal) var(--ease-out-expo) 240ms both; } .ds-window-bar { display: flex; align-items: center; height: 2.5rem; padding-inline: var(--spacing-4); border-bottom: 1px solid var(--color-base-300); font-size: 0.875rem; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); } .ds-capture { display: grid; gap: var(--spacing-2); padding: var(--spacing-4); background: var(--color-base-100); } .ds-capture-row { height: 2.25rem; border: 1px solid var(--color-base-300); border-radius: var(--radius-sm); } .ds-shot-caption { margin-top: var(--spacing-3); font-size: 0.875rem; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); } @keyframes ds-window-in { from { clip-path: inset(14% 6% 0 6% round var(--radius-box)); filter: brightness(0.6); transform: translateY(2.5rem); } to { clip-path: inset(0 round var(--radius-box)); filter: brightness(1); transform: none; } } @media (prefers-reduced-motion: reduce) { .ds-window { animation: none; } }"
+    },
+    {
+      "name": "Capabilities Strip",
+      "kind": "nav",
+      "refersTo": "capability-link",
+      "description": "Índice de funciones bajo el hero: una banda entre filetes con enlaces a sus anclas.",
+      "html": "<nav class=\"ds-strip\" aria-label=\"Funciones\"><a class=\"ds-strip-link\" href=\"#\"><svg viewBox=\"0 -960 960 960\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z\"/></svg>Buscador</a><a class=\"ds-strip-link\" href=\"#\">Archivos</a><a class=\"ds-strip-link\" href=\"#\">Contraseñas</a><a class=\"ds-strip-link\" href=\"#\">Eventos</a></nav>",
+      "css": ".ds-strip { display: flex; border-block: 1px solid var(--color-base-300); font-family: var(--font-base); } .ds-strip-link { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; gap: var(--spacing-2); min-height: 3rem; padding-inline: var(--spacing-3); color: color-mix(in oklch, var(--color-base-content) 85%, transparent); font-size: 0.875rem; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 150ms ease; } .ds-strip-link + .ds-strip-link { border-left: 1px solid var(--color-base-300); } .ds-strip-link:hover { background: var(--color-base-200); } .ds-strip-link:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }"
+    },
+    {
+      "name": "Feature Block",
+      "kind": "custom",
+      "refersTo": "feature-shot",
+      "description": "Explicación y captura grande en 5:7, con la escena del campo Solución sobre la captura.",
+      "html": "<article class=\"ds-block\"><div><h3 class=\"ds-block-title\">Tus avances</h3><p class=\"ds-block-text\">En cada tarea apuntas qué pasó y cómo lo resolviste, con sus adjuntos.</p></div><figure class=\"ds-block-shot\"><div class=\"ds-capture\" role=\"img\" aria-label=\"Lugar de la captura real\"><div class=\"ds-capture-row\"></div><div class=\"ds-capture-row\"></div><div class=\"ds-capture-row ds-capture-tall\"></div></div><div class=\"ds-scene-solution\" aria-hidden=\"true\"></div></figure></article>",
+      "css": ".ds-block { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--spacing-12); align-items: center; color: var(--color-base-content); font-family: var(--font-base); } .ds-block-title { margin: 0; font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; } .ds-block-text { max-width: 44ch; margin: var(--spacing-4) 0 0; font-size: 1.125rem; line-height: 1.55; color: color-mix(in oklch, var(--color-base-content) 78%, transparent); } .ds-block-shot { position: relative; margin: 0; overflow: hidden; border: 1px solid var(--color-base-300); border-radius: var(--radius-box); } .ds-capture { display: grid; gap: var(--spacing-2); padding: var(--spacing-4); background: var(--color-base-100); } .ds-capture-row { height: 2.25rem; border: 1px solid var(--color-base-300); border-radius: var(--radius-sm); } .ds-capture-tall { height: 4.5rem; } .ds-scene-solution { position: absolute; left: var(--spacing-4); right: var(--spacing-4); bottom: var(--spacing-4); height: 4.5rem; border: 1px solid color-mix(in oklch, var(--color-base-content) 70%, transparent); border-radius: var(--radius-sm); background: color-mix(in oklch, var(--color-base-content) 7%, transparent); animation: ds-scene-lit 1100ms var(--ease-out-expo) 300ms both; } @keyframes ds-scene-lit { from { opacity: 0; } 45% { opacity: 1; background: color-mix(in oklch, var(--color-base-content) 18%, transparent); } } @media (prefers-reduced-motion: reduce) { .ds-scene-solution { animation: none; } } @media (max-width: 79.99rem) { .ds-block { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-6); } }"
+    },
+    {
+      "name": "Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "Función secundaria con título, texto y un visual al fondo: captura real o, como aquí, escena en código.",
+      "html": "<article class=\"ds-tile\"><h3 class=\"ds-tile-title\">Eventos</h3><p class=\"ds-tile-text\">Fechas y compromisos en un calendario global, en la misma pantalla que el resto de tu trabajo.</p><ul class=\"ds-events\" aria-label=\"Ejemplo de eventos\"><li class=\"ds-event\"><span class=\"ds-event-date\">2 dic</span><span class=\"ds-event-name\">Renovar certificado</span><span class=\"ds-event-side\">10:00</span></li><li class=\"ds-event\"><span class=\"ds-event-date\">15 dic</span><span class=\"ds-event-name\">Revisar cuotas del proveedor</span><span class=\"ds-event-side\">Todo el día</span></li></ul></article>",
+      "css": ".ds-tile { display: flex; flex-direction: column; overflow: hidden; padding: var(--spacing-6); background: var(--color-base-200); color: var(--color-base-content); border: 1px solid var(--color-base-300); border-radius: var(--radius-box); font-family: var(--font-base); transition: border-color 200ms var(--ease-out-expo); } .ds-tile:hover { border-color: color-mix(in oklch, var(--color-base-content) 30%, transparent); } .ds-tile-title { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.015em; } .ds-tile-text { max-width: 46ch; margin: var(--spacing-2) 0 var(--spacing-6); line-height: 1.55; color: color-mix(in oklch, var(--color-base-content) 78%, transparent); } .ds-events { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-base-300); font-size: 0.875rem; } .ds-event { display: flex; align-items: center; gap: var(--spacing-3); min-height: 2.75rem; padding-block: var(--spacing-2); } .ds-event + .ds-event { border-top: 1px solid var(--color-base-300); } .ds-event-date { flex-shrink: 0; width: 3.25rem; font-weight: 600; font-variant-numeric: tabular-nums; } .ds-event-name { flex: 1; min-width: 0; } .ds-event-side { flex-shrink: 0; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); font-variant-numeric: tabular-nums; }"
     },
     {
       "name": "Record",
@@ -376,22 +461,7 @@
       "refersTo": "record",
       "description": "Pieza firma: registro de tarea con campos separados por filetes y solución encendida.",
       "html": "<article class=\"ds-record\"><header class=\"ds-record-head\"><h3 class=\"ds-record-title\"><svg class=\"ds-icon ds-ok\" viewBox=\"0 -960 960 960\" width=\"20\" height=\"20\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg>CORS bloqueado tras cambiar de dominio</h3><p class=\"ds-record-meta\">api-pagos · Tarea de ejemplo</p></header><div class=\"ds-record-fields\"><div class=\"ds-record-field\"><h4 class=\"ds-record-label\">Problema</h4><p>El front recibe un 403 en el preflight desde el dominio nuevo.</p></div><div class=\"ds-record-field ds-record-lit\"><h4 class=\"ds-record-label\">Solución</h4><p class=\"ds-record-answer\">Con credenciales hay que devolver el origin exacto.</p></div></div></article>",
-      "css": ".ds-record { background: var(--color-base-200); color: var(--color-base-content); border: 1px solid var(--color-base-300); border-radius: var(--radius-field); font-family: var(--font-base); overflow: hidden; } .ds-record-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--spacing-1) var(--spacing-6); padding: var(--spacing-3) var(--spacing-5); border-bottom: 1px solid var(--color-base-300); } .ds-record-title { display: flex; gap: var(--spacing-2); margin: 0; font-size: 1.125rem; font-weight: 600; } .ds-ok { color: var(--color-success); flex-shrink: 0; } .ds-record-meta, .ds-record-label { margin: 0; font-size: 0.875rem; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); } .ds-record-label { margin-bottom: var(--spacing-2); font-weight: 500; } .ds-record-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); } .ds-record-field { padding: var(--spacing-6); line-height: 1.55; } .ds-record-field p { margin: 0; } .ds-record-lit { background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200)); border-left: 1px solid var(--color-base-300); animation: ds-lit 900ms cubic-bezier(0.16, 1, 0.3, 1) both; } .ds-record-field .ds-record-answer { font-size: clamp(1.25rem, 2.8vw, 2.5rem); font-weight: 500; line-height: 1.28; letter-spacing: -0.01em; } @keyframes ds-lit { from { background: var(--color-base-200); filter: brightness(0.82); } } @media (prefers-reduced-motion: reduce) { .ds-record-lit { animation: none; } }"
-    },
-    {
-      "name": "Feature Row",
-      "kind": "custom",
-      "refersTo": "demo-line",
-      "description": "Fila con filete superior: título, explicación y fragmento de registro.",
-      "html": "<article class=\"ds-row\"><h3 class=\"ds-row-title\">Buscador</h3><p class=\"ds-row-text\">Salta directamente a la tarea que recuerdas a medias.</p><div class=\"ds-demo\"><p class=\"ds-demo-line\"><svg class=\"ds-icon ds-sm\" viewBox=\"0 -960 960 960\" width=\"20\" height=\"20\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z\"/></svg><span class=\"ds-demo-main\">preflight</span></p><p class=\"ds-demo-line ds-demo-hit\"><span class=\"ds-demo-main\">CORS bloqueado tras cambiar de dominio</span><span class=\"ds-demo-side\">api-pagos</span></p></div></article>",
-      "css": ".ds-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr); gap: var(--spacing-8); padding-block: var(--spacing-8); border-top: 1px solid var(--color-base-300); color: var(--color-base-content); font-family: var(--font-base); } .ds-row-title { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.015em; } .ds-row-text { margin: 0; max-width: 48ch; line-height: 1.55; color: color-mix(in oklch, var(--color-base-content) 78%, transparent); } .ds-demo { align-self: start; background: var(--color-base-200); border: 1px solid var(--color-base-300); border-radius: var(--radius-field); font-size: 0.875rem; overflow: hidden; } .ds-demo-line { display: flex; align-items: center; gap: var(--spacing-3); min-height: 2.75rem; margin: 0; padding: var(--spacing-2) var(--spacing-4); } .ds-demo-line + .ds-demo-line { border-top: 1px solid var(--color-base-300); } .ds-demo-hit { background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-200)); font-weight: 500; } .ds-demo-main { flex: 1; min-width: 0; } .ds-demo-side { flex-shrink: 0; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); font-variant-numeric: tabular-nums; } .ds-sm { width: 16px; height: 16px; flex-shrink: 0; } @media (max-width: 63.99rem) { .ds-row { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-3); padding-block: var(--spacing-6); } }"
-    },
-    {
-      "name": "Checklist",
-      "kind": "custom",
-      "description": "Filas de pasos dentro de un único contorno, con enlace subrayado.",
-      "html": "<ol class=\"ds-checklist\"><li class=\"ds-check\"><svg class=\"ds-icon\" viewBox=\"0 -960 960 960\" width=\"20\" height=\"20\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z\"/></svg><h3 class=\"ds-check-title\">Crea tu cuenta</h3><p class=\"ds-check-text\">Regístrate con email y contraseña o con Google.</p><a class=\"ds-check-link\" href=\"#\">Crear cuenta</a></li></ol>",
-      "css": ".ds-checklist { margin: 0; padding: 0; list-style: none; background: var(--color-base-100); color: var(--color-base-content); border: 1px solid var(--color-base-300); border-radius: var(--radius-field); font-family: var(--font-base); } .ds-check { display: grid; grid-template-columns: auto minmax(0, 3fr) minmax(0, 5fr) minmax(0, 2fr); align-items: baseline; gap: var(--spacing-6); padding: var(--spacing-6) var(--spacing-8); } .ds-check + .ds-check { border-top: 1px solid var(--color-base-300); } .ds-check-title { margin: 0; font-size: 1.25rem; font-weight: 600; } .ds-check-text { margin: 0; line-height: 1.55; color: color-mix(in oklch, var(--color-base-content) 78%, transparent); } .ds-check-link { justify-self: end; color: inherit; text-decoration: underline; text-underline-offset: 0.25em; } .ds-check-link:hover { opacity: 0.8; } .ds-check-link:focus-visible { outline: 2px solid var(--color-base-content); outline-offset: 2px; }"
+      "css": ".ds-record { background: var(--color-base-100); color: var(--color-base-content); border: 1px solid var(--color-base-300); border-radius: var(--radius-field); font-family: var(--font-base); overflow: hidden; } .ds-record-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--spacing-1) var(--spacing-6); padding: var(--spacing-3) var(--spacing-5); border-bottom: 1px solid var(--color-base-300); } .ds-record-title { display: flex; gap: var(--spacing-2); margin: 0; font-size: 1.125rem; font-weight: 600; } .ds-ok { color: var(--color-success); flex-shrink: 0; } .ds-record-meta, .ds-record-label { margin: 0; font-size: 0.875rem; color: color-mix(in oklch, var(--color-base-content) 70%, transparent); } .ds-record-label { margin-bottom: var(--spacing-2); font-weight: 500; } .ds-record-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); } .ds-record-field { padding: var(--spacing-6); line-height: 1.55; } .ds-record-field p { margin: 0; } .ds-record-lit { background: color-mix(in oklch, var(--color-base-content) 7%, var(--color-base-100)); border-left: 1px solid var(--color-base-300); animation: ds-lit 900ms var(--ease-out-expo) both; } .ds-record-field .ds-record-answer { font-size: clamp(1.25rem, 2.8vw, 2.5rem); font-weight: 500; line-height: 1.28; letter-spacing: -0.01em; } @keyframes ds-lit { from { background: var(--color-base-100); filter: brightness(0.82); } } @media (prefers-reduced-motion: reduce) { .ds-record-lit { animation: none; } }"
     },
     {
       "name": "Boundary",
@@ -403,13 +473,15 @@
   ],
   "narrative": {
     "northStar": "El registro abierto",
-    "overview": "DevHelper se presenta como lo que guarda: un registro técnico con sus campos a la vista. Las superficies son planos oscuros contiguos, separados por filetes de 1px, y el contenido se ordena en campos y filas en lugar de piezas flotantes. La sensación es densa, sobria y cerrada por defecto: cero adornos y solo feedback de estado discreto.\n\nLa jerarquía nace de la escala y no del color. Roboto, la única familia, va de titulares enormes con tracking apretado a metadatos de 0.875rem; el botón principal es casi blanco y el único tono que aparece en reposo marca un estado resuelto. El campo más luminoso de una pantalla es el que contiene la respuesta.\n\n`docs/design-context.md` sigue siendo vinculante para tema, tokens, convenciones y anti-patterns; este archivo registra cómo se expresan en lo construido. La composición en registros se ha evidenciado en la landing; el dashboard y los formularios siguen usando las cards y los campos descritos en ese documento.",
+    "overview": "DevHelper se presenta como lo que guarda: un registro técnico con sus campos a la vista. Las superficies son planos oscuros contiguos, separados por filetes de 1px, y el contenido se ordena en campos, filas y marcos con capturas reales, sin piezas que floten. La sensación es densa, sobria y cerrada por defecto: cero adornos y solo feedback de estado discreto.\n\nLa jerarquía nace de la escala y no del color. Roboto, la única familia, va de titulares enormes con tracking apretado a metadatos de 0.875rem; el botón principal es casi blanco y el único tono que aparece en reposo marca un estado resuelto. El campo más luminoso de una pantalla es el que contiene la respuesta.\n\n`docs/design-context.md` sigue siendo vinculante para tema, tokens, convenciones y anti-patterns; este archivo registra cómo se expresan en lo construido. La landing es una página de producto clásica: hero centrado, ventana del producto con captura real, bloques y tiles con capturas y escenas, y el registro como demostración del buscador. El dashboard y los formularios siguen usando las cards y los campos descritos en ese documento.",
     "keyCharacteristics": [
       "Un solo tema oscuro, `devhelper`, sin alternador.",
       "Roboto como única familia y Material Symbols Outlined como única iconografía de interfaz.",
       "Superficies planas separadas por filetes de 1px en lugar de sombras.",
       "Acromático en reposo, salvo el verde de estado resuelto.",
-      "Esquinas de campo de 4px en registros y botones."
+      "Esquinas de campo de 4px en registros y botones; marcos de caja de 16px alrededor de las capturas.",
+      "Capturas reales con datos de ejemplo como prueba del producto.",
+      "Movimiento que termina en el estado ya visible sin JS y que se retira con `prefers-reduced-motion`."
     ],
     "rules": [
       {
@@ -419,7 +491,7 @@
       },
       {
         "name": "The Lit Answer Rule",
-        "body": "El Campo Encendido marca solo la respuesta: la solución de un registro o la fila que acierta. Si todo se enciende, nada responde.",
+        "body": "El Campo Encendido marca solo la respuesta: la solución de un registro o el campo Solución de una captura. Si todo se enciende, nada responde.",
         "section": "colors"
       },
       {
@@ -434,7 +506,7 @@
       },
       {
         "name": "The Tighter With Scale Rule",
-        "body": "El tracking se aprieta con el tamaño: -0.035em en display, -0.03em en headline, -0.015em en title, -0.01em en field lit; el texto corriente queda a 0.",
+        "body": "El tracking se aprieta con el tamaño: -0.035em en display, -0.03em en headline, -0.02em en block title, -0.015em en title, -0.01em en field lit; el texto corriente queda a 0.",
         "section": "typography"
       },
       {
@@ -444,7 +516,7 @@
       },
       {
         "name": "The Hairline Rule",
-        "body": "Lo contiguo se separa con 1px de `base-300`, no con huecos ni contenedores anidados. Los filetes se reorientan al cambiar de columnas: horizontales apilados, verticales en fila.",
+        "body": "Dentro de una pieza, lo contiguo se separa con 1px de `base-300`, no con huecos ni contenedores anidados. Los filetes se reorientan al cambiar de columnas: horizontales apilados, verticales en fila. Las piezas independientes, como las tiles, se separan con un hueco de 1rem y llevan su propio contorno.",
         "section": "layout"
       },
       {
@@ -454,22 +526,35 @@
       },
       {
         "name": "The Flat At Rest Rule",
-        "body": "Lo que vive en el plano de la página no lleva sombra. La sombra queda para lo que flota o para indicar estado.",
+        "body": "Lo que vive en el plano de la página no lleva sombra. La sombra queda para lo que flota o para indicar estado; el hover de una tile aclara su contorno en lugar de alzarla.",
         "section": "elevation"
+      },
+      {
+        "name": "The End State Default Rule",
+        "body": "El estado sin clases de una pieza animada es el final. El estado oculto o previo solo existe bajo `.reveal-pending`, que añade JS; apagar JS o el movimiento nunca esconde contenido.",
+        "section": "motion"
+      },
+      {
+        "name": "The Top-Level Animation Rule",
+        "body": "En el CSS de un componente, `animation` se declara a nivel superior, con un override `reduce` o tras un gate `.is-revealed`, no dentro de `@media`. En el build minificado, un `animation` que abre su bloque dentro de `@media` conserva el nombre original mientras el keyframe sí se renombra, y la animación se pierde en silencio. Si dudas, comprueba `dist`: el nombre del `animation` y el del `@keyframes` deben coincidir.",
+        "section": "motion"
       }
     ],
     "dos": [
-      "Do separa lo contiguo con 1px de `base-300` y usa solo dos planos, `base-100` y `base-200`.",
+      "Do separa lo contiguo dentro de una pieza con 1px de `base-300` y usa solo dos planos, `base-100` y `base-200`.",
       "Do referencia color con `var(--color-*)`; deriva texto secundario y Campo Encendido con `color-mix` sobre `base-content`.",
       "Do reserva el Campo Encendido para la respuesta y `success` para los estados hecho y cifrado.",
       "Do aplica iconos con la clase `icon` y sus variantes `icon-sm` e `icon-lg`, con `aria-hidden` cuando acompañan a un texto.",
       "Do añade cualquier tamaño nuevo que se reutilice a `tokens.css` antes de usarlo en más de un sitio.",
-      "Do respeta `prefers-reduced-motion` en cualquier animación de contenido.",
+      "Do respeta `prefers-reduced-motion` en cualquier animación de contenido, y deja que el estado sin clases sea el final.",
+      "Do declara `animation` a nivel superior en el CSS de componente, con override `reduce` o gate `.is-revealed`.",
+      "Do muestra el producto con capturas reales con datos de ejemplo, enmarcadas con contorno y radio de caja, cada una con su `.webp.json` de procedencia.",
       "Do etiqueta como ejemplo todo dato de demostración."
     ],
     "donts": [
-      "Don't compongas superficies de marketing como rejillas de cards con icono ni como hero partido con captura; esta restricción no aplica a las cards del dashboard.",
-      "Don't pongas sombra a lo que vive en el plano de la página.",
+      "Don't estructures una superficie de marketing como rejilla de cards con icono del mismo tamaño; una tile lleva una captura real o una escena en código y alterna 7 y 5 columnas. Esta restricción no aplica a las cards del dashboard.",
+      "Don't pongas sombra a lo que vive en el plano de la página, incluidas la ventana del producto y las tiles.",
+      "Don't animes escenas en bucle: se reproducen una vez al entrar.",
       "Don't cargues otra familia, uses la clase `font-mono` ni añadas un segundo tema sin migrar antes `tokens.css`.",
       "Don't uses emojis, iconos coloridos, gradientes decorativos ni animaciones de celebración como confetti o shake.",
       "Don't uses clases de color de Tailwind como `text-red-500`, prefijos `dark:` ni colores hexadecimales en CSS de componentes.",

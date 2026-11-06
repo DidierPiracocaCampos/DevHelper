@@ -38,10 +38,9 @@ describe('SiteHeader', () => {
     const links = fixture.nativeElement.querySelectorAll('nav a');
     const hrefs = Array.from(links).map((link) => (link as HTMLAnchorElement).getAttribute('href'));
     expect(hrefs).toContain('/#features');
-    expect(hrefs).toContain('/#how-it-works');
     expect(hrefs).toContain('/#security');
-    expect(fixture.nativeElement.textContent).toContain('Características');
-    expect(fixture.nativeElement.textContent).toContain('Cómo funciona');
+    expect(fixture.nativeElement.textContent).toContain('Funciones');
+    expect(fixture.nativeElement.textContent).not.toContain('Cómo funciona');
     expect(fixture.nativeElement.textContent).toContain('Seguridad');
   });
 
@@ -65,9 +64,7 @@ describe('SiteHeader', () => {
       link.getAttribute('href'),
     );
 
-    expect(hrefs).toEqual(
-      expect.arrayContaining(['/#features', '/#how-it-works', '/#security', '/home']),
-    );
+    expect(hrefs).toEqual(expect.arrayContaining(['/#features', '/#security', '/home']));
     expect(root.textContent).toContain('Ir al dashboard');
     expect(root.textContent).toContain('Cerrar sesión');
   });
@@ -111,14 +108,19 @@ describe('SiteHeader', () => {
       (link as HTMLAnchorElement).getAttribute('href'),
     );
     expect(hrefs).toEqual(
-      expect.arrayContaining([
-        '/#features',
-        '/#how-it-works',
-        '/#security',
-        '/login',
-        '/login/register',
-      ]),
+      expect.arrayContaining(['/#features', '/#security', '/login', '/login/register']),
     );
+  });
+
+  it('releases focus when a mobile menu link is clicked, closing the dropdown', () => {
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector(
+      'ul.dropdown-content a[href="/#features"]',
+    ) as HTMLAnchorElement;
+    link.focus();
+    expect(document.activeElement).toBe(link);
+    link.click();
+    expect(document.activeElement).not.toBe(link);
   });
 
   it('renders the mobile dropdown CTAs for logged-in users', () => {
