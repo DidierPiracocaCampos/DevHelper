@@ -2,6 +2,26 @@
   <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
     <h2 class="security__title">Esto se cifra. Esto no.</h2>
 
+    <div
+      class="seal"
+      role="img"
+      aria-label="Ejemplo: el valor de una contraseña se convierte en texto cifrado antes de salir de tu navegador."
+      landingReveal
+      [revealDelay]="0"
+    >
+      <div class="seal__what" aria-hidden="true">
+        <span class="seal__name">Panel del proxy</span>
+        <span class="seal__tag">Ejemplo</span>
+      </div>
+      <div class="seal__value" aria-hidden="true" landingReveal [revealDelay]="120">
+        <span class="seal__text">
+          <span class="seal__cipher">x9Fq2Lr7mQa0ZtK4vPe8</span>
+          <span class="seal__plain">ejemplo-de-valor-2025</span>
+        </span>
+        <span class="icon seal__lock text-success">lock</span>
+      </div>
+    </div>
+
     <div class="boundary">
       <div class="boundary__side boundary__side--sealed" data-boundary="encrypted">
         <h3 class="boundary__heading">Se cifra en tu navegador</h3>
@@ -12,7 +32,7 @@
           </li>
           <li>
             <span class="icon text-success" aria-hidden="true">lock</span>
-            El contenido de tus archivos
+            El contenido de los archivos que cifres
           </li>
         </ul>
         <p class="boundary__text">
