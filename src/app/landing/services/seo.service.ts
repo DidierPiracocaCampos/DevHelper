@@ -10,7 +10,11 @@ export interface SeoPage {
   path: string;
   image?: string;
   imageAlt?: string;
+  /** schema.org structured data; replaced on every `set`, removed when absent. */
+  jsonLd?: Record<string, unknown>;
 }
+
+const JSON_LD_ID = 'seo-jsonld';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {
@@ -49,5 +53,17 @@ export class SeoService {
       this._doc.head.appendChild(link);
     }
     link.href = url;
+    this._setJsonLd(page.jsonLd);
+  }
+
+  private _setJsonLd(data: Record<string, unknown> | undefined): void {
+    this._doc.getElementById(JSON_LD_ID)?.remove();
+    if (!data) return;
+    const script = this._doc.createElement('script');
+    script.id = JSON_LD_ID;
+    script.type = 'application/ld+json';
+    // "<" escaped so a value can never close the script element.
+    script.textContent = JSON.stringify(data).replace(/</g, '\\u003c');
+    this._doc.head.appendChild(script);
   }
 }

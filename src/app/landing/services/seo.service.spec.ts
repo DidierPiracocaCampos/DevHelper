@@ -74,4 +74,33 @@ describe('SeoService', () => {
     );
     expect(meta.getTag('name="twitter:image:alt"')?.content).toBe('Custom alt');
   });
+
+  const jsonLdScripts = () =>
+    Array.from(doc.head.querySelectorAll('script[type="application/ld+json"]'));
+
+  it('writes structured data when jsonLd is provided', () => {
+    const data = { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'X' };
+    service.set({ title: 'T', description: 'd', path: '/x', jsonLd: data });
+    expect(jsonLdScripts()).toHaveLength(1);
+    expect(JSON.parse(jsonLdScripts()[0].textContent ?? '')).toEqual(data);
+  });
+
+  it('replaces structured data instead of piling it up', () => {
+    service.set({ title: 'T', description: 'd', path: '/x', jsonLd: { name: 'a' } });
+    service.set({ title: 'T', description: 'd', path: '/y', jsonLd: { name: 'b' } });
+    expect(jsonLdScripts()).toHaveLength(1);
+    expect(JSON.parse(jsonLdScripts()[0].textContent ?? '').name).toBe('b');
+  });
+
+  it('removes structured data on a page without it', () => {
+    service.set({ title: 'T', description: 'd', path: '/x', jsonLd: { name: 'a' } });
+    service.set({ title: 'T', description: 'd', path: '/' });
+    expect(jsonLdScripts()).toHaveLength(0);
+  });
+
+  it('escapes "<" so the JSON cannot close its script tag', () => {
+    service.set({ title: 'T', description: 'd', path: '/x', jsonLd: { name: '</script>' } });
+    expect(jsonLdScripts()[0].textContent).not.toContain('</script>');
+    expect(JSON.parse(jsonLdScripts()[0].textContent ?? '').name).toBe('</script>');
+  });
 });

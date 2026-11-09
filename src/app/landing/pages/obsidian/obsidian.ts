@@ -62,6 +62,53 @@ const DOCS_INDEX: readonly DocsIndexItem[] = [
   { id: 'faq', label: 'Preguntas frecuentes' },
 ];
 
+const SITE_URL = 'https://devhelper.didierpiracoca.com';
+
+const AUTHOR = {
+  '@type': 'Person',
+  name: 'Didier Piracoca',
+  url: 'https://github.com/DidierPiracocaCampos',
+};
+
+const FREE = { '@type': 'Offer', price: '0', priceCurrency: 'EUR' };
+
+const OBSIDIAN_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareApplication',
+      name: 'DevHelper Dashboard',
+      description:
+        'Plugin de Obsidian que reúne proyectos, tareas, notas, archivos, credenciales cifradas y un calendario mensual en un dashboard sobre notas Markdown.',
+      applicationCategory: 'DeveloperApplication',
+      applicationSubCategory: 'Plugin de Obsidian',
+      operatingSystem: 'Windows, macOS, Linux, Android, iOS',
+      url: OBSIDIAN_LINKS.pluginStore,
+      sameAs: OBSIDIAN_LINKS.pluginRepo,
+      screenshot: `${SITE_URL}/img/obsidian/dashboard.webp`,
+      inLanguage: 'es',
+      isAccessibleForFree: true,
+      offers: FREE,
+      author: AUTHOR,
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'DevHelper (theme de Obsidian)',
+      description:
+        'Theme oscuro y monocromo para Obsidian, diseñado junto al plugin DevHelper Dashboard.',
+      applicationCategory: 'DesignApplication',
+      applicationSubCategory: 'Theme de Obsidian',
+      operatingSystem: 'Windows, macOS, Linux, Android, iOS',
+      url: OBSIDIAN_LINKS.themeStore,
+      sameAs: OBSIDIAN_LINKS.themeRepo,
+      screenshot: `${SITE_URL}/img/obsidian/theme.webp`,
+      isAccessibleForFree: true,
+      offers: FREE,
+      author: AUTHOR,
+    },
+  ],
+};
+
 @Component({
   selector: 'landing-obsidian',
   standalone: true,
@@ -85,10 +132,13 @@ export class ObsidianPage {
     // Same offset as the landing: router fragment scrolling ignores scroll-margin-top.
     inject(ViewportScroller).setOffset([0, 88]);
     this._seo.set({
-      title: 'DevHelper para Obsidian — plugin y theme',
+      title: 'Plugin de Obsidian para proyectos y tareas | DevHelper',
       description:
-        'DevHelper Dashboard es un plugin de Obsidian para registrar tus avances: proyectos, tareas, notas, archivos, credenciales cifradas y calendario sobre notas Markdown. Con el theme DevHelper a juego.',
+        'Plugin gratuito de Obsidian para registrar tus avances: proyectos, tareas, notas, archivos, credenciales cifradas y calendario. Con un theme a juego.',
       path: '/obsidian',
+      image: `${SITE_URL}/og-obsidian.jpg`,
+      imageAlt: 'DevHelper Dashboard, plugin de proyectos y tareas para Obsidian',
+      jsonLd: OBSIDIAN_JSON_LD,
     });
 
     afterNextRender(() => this._watchActiveDoc());

@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { ObsidianPage } from './obsidian';
 import { Authenticator } from '../../../shared/service/authenticator';
-import { SeoService } from '../../services/seo.service';
+import { SeoPage, SeoService } from '../../services/seo.service';
 import { OBSIDIAN_LINKS } from '../../data/obsidian-links';
 
 class FakeAuth {
@@ -61,6 +61,37 @@ describe('ObsidianPage', () => {
 
   it('sets SEO for /obsidian', () => {
     expect(seoSet).toHaveBeenCalledWith(expect.objectContaining({ path: '/obsidian' }));
+  });
+
+  const seoPage = () => seoSet.mock.calls[0][0] as SeoPage;
+
+  it('keeps title and description within search snippet limits', () => {
+    const { title, description } = seoPage();
+    expect(title).toContain('Obsidian');
+    expect(title.length).toBeLessThanOrEqual(60);
+    expect(description).toContain('Obsidian');
+    expect(description.length).toBeGreaterThanOrEqual(110);
+    expect(description.length).toBeLessThanOrEqual(160);
+  });
+
+  it('shares its own preview image', () => {
+    const { image, imageAlt } = seoPage();
+    expect(image).toBe('https://devhelper.didierpiracoca.com/og-obsidian.jpg');
+    expect(imageAlt).toContain('Obsidian');
+  });
+
+  it('describes the plugin and the theme as free software applications', () => {
+    const graph = (seoPage().jsonLd as { '@graph': Record<string, unknown>[] })['@graph'];
+    const plugin = graph.find((n) => n['name'] === 'DevHelper Dashboard')!;
+    const theme = graph.find((n) => n['name'] === 'DevHelper (theme de Obsidian)')!;
+    for (const app of [plugin, theme]) {
+      expect(app['@type']).toBe('SoftwareApplication');
+      expect(app['isAccessibleForFree']).toBe(true);
+      expect(app['offers']).toEqual({ '@type': 'Offer', price: '0', priceCurrency: 'EUR' });
+    }
+    expect(plugin['url']).toBe(OBSIDIAN_LINKS.pluginStore);
+    expect(theme['url']).toBe(OBSIDIAN_LINKS.themeStore);
+    expect(plugin['sameAs']).toBe(OBSIDIAN_LINKS.pluginRepo);
   });
 
   it('lists the six plugin capabilities', () => {
