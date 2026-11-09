@@ -22,11 +22,8 @@
         </a>
         <a routerLink="/obsidian" fragment="theme" class="btn btn-ghost btn-lg">Ver el theme</a>
       </div>
-      <p class="intro__aside">
-        ¿Ya tienes Obsidian?
-        <a [href]="links.pluginDeepLink" class="link">Ábrelo directamente en la app</a>
-        .
-      </p>
+      <!-- prettier-ignore -->
+      <p class="intro__aside">¿Ya tienes Obsidian? <a [href]="links.pluginDeepLink" class="link">Ábrelo directamente en la app</a>.</p>
     </div>
 
     <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
@@ -93,14 +90,22 @@
           </div>
         </div>
         <figure class="shot">
-          <img
-            src="/img/obsidian/theme.webp"
-            width="1920"
-            height="1080"
-            loading="lazy"
-            decoding="async"
-            alt="Una nota de demostración en Obsidian con el theme DevHelper: tareas, enlaces, código, una cita y una tabla sobre fondo casi negro."
-          />
+          <picture>
+            <source
+              media="(max-width: 47.99rem)"
+              srcset="/img/obsidian/theme-movil.webp"
+              width="800"
+              height="580"
+            />
+            <img
+              src="/img/obsidian/theme.webp"
+              width="1920"
+              height="1080"
+              loading="lazy"
+              decoding="async"
+              alt="Una nota de demostración en Obsidian con el theme DevHelper: tareas, enlaces, código, una cita y una tabla sobre fondo casi negro."
+            />
+          </picture>
         </figure>
       </article>
     </div>
@@ -131,11 +136,8 @@
             <h3 class="doc__title">Instalación</h3>
             <p>El plugin y el theme están en la tienda oficial de Obsidian.</p>
             <ol class="doc__steps">
-              <li>
-                Plugin: en Obsidian, abre Ajustes → Plugins de la comunidad → Explorar, busca
-                <strong>DevHelper Dashboard</strong>
-                , pulsa Instalar y después Activar.
-              </li>
+              <!-- prettier-ignore -->
+              <li>Plugin: en Obsidian, abre Ajustes → Plugins de la comunidad → Explorar, busca <strong>DevHelper Dashboard</strong>, pulsa Instalar y después Activar.</li>
               <li>
                 Theme: Ajustes → Apariencia → Themes → Gestionar, busca
                 <strong>DevHelper</strong>
@@ -146,38 +148,15 @@
               Necesitas Obsidian 1.9.0 o superior, porque el plugin crea vistas de Bases. Funciona
               en escritorio y en móvil.
             </p>
-            <p class="doc__aside">
-              Instalación manual: descarga
-              <code class="obsidian-path">main.js</code>
-              ,
-              <code class="obsidian-path">manifest.json</code>
-              y
-              <code class="obsidian-path">styles.css</code>
-              de la
-              <a
-                [href]="links.pluginReleases"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link"
-              >
-                última versión en GitHub
-              </a>
-              y cópialos en
-              <code class="obsidian-path">
-                &lt;vault&gt;/.obsidian/plugins/devhelper-dashboard/
-              </code>
-              .
-            </p>
+            <!-- prettier-ignore -->
+            <p class="doc__aside">Instalación manual: descarga <code class="obsidian-path">main.js</code>, <code class="obsidian-path">manifest.json</code> y <code class="obsidian-path">styles.css</code> de la <a [href]="links.pluginReleases" target="_blank" rel="noopener noreferrer" class="link">última versión en GitHub</a> y cópialos en <code class="obsidian-path">&lt;vault&gt;/.obsidian/plugins/devhelper-dashboard/</code>.</p>
           </section>
 
           <section id="primeros-pasos" class="doc">
             <h3 class="doc__title">Primeros pasos</h3>
             <ol class="doc__steps">
-              <li>
-                Abre el dashboard con el icono de la barra lateral o con el comando
-                <strong>Abrir el dashboard de proyectos y tareas</strong>
-                .
-              </li>
+              <!-- prettier-ignore -->
+              <li>Abre el dashboard con el icono de la barra lateral o con el comando <strong>Abrir el dashboard de proyectos y tareas</strong>.</li>
               <li>
                 Crea tu primer proyecto con el botón
                 <strong>+</strong>
@@ -188,19 +167,8 @@
                 donde apuntar cómo lo hiciste.
               </li>
             </ol>
-            <p>
-              Las carpetas se pueden cambiar en los ajustes del plugin. Por defecto son
-              <code class="obsidian-path">Projects</code>
-              ,
-              <code class="obsidian-path">Plantillas</code>
-              ,
-              <code class="obsidian-path">Calendario</code>
-              y
-              <code class="obsidian-path">Botones</code>
-              . El plugin crea solo el proyecto
-              <strong>General</strong>
-              , que guarda los archivos y las credenciales compartidos.
-            </p>
+            <!-- prettier-ignore -->
+            <p>Las carpetas se pueden cambiar en los ajustes del plugin. Por defecto son <code class="obsidian-path">Projects</code>, <code class="obsidian-path">Plantillas</code>, <code class="obsidian-path">Calendario</code> y <code class="obsidian-path">Botones</code>. El plugin crea solo el proyecto <strong>General</strong>, que guarda los archivos y las credenciales compartidos.</p>
           </section>
 
           <section id="skills" class="doc">
@@ -226,20 +194,8 @@
 
           <section id="credenciales" class="doc">
             <h3 class="doc__title">Credenciales</h3>
-            <p>
-              La primera vez que guardas una credencial, el plugin te pide una contraseña maestra.
-              De cada entrada,
-              <code class="obsidian-path">service</code>
-              queda en claro para poder buscarla;
-              <code class="obsidian-path">user</code>
-              ,
-              <code class="obsidian-path">password</code>
-              ,
-              <code class="obsidian-path">url</code>
-              y
-              <code class="obsidian-path">notes</code>
-              se cifran con AES-GCM 256 antes de escribirse en la nota.
-            </p>
+            <!-- prettier-ignore -->
+            <p>La primera vez que guardas una credencial, el plugin te pide una contraseña maestra. De cada entrada, <code class="obsidian-path">service</code> queda en claro para poder buscarla; <code class="obsidian-path">user</code>, <code class="obsidian-path">password</code>, <code class="obsidian-path">url</code> y <code class="obsidian-path">notes</code> se cifran con AES-GCM 256 antes de escribirse en la nota.</p>
             <p>
               La clave solo vive en memoria y se bloquea sola tras unos minutos sin uso (15 por
               defecto). La contraseña maestra no se puede recuperar: si la olvidas, puedes empezar
@@ -249,11 +205,8 @@
 
           <section id="botones" class="doc">
             <h3 class="doc__title">Botones con código</h3>
-            <p>
-              Puedes añadir a la barra del dashboard botones propios que ejecutan JavaScript, cada
-              uno definido en una nota de la carpeta
-              <code class="obsidian-path">Botones</code>
-              . Vienen desactivados: actívalos con
+            <!-- prettier-ignore -->
+            <p>Puedes añadir a la barra del dashboard botones propios que ejecutan JavaScript, cada uno definido en una nota de la carpeta <code class="obsidian-path">Botones</code>. Vienen desactivados: actívalos con
               <strong>Permitir botones con código</strong>
               en los ajustes del plugin, y solo con código que entiendas. Los que lanzan comandos
               del sistema solo funcionan en escritorio.
@@ -279,15 +232,8 @@
               </details>
               <details>
                 <summary>¿Dónde están mis datos?</summary>
-                <p>
-                  En notas Markdown de tu vault, con propiedades como
-                  <code class="obsidian-path">type: task</code>
-                  y
-                  <code class="obsidian-path">status: open</code>
-                  . Los archivos se copian a la carpeta
-                  <code class="obsidian-path">Archivos</code>
-                  de cada proyecto.
-                </p>
+                <!-- prettier-ignore -->
+                <p>En notas Markdown de tu vault, con propiedades como <code class="obsidian-path">type: task</code> y <code class="obsidian-path">status: open</code>. Los archivos se copian a la carpeta <code class="obsidian-path">Archivos</code> de cada proyecto.</p>
               </details>
             </div>
           </section>

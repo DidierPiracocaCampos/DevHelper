@@ -207,6 +207,10 @@ main {
   background: var(--color-base-100);
 }
 
+.shot picture {
+  display: block;
+}
+
 .shot img {
   display: block;
   width: 100%;
