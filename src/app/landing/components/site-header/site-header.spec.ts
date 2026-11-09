@@ -39,9 +39,17 @@ describe('SiteHeader', () => {
     const hrefs = Array.from(links).map((link) => (link as HTMLAnchorElement).getAttribute('href'));
     expect(hrefs).toContain('/#features');
     expect(hrefs).toContain('/#security');
+    expect(hrefs).toContain('/obsidian');
     expect(fixture.nativeElement.textContent).toContain('Funciones');
     expect(fixture.nativeElement.textContent).not.toContain('Cómo funciona');
     expect(fixture.nativeElement.textContent).toContain('Seguridad');
+  });
+
+  it('links to /obsidian from the mobile menu', () => {
+    fixture.detectChanges();
+
+    const menuLink = fixture.nativeElement.querySelector('.dropdown a[href="/obsidian"]');
+    expect(menuLink?.textContent?.trim()).toBe('Obsidian');
   });
 
   it('renders the dashboard CTAs when isLogged is true', () => {

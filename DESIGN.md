@@ -341,6 +341,18 @@ Tarea vacía de contorno completo, con radio de campo y fondo `base-200`, que re
 ### Technology List
 Filas de 3.25rem con filete, logo de 1.5rem, nombre a 500 y rol en Meta. Las marcas de terceros, que Material Symbols no incluye, se tiñen a un solo color con `mask-image` sobre `base-content`.
 
+### Página de Obsidian (`/obsidian`)
+Gemela de la landing para el plugin DevHelper Dashboard y el theme DevHelper: mismo hero centrado y la misma ventana del producto, seguidos de una lista de capacidades, el bloque del theme, la documentación y las preguntas frecuentes. Los enlaces externos salen de `OBSIDIAN_LINKS`.
+- **Aparte del hero:** línea en Meta bajo los botones con el deep link `obsidian://`, siempre secundario a la tienda web.
+- **Lista de capacidades:** filas con filete superior e inferior, Title Small y Body de hasta 46ch; una columna, dos desde 48rem y tres desde 64rem. Sin iconos ni cards.
+- **Bloque del theme:** Feature Block dentro de una banda `base-200` (Band Rule), con botón primario a la tienda y ghost al deep link; recorte propio para móvil.
+- **Índice de documentación:** bajo 64rem, fila de términos contorneados de 2.25rem; desde 64rem, columna fija de 14rem pegada a 5.5rem con un filete izquierdo, y la entrada activa (`aria-current`, por IntersectionObserver) lleva el filete en `base-content`.
+- **Documento:** columna de lectura de 70ch, secciones separadas por filetes, título en Title, pasos en lista numerada con marcadores al 70%. Rutas y propiedades en `.obsidian-path`: Roboto a 0.875em sobre `base-200`, contorno de 1px, radio de campo y `overflow-wrap: anywhere`.
+- **Preguntas frecuentes:** `details` con filete inferior, `summary` de 3.25rem a 500 y el icono `add`/`remove` de Material Symbols al 70%.
+
+### Franja de Obsidian (landing)
+Banda `base-200` entre filetes, antes del cierre: Headline y Body Large a la izquierda; a la derecha, primario hacia `/obsidian` y ghost hacia la tienda con `open_in_new`. Apilada bajo 64rem.
+
 ### Motion
 Sobrio y de una sola pasada: el movimiento confirma lo que ya está ahí.
 

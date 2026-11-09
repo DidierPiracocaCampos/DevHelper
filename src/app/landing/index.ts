@@ -10,6 +10,10 @@ export const routesLanding: Routes = [
     loadComponent: () => import('./pages/about/about').then((c) => c.About),
   },
   {
+    path: 'obsidian',
+    loadComponent: () => import('./pages/obsidian/obsidian').then((c) => c.ObsidianPage),
+  },
+  {
     path: 'legal/terms',
     loadComponent: () => import('./pages/legal-terms/legal-terms').then((c) => c.LegalTerms),
   },

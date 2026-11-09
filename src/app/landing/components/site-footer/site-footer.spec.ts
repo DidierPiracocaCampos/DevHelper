@@ -37,6 +37,8 @@ describe('SiteFooter', () => {
     const security = fixture.nativeElement.querySelector('a[href="/#security"]');
     expect(features?.textContent?.trim()).toBe('Funciones');
     expect(security).toBeTruthy();
+    const product = fixture.nativeElement.querySelector('.landing-site-footer__col') as HTMLElement;
+    expect(product.querySelector('a[href="/obsidian"]')?.textContent?.trim()).toBe('Obsidian');
   });
 
   it('renders the Legal column links', () => {
