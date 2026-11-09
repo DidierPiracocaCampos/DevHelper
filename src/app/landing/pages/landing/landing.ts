@@ -7,6 +7,7 @@ import { SectionCapabilities } from '../../components/section-capabilities/secti
 import { SectionSearch } from '../../components/section-search/section-search';
 import { SectionSecurity } from '../../components/section-security/section-security';
 import { SectionStack } from '../../components/section-stack/section-stack';
+import { SectionObsidian } from '../../components/section-obsidian/section-obsidian';
 import { SectionCta } from '../../components/section-cta/section-cta';
 import { SiteHeader } from '../../components/site-header/site-header';
 import { SiteFooter } from '../../components/site-footer/site-footer';
@@ -23,6 +24,7 @@ import { SeoService } from '../../services/seo.service';
     SectionSearch,
     SectionSecurity,
     SectionStack,
+    SectionObsidian,
     SectionCta,
     SiteFooter,
   ],

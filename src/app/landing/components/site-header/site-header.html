@@ -14,6 +14,7 @@
     <nav class="hidden md:flex items-center gap-4" aria-label="Principal">
       <a routerLink="/" fragment="features" class="link link-hover text-sm px-1">Funciones</a>
       <a routerLink="/" fragment="security" class="link link-hover text-sm px-1">Seguridad</a>
+      <a routerLink="/obsidian" class="link link-hover text-sm px-1">Obsidian</a>
       @if (!isLogged()) {
         <a routerLink="/login" class="btn btn-ghost btn-sm sm:btn-md text-sm">Iniciar sesión</a>
         <a routerLink="/login/register" class="btn btn-primary btn-sm sm:btn-md text-sm">
@@ -44,6 +45,9 @@
         </li>
         <li>
           <a routerLink="/" fragment="security" (click)="closeMenu()">Seguridad</a>
+        </li>
+        <li>
+          <a routerLink="/obsidian" (click)="closeMenu()">Obsidian</a>
         </li>
         <li class="border-t border-base-300 mt-1 pt-1"></li>
         @if (!isLogged()) {

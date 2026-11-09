@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -81,6 +82,8 @@ export class ObsidianPage {
   protected readonly activeDoc = signal<string | null>(null);
 
   constructor() {
+    // Same offset as the landing: router fragment scrolling ignores scroll-margin-top.
+    inject(ViewportScroller).setOffset([0, 88]);
     this._seo.set({
       title: 'DevHelper para Obsidian — plugin y theme',
       description:

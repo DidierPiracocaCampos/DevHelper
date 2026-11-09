@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { computed, signal } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -17,6 +18,7 @@ describe('ObsidianPage', () => {
   let fixture: ComponentFixture<ObsidianPage>;
   let auth: FakeAuth;
   let seoSet: ReturnType<typeof vi.spyOn>;
+  let setOffset: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     auth = new FakeAuth();
@@ -26,6 +28,7 @@ describe('ObsidianPage', () => {
     }).compileComponents();
 
     seoSet = vi.spyOn(TestBed.inject(SeoService), 'set');
+    setOffset = vi.spyOn(TestBed.inject(ViewportScroller), 'setOffset');
     fixture = TestBed.createComponent(ObsidianPage);
     fixture.detectChanges();
   });
@@ -50,6 +53,10 @@ describe('ObsidianPage', () => {
     for (const link of deepLinks) {
       expect(link.hasAttribute('target')).toBe(false);
     }
+  });
+
+  it('scrolls fragment links clear of the fixed header', () => {
+    expect(setOffset).toHaveBeenCalledWith([0, 88]);
   });
 
   it('sets SEO for /obsidian', () => {

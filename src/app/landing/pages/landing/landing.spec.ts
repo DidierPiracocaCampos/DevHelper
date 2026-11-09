@@ -32,9 +32,16 @@ describe('Landing', () => {
 
   it('renders all sections in order', () => {
     const root = fixture.nativeElement as HTMLElement;
-    const order = ['hero', 'capabilities', 'features', 'search', 'security', 'stack', 'cta'].map(
-      (name) => root.querySelector('landing-section-' + name),
-    );
+    const order = [
+      'hero',
+      'capabilities',
+      'features',
+      'search',
+      'security',
+      'stack',
+      'obsidian',
+      'cta',
+    ].map((name) => root.querySelector('landing-section-' + name));
     order.forEach((el) => expect(el).toBeTruthy());
     for (let i = 1; i < order.length; i++) {
       expect(order[i]!.previousElementSibling).toBe(order[i - 1]);
