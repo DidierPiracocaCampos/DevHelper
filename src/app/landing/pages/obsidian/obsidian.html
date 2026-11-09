@@ -1,0 +1,54 @@
+<landing-site-header [isLogged]="isLogged()" />
+<main>
+  <section id="inicio" class="obs-intro">
+    <div class="intro mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <h1 class="intro__title">
+        <span class="intro__line">Tus proyectos y tareas,</span>
+        &ngsp;
+        <span class="intro__line">dentro de Obsidian.</span>
+      </h1>
+      <p class="intro__lede">
+        DevHelper Dashboard es un plugin que registra tus avances en tu vault: proyectos, tareas,
+        notas, archivos, credenciales y calendario en un dashboard sobre tus notas Markdown.
+      </p>
+      <div class="intro__actions">
+        <a
+          [href]="links.pluginStore"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary btn-lg"
+        >
+          Instalar plugin
+        </a>
+        <a routerLink="/obsidian" fragment="theme" class="btn btn-ghost btn-lg">Ver el theme</a>
+      </div>
+      <p class="intro__aside">
+        ¿Ya tienes Obsidian?
+        <a [href]="links.pluginDeepLink" class="link">Ábrelo directamente en la app</a>.
+      </p>
+    </div>
+
+    <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <figure class="product-shot">
+        <div class="product-window">
+          <div class="product-window__bar">
+            <span class="icon" aria-hidden="true">dashboard</span>
+            <span>DevHelper Dashboard</span>
+          </div>
+          <img
+            src="/img/obsidian/dashboard.webp"
+            width="2880"
+            height="1800"
+            fetchpriority="high"
+            decoding="async"
+            alt="El dashboard del plugin en Obsidian, con proyectos favoritos, tareas, calendario de la semana, archivos y credenciales, con datos de ejemplo."
+          />
+        </div>
+        <figcaption class="product-shot__caption">
+          Dashboard real del plugin con datos de ejemplo.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+</main>
+<landing-site-footer />

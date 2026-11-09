@@ -4,5 +4,6 @@ export const serverRoutes: ServerRoute[] = [
   { path: '', renderMode: RenderMode.Prerender },
   { path: 'about', renderMode: RenderMode.Prerender },
   { path: 'legal/terms', renderMode: RenderMode.Prerender },
+  { path: 'obsidian', renderMode: RenderMode.Prerender },
   { path: '**', renderMode: RenderMode.Client },
 ];

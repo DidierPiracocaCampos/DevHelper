@@ -1,0 +1,161 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1;
+  padding-top: 4.5rem;
+}
+
+/* Hero: same composition as the landing hero (DESIGN.md, Product Window). */
+.obs-intro {
+  padding-block: var(--spacing-10) var(--spacing-12);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: var(--spacing-10);
+}
+
+.intro__title {
+  font-size: clamp(2.5rem, 11.5vw, 3.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.intro__line {
+  display: block;
+  text-wrap: balance;
+}
+
+@media (min-width: 48rem) {
+  .intro__title {
+    font-size: var(--font-size-display);
+  }
+}
+
+.intro__lede {
+  max-width: 60ch;
+  margin-top: var(--spacing-6);
+  font-size: var(--font-size-lg);
+  line-height: 1.55;
+  color: color-mix(in oklch, var(--color-base-content) 78%, transparent);
+}
+
+.intro__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-8);
+}
+
+.intro__aside {
+  margin-top: var(--spacing-4);
+  font-size: var(--font-size-sm);
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+}
+
+.intro__aside .link {
+  color: var(--color-base-content);
+  text-underline-offset: 0.2em;
+}
+
+.product-shot {
+  margin: 0;
+}
+
+.product-window {
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
+  background: var(--color-base-200);
+}
+
+.product-window__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  height: 2.5rem;
+  padding-inline: var(--spacing-4);
+  border-bottom: 1px solid var(--color-base-300);
+  font-size: var(--font-size-sm);
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+}
+
+.product-window__bar .icon {
+  font-size: 1rem;
+}
+
+.product-window img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.product-shot__caption {
+  margin-top: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: color-mix(in oklch, var(--color-base-content) 70%, transparent);
+}
+
+@keyframes intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes window-in {
+  from {
+    clip-path: inset(14% 6% 0 6% round var(--radius-box));
+    filter: brightness(0.6);
+    transform: translateY(2.5rem);
+  }
+  to {
+    clip-path: inset(0 round var(--radius-box));
+    filter: brightness(1);
+    transform: none;
+  }
+}
+
+/* Outside @media on purpose: Angular does not rename keyframes used inside one once minified. */
+.intro__title,
+.intro__lede,
+.intro__actions,
+.intro__aside {
+  animation: intro-in 700ms var(--ease-out-expo) both;
+}
+
+.intro__lede {
+  animation-delay: 80ms;
+}
+
+.intro__actions,
+.intro__aside {
+  animation-delay: 160ms;
+}
+
+.product-window {
+  animation: window-in var(--motion-focal) var(--ease-out-expo) 240ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__title,
+  .intro__lede,
+  .intro__actions,
+  .intro__aside,
+  .product-window {
+    animation: none;
+  }
+}
