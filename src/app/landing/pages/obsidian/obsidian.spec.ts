@@ -139,6 +139,12 @@ describe('ObsidianPage', () => {
     expect(root().querySelectorAll('#faq details').length).toBe(3);
   });
 
+  it('does not overstate mobile support', () => {
+    const faq = root().querySelector('#faq')?.textContent ?? '';
+    expect(faq).not.toContain('Todo funciona');
+    expect(faq).toContain('abrir la carpeta');
+  });
+
   it('shows the theme with descriptive alt text', () => {
     const img = root().querySelector('#theme img') as HTMLImageElement;
     expect(img.getAttribute('src')).toBe('/img/obsidian/theme.webp');
