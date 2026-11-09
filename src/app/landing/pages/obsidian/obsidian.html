@@ -24,7 +24,8 @@
       </div>
       <p class="intro__aside">
         ¿Ya tienes Obsidian?
-        <a [href]="links.pluginDeepLink" class="link">Ábrelo directamente en la app</a>.
+        <a [href]="links.pluginDeepLink" class="link">Ábrelo directamente en la app</a>
+        .
       </p>
     </div>
 
@@ -48,6 +49,250 @@
           Dashboard real del plugin con datos de ejemplo.
         </figcaption>
       </figure>
+    </div>
+  </section>
+
+  <section id="plugin" class="obs-section">
+    <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <h2 class="obs-section__title">Todo lo que guardas en tu vault, en un dashboard.</h2>
+      <p class="obs-section__lede">
+        El plugin lee y escribe notas Markdown normales. No hay base de datos aparte: si lo
+        desinstalas, tus proyectos y tareas siguen siendo tus notas.
+      </p>
+      <ul class="caps" landingReveal>
+        @for (cap of capabilities; track cap.title) {
+          <li class="caps__item">
+            <h3 class="caps__title">{{ cap.title }}</h3>
+            <p class="caps__text">{{ cap.text }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section id="theme" class="obs-section obs-section--band">
+    <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <article class="block" landingReveal>
+        <div class="block__copy">
+          <h2 class="block__title">El theme DevHelper</h2>
+          <p class="block__text">
+            Un theme oscuro y monocromo para Obsidian, diseñado junto al plugin: fondo casi negro,
+            texto de alto contraste y color solo donde aporta, como en los strings y los números del
+            código. Funciona solo en modo oscuro.
+          </p>
+          <div class="block__actions">
+            <a
+              [href]="links.themeStore"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary"
+            >
+              Instalar theme
+            </a>
+            <a [href]="links.themeDeepLink" class="btn btn-ghost">Abrir en Obsidian</a>
+          </div>
+        </div>
+        <figure class="shot">
+          <img
+            src="/img/obsidian/theme.webp"
+            width="1920"
+            height="1080"
+            loading="lazy"
+            decoding="async"
+            alt="Una nota de demostración en Obsidian con el theme DevHelper: tareas, enlaces, código, una cita y una tabla sobre fondo casi negro."
+          />
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <section id="docs" class="obs-section">
+    <div class="mx-auto max-w-[90rem] px-4 sm:px-8 lg:px-16">
+      <h2 class="obs-section__title">Documentación</h2>
+      <div class="docs">
+        <nav class="docs-index" aria-label="Documentación">
+          <ul>
+            @for (item of docsIndex; track item.id) {
+              <li>
+                <a
+                  routerLink="/obsidian"
+                  [fragment]="item.id"
+                  [attr.aria-current]="activeDoc() === item.id ? 'location' : null"
+                >
+                  {{ item.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+
+        <div class="docs__body">
+          <section id="instalacion" class="doc">
+            <h3 class="doc__title">Instalación</h3>
+            <p>El plugin y el theme están en la tienda oficial de Obsidian.</p>
+            <ol class="doc__steps">
+              <li>
+                Plugin: en Obsidian, abre Ajustes → Plugins de la comunidad → Explorar, busca
+                <strong>DevHelper Dashboard</strong>
+                , pulsa Instalar y después Activar.
+              </li>
+              <li>
+                Theme: Ajustes → Apariencia → Themes → Gestionar, busca
+                <strong>DevHelper</strong>
+                y pulsa Usar.
+              </li>
+            </ol>
+            <p>
+              Necesitas Obsidian 1.9.0 o superior, porque el plugin crea vistas de Bases. Funciona
+              en escritorio y en móvil.
+            </p>
+            <p class="doc__aside">
+              Instalación manual: descarga
+              <code class="obsidian-path">main.js</code>
+              ,
+              <code class="obsidian-path">manifest.json</code>
+              y
+              <code class="obsidian-path">styles.css</code>
+              de la
+              <a
+                [href]="links.pluginReleases"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link"
+              >
+                última versión en GitHub
+              </a>
+              y cópialos en
+              <code class="obsidian-path">
+                &lt;vault&gt;/.obsidian/plugins/devhelper-dashboard/
+              </code>
+              .
+            </p>
+          </section>
+
+          <section id="primeros-pasos" class="doc">
+            <h3 class="doc__title">Primeros pasos</h3>
+            <ol class="doc__steps">
+              <li>
+                Abre el dashboard con el icono de la barra lateral o con el comando
+                <strong>Abrir el dashboard de proyectos y tareas</strong>
+                .
+              </li>
+              <li>
+                Crea tu primer proyecto con el botón
+                <strong>+</strong>
+                de la fila de favoritos y añade sus tareas.
+              </li>
+              <li>
+                Marca una tarea como hecha cuando la resuelvas. La nota de la tarea es el sitio
+                donde apuntar cómo lo hiciste.
+              </li>
+            </ol>
+            <p>
+              Las carpetas se pueden cambiar en los ajustes del plugin. Por defecto son
+              <code class="obsidian-path">Projects</code>
+              ,
+              <code class="obsidian-path">Plantillas</code>
+              ,
+              <code class="obsidian-path">Calendario</code>
+              y
+              <code class="obsidian-path">Botones</code>
+              . El plugin crea solo el proyecto
+              <strong>General</strong>
+              , que guarda los archivos y las credenciales compartidos.
+            </p>
+          </section>
+
+          <section id="skills" class="doc">
+            <h3 class="doc__title">Skills de IA</h3>
+            <p>
+              Diez archivos
+              <code class="obsidian-path">SKILL.md</code>
+              en español que enseñan a un agente de IA, como Claude Code, cómo guarda el plugin tus
+              proyectos, tareas, notas, archivos, eventos y botones. Así el agente puede crear y
+              ordenar notas que el dashboard entiende. Son opcionales y no se ejecutan dentro del
+              plugin.
+            </p>
+            <a [href]="links.skillsZip" class="btn btn-primary" rel="noopener noreferrer" download>
+              <span class="icon" aria-hidden="true">download</span>
+              Descargar skills (.zip)
+            </a>
+            <p>
+              Descomprímelo en
+              <code class="obsidian-path">&lt;vault&gt;/.claude/skills/</code>
+              o en la carpeta donde tu agente cargue sus skills.
+            </p>
+          </section>
+
+          <section id="credenciales" class="doc">
+            <h3 class="doc__title">Credenciales</h3>
+            <p>
+              La primera vez que guardas una credencial, el plugin te pide una contraseña maestra.
+              De cada entrada,
+              <code class="obsidian-path">service</code>
+              queda en claro para poder buscarla;
+              <code class="obsidian-path">user</code>
+              ,
+              <code class="obsidian-path">password</code>
+              ,
+              <code class="obsidian-path">url</code>
+              y
+              <code class="obsidian-path">notes</code>
+              se cifran con AES-GCM 256 antes de escribirse en la nota.
+            </p>
+            <p>
+              La clave solo vive en memoria y se bloquea sola tras unos minutos sin uso (15 por
+              defecto). La contraseña maestra no se puede recuperar: si la olvidas, puedes empezar
+              de cero, pero las credenciales cifradas se pierden.
+            </p>
+          </section>
+
+          <section id="botones" class="doc">
+            <h3 class="doc__title">Botones con código</h3>
+            <p>
+              Puedes añadir a la barra del dashboard botones propios que ejecutan JavaScript, cada
+              uno definido en una nota de la carpeta
+              <code class="obsidian-path">Botones</code>
+              . Vienen desactivados: actívalos con
+              <strong>Permitir botones con código</strong>
+              en los ajustes del plugin, y solo con código que entiendas. Los que lanzan comandos
+              del sistema solo funcionan en escritorio.
+            </p>
+          </section>
+
+          <section id="faq" class="doc">
+            <h3 class="doc__title">Preguntas frecuentes</h3>
+            <div class="faq">
+              <details>
+                <summary>¿Necesito una cuenta de DevHelper?</summary>
+                <p>
+                  No. El plugin funciona solo dentro de tu vault y no se conecta con la app web de
+                  DevHelper.
+                </p>
+              </details>
+              <details>
+                <summary>¿Funciona en el móvil?</summary>
+                <p>
+                  Sí. Todo funciona en Obsidian para móvil salvo los botones que lanzan comandos del
+                  sistema.
+                </p>
+              </details>
+              <details>
+                <summary>¿Dónde están mis datos?</summary>
+                <p>
+                  En notas Markdown de tu vault, con propiedades como
+                  <code class="obsidian-path">type: task</code>
+                  y
+                  <code class="obsidian-path">status: open</code>
+                  . Los archivos se copian a la carpeta
+                  <code class="obsidian-path">Archivos</code>
+                  de cada proyecto.
+                </p>
+              </details>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   </section>
 </main>

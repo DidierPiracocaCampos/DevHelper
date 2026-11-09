@@ -56,6 +56,88 @@ describe('ObsidianPage', () => {
     expect(seoSet).toHaveBeenCalledWith(expect.objectContaining({ path: '/obsidian' }));
   });
 
+  it('lists the six plugin capabilities', () => {
+    const titles = Array.from(root().querySelectorAll('#plugin h3')).map((h) =>
+      h.textContent?.trim(),
+    );
+    expect(titles).toEqual([
+      'Proyectos y tareas',
+      'Notas',
+      'Archivos y proyecto General',
+      'Credenciales cifradas',
+      'Calendario mensual',
+      'Botones de la barra',
+    ]);
+  });
+
+  it('links the theme to the store', () => {
+    const theme = root().querySelector('#theme') as HTMLElement;
+    const store = theme.querySelector(`a[href="${OBSIDIAN_LINKS.themeStore}"]`);
+    expect(store?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(theme.querySelector(`a[href="${OBSIDIAN_LINKS.themeDeepLink}"]`)).toBeTruthy();
+  });
+
+  it('offers the skills zip', () => {
+    const skills = root().querySelector('#skills') as HTMLElement;
+    expect(skills.querySelector(`a[href="${OBSIDIAN_LINKS.skillsZip}"]`)).toBeTruthy();
+    expect(skills.textContent).toContain('.claude/skills/');
+  });
+
+  it('states exactly what is encrypted', () => {
+    const text = root().querySelector('#credenciales')?.textContent ?? '';
+    for (const word of ['user', 'password', 'url', 'notes', 'service', 'AES-GCM']) {
+      expect(text).toContain(word);
+    }
+    expect(text).toContain('no se puede recuperar');
+  });
+
+  it('anchors every doc section below the header', () => {
+    for (const id of [
+      'instalacion',
+      'primeros-pasos',
+      'skills',
+      'credenciales',
+      'botones',
+      'faq',
+    ]) {
+      const el = root().querySelector(`#${id}`) as HTMLElement;
+      expect(el.tagName).toBe('SECTION');
+      expect(el.closest('main')).toBeTruthy();
+    }
+  });
+
+  it('lets long paths wrap', () => {
+    const codes = Array.from(root().querySelectorAll('#docs code'));
+    expect(codes.length).toBeGreaterThan(0);
+    for (const code of codes) {
+      expect(code.classList).toContain('obsidian-path');
+    }
+  });
+
+  it('has a docs index pointing to each section', () => {
+    const hrefs = Array.from(root().querySelectorAll('.docs-index a')).map((a) =>
+      a.getAttribute('href'),
+    );
+    expect(hrefs).toEqual([
+      '/obsidian#instalacion',
+      '/obsidian#primeros-pasos',
+      '/obsidian#skills',
+      '/obsidian#credenciales',
+      '/obsidian#botones',
+      '/obsidian#faq',
+    ]);
+  });
+
+  it('answers three FAQs', () => {
+    expect(root().querySelectorAll('#faq details').length).toBe(3);
+  });
+
+  it('shows the theme with descriptive alt text', () => {
+    const img = root().querySelector('#theme img') as HTMLImageElement;
+    expect(img.getAttribute('src')).toBe('/img/obsidian/theme.webp');
+    expect(img.getAttribute('alt')?.length).toBeGreaterThan(20);
+  });
+
   it('shows the logged-in header', () => {
     auth.user.set({ uid: 'u' });
     fixture.detectChanges();
